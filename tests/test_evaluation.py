@@ -407,3 +407,176 @@ def test_build_beat_the_streak_export_model_version_filters_and_labels_summary()
     assert summary.loc[0, "model_version"] == "v1"
     assert summary.loc[0, "n_days_resolved"] == 5  # unchanged from the all-v1 fixture above
     assert summary.loc[0, "day_survival_rate"] == pytest.approx(4 / 5)  # 4 of 5 resolved days didn't reset
+
+
+def _bts_day(date, outcomes, predicted_probability=0.8):
+    """Build one fully-resolved top-2 day from a list of (at_bats, actual_hit)."""
+    rows = []
+    for rank, (at_bats, actual_hit) in enumerate(outcomes, start=1):
+        rows.append(_pick(date, rank, predicted_probability, at_bats, actual_hit))
+    return rows
+
+
+def test_classify_pick_states_hit_miss_no_game_pending():
+    preds = pd.DataFrame(
+        [
+            _pick("2026-06-18", 1, 0.9, 3, 1),
+            _pick("2026-06-18", 2, 0.8, 2, 0),
+            _pick("2026-06-18", 3, 0.7, 0, None),
+            _pick("2026-06-18", 4, 0.6, None, None),
+        ]
+    )
+    assert list(evaluation.classify_pick_states(preds)) == [
+        evaluation.PICK_STATE_HIT,
+        evaluation.PICK_STATE_MISS,
+        evaluation.PICK_STATE_NO_GAME,
+        evaluation.PICK_STATE_PENDING,
+    ]
+
+
+def test_top_k_day_outcomes_hand_calculated_two_pick_cases():
+    # Five mutually exclusive two-pick day shapes from the BTS rules.
+    preds = pd.DataFrame(
+        _bts_day("2026-06-18", [(3, 1), (2, 1)])  # hit/hit
+        + _bts_day("2026-06-19", [(3, 1), (0, None)])  # hit/void
+        + _bts_day("2026-06-20", [(0, None), (0, None)])  # void/void
+        + _bts_day("2026-06-21", [(3, 1), (2, 0)])  # hit/miss
+        + _bts_day("2026-06-22", [(0, None), (2, 0)])  # void/miss
+    )
+    preds["date"] = pd.to_datetime(preds["date"])
+    days = evaluation.top_k_day_outcomes(preds, k=2)
+    by_date = days.set_index("date")
+
+    hit_hit = by_date.loc[pd.Timestamp("2026-06-18")]
+    assert bool(hit_hit["survived"]) and bool(hit_hit["all_hit"]) and hit_hit["hits_added"] == 2
+    assert bool(hit_hit["advanced"]) and not bool(hit_hit["reset"])
+
+    hit_void = by_date.loc[pd.Timestamp("2026-06-19")]
+    assert bool(hit_void["survived"]) and not bool(hit_void["all_hit"]) and hit_void["hits_added"] == 1
+    assert bool(hit_void["advanced"]) and not bool(hit_void["reset"])
+
+    void_void = by_date.loc[pd.Timestamp("2026-06-20")]
+    assert bool(void_void["survived"]) and not bool(void_void["all_hit"]) and void_void["hits_added"] == 0
+    assert not bool(void_void["advanced"]) and not bool(void_void["reset"])
+
+    hit_miss = by_date.loc[pd.Timestamp("2026-06-21")]
+    assert bool(hit_miss["reset"]) and not bool(hit_miss["survived"]) and hit_miss["hits_added"] == 0
+    assert not bool(hit_miss["all_hit"]) and bool(hit_miss["any_hit"])
+
+    void_miss = by_date.loc[pd.Timestamp("2026-06-22")]
+    assert bool(void_miss["reset"]) and not bool(void_miss["survived"]) and void_miss["hits_added"] == 0
+    assert not bool(void_miss["any_hit"])
+
+
+def test_selection_strategy_metrics_hand_calculated_over_bts_day_shapes():
+    preds = pd.DataFrame(
+        _bts_day("2026-06-18", [(3, 1), (2, 1)])
+        + _bts_day("2026-06-19", [(3, 1), (0, None)])
+        + _bts_day("2026-06-20", [(0, None), (0, None)])
+        + _bts_day("2026-06-21", [(3, 1), (2, 0)])
+        + _bts_day("2026-06-22", [(0, None), (2, 0)])
+    )
+    # One extra candidate date with no picks -> coverage 5/6.
+    metrics = evaluation.selection_strategy_metrics(preds, k=2, n_candidate_dates=6)
+
+    assert metrics["n_candidate_dates"] == 6
+    assert metrics["n_dates_with_picks"] == 5
+    assert metrics["coverage_rate"] == pytest.approx(5 / 6)
+    assert metrics["n_resolved_pick_rows"] == 10  # includes no_game rows
+    assert metrics["no_game_rate"] == pytest.approx(4 / 10)  # four voids across the five days
+    # At-bats taken: hit/hit (2), hit/void (1), hit/miss (2), void/miss (1) = 6 rows; hits = 1+1+1+1 = 4? 
+    # hit/hit: 2 hits, hit/void: 1, hit/miss: 1 hit + 1 miss, void/miss: 1 miss → hits=4, taken=6
+    assert metrics["conditional_hit_rate_given_at_bat"] == pytest.approx(4 / 6)
+    # all_hit only on 06-18 → 1/5
+    assert metrics["all_of_top_2_hit_rate"] == pytest.approx(1 / 5)
+    # any_hit on 06-18, 06-19, 06-21 → 3/5
+    assert metrics["any_of_top_2_hit_rate"] == pytest.approx(3 / 5)
+    # survived: hit/hit, hit/void, void/void → 3/5; reset: hit/miss, void/miss → 2/5
+    assert metrics["top_2_survival_rate"] == pytest.approx(3 / 5)
+    assert metrics["top_2_reset_rate"] == pytest.approx(2 / 5)
+    # hits_added: 2, 1, 0, 0, 0 → mean 0.6
+    assert metrics["mean_hits_added_per_played_day"] == pytest.approx(0.6)
+    # top-1: advance on 18,19,21 (hit); reset on none of first picks... 
+    # rank1 outcomes: hit, hit, void, hit, void → advance 3/5, reset 0/5
+    assert metrics["top_1_advance_rate"] == pytest.approx(3 / 5)
+    assert metrics["top_1_reset_rate"] == pytest.approx(0 / 5)
+    assert metrics["brier_score"] == metrics["brier_score"]  # finite
+    assert metrics["log_loss"] == metrics["log_loss"]
+
+
+def test_no_game_row_is_not_silently_removed_from_advancement_and_coverage():
+    # A lone void day must still count as a played/survived day with
+    # coverage, and must NOT inflate all_of_top_k via resolved_only dropping.
+    preds = pd.DataFrame(
+        [
+            _pick("2026-06-18", 1, 0.9, 0, None),
+            _pick("2026-06-18", 2, 0.8, 0, None),
+        ]
+    )
+    metrics = evaluation.selection_strategy_metrics(preds, k=2, n_candidate_dates=2)
+
+    assert metrics["n_dates_with_picks"] == 1
+    assert metrics["coverage_rate"] == pytest.approx(0.5)
+    assert metrics["n_resolved_pick_rows"] == 2
+    assert metrics["no_game_rate"] == pytest.approx(1.0)
+    assert metrics["top_2_survival_rate"] == pytest.approx(1.0)
+    assert metrics["top_2_reset_rate"] == pytest.approx(0.0)
+    assert metrics["all_of_top_2_hit_rate"] == pytest.approx(0.0)  # voids are not hits
+    assert metrics["any_of_top_2_hit_rate"] == pytest.approx(0.0)
+    assert metrics["mean_hits_added_per_played_day"] == pytest.approx(0.0)
+    # Legacy top_k_hit_rate(require_all=True) would be NaN (no labeled rows)
+    # or overstate if mixed - prove the new metric keeps the void day.
+    days = evaluation.top_k_day_outcomes(preds, k=2)
+    assert len(days) == 1
+    assert bool(days.iloc[0]["survived"])
+    assert days.iloc[0]["n_no_game"] == 2
+
+
+def test_legacy_top_k_all_hit_overstates_hit_plus_void_day():
+    # Documents why selection_strategy_metrics exists: resolved_only drops
+    # the void, so legacy require_all=True treats hit+void as "all hit".
+    preds = pd.DataFrame(_bts_day("2026-06-19", [(3, 1), (0, None)]))
+    assert evaluation.top_k_hit_rate(preds, 2, require_all=True) == pytest.approx(1.0)
+    metrics = evaluation.selection_strategy_metrics(preds, k=2, n_candidate_dates=1)
+    assert metrics["all_of_top_2_hit_rate"] == pytest.approx(0.0)
+    assert metrics["top_2_survival_rate"] == pytest.approx(1.0)
+
+
+def test_bootstrap_strategy_metric_difference_resamples_dates_not_rows(monkeypatch):
+    # Strategy A: two dates, both all-hit. Strategy B: same dates, both reset.
+    picks_a = pd.DataFrame(
+        _bts_day("2026-06-18", [(3, 1), (2, 1)])
+        + _bts_day("2026-06-19", [(3, 1), (2, 1)])
+    )
+    picks_b = pd.DataFrame(
+        _bts_day("2026-06-18", [(3, 0), (2, 0)])
+        + _bts_day("2026-06-19", [(3, 0), (2, 0)])
+    )
+    candidate_dates = [pd.Timestamp("2026-06-18"), pd.Timestamp("2026-06-19")]
+    picks_a["date"] = pd.to_datetime(picks_a["date"])
+    picks_b["date"] = pd.to_datetime(picks_b["date"])
+
+    drawn_high_values = []
+
+    class _FakeRng:
+        def integers(self, low, high, size=None):
+            # Date-block bootstrap must draw from n_dates (=2), never from
+            # n_pick_rows (=4). Recording `high` proves which population size
+            # was used.
+            drawn_high_values.append(high)
+            import numpy as _np
+            return _np.zeros(size, dtype=int)
+
+    monkeypatch.setattr(evaluation.np.random, "default_rng", lambda seed=None: _FakeRng())
+
+    result = evaluation.bootstrap_strategy_metric_difference(
+        picks_a, picks_b, metric="all_of_top_2_hit_rate", k=2,
+        n_bootstrap=5, candidate_dates=candidate_dates, random_state=0,
+    )
+    assert result["resampled_unit"] == "date"
+    assert result["n_dates"] == 2
+    assert result["point_difference"] == pytest.approx(1.0)
+    assert drawn_high_values == [2, 2, 2, 2, 2]
+    assert all(diff == pytest.approx(1.0) for diff in result["differences"])
+    days_a = evaluation.top_k_day_outcomes(picks_a, 2)
+    assert set(days_a["n_picks"]) == {2}

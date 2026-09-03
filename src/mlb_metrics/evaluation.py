@@ -2,6 +2,14 @@
 into the numbers that actually answer "does this beat a coin flip, let
 alone Beat the Streak" - hit rate by pick rank, calibration, Brier score,
 and log loss.
+
+Beat the Streak day-level semantics (hit / miss / no_game) live in
+`classify_pick_states`, `top_k_day_outcomes`, and `selection_strategy_metrics`.
+Those keep survival, advancement, all-picks-hit, and conditional-at-bat hit
+rate as DISTINCT quantities - they must not share one ambiguous metric.
+`top_k_hit_rate` / `summarize` remain available for legacy callers but are
+NOT the Beat the Streak headline definitions (they historically dropped
+`at_bats==0` rows via `resolved_only`, which can overstate "all hit" days).
 """
 
 import numpy as np
@@ -10,20 +18,58 @@ from scipy.stats import binomtest, ttest_1samp
 
 from mlb_metrics import helpers
 
+# Resolved pick states for Beat the Streak / selection-rule scoring.
+# Distinct from dashboard status strings that also include "pending"/"no_pick".
+PICK_STATE_HIT = "hit"
+PICK_STATE_MISS = "miss"
+PICK_STATE_NO_GAME = "no_game"
+PICK_STATE_PENDING = "pending"
+
 
 def resolved_only(predictions: pd.DataFrame, outcome_col: str = "actual_hit") -> pd.DataFrame:
     """Rows with a known outcome (0/1) in `outcome_col`, i.e. the game has
     been played. `outcome_col` defaults to "actual_hit" (hitter picks); pass
-    "actual_correct" for game picks (see game_evaluation.py)."""
+    "actual_correct" for game picks (see game_evaluation.py).
+
+    Note: a Beat the Streak `no_game` row (`at_bats==0`, `actual_hit` null)
+    is intentionally NOT included here - there is no 0/1 hit outcome to
+    score. Day-level BTS metrics must go through `top_k_day_outcomes` /
+    `selection_strategy_metrics` instead of this filter, so voids are not
+    silently erased from survival/coverage denominators."""
     resolved = predictions[predictions[outcome_col].notna()].copy()
     resolved[outcome_col] = resolved[outcome_col].astype(float)
     return resolved
 
 
+def classify_pick_states(df: pd.DataFrame) -> pd.Series:
+    """Per-pick state from `at_bats` / `actual_hit`:
+
+    - hit: at_bats > 0 and actual_hit == 1
+    - miss: at_bats > 0 and actual_hit == 0
+    - no_game (void): at_bats == 0
+    - pending: at_bats unknown (null)
+
+    These four states are the only inputs to date-level Beat the Streak
+    survival / advancement / all-hit logic. A no_game row is a first-class
+    resolved state - never drop it before aggregating days."""
+    at_bats = pd.to_numeric(df["at_bats"], errors="coerce")
+    actual_hit = pd.to_numeric(df["actual_hit"], errors="coerce")
+
+    state = pd.Series(PICK_STATE_PENDING, index=df.index, dtype=object)
+    state[at_bats == 0] = PICK_STATE_NO_GAME
+    state[(at_bats > 0) & (actual_hit == 1)] = PICK_STATE_HIT
+    state[(at_bats > 0) & (actual_hit == 0)] = PICK_STATE_MISS
+    return state
+
+
 def pick_accuracy_by_rank(predictions: pd.DataFrame, outcome_col: str = "actual_hit") -> pd.DataFrame:
     """Hit rate for each individual pick rank (1st-ranked pick, 2nd-ranked,
     ...), independent of the others. If the model has any skill, this should
-    decrease as rank increases; if it's flat, the ranking isn't doing anything."""
+    decrease as rank increases; if it's flat, the ranking isn't doing anything.
+
+    Scoped to rows with a 0/1 `outcome_col` (see `resolved_only`) - no_game
+    voids have no hit/miss label and are excluded from this per-player rate
+    by design. Use `selection_strategy_metrics` for day-level BTS rates."""
     resolved = resolved_only(predictions, outcome_col)
     if resolved.empty:
         return pd.DataFrame(columns=["rank", "hit_rate", "n"])
@@ -32,11 +78,16 @@ def pick_accuracy_by_rank(predictions: pd.DataFrame, outcome_col: str = "actual_
 
 
 def top_k_hit_rate(predictions: pd.DataFrame, k: int, require_all: bool = False, outcome_col: str = "actual_hit") -> float:
-    """Per-day rate of success using the top `k` picks. require_all=False
-    (default) scores a day as a "hit" if *any* of the top-k picks got a hit
-    (a "pick k, need one" strategy); require_all=True scores a day as a hit
-    only if *all* k did (Beat the Streak's actual multi-pick mode, where
-    every pick must land to extend the streak)."""
+    """Legacy per-day rate over rows with a 0/1 `outcome_col` only
+    (`resolved_only`). require_all=False: any labeled hit that day;
+    require_all=True: every labeled row that day is a hit.
+
+    WARNING: because `no_game` rows have null `actual_hit`, they are dropped
+    before aggregation - a hit+void day looks like "all hit" here. That is
+    NOT Beat the Streak's all-picks-hit definition. Prefer
+    `selection_strategy_metrics` / `top_k_day_outcomes` for BTS scoring
+    (`all_of_top_k_hit_rate` requires every selected pick to be a hit;
+    `top_k_survival_rate` allows voids)."""
     resolved = resolved_only(predictions, outcome_col)
     picks = resolved[resolved["rank"] <= k]
     if picks.empty:
@@ -49,7 +100,8 @@ def top_k_hit_rate(predictions: pd.DataFrame, k: int, require_all: bool = False,
 def brier_score(predictions: pd.DataFrame, outcome_col: str = "actual_hit") -> float:
     """Mean squared error between predicted probability and actual (0/1)
     outcome - lower is better, 0 is perfect, 0.25 is what an uninformative
-    always-predict-0.5 model scores."""
+    always-predict-0.5 model scores. Only rows with a real 0/1 outcome
+    (at-bat taken) enter; no_game voids correctly contribute nothing."""
     resolved = resolved_only(predictions, outcome_col)
     if resolved.empty:
         return float("nan")
@@ -63,6 +115,319 @@ def log_loss(predictions: pd.DataFrame, eps: float = 1e-6, outcome_col: str = "a
     p = resolved["predicted_probability"].clip(eps, 1 - eps)
     y = resolved[outcome_col]
     return float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
+
+
+def top_k_day_outcomes(predictions: pd.DataFrame, k: int) -> pd.DataFrame:
+    """One row per date that has at least one rank<=k pick and is FULLY
+    resolved (no pending pick states). Encodes Beat the Streak's date-level
+    rules without collapsing distinct quantities:
+
+    For a two-pick day:
+      - two hits -> survived, all_hit, hits_added=2, advanced
+      - one hit + one no_game -> survived, not all_hit, hits_added=1, advanced
+      - two no_game -> survived, not all_hit, hits_added=0, not advanced
+      - any miss -> reset, hits_added=0, not survived
+
+    Columns: date, n_picks, n_hit, n_miss, n_no_game, reset, survived,
+    all_hit, any_hit, hits_added, advanced.
+    """
+    if predictions.empty or "at_bats" not in predictions.columns:
+        return pd.DataFrame(
+            columns=[
+                "date", "n_picks", "n_hit", "n_miss", "n_no_game",
+                "reset", "survived", "all_hit", "any_hit", "hits_added", "advanced",
+            ]
+        )
+
+    picks = predictions[predictions["rank"] <= k].copy()
+    if picks.empty:
+        return pd.DataFrame(
+            columns=[
+                "date", "n_picks", "n_hit", "n_miss", "n_no_game",
+                "reset", "survived", "all_hit", "any_hit", "hits_added", "advanced",
+            ]
+        )
+
+    picks["state"] = classify_pick_states(picks)
+    rows = []
+    for date, day in picks.groupby("date", sort=True):
+        if (day["state"] == PICK_STATE_PENDING).any():
+            continue
+        n_hit = int((day["state"] == PICK_STATE_HIT).sum())
+        n_miss = int((day["state"] == PICK_STATE_MISS).sum())
+        n_no_game = int((day["state"] == PICK_STATE_NO_GAME).sum())
+        n_picks = len(day)
+        reset = n_miss > 0
+        survived = not reset
+        all_hit = (n_hit == n_picks) and n_picks > 0
+        any_hit = n_hit > 0
+        hits_added = n_hit if survived else 0
+        advanced = hits_added > 0
+        rows.append(
+            {
+                "date": date,
+                "n_picks": n_picks,
+                "n_hit": n_hit,
+                "n_miss": n_miss,
+                "n_no_game": n_no_game,
+                "reset": reset,
+                "survived": survived,
+                "all_hit": all_hit,
+                "any_hit": any_hit,
+                "hits_added": hits_added,
+                "advanced": advanced,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _rate_or_nan(successes: int, n: int) -> float:
+    return float(successes / n) if n else float("nan")
+
+
+def selection_strategy_metrics(
+    predictions: pd.DataFrame,
+    k: int = 2,
+    n_candidate_dates: int | None = None,
+    probability_col: str = "predicted_probability",
+) -> dict:
+    """Full Beat the Streak / selection-rule metric bundle for top-`k` picks.
+
+    Survival, advancement, all-picks-hit, and conditional-at-bat hit rate are
+    reported as separate fields - they are not interchangeable:
+
+      - top_k_survival_rate: no selected pick missed (voids allowed)
+      - top_k_reset_rate: any selected pick missed
+      - all_of_top_k_hit_rate: every selected pick was a hit (voids fail this)
+      - any_of_top_k_hit_rate: at least one selected pick was a hit (secondary)
+      - top_1_advance_rate / top_1_reset_rate: when k>=1, computed on rank-1 days
+      - conditional_hit_rate_given_at_bat: among pick rows with at_bats>0
+      - mean_hits_added_per_played_day: mean hits_added over fully-resolved days
+
+    `n_candidate_dates` is the evaluation window size (holdout dates). When
+    omitted, defaults to the number of distinct dates present in
+    `predictions` (coverage_rate then reflects only dates that produced
+    rows, not a true slate-coverage rate).
+    """
+    preds = predictions.copy()
+    if n_candidate_dates is None:
+        n_candidate_dates = int(preds["date"].nunique()) if not preds.empty and "date" in preds.columns else 0
+
+    top = preds[preds["rank"] <= k] if not preds.empty and "rank" in preds.columns else preds.iloc[0:0]
+    n_dates_with_picks = int(top["date"].nunique()) if not top.empty else 0
+    coverage_rate = _rate_or_nan(n_dates_with_picks, n_candidate_dates)
+
+    if top.empty or "at_bats" not in top.columns:
+        at_bat_known = top.iloc[0:0]
+        at_bat_taken = top.iloc[0:0]
+        n_resolved_pick_rows = 0
+        no_game_rate = float("nan")
+        conditional_hit_rate = float("nan")
+        brier = float("nan")
+        ll = float("nan")
+    else:
+        at_bats = pd.to_numeric(top["at_bats"], errors="coerce")
+        at_bat_known = top[at_bats.notna()]
+        n_resolved_pick_rows = len(at_bat_known)
+        no_game_rate = _rate_or_nan(int((pd.to_numeric(at_bat_known["at_bats"], errors="coerce") == 0).sum()), n_resolved_pick_rows)
+        at_bat_taken = top[at_bats > 0].copy()
+        if at_bat_taken.empty:
+            conditional_hit_rate = float("nan")
+            brier = float("nan")
+            ll = float("nan")
+        else:
+            y = pd.to_numeric(at_bat_taken["actual_hit"], errors="coerce").astype(float)
+            conditional_hit_rate = float(y.mean())
+            # Score calibration only on rows with a real 0/1 label.
+            scored = at_bat_taken.copy()
+            scored["actual_hit"] = y
+            scored["predicted_probability"] = pd.to_numeric(at_bat_taken[probability_col], errors="coerce")
+            brier = brier_score(scored)
+            ll = log_loss(scored)
+
+    days = top_k_day_outcomes(preds, k)
+    n_played_days = len(days)
+    all_of_rate = _rate_or_nan(int(days["all_hit"].sum()), n_played_days) if n_played_days else float("nan")
+    any_of_rate = _rate_or_nan(int(days["any_hit"].sum()), n_played_days) if n_played_days else float("nan")
+    survival_rate = _rate_or_nan(int(days["survived"].sum()), n_played_days) if n_played_days else float("nan")
+    reset_rate = _rate_or_nan(int(days["reset"].sum()), n_played_days) if n_played_days else float("nan")
+    mean_hits_added = float(days["hits_added"].mean()) if n_played_days else float("nan")
+
+    # Top-1 advance/reset always come from the rank-1 day slice (even when
+    # reporting a k=2 bundle), so the two-pick headline metrics stay
+    # distinguishable from single-pick advancement.
+    days_1 = top_k_day_outcomes(preds, 1)
+    n_played_1 = len(days_1)
+    top_1_advance_rate = _rate_or_nan(int(days_1["advanced"].sum()), n_played_1) if n_played_1 else float("nan")
+    top_1_reset_rate = _rate_or_nan(int(days_1["reset"].sum()), n_played_1) if n_played_1 else float("nan")
+
+    return {
+        "k": k,
+        "n_candidate_dates": int(n_candidate_dates),
+        "n_dates_with_picks": n_dates_with_picks,
+        "coverage_rate": coverage_rate,
+        "n_resolved_pick_rows": n_resolved_pick_rows,
+        "no_game_rate": no_game_rate,
+        "conditional_hit_rate_given_at_bat": conditional_hit_rate,
+        "top_1_advance_rate": top_1_advance_rate,
+        "top_1_reset_rate": top_1_reset_rate,
+        f"all_of_top_{k}_hit_rate": all_of_rate,
+        f"any_of_top_{k}_hit_rate": any_of_rate,
+        f"top_{k}_survival_rate": survival_rate,
+        f"top_{k}_reset_rate": reset_rate,
+        "mean_hits_added_per_played_day": mean_hits_added,
+        "brier_score": brier,
+        "log_loss": ll,
+        "n_played_days": n_played_days,
+    }
+
+
+def _metric_from_day_outcomes_and_rows(
+    days: pd.DataFrame,
+    pick_rows: pd.DataFrame,
+    metric: str,
+    k: int,
+    n_candidate_dates: int,
+) -> float:
+    """Compute one named metric from an already-sliced day/row frame.
+    Used by the date-block bootstrap so each resample aggregates days, not
+    independent pick rows."""
+    n_played = len(days)
+    if metric == "coverage_rate":
+        n_with_picks = int(pick_rows["date"].nunique()) if not pick_rows.empty else 0
+        return _rate_or_nan(n_with_picks, n_candidate_dates)
+    if metric in (f"all_of_top_{k}_hit_rate", "all_of_top_k_hit_rate"):
+        return _rate_or_nan(int(days["all_hit"].sum()), n_played) if n_played else float("nan")
+    if metric in (f"any_of_top_{k}_hit_rate", "any_of_top_k_hit_rate"):
+        return _rate_or_nan(int(days["any_hit"].sum()), n_played) if n_played else float("nan")
+    if metric in (f"top_{k}_survival_rate", "top_k_survival_rate"):
+        return _rate_or_nan(int(days["survived"].sum()), n_played) if n_played else float("nan")
+    if metric in (f"top_{k}_reset_rate", "top_k_reset_rate"):
+        return _rate_or_nan(int(days["reset"].sum()), n_played) if n_played else float("nan")
+    if metric == "mean_hits_added_per_played_day":
+        return float(days["hits_added"].mean()) if n_played else float("nan")
+    if metric == "top_1_advance_rate":
+        days_1 = days if k == 1 else top_k_day_outcomes(pick_rows, 1)
+        return _rate_or_nan(int(days_1["advanced"].sum()), len(days_1)) if len(days_1) else float("nan")
+    if metric == "top_1_reset_rate":
+        days_1 = days if k == 1 else top_k_day_outcomes(pick_rows, 1)
+        return _rate_or_nan(int(days_1["reset"].sum()), len(days_1)) if len(days_1) else float("nan")
+    if metric == "conditional_hit_rate_given_at_bat":
+        if pick_rows.empty or "at_bats" not in pick_rows.columns:
+            return float("nan")
+        taken = pick_rows[pd.to_numeric(pick_rows["at_bats"], errors="coerce") > 0]
+        if taken.empty:
+            return float("nan")
+        return float(pd.to_numeric(taken["actual_hit"], errors="coerce").astype(float).mean())
+    raise ValueError(f"Unknown bootstrap metric {metric!r}")
+
+
+def bootstrap_strategy_metric_difference(
+    picks_a: pd.DataFrame,
+    picks_b: pd.DataFrame,
+    metric: str,
+    k: int = 2,
+    n_bootstrap: int = 1000,
+    alpha: float = 0.05,
+    candidate_dates=None,
+    random_state: int | None = None,
+) -> dict:
+    """Paired date-block bootstrap CI for metric(A) - metric(B).
+
+    Resamples WHOLE dates with replacement from `candidate_dates` (or the
+    union of dates present in either pick frame). Pick rows are never
+    resampled independently - every pick from a drawn date is kept
+    together - because same-day picks are dependent under Beat the Streak.
+
+    Returns point_difference, ci_low, ci_high, n_bootstrap, n_dates,
+    metric_a, metric_b, and the raw bootstrap differences series.
+    """
+    rng = np.random.default_rng(random_state)
+    if candidate_dates is None:
+        dates_a = set(picks_a["date"]) if not picks_a.empty else set()
+        dates_b = set(picks_b["date"]) if not picks_b.empty else set()
+        candidate_dates = sorted(dates_a | dates_b)
+    else:
+        candidate_dates = list(candidate_dates)
+
+    n_dates = len(candidate_dates)
+    if n_dates == 0:
+        return {
+            "metric": metric,
+            "metric_a": float("nan"),
+            "metric_b": float("nan"),
+            "point_difference": float("nan"),
+            "ci_low": float("nan"),
+            "ci_high": float("nan"),
+            "n_bootstrap": n_bootstrap,
+            "n_dates": 0,
+            "differences": np.array([], dtype=float),
+            "resampled_unit": "date",
+        }
+
+    days_a = top_k_day_outcomes(picks_a, k).set_index("date") if not picks_a.empty else pd.DataFrame()
+    days_b = top_k_day_outcomes(picks_b, k).set_index("date") if not picks_b.empty else pd.DataFrame()
+    rows_a = picks_a[picks_a["rank"] <= k].copy() if not picks_a.empty else picks_a
+    rows_b = picks_b[picks_b["rank"] <= k].copy() if not picks_b.empty else picks_b
+
+    metric_a = _metric_from_day_outcomes_and_rows(
+        days_a.reset_index() if not days_a.empty else days_a,
+        rows_a, metric, k, n_dates,
+    )
+    metric_b = _metric_from_day_outcomes_and_rows(
+        days_b.reset_index() if not days_b.empty else days_b,
+        rows_b, metric, k, n_dates,
+    )
+    point = metric_a - metric_b if (metric_a == metric_a and metric_b == metric_b) else float("nan")
+
+    differences = np.empty(n_bootstrap, dtype=float)
+    date_array = np.asarray(candidate_dates, dtype=object)
+    for i in range(n_bootstrap):
+        # Sample DATE indices, not pick-row indices - the whole point of a
+        # date-block bootstrap (dependence within a day).
+        sampled = date_array[rng.integers(0, n_dates, size=n_dates)]
+        # Preserve multiplicity: a date drawn twice contributes its day
+        # outcome twice to the aggregate (standard bootstrap with replacement).
+        day_a_parts = []
+        day_b_parts = []
+        row_a_parts = []
+        row_b_parts = []
+        for date in sampled:
+            if not days_a.empty and date in days_a.index:
+                day_a_parts.append(days_a.loc[[date]].reset_index())
+            if not days_b.empty and date in days_b.index:
+                day_b_parts.append(days_b.loc[[date]].reset_index())
+            if not rows_a.empty:
+                row_a_parts.append(rows_a[rows_a["date"] == date])
+            if not rows_b.empty:
+                row_b_parts.append(rows_b[rows_b["date"] == date])
+        day_a_boot = pd.concat(day_a_parts, ignore_index=True) if day_a_parts else pd.DataFrame(columns=list(days_a.reset_index().columns) if not days_a.empty else ["date"])
+        day_b_boot = pd.concat(day_b_parts, ignore_index=True) if day_b_parts else pd.DataFrame(columns=list(days_b.reset_index().columns) if not days_b.empty else ["date"])
+        row_a_boot = pd.concat(row_a_parts, ignore_index=True) if row_a_parts else rows_a.iloc[0:0]
+        row_b_boot = pd.concat(row_b_parts, ignore_index=True) if row_b_parts else rows_b.iloc[0:0]
+        a = _metric_from_day_outcomes_and_rows(day_a_boot, row_a_boot, metric, k, n_dates)
+        b = _metric_from_day_outcomes_and_rows(day_b_boot, row_b_boot, metric, k, n_dates)
+        differences[i] = a - b if (a == a and b == b) else np.nan
+
+    finite = differences[np.isfinite(differences)]
+    if len(finite) == 0:
+        ci_low = ci_high = float("nan")
+    else:
+        ci_low = float(np.quantile(finite, alpha / 2))
+        ci_high = float(np.quantile(finite, 1 - alpha / 2))
+
+    return {
+        "metric": metric,
+        "metric_a": metric_a,
+        "metric_b": metric_b,
+        "point_difference": point,
+        "ci_low": ci_low,
+        "ci_high": ci_high,
+        "n_bootstrap": n_bootstrap,
+        "n_dates": n_dates,
+        "differences": differences,
+        "resampled_unit": "date",
+    }
 
 
 def wilson_confidence_interval(successes: int, n: int, alpha: float = 0.05) -> tuple[float, float]:
@@ -248,16 +613,11 @@ def graded_daily_picks(
 
 
 def _classify_outcome(df: pd.DataFrame) -> pd.Series:
-    """Per-pick outcome: "pending" (at_bats unknown yet), "no_game"
-    (confirmed zero at-bats - a rainout, DNP, etc.), "hit", or "miss"."""
-    at_bats = pd.to_numeric(df["at_bats"], errors="coerce")
-    actual_hit = pd.to_numeric(df["actual_hit"], errors="coerce")
-
-    outcome = pd.Series("pending", index=df.index)
-    outcome[at_bats == 0] = "no_game"
-    outcome[(at_bats > 0) & (actual_hit == 1)] = "hit"
-    outcome[(at_bats > 0) & (actual_hit == 0)] = "miss"
-    return outcome
+    """Per-pick outcome for dashboard/export status strings. Same states as
+    `classify_pick_states` (pending / no_game / hit / miss) - kept as a
+    thin alias so streak_progression / graded exports share one definition
+    with selection_strategy_metrics."""
+    return classify_pick_states(df)
 
 
 def streak_progression(
@@ -363,7 +723,14 @@ def build_beat_the_streak_export(
     CSV covering both views without ambiguity about which row is which."""
     picks = graded_daily_picks(predictions, metric, max_picks, min_probability, model_version).copy()
     picks["status"] = _classify_outcome(picks)
-    picks = picks[["date", "rank", "name", "predicted_probability", "combined_probability", "actual_hit", "status", "grade"]]
+    # game_pk is optional for legacy CSV rows (null) and required on new
+    # live rows - surface it when present so the export stays aligned with
+    # predictions.PREDICTION_COLUMNS without breaking older logs.
+    if "game_pk" not in picks.columns:
+        picks["game_pk"] = pd.NA
+    picks = picks[
+        ["date", "game_pk", "rank", "name", "predicted_probability", "combined_probability", "actual_hit", "status", "grade"]
+    ]
 
     # graded_daily_picks already includes every rank<=max_picks candidate
     # regardless of grade, so a date can only be missing from `picks` here
@@ -377,6 +744,7 @@ def build_beat_the_streak_export(
         no_pick_rows = pd.DataFrame(
             {
                 "date": no_pick_dates,
+                "game_pk": pd.NA,
                 "rank": pd.NA,
                 "name": pd.NA,
                 "predicted_probability": pd.NA,

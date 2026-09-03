@@ -146,14 +146,71 @@ def test_select_and_resolve_missing_from_got_hit_table_means_no_game():
 
 def test_report_runs_without_error_on_empty_and_nonempty_input(capsys):
     module = _load_backtest_selection_rule_module()
-    empty = pd.DataFrame(columns=["date", "key_mlbam", "rank", "predicted_probability", "actual_hit", "metric"])
-    module.report("empty case", empty, total_dates=0)
+    empty = pd.DataFrame(
+        columns=["date", "key_mlbam", "rank", "predicted_probability", "actual_hit", "at_bats", "metric"]
+    )
+    module.report("empty case", empty, n_candidate_dates=0)
 
     nonempty = pd.DataFrame([
-        {"date": "2026-06-20", "key_mlbam": 1, "rank": 1, "predicted_probability": 0.8, "actual_hit": 1, "metric": "Game_Hit_Probability"},
+        {
+            "date": "2026-06-20", "key_mlbam": 1, "rank": 1, "predicted_probability": 0.8,
+            "actual_hit": 1, "at_bats": 3, "metric": "Game_Hit_Probability",
+        },
+        {
+            "date": "2026-06-20", "key_mlbam": 2, "rank": 2, "predicted_probability": 0.75,
+            "actual_hit": 1, "at_bats": 2, "metric": "Game_Hit_Probability",
+        },
     ])
-    module.report("nonempty case", nonempty, total_dates=1)
+    metrics = module.report("nonempty case", nonempty, n_candidate_dates=1)
 
     out = capsys.readouterr().out
     assert "empty case" in out
     assert "nonempty case" in out
+    assert "HEADLINE all_of_top_2_hit_rate" in out
+    assert "top_2_reset_rate" in out
+    assert "secondary any_of_top_2_hit_rate" in out
+    assert metrics["all_of_top_2_hit_rate"] == pytest.approx(1.0)
+    assert metrics["top_2_reset_rate"] == pytest.approx(0.0)
+
+
+def test_report_headline_prefers_all_of_top_2_over_any_of_top_2(capsys):
+    # hit/miss day: any_of=1, all_of=0, reset=1 - headline must surface all_of/reset.
+    module = _load_backtest_selection_rule_module()
+    picks = pd.DataFrame([
+        {"date": "2026-06-20", "key_mlbam": 1, "rank": 1, "predicted_probability": 0.8,
+         "actual_hit": 1, "at_bats": 3, "metric": "Game_Hit_Probability"},
+        {"date": "2026-06-20", "key_mlbam": 2, "rank": 2, "predicted_probability": 0.7,
+         "actual_hit": 0, "at_bats": 2, "metric": "Game_Hit_Probability"},
+    ])
+    metrics = module.report("mixed day", picks, n_candidate_dates=1)
+    out = capsys.readouterr().out
+    assert "HEADLINE all_of_top_2_hit_rate=0.0000" in out
+    assert "top_2_reset_rate=1.0000" in out
+    assert "secondary any_of_top_2_hit_rate=1.0000" in out
+    assert metrics["any_of_top_2_hit_rate"] == pytest.approx(1.0)
+    assert metrics["all_of_top_2_hit_rate"] == pytest.approx(0.0)
+
+
+def test_report_bootstrap_comparison_uses_date_unit(capsys):
+    module = _load_backtest_selection_rule_module()
+    picks_a = pd.DataFrame([
+        {"date": pd.Timestamp("2026-06-18"), "rank": 1, "predicted_probability": 0.9, "actual_hit": 1, "at_bats": 3},
+        {"date": pd.Timestamp("2026-06-18"), "rank": 2, "predicted_probability": 0.8, "actual_hit": 1, "at_bats": 2},
+        {"date": pd.Timestamp("2026-06-19"), "rank": 1, "predicted_probability": 0.9, "actual_hit": 1, "at_bats": 3},
+        {"date": pd.Timestamp("2026-06-19"), "rank": 2, "predicted_probability": 0.8, "actual_hit": 1, "at_bats": 2},
+    ])
+    picks_b = pd.DataFrame([
+        {"date": pd.Timestamp("2026-06-18"), "rank": 1, "predicted_probability": 0.9, "actual_hit": 0, "at_bats": 3},
+        {"date": pd.Timestamp("2026-06-18"), "rank": 2, "predicted_probability": 0.8, "actual_hit": 0, "at_bats": 2},
+        {"date": pd.Timestamp("2026-06-19"), "rank": 1, "predicted_probability": 0.9, "actual_hit": 0, "at_bats": 3},
+        {"date": pd.Timestamp("2026-06-19"), "rank": 2, "predicted_probability": 0.8, "actual_hit": 0, "at_bats": 2},
+    ])
+    module.report_bootstrap_comparison(
+        picks_a, picks_b, "A", "B",
+        candidate_dates=[pd.Timestamp("2026-06-18"), pd.Timestamp("2026-06-19")],
+        n_bootstrap=20, random_state=0,
+    )
+    out = capsys.readouterr().out
+    assert "unit=date" in out
+    assert "all_of_top_2_hit_rate" in out
+    assert "top_2_reset_rate" in out

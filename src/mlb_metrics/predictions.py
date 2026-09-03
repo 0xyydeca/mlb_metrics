@@ -2,11 +2,15 @@
 
 Nothing in the original script ever checked whether WAVE/Game_Hit_Probability
 actually predicted hits. This module maintains an append-only log of
-(date, player, predicted probability, realized outcome) that evaluation.py
-scores: `select_picks` turns a computed hitters table into that day's
-ranked, qualified picks; `append_predictions` logs them *before* the game is
-played; `resolve_predictions` fills in whether the pick actually got a hit
-once that date's outcome data is available.
+(date, game_pk, player, predicted probability, realized outcome) that
+evaluation.py scores: `select_picks` turns a computed hitters table into
+that day's ranked, qualified picks; `append_predictions` logs them *before*
+the game is played; `resolve_predictions` fills in whether the pick actually
+got a hit once that game's outcome data is available.
+
+Natural key for new rows: (date, game_pk, key_mlbam, metric). Legacy CSV
+rows may have a null game_pk; resolution then falls back to the old
+(date, key_mlbam) label so already-logged history stays readable.
 """
 
 import os
@@ -16,7 +20,7 @@ import pandas as pd
 from mlb_metrics import config, helpers
 
 PREDICTION_COLUMNS = [
-    "date", "key_mlbam", "name", "rank", "predicted_probability", "metric",
+    "date", "game_pk", "key_mlbam", "name", "rank", "predicted_probability", "metric",
     "probability", "Matchup_Hit_Probability", "Model_Hit_Probability", "actual_hit", "at_bats", "model_version",
 ]
 
@@ -30,6 +34,17 @@ LEGACY_MODEL_VERSION = "legacy"
 # must clear min_probability), whichever of them happen to be present on the
 # `hitters` table passed in - see select_picks's docstring.
 JOINT_PROBABILITY_GATE_COLUMNS = ["probability", "Game_Hit_Probability", "Matchup_Hit_Probability"]
+
+# Dedup / identity key for the predictions log once game_pk exists.
+PREDICTION_KEY_COLUMNS = ["date", "game_pk", "key_mlbam", "metric"]
+
+
+def _ensure_game_pk_column(df: pd.DataFrame) -> pd.DataFrame:
+    """Migrate a frame written before game_pk existed - null, not a guess."""
+    if "game_pk" not in df.columns:
+        df = df.copy()
+        df["game_pk"] = pd.NA
+    return df
 
 
 def _diversify_second_pick(ranked: pd.DataFrame, rank_column: str, margin: float) -> pd.DataFrame:
@@ -86,12 +101,18 @@ def select_picks(
     same_game_diversification_margin: float = config.SAME_GAME_DIVERSIFICATION_MARGIN,
 ) -> pd.DataFrame:
     """Rank a computed hitters table (the wave.csv-equivalent output of
-    hitters.assemble_hitters) by `rank_metric` (defaults to `metric`) and
+    hitters.assemble_hitters, optionally already merged with per-game
+    matchup / model columns) by `rank_metric` (defaults to `metric`) and
     return the top `top_n` qualified picks for `date`, in PREDICTION_COLUMNS
     shape with `actual_hit` left null (unresolved). `predicted_probability`
     and the logged `metric` name always come from `metric`, regardless of
     which column was used to rank - `rank_metric` only changes *which*
     qualified hitters get chosen, not what probability gets reported/scored.
+
+    When `hitters` carries `game_pk` (live matchup path / hitter schedule),
+    each returned row is keyed to that specific contest. New logged rows
+    must have a non-null game_pk; git-history replays without schedule data
+    still produce null game_pk and are tagged as legacy-readable.
 
     `max_avg_batting_order`/`min_start_rate` only take effect if `hitters`
     has avg_batting_order/start_rate columns (see hitters.assemble_hitters's
@@ -213,6 +234,8 @@ def select_picks(
     picks["name"] = picks["name_first"].fillna("").astype(str) + " " + picks["name_last"].fillna("").astype(str)
     picks["predicted_probability"] = picks[metric]
     picks["metric"] = metric
+    if "game_pk" not in picks.columns:
+        picks["game_pk"] = pd.NA
     for optional_column in ("probability", "Matchup_Hit_Probability", "Model_Hit_Probability"):
         if optional_column not in picks.columns:
             picks[optional_column] = pd.NA
@@ -225,11 +248,16 @@ def select_picks(
 
 def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     """Append `picks` to the predictions log at `log_path`, deduping on
-    (date, key_mlbam, metric) so re-running a day's pipeline - or a `picks`
-    batch that already contains duplicates itself, e.g. from git history
-    replaying the same date via more than one commit - doesn't create
+    (date, game_pk, key_mlbam, metric) so re-running a day's pipeline - or a
+    `picks` batch that already contains duplicates itself, e.g. from git
+    history replaying the same date via more than one commit - doesn't create
     duplicate log entries. Existing rows (including already-resolved
     actual_hit values) always win over a re-logged pick for the same key.
+
+    Legacy rows may have a null `game_pk` (migration fills NA, not a guess).
+    New live rows must carry a non-null game_pk. Pandas treats NA as equal
+    in drop_duplicates, so legacy (date, NA, key_mlbam, metric) keys still
+    dedupe the way the old (date, key_mlbam, metric) key did.
 
     That per-key dedup alone isn't enough when a rerun's TOP-N candidate
     SET changes for a date that's already logged, though - e.g. a mid-day
@@ -251,11 +279,15 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     this way; only the per-key dedup below applies there, preserving
     already-resolved backtest history exactly as before."""
     os.makedirs(os.path.dirname(log_path) or ".", exist_ok=True)
+    picks = _ensure_game_pk_column(picks)
+    picks["date"] = pd.to_datetime(picks["date"])
 
     if os.path.exists(log_path):
         existing = pd.read_csv(log_path, parse_dates=["date"])
         if "model_version" not in existing.columns:
             existing["model_version"] = LEGACY_MODEL_VERSION  # migrate a log written before model_version existed
+        existing = _ensure_game_pk_column(existing)
+        existing["date"] = pd.to_datetime(existing["date"])
         fresh_dates = set(picks["date"])
         resolved_dates = set(existing.loc[existing["at_bats"].notna(), "date"])
         supersede_dates = fresh_dates - resolved_dates
@@ -264,7 +296,7 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     else:
         combined = picks
 
-    combined = combined.drop_duplicates(subset=["date", "key_mlbam", "metric"], keep="last")
+    combined = combined.drop_duplicates(subset=PREDICTION_KEY_COLUMNS, keep="last")
     combined = combined.sort_values(["date", "rank"]).reset_index(drop=True)
     combined.to_csv(log_path, index=False)
     return combined
@@ -273,8 +305,16 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
 def resolve_predictions(log_path: str, completed_events_by_date: pd.DataFrame) -> pd.DataFrame:
     """Fill in `at_bats`/`actual_hit` for any still-pending rows in the
     predictions log whose date is covered by `completed_events_by_date`
-    (columns: game_date, batter, events - e.g. the persisted raw Statcast
-    data). A row is "still pending" if its `at_bats` is null - not
+    (columns: game_date, batter, events, and game_pk when available -
+    e.g. the persisted raw Statcast data).
+
+    When both the log row and the events carry a non-null `game_pk`,
+    outcomes are labeled per (game_pk, batter) - a doubleheader miss in
+    game one and hit in game two resolve independently. Legacy rows with a
+    null game_pk still resolve on (date, batter), preserving pre-migration
+    history readability.
+
+    A row is "still pending" if its `at_bats` is null - not
     `actual_hit`, since a batter can be fully resolved with zero at-bats
     (rained out, DNP, etc: at_bats=0, actual_hit stays null because there's
     no hit/miss to score) which must stay distinguishable from a date we
@@ -293,29 +333,55 @@ def resolve_predictions(log_path: str, completed_events_by_date: pd.DataFrame) -
         log["at_bats"] = pd.NA  # migrate a log written before at_bats existed
     if "model_version" not in log.columns:
         log["model_version"] = LEGACY_MODEL_VERSION  # migrate a log written before model_version existed
+    log = _ensure_game_pk_column(log)
 
     events = completed_events_by_date.copy()
     events["had_hit"] = helpers.is_hit(events["events"])
     known_through = events["game_date"].max() if len(events) else pd.NaT
 
-    per_batter_day = (
-        events.groupby(["game_date", "batter"])
-        .agg(resolved_at_bats=("events", "size"), resolved_hit=("had_hit", "max"))
-        .reset_index()
-        .rename(columns={"game_date": "date", "batter": "key_mlbam"})
-    )
-
-    log = log.merge(per_batter_day, on=["date", "key_mlbam"], how="left")
-
     still_pending = log["at_bats"].isna()
     knowable = pd.notna(known_through) & (log["date"] <= known_through)
     resolvable = still_pending & knowable
 
-    resolved_at_bats = log["resolved_at_bats"].fillna(0)
+    has_event_game_pk = "game_pk" in events.columns
+    game_keyed = resolvable & log["game_pk"].notna() if has_event_game_pk else pd.Series(False, index=log.index)
+    date_keyed = resolvable & ~game_keyed
+
+    log["resolved_at_bats"] = pd.NA
+    log["resolved_hit"] = pd.NA
+
+    if game_keyed.any():
+        per_batter_game = (
+            events.groupby(["game_pk", "batter"])
+            .agg(resolved_at_bats=("events", "size"), resolved_hit=("had_hit", "max"))
+            .reset_index()
+            .rename(columns={"batter": "key_mlbam"})
+        )
+        # reset_index so merge results reattach by original log index -
+        # never assign via positional .to_numpy() after a join that could
+        # reorder or fan out duplicates.
+        left_game = log.loc[game_keyed, ["game_pk", "key_mlbam"]].reset_index()
+        merged_game = left_game.merge(per_batter_game, on=["game_pk", "key_mlbam"], how="left")
+        log.loc[merged_game["index"], "resolved_at_bats"] = merged_game["resolved_at_bats"].to_numpy()
+        log.loc[merged_game["index"], "resolved_hit"] = merged_game["resolved_hit"].to_numpy()
+
+    if date_keyed.any():
+        per_batter_day = (
+            events.groupby(["game_date", "batter"])
+            .agg(resolved_at_bats=("events", "size"), resolved_hit=("had_hit", "max"))
+            .reset_index()
+            .rename(columns={"game_date": "date", "batter": "key_mlbam"})
+        )
+        left_day = log.loc[date_keyed, ["date", "key_mlbam"]].reset_index()
+        merged_day = left_day.merge(per_batter_day, on=["date", "key_mlbam"], how="left")
+        log.loc[merged_day["index"], "resolved_at_bats"] = merged_day["resolved_at_bats"].to_numpy()
+        log.loc[merged_day["index"], "resolved_hit"] = merged_day["resolved_hit"].to_numpy()
+
+    resolved_at_bats = pd.to_numeric(log["resolved_at_bats"], errors="coerce").fillna(0)
     log.loc[resolvable, "at_bats"] = resolved_at_bats[resolvable]
 
-    got_hit = resolvable & (resolved_at_bats > 0) & (log["resolved_hit"] == 1)
-    got_out = resolvable & (resolved_at_bats > 0) & (log["resolved_hit"] != 1)
+    got_hit = resolvable & (resolved_at_bats > 0) & (pd.to_numeric(log["resolved_hit"], errors="coerce") == 1)
+    got_out = resolvable & (resolved_at_bats > 0) & (pd.to_numeric(log["resolved_hit"], errors="coerce") != 1)
     log.loc[got_hit, "actual_hit"] = 1
     log.loc[got_out, "actual_hit"] = 0
     # resolvable & resolved_at_bats == 0 (no_game): at_bats is now 0, but

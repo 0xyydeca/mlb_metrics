@@ -117,6 +117,23 @@ def test_normalize_schedule_keeps_only_first_game_of_a_doubleheader():
     assert result[result["team"] == "NYY"].iloc[0]["probable_pitcher_key_mlbam"] == 592789
 
 
+def test_normalize_hitter_schedule_keeps_both_games_of_a_doubleheader():
+    raw = _raw_schedule(
+        [
+            ("2026-07-21", 147, 111, 592789, 111111),
+            ("2026-07-21", 147, 111, 605400, 222222),
+        ],
+        game_pks=[824409, 824410],
+    )
+
+    result = schedule.normalize_hitter_schedule(raw)
+
+    nyy = result[result["team"] == "NYY"].sort_values("game_pk")
+    assert list(nyy["game_pk"]) == [824409, 824410]
+    assert list(nyy["probable_pitcher_key_mlbam"]) == [592789, 605400]
+    assert len(result[result["team"] == "BOS"]) == 2
+
+
 def test_normalize_schedule_carries_game_pk_and_is_home():
     raw = _raw_schedule([("2026-07-21", 147, 111, 592789, None)], game_pks=[824409])
 

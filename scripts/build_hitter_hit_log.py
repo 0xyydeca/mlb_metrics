@@ -1,9 +1,14 @@
 """Build/append data/predictions/hitter_hit_log.csv: one row per hitter per
-game, every hitter with a game that date (not just the handful that ever
+game_pk, every hitter with a game that date (not just the handful that ever
 became an official Beat the Streak pick), carrying every
 dfs_ml.HITTER_FEATURE_COLUMNS feature - starter_PAVE, Bullpen_PAVE, WAVE,
 Game_Hit_Probability, etc. - computed strictly before that date, plus
-Total_PA and a binary Got_Hit label for whether they actually got a hit.
+Total_PA and a binary Got_Hit label for whether they actually got a hit
+in THAT game.
+
+Natural uniqueness: (date, game_pk, key_mlbam). Legacy CSV rows may lack
+game_pk; migration fills NA and keeps the old (date, key_mlbam) dedupe
+readable until those rows are recomputed.
 
 This is a data asset for a future logistic regression on real hit
 outcomes (see README) - it feeds nothing live today.
@@ -28,6 +33,8 @@ import pandas as pd
 
 from mlb_metrics import config, dfs_backtest
 
+HIT_LOG_KEY_COLUMNS = ["date", "game_pk", "key_mlbam"]
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -45,12 +52,17 @@ def main():
 
     if os.path.exists(args.output):
         existing = pd.read_csv(args.output, parse_dates=["date"])
+        if "game_pk" not in existing.columns:
+            existing["game_pk"] = pd.NA
         combined = pd.concat([existing, new_rows], ignore_index=True)
     else:
         combined = new_rows
 
-    combined = combined.drop_duplicates(subset=["date", "key_mlbam"], keep="last")
-    combined = combined.sort_values(["date", "key_mlbam"]).reset_index(drop=True)
+    if "game_pk" not in combined.columns:
+        combined["game_pk"] = pd.NA
+
+    combined = combined.drop_duplicates(subset=HIT_LOG_KEY_COLUMNS, keep="last")
+    combined = combined.sort_values(["date", "game_pk", "key_mlbam"]).reset_index(drop=True)
 
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     combined.to_csv(args.output, index=False)

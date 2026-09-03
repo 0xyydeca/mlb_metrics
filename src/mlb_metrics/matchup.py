@@ -263,10 +263,20 @@ def compute_matchup_hit_probability(
     confidence: pd.DataFrame,
     schedule_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Returns [key_mlbam, Matchup_Hit_Probability] - one row per batter
-    whose team has a game in `schedule_df` today (a batter with no game
-    today has no matchup and is left out entirely, not given a neutral
-    value). A probable starter not yet announced, or not found in `pave`,
+    """Returns [key_mlbam, game_pk, Matchup_Hit_Probability] - one row per
+    batter-game whose team has a row in `schedule_df` today (a batter with
+    no game today has no matchup and is left out entirely, not given a
+    neutral value). When `schedule_df` is the hitter schedule shape
+    (schedule.normalize_hitter_schedule / derive_historical_team_schedule),
+    a doubleheader produces two rows for the same batter with distinct
+    `game_pk` values and the correct starter/park for each contest.
+
+    `game_pk` is required on `schedule_df` for the live/hitter-modeling
+    path. A fixture that omits it entirely still runs (game_pk column
+    filled with NA) so older unit tests keep working, but new rows must
+    carry a real game_pk before they are logged.
+
+    A probable starter not yet announced, or not found in `pave`,
     contributes a neutral (league-average) matchup rather than dropping the
     batter.
 
@@ -292,9 +302,11 @@ def compute_matchup_hit_probability(
         if c in wave.columns
     ]
     schedule_columns = [
-        c for c in ("team", "opponent", "probable_pitcher_key_mlbam", "is_home") if c in schedule_df.columns
+        c for c in ("team", "opponent", "probable_pitcher_key_mlbam", "is_home", "game_pk") if c in schedule_df.columns
     ]
     matchup = wave[wave_columns].merge(schedule_df[schedule_columns], on="team", how="inner")
+    if "game_pk" not in matchup.columns:
+        matchup["game_pk"] = pd.NA
 
     league_pave = _league_pave(pave)
     league_arsenal_mix = _league_arsenal_mix(pave)
@@ -334,4 +346,4 @@ def compute_matchup_hit_probability(
         1 - (1 - matchup_ab_rate) ** config.WAVE_TRIALS_PER_GAME
     ).clip(0, 1)
 
-    return matchup[["key_mlbam", "Matchup_Hit_Probability"]]
+    return matchup[["key_mlbam", "game_pk", "Matchup_Hit_Probability"]]

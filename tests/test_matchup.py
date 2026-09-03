@@ -124,6 +124,27 @@ def test_batter_with_no_game_today_is_excluded():
     assert list(result["key_mlbam"]) == [1]
 
 
+def test_compute_matchup_hit_probability_doubleheader_uses_each_games_starter():
+    wave = _wave([(1, "NYY", 0.30)])
+    pave = pd.DataFrame([
+        {"key_mlbam": 999, "PAVE": 0.20, "PAVE_PLUS": 0.20 / 0.27},
+        {"key_mlbam": 1000, "PAVE": 0.40, "PAVE_PLUS": 0.40 / 0.27},
+        {"key_mlbam": 1001, "PAVE": 0.27, "PAVE_PLUS": 1.0},  # league-average anchor
+    ])
+    confidence = pd.DataFrame([{"team": "BOS", "Bullpen_PAVE": 0.297}])
+    schedule_df = pd.DataFrame([
+        {"team": "NYY", "opponent": "BOS", "probable_pitcher_key_mlbam": 999, "game_pk": 101, "is_home": True},
+        {"team": "NYY", "opponent": "BOS", "probable_pitcher_key_mlbam": 1000, "game_pk": 102, "is_home": True},
+    ])
+
+    result = matchup.compute_matchup_hit_probability(wave, pave, confidence, schedule_df).set_index("game_pk")
+
+    assert list(result.index) == [101, 102]
+    assert (result["key_mlbam"] == 1).all()
+    # Soft starter (0.20) -> lower hit probability than hard starter (0.40).
+    assert result.loc[101, "Matchup_Hit_Probability"] < result.loc[102, "Matchup_Hit_Probability"]
+
+
 def _wave_with_platoon(rows):
     """rows: list of (key_mlbam, team, WAVE, WAVE_L, WAVE_R)."""
     return pd.DataFrame(

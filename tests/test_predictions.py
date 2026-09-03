@@ -575,3 +575,96 @@ def test_resolve_predictions_migrates_a_log_written_before_model_version_existed
     result = predictions.resolve_predictions(log_path, completed_events)
 
     assert result.loc[0, "model_version"] == predictions.LEGACY_MODEL_VERSION
+
+
+def test_append_predictions_migrates_a_log_written_before_game_pk_existed(tmp_path):
+    log_path = str(tmp_path / "predictions.csv")
+    legacy_log = pd.DataFrame([
+        {"date": "2026-06-18", "key_mlbam": 1, "name": "A", "rank": 1, "predicted_probability": 0.9,
+         "metric": "Game_Hit_Probability", "actual_hit": 1, "at_bats": 1, "model_version": "legacy"},
+    ])
+    legacy_log.to_csv(log_path, index=False)
+
+    new_pick = predictions.select_picks(_hitters([(2, 0, 40, 0.9)]), "2026-06-19", top_n=1, min_plate_appearances=30)
+    new_pick = new_pick.copy()
+    new_pick["game_pk"] = 824651
+    combined = predictions.append_predictions(new_pick, log_path)
+
+    row_18 = combined[combined["date"] == "2026-06-18"].iloc[0]
+    assert pd.isna(row_18["game_pk"])
+    row_19 = combined[combined["date"] == "2026-06-19"].iloc[0]
+    assert row_19["game_pk"] == 824651
+    assert "game_pk" in predictions.PREDICTION_COLUMNS
+
+
+def test_append_predictions_legacy_null_game_pk_still_dedupes(tmp_path):
+    # Pandas treats NA as equal in drop_duplicates, so two legacy rows with
+    # the same (date, NA, key_mlbam, metric) still collapse the way the old
+    # (date, key_mlbam, metric) key did.
+    log_path = str(tmp_path / "predictions.csv")
+    legacy = pd.DataFrame([
+        {"date": "2026-06-18", "key_mlbam": 1, "name": "A", "rank": 1, "predicted_probability": 0.9,
+         "metric": "Game_Hit_Probability", "probability": 0.9, "Matchup_Hit_Probability": pd.NA,
+         "Model_Hit_Probability": pd.NA, "actual_hit": 1, "at_bats": 1, "model_version": "legacy"},
+    ])
+    legacy.to_csv(log_path, index=False)
+
+    again = legacy.copy()
+    again["predicted_probability"] = 0.5  # would overwrite if keep=last preferred new
+    combined = predictions.append_predictions(again, log_path)
+
+    assert len(combined) == 1
+    assert combined.iloc[0]["actual_hit"] == 1  # existing resolved row wins (keep=last on concat[picks, existing])
+
+
+def test_resolve_predictions_uses_game_pk_when_present(tmp_path):
+    log_path = str(tmp_path / "predictions.csv")
+    log = pd.DataFrame([
+        {"date": "2026-06-19", "game_pk": 101, "key_mlbam": 1, "name": "A", "rank": 1,
+         "predicted_probability": 0.8, "metric": "Game_Hit_Probability",
+         "probability": 0.8, "Matchup_Hit_Probability": pd.NA, "Model_Hit_Probability": pd.NA,
+         "actual_hit": None, "at_bats": None, "model_version": "v1"},
+        {"date": "2026-06-19", "game_pk": 102, "key_mlbam": 1, "name": "A", "rank": 2,
+         "predicted_probability": 0.7, "metric": "Game_Hit_Probability",
+         "probability": 0.7, "Matchup_Hit_Probability": pd.NA, "Model_Hit_Probability": pd.NA,
+         "actual_hit": None, "at_bats": None, "model_version": "v1"},
+    ])
+    log.to_csv(log_path, index=False)
+
+    completed_events = pd.DataFrame([
+        {"game_date": pd.Timestamp("2026-06-19"), "game_pk": 101, "batter": 1, "events": "field_out"},
+        {"game_date": pd.Timestamp("2026-06-19"), "game_pk": 102, "batter": 1, "events": "single"},
+    ])
+
+    result = predictions.resolve_predictions(log_path, completed_events).set_index("game_pk")
+    assert result.loc[101, "actual_hit"] == 0
+    assert result.loc[102, "actual_hit"] == 1
+
+
+def test_resolve_predictions_legacy_null_game_pk_still_resolves_by_date(tmp_path):
+    log_path = str(tmp_path / "predictions.csv")
+    log = pd.DataFrame([
+        {"date": "2026-06-19", "key_mlbam": 1, "name": "A", "rank": 1, "predicted_probability": 0.8,
+         "metric": "Game_Hit_Probability", "actual_hit": None, "at_bats": None},
+    ])
+    log.to_csv(log_path, index=False)
+
+    completed_events = pd.DataFrame([
+        {"game_date": pd.Timestamp("2026-06-19"), "game_pk": 101, "batter": 1, "events": "field_out"},
+        {"game_date": pd.Timestamp("2026-06-19"), "game_pk": 102, "batter": 1, "events": "single"},
+    ])
+
+    result = predictions.resolve_predictions(log_path, completed_events)
+    # Date-level legacy label: any hit that day -> hit.
+    assert result.loc[0, "actual_hit"] == 1
+    assert pd.isna(result.loc[0, "game_pk"])
+
+
+def test_select_picks_carries_game_pk_when_present():
+    hitters = _hitters([(1, 0, 40, 0.9)])
+    hitters["game_pk"] = 824651
+
+    picks = predictions.select_picks(hitters, "2026-06-20", top_n=1, min_plate_appearances=30)
+
+    assert picks.iloc[0]["game_pk"] == 824651
+    assert list(picks.columns) == predictions.PREDICTION_COLUMNS

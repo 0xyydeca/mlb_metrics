@@ -82,11 +82,36 @@ def normalize_schedule(raw: dict, fallback_date=None) -> pd.DataFrame:
     see this module's docstring for why this field isn't yet live-confirmed
     like the others here, and null if absent, never raising. Games for a
     team whose numeric ID isn't in TEAM_ID_TO_ABBREV are skipped rather
-    than guessed at. V1 simplification: a doubleheader only keeps a team's
-    first game of the day, not both - for a game-level view that keeps
-    every game (needed to resolve Automated Game Picks), see
-    normalize_schedule_games instead.
+    than guessed at.
+
+    V1 simplification for dashboard/probable-pitcher slate views: a
+    doubleheader only keeps a team's first game of the day, not both.
+    Hitter matchup / feature / prediction paths must NOT use this shape -
+    use `normalize_hitter_schedule` / `fetch_hitter_schedule`, which keep
+    every game so game-one features are never attached to a game-two label.
+    For a game-level (not per-team) view that also keeps every game, see
+    `normalize_schedule_games`.
     """
+    return _normalize_schedule_team_rows(raw, fallback_date=fallback_date, keep_doubleheaders=False)
+
+
+def normalize_hitter_schedule(raw: dict, fallback_date=None) -> pd.DataFrame:
+    """One row per team per game for hitter modeling - SAME columns as
+    `normalize_schedule`, but BOTH halves of a doubleheader are kept.
+
+    This is the schedule shape matchup / dfs_ml / predictions / hit-log
+    assembly must use. Joining on `team` alone against a multi-game day
+    is then intentional (one batter-game row per real contest), keyed by
+    `game_pk`, rather than the old first-game-only simplification that
+    silently dropped game two.
+    """
+    return _normalize_schedule_team_rows(raw, fallback_date=fallback_date, keep_doubleheaders=True)
+
+
+def _normalize_schedule_team_rows(raw: dict, fallback_date=None, keep_doubleheaders: bool = False) -> pd.DataFrame:
+    """Shared parser for the per-team schedule shapes. When
+    `keep_doubleheaders` is False, the first game seen for each team wins
+    (legacy normalize_schedule behavior)."""
     rows = []
     seen_teams = set()
 
@@ -105,7 +130,7 @@ def normalize_schedule(raw: dict, fallback_date=None) -> pd.DataFrame:
                 (home_abbrev, away_abbrev, home, True),
                 (away_abbrev, home_abbrev, away, False),
             ):
-                if team_abbrev in seen_teams:
+                if not keep_doubleheaders and team_abbrev in seen_teams:
                     continue
                 seen_teams.add(team_abbrev)
                 probable = side.get("probablePitcher") or {}
@@ -195,9 +220,18 @@ def _fetch_raw_schedule(date, hydrate: str = "probablePitcher,team") -> dict:
 
 
 def fetch_probable_pitchers(date) -> pd.DataFrame:
-    """Today's games and probable starting pitchers, one row per team. See
-    module docstring for the data source and its limitations."""
+    """Today's games and probable starting pitchers, one row per team
+    (first game of a doubleheader only - see normalize_schedule). Use
+    `fetch_hitter_schedule` for hitter matchup / feature paths that must
+    keep both DH games."""
     return normalize_schedule(_fetch_raw_schedule(date), fallback_date=date)
+
+
+def fetch_hitter_schedule(date) -> pd.DataFrame:
+    """Today's per-team schedule for hitter modeling - one row per team per
+    game, including both halves of a doubleheader (see
+    normalize_hitter_schedule)."""
+    return normalize_hitter_schedule(_fetch_raw_schedule(date), fallback_date=date)
 
 
 def fetch_todays_games(date) -> pd.DataFrame:

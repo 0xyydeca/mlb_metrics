@@ -1,7 +1,8 @@
 """End-to-end smoke test for scripts/build_hitter_hit_log.py: a synthetic
 persisted Statcast history is used to write/append hitter_hit_log.csv,
 checking schema, --days truncation, dedupe-on-rerun (same (date,
-key_mlbam) rows get replaced by the fresher recompute, not duplicated),
+game_pk, key_mlbam) rows get replaced by the fresher recompute, not
+duplicated),
 and no-data resilience - mirroring test_build_dfs_rankings_script.py's
 exact pattern."""
 
@@ -78,7 +79,7 @@ def test_build_hitter_hit_log_full_backfill_writes_expected_schema(tmp_path, mon
     result = pd.read_csv(output)
     assert not result.empty
     expected_cols = {
-        "date", "key_mlbam", "name_first", "name_last", "team",
+        "date", "game_pk", "key_mlbam", "name_first", "name_last", "team",
         *dfs_ml.HITTER_FEATURE_COLUMNS, "Total_PA", "Days_Rest", "Umpire_Factor", "Got_Hit",
     }
     assert set(result.columns) == expected_cols
@@ -120,13 +121,13 @@ def test_build_hitter_hit_log_rerun_dedupes_and_preserves_older_dates(tmp_path, 
     first_run = pd.read_csv(output, parse_dates=["date"])
 
     # Re-running with the SAME persisted data must not duplicate rows -
-    # every (date, key_mlbam) pair recomputes identically and the dedupe
-    # keeps exactly one row per pair.
+    # every (date, game_pk, key_mlbam) pair recomputes identically and the
+    # dedupe keeps exactly one row per pair.
     module.main()
     second_run = pd.read_csv(output, parse_dates=["date"])
 
     assert len(second_run) == len(first_run)
-    assert not second_run.duplicated(subset=["date", "key_mlbam"]).any()
+    assert not second_run.duplicated(subset=["date", "game_pk", "key_mlbam"]).any()
 
     # A --days-limited rerun still preserves the older, untouched dates
     # already on disk rather than truncating the file down to just the

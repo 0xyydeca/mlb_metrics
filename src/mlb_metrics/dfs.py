@@ -207,9 +207,15 @@ def compute_hitter_dk_points(
         c for c in ("team", "opponent", "is_home", "game_pk", "game_datetime") if c in schedule_df.columns
     ]
     scheduled = qualified.merge(schedule_df[schedule_columns], on="team", how="inner")
-    scheduled = scheduled.merge(
-        matchup_probability[["key_mlbam", "Matchup_Hit_Probability"]], on="key_mlbam", how="inner"
-    )
+    # Join matchup on (key_mlbam, game_pk) whenever both sides carry game_pk
+    # so a doubleheader never fans into a cartesian product of
+    # schedule-games × matchup-games for the same batter.
+    matchup_cols = ["key_mlbam", "Matchup_Hit_Probability"]
+    matchup_keys = ["key_mlbam"]
+    if "game_pk" in matchup_probability.columns and "game_pk" in scheduled.columns:
+        matchup_cols = ["key_mlbam", "game_pk", "Matchup_Hit_Probability"]
+        matchup_keys = ["key_mlbam", "game_pk"]
+    scheduled = scheduled.merge(matchup_probability[matchup_cols], on=matchup_keys, how="inner")
 
     scheduled["Matchup_Ratio"] = compute_matchup_adjustment(
         scheduled["Matchup_Hit_Probability"], scheduled["Game_Hit_Probability"]

@@ -112,15 +112,25 @@ def build_hitter_features(
     schedule_df: pd.DataFrame,
     matchup_probability: pd.DataFrame,
 ) -> pd.DataFrame:
-    """One row per hitter with a game today (schedule_df) AND a resolvable
-    Matchup_Hit_Probability - the same qualifying join
-    dfs.compute_hitter_dk_points uses - carrying key_mlbam plus every
-    column in HITTER_FEATURE_COLUMNS. Used identically at training-table
-    assembly time (dfs_backtest.assemble_ml_training_rows) and at live
-    prediction time (apply_ml_overrides), so training and serving can
-    never drift apart."""
-    schedule_columns = [c for c in ("team", "opponent", "probable_pitcher_key_mlbam", "is_home") if c in schedule_df.columns]
+    """One row per hitter-game with a resolvable Matchup_Hit_Probability -
+    the same qualifying join dfs.compute_hitter_dk_points uses - carrying
+    key_mlbam, game_pk, plus every column in HITTER_FEATURE_COLUMNS.
+
+    Joins schedule on `team` and matchup on (`key_mlbam`, `game_pk`) when
+    `game_pk` is present on both sides, so a doubleheader never fans out
+    into a cartesian product of game-one features × game-two labels.
+    Callers must pass the hitter schedule shape (one row per team per
+    game, both DH halves kept). Used identically at training-table
+    assembly time (dfs_backtest.assemble_ml_training_rows /
+    assemble_hitter_hit_log) and at live prediction time
+    (apply_ml_overrides / predict_hitter_hit_probability)."""
+    schedule_columns = [
+        c for c in ("team", "opponent", "probable_pitcher_key_mlbam", "is_home", "game_pk")
+        if c in schedule_df.columns
+    ]
     df = wave.merge(schedule_df[schedule_columns], on="team", how="inner")
+    if "game_pk" not in df.columns:
+        df["game_pk"] = pd.NA
 
     # Falls back to the hand-blended overall WAVE when WAVE_L/WAVE_R aren't
     # present at all - an old wave.csv snapshot predating platoon-awareness,
@@ -181,8 +191,13 @@ def build_hitter_features(
     else:
         df["Park_Factor"] = pd.NA
 
-    df = df.merge(matchup_probability[["key_mlbam", "Matchup_Hit_Probability"]], on="key_mlbam", how="inner")
-    return df[["key_mlbam"] + HITTER_FEATURE_COLUMNS]
+    matchup_cols = ["key_mlbam", "Matchup_Hit_Probability"]
+    if "game_pk" in matchup_probability.columns:
+        matchup_cols = ["key_mlbam", "game_pk", "Matchup_Hit_Probability"]
+        df = df.merge(matchup_probability[matchup_cols], on=["key_mlbam", "game_pk"], how="inner")
+    else:
+        df = df.merge(matchup_probability[matchup_cols], on="key_mlbam", how="inner")
+    return df[["key_mlbam", "game_pk"] + HITTER_FEATURE_COLUMNS]
 
 
 def hitter_feature_matrix(features_df: pd.DataFrame) -> pd.DataFrame:
@@ -239,8 +254,20 @@ def apply_ml_overrides(
     if hitter_model is not None and not hitters_df.empty and not hitter_features.empty:
         X = hitter_feature_matrix(hitter_features)
         predicted = hitter_model.predict(X).clip(min=0)
-        prediction_lookup = pd.DataFrame({"key_mlbam": hitter_features["key_mlbam"], "_ml_dk_points_hitter": predicted})
-        hitters_df = hitters_df.merge(prediction_lookup, on="key_mlbam", how="left")
+        merge_keys = ["key_mlbam"]
+        # Only join on game_pk when both sides have real (non-null) values -
+        # otherwise NA game_pk columns (legacy fixtures / dtype object vs
+        # int64) would either cartesian-fail or coerce-error on the merge.
+        if (
+            "game_pk" in hitter_features.columns
+            and "game_pk" in hitters_df.columns
+            and hitter_features["game_pk"].notna().any()
+            and hitters_df["game_pk"].notna().any()
+        ):
+            merge_keys = ["key_mlbam", "game_pk"]
+        prediction_lookup = hitter_features[merge_keys].copy()
+        prediction_lookup["_ml_dk_points_hitter"] = predicted
+        hitters_df = hitters_df.merge(prediction_lookup, on=merge_keys, how="left")
         has_prediction = hitters_df["_ml_dk_points_hitter"].notna()
         hitters_df.loc[has_prediction, "DK_Points_Hitter"] = hitters_df.loc[has_prediction, "_ml_dk_points_hitter"]
         hitters_df.loc[has_prediction, "DK_Points_Hitter_Source"] = "model"
@@ -277,8 +304,8 @@ def apply_ml_overrides(
 
 
 def predict_hitter_hit_probability(hitter_features: pd.DataFrame) -> pd.DataFrame:
-    """[key_mlbam, Model_Hit_Probability] - the trained hit-probability
-    classifier's (config.HITTER_HIT_PROBABILITY_MODEL_PATH,
+    """[key_mlbam, game_pk, Model_Hit_Probability] - the trained
+    hit-probability classifier's (config.HITTER_HIT_PROBABILITY_MODEL_PATH,
     scripts/train_hitter_hit_model.py) predicted probability for each row
     in `hitter_features` (build_hitter_features's own output - same
     train/serve feature parity apply_ml_overrides relies on). Returns an
@@ -289,8 +316,16 @@ def predict_hitter_hit_probability(hitter_features: pd.DataFrame) -> pd.DataFram
     positive class), not apply_ml_overrides's regression-style `.predict()`."""
     model = ml_models.load_model(config.HITTER_HIT_PROBABILITY_MODEL_PATH)
     if model is None or hitter_features.empty:
-        return pd.DataFrame(columns=["key_mlbam", "Model_Hit_Probability"])
+        return pd.DataFrame(columns=["key_mlbam", "game_pk", "Model_Hit_Probability"])
 
     X = hitter_feature_matrix(hitter_features)
     predicted = model.predict_proba(X)[:, 1]
-    return pd.DataFrame({"key_mlbam": hitter_features["key_mlbam"].values, "Model_Hit_Probability": predicted})
+    out = pd.DataFrame({
+        "key_mlbam": hitter_features["key_mlbam"].values,
+        "Model_Hit_Probability": predicted,
+    })
+    if "game_pk" in hitter_features.columns:
+        out["game_pk"] = hitter_features["game_pk"].values
+    else:
+        out["game_pk"] = pd.NA
+    return out[["key_mlbam", "game_pk", "Model_Hit_Probability"]]

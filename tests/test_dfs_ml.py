@@ -53,7 +53,8 @@ def test_build_hitter_features_joins_matchup_ingredients():
     assert result.loc[1, "starter_fastball_rate"] == pytest.approx(0.60)
     assert result.loc[1, "starter_breaking_rate"] == pytest.approx(0.25)
     assert result.loc[1, "starter_offspeed_rate"] == pytest.approx(0.15)
-    assert list(result.reset_index().columns) == ["key_mlbam"] + dfs_ml.HITTER_FEATURE_COLUMNS
+    assert list(result.reset_index().columns) == ["key_mlbam", "game_pk"] + dfs_ml.HITTER_FEATURE_COLUMNS
+    assert pd.isna(result.loc[1, "game_pk"])
 
 
 def test_build_hitter_features_falls_back_to_null_when_pitch_family_columns_missing():
@@ -321,7 +322,7 @@ def test_predict_hitter_hit_probability_no_model_returns_empty(tmp_path, monkeyp
     result = dfs_ml.predict_hitter_hit_probability(hitter_features)
 
     assert result.empty
-    assert list(result.columns) == ["key_mlbam", "Model_Hit_Probability"]
+    assert list(result.columns) == ["key_mlbam", "game_pk", "Model_Hit_Probability"]
 
 
 def test_predict_hitter_hit_probability_with_model_returns_probability(tmp_path, monkeypatch):
@@ -333,10 +334,42 @@ def test_predict_hitter_hit_probability_with_model_returns_probability(tmp_path,
         pd.DataFrame([_wave_row(1, "BOS")]),
         pd.DataFrame([{"key_mlbam": 99, "PAVE": 0.24}]),
         pd.DataFrame([{"team": "NYY", "Bullpen_PAVE": 0.26, "Park_Factor": 1.05}]),
-        pd.DataFrame([{"team": "BOS", "opponent": "NYY", "is_home": True, "probable_pitcher_key_mlbam": 99}]),
-        pd.DataFrame([{"key_mlbam": 1, "Matchup_Hit_Probability": 0.72}]),
+        pd.DataFrame([{"team": "BOS", "opponent": "NYY", "is_home": True, "probable_pitcher_key_mlbam": 99, "game_pk": 824651}]),
+        pd.DataFrame([{"key_mlbam": 1, "game_pk": 824651, "Matchup_Hit_Probability": 0.72}]),
     )
 
     result = dfs_ml.predict_hitter_hit_probability(hitter_features).set_index("key_mlbam")
 
     assert result.loc[1, "Model_Hit_Probability"] == pytest.approx(0.63)
+    assert result.loc[1, "game_pk"] == 824651
+
+
+def test_build_hitter_features_doubleheader_keeps_both_games_with_correct_starter():
+    wave = pd.DataFrame([_wave_row(1, "BOS")])
+    pave = pd.DataFrame([
+        {"key_mlbam": 99, "PAVE": 0.20, "Fastball_Rate": 0.60, "Breaking_Rate": 0.25, "Offspeed_Rate": 0.15},
+        {"key_mlbam": 88, "PAVE": 0.40, "Fastball_Rate": 0.50, "Breaking_Rate": 0.30, "Offspeed_Rate": 0.20},
+    ])
+    confidence = pd.DataFrame([
+        {"team": "NYY", "Bullpen_PAVE": 0.26, "Park_Factor": 0.95},
+        {"team": "BOS", "Bullpen_PAVE": 0.25, "Park_Factor": 1.05},
+    ])
+    schedule_df = pd.DataFrame([
+        {"team": "BOS", "opponent": "NYY", "is_home": True, "probable_pitcher_key_mlbam": 99, "game_pk": 101},
+        {"team": "BOS", "opponent": "NYY", "is_home": True, "probable_pitcher_key_mlbam": 88, "game_pk": 102},
+    ])
+    matchup_probability = pd.DataFrame([
+        {"key_mlbam": 1, "game_pk": 101, "Matchup_Hit_Probability": 0.70},
+        {"key_mlbam": 1, "game_pk": 102, "Matchup_Hit_Probability": 0.55},
+    ])
+
+    result = dfs_ml.build_hitter_features(
+        wave, pave, confidence, schedule_df, matchup_probability
+    ).set_index("game_pk")
+
+    assert list(result.index) == [101, 102]
+    assert (result["key_mlbam"] == 1).all()
+    assert result.loc[101, "starter_PAVE"] == pytest.approx(0.20)
+    assert result.loc[102, "starter_PAVE"] == pytest.approx(0.40)
+    assert result.loc[101, "Matchup_Hit_Probability"] == pytest.approx(0.70)
+    assert result.loc[102, "Matchup_Hit_Probability"] == pytest.approx(0.55)

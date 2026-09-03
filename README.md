@@ -27,9 +27,11 @@ to `docs/` as a GitHub Pages dashboard.
 - `data/raw/` - persisted raw Statcast pulls, one parquet file per season,
   committed daily alongside the output CSVs so history accumulates run over run.
 - `data/predictions/predictions.csv` - append-only log of every daily hitter
-  pick (date, player, predicted probability, realized actual_hit once
-  known). `data/predictions/game_predictions.csv` is the analogous log for
-  Automated Game Picks, keyed on `game_pk` instead of a player id.
+  pick, keyed on `(date, game_pk, key_mlbam, metric)` (legacy rows may have
+  a null `game_pk`; new live rows always carry a real one). Realized
+  `actual_hit` is filled once that game is known.
+  `data/predictions/game_predictions.csv` is the analogous log for
+  Automated Game Picks, also keyed on `game_pk`.
 - `docs/data/` - the published `wave.csv` / `pave.csv` / `confidence.csv`
   consumed by the `docs/` dashboard, plus `backtest_summary.csv` (see below).
   `confidence.csv` includes `Bullpen_PAVE_PLUS`
@@ -605,23 +607,27 @@ levels.
 
 `dfs_backtest.assemble_hitter_hit_log` (run daily via
 `scripts/build_hitter_hit_log.py`) builds the real training table instead:
-one row per hitter per game, for **every** hitter with a game that date
-(not just the ones that cleared the pick gates), with every feature
+one row per hitter per `game_pk`, for **every** hitter with a game that
+date (not just the ones that cleared the pick gates), with every feature
 computed strictly before that game - `starter_PAVE`, `Bullpen_PAVE`,
 `WAVE`/`WAVE_L`/`WAVE_R`, `Total_PA` (`PA_L + PA_R`),
 `Game_Hit_Probability`, `Matchup_Hit_Probability`, `Park_Factor`, and the
 rest of `dfs_ml.HITTER_FEATURE_COLUMNS` - plus a binary `Got_Hit` label
-(did that batter record at least one hit that date, from real completed
-Statcast events). Same no-lookahead recompute (`dfs_backtest._compute_date_outputs`)
+(did that batter record at least one hit in THAT game, from real completed
+Statcast events). A doubleheader produces two rows for the same batter
+with independent labels and the correct starter features per contest.
+Same no-lookahead recompute (`dfs_backtest._compute_date_outputs`)
 and the same feature-building function (`dfs_ml.build_hitter_features`)
 already used and tested for the DFS ML models, so this reuses trusted
 machinery rather than hand-rolling a second merge path.
 
 `scripts/build_hitter_hit_log.py` (no `--days` for a one-time full
 historical backfill; `--days 10` for the daily incremental run
-`daily_update.yml` uses) appends and dedupes on `(date, key_mlbam)` -
+`daily_update.yml` uses) appends and dedupes on `(date, game_pk, key_mlbam)` -
 keep-last, so a freshly recomputed row always wins over a stale one and
-re-running never creates duplicate rows.
+re-running never creates duplicate rows. Legacy CSV rows without
+`game_pk` migrate to null and keep the old date-level dedupe readable
+until recomputed.
 
 This log is **purely a data asset today** - it feeds nothing live. Fitting
 the actual logistic regression against it (and deciding whether it ever
@@ -973,11 +979,44 @@ threshold to derive or backtest.
 
 `config.HITTER_MODEL_SHORTLIST_SIZE = 10` is an explicit user-specified
 value, not backtest-derived like almost everything else in this file -
-`scripts/backtest_selection_rule.py` (extended for this design, comparing
-`heuristic_only` vs. `model_shortlist` variants head to head) should still
-validate or inform retuning it, reported honestly either way, once that
-real run is unblocked (see the script's own docstring for the sandbox
-network limitation blocking it so far).
+`scripts/backtest_selection_rule.py` compares `heuristic_only` vs.
+`model_shortlist` head to head and reports Beat the Streak day-level
+metrics from `evaluation.selection_strategy_metrics` (not the legacy
+`any_of_top_k` summary). Headline two-pick numbers are
+`all_of_top_2_hit_rate` and `top_2_reset_rate` (with
+`top_2_survival_rate`); `any_of_top_2_hit_rate` is secondary only.
+Strategy differences use a paired **date-block** bootstrap
+(`evaluation.bootstrap_strategy_metric_difference`) that resamples whole
+dates, never independent pick rows. Report honestly either way.
+
+### Beat the Streak evaluation semantics (`evaluation.py`)
+
+Pick rows resolve to three played states (plus pending): **hit**
+(`at_bats > 0`, `actual_hit == 1`), **miss** (`at_bats > 0`,
+`actual_hit == 0`), **no_game/void** (`at_bats == 0`). These must not be
+collapsed into one ambiguous “hit rate.”
+
+For a two-pick day (`top_k_day_outcomes` / `selection_strategy_metrics`):
+
+- two hits → survive, all-hit, add 2
+- one hit + one no_game → survive, not all-hit, add 1
+- two no_game → survive, not all-hit, add 0
+- any miss → reset (hits that day do not advance the streak)
+
+Reported quantities are deliberately distinct:
+
+- `top_k_survival_rate` / `top_k_reset_rate` — no miss vs any miss (voids allowed to survive)
+- `all_of_top_k_hit_rate` — every selected pick was a hit (voids fail this)
+- `any_of_top_k_hit_rate` — at least one hit (descriptive only for BTS)
+- `conditional_hit_rate_given_at_bat` — among pick rows with an at-bat
+- `mean_hits_added_per_played_day` — mean streak increments over fully resolved days
+- coverage / no_game rates keep void rows in the denominator instead of
+  dropping them via `resolved_only` (which would overstate “all hit” on
+  hit+void days)
+
+Live dashboard exports (`build_beat_the_streak_export` /
+`streak_progression`) are unchanged by this methodology cleanup;
+`predictions.select_picks` is also unchanged.
 
 `predicted_probability`/`probability`/`Matchup_Hit_Probability`/
 `Model_Hit_Probability` are all still logged to `predictions.csv` on
@@ -1079,10 +1118,13 @@ Quant-analytics item #4, slice 2 of 2 - the deferred other half of the
 streak-aware stopping rule above: "correlation from being in the same
 game/weather." No weather data exists anywhere in this project (confirmed
 by a real search - this slice can only address same-game correlation).
-`game_pk` exists in raw Statcast and `schedule.normalize_schedule`'s
-output, but was discarded before reaching `predictions.select_picks` -
-`matchup.compute_matchup_hit_probability` returned only `[key_mlbam,
-Matchup_Hit_Probability]`. A real local query against
+`game_pk` exists in raw Statcast and the hitter schedule shape
+(`schedule.normalize_hitter_schedule` / `fetch_hitter_schedule`, which
+keeps both halves of a doubleheader - distinct from the first-game-only
+`normalize_schedule` used for the probable-pitchers export). Matchup /
+feature building / pick logging join on `(key_mlbam, game_pk)` so a
+doubleheader never fans into a cartesian product or attaches game-one
+features to a game-two label. A real local query against
 `data/raw/statcast_2026.parquet` found 6 of 71 real two-pick days
 (≈8.5%) had both picks in the same real game - real, but too thin to fit
 an actual correlation coefficient from (statistically indefensible with
@@ -1097,10 +1139,11 @@ pick shares a game with #1, and a comparably-ranked candidate from a
 DIFFERENT game exists within `margin`, preferring it is a real
 improvement whose direction doesn't depend on knowing the exact
 correlation magnitude. Only ever touches the #2 slot; #1 is never
-affected; a missing `game_pk` column (every historical wave.csv-only
-replay) is a no-op, same convention as every other optional qualifier in
-`select_picks`. `pipeline.py` now merges `schedule_df`'s real `game_pk`
-into `pick_pool` so live runs can actually use this.
+affected; a missing/null `game_pk` (legacy CSV rows and historical
+wave.csv-only replays) is a no-op, same convention as every other
+optional qualifier in `select_picks`. Live runs get `game_pk` from the
+hitter schedule via matchup, so same-game diversification can actually
+use it.
 
 **Real backtest** (`scripts/backtest_same_game_diversification.py`,
 GitHub Actions run 32513681638, 2026-08-21, the SAME final

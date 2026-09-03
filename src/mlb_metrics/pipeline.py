@@ -251,7 +251,10 @@ def run(
         # `df` already covers every completed game strictly before as_of_date,
         # i.e. exactly what's needed to resolve any pick logged on an earlier
         # run whose target date has since happened.
-        completed = data.completed_events(df, ["game_date", "batter", "events"])
+        resolve_columns = ["game_date", "batter", "events"]
+        if "game_pk" in df.columns:
+            resolve_columns = ["game_date", "game_pk", "batter", "events"]
+        completed = data.completed_events(df, resolve_columns)
         predictions.resolve_predictions(predictions_log_path, completed)
         # Resolving game picks needs final scores, not Statcast (see
         # schedule.fetch_game_results) - this call is internally resilient
@@ -282,7 +285,21 @@ def run(
 
         # None (fetch failed) means "unknown, don't filter"; an empty set
         # (fetch succeeded, zero games today) correctly excludes every pick.
-        teams_playing_today = set(schedule_df["team"]) if schedule_df is not None else None
+        # Hitter matchup / features / picks use the all-games schedule
+        # (both DH halves); probable-pitchers export keeps the first-game-
+        # only shape for the dashboard list.
+        hitter_schedule_df = schedule_df
+        if schedule_df is not None:
+            try:
+                hitter_schedule_df = schedule.fetch_hitter_schedule(as_of_date)
+            except Exception as exc:
+                print(
+                    f"WARNING: failed to fetch all-games hitter schedule ({exc}); "
+                    f"falling back to first-game-only probable-pitchers schedule for matchup."
+                )
+                hitter_schedule_df = schedule_df
+
+        teams_playing_today = set(hitter_schedule_df["team"]) if hitter_schedule_df is not None else None
 
         # Two-tier rank_metric, best available first: Matchup_Approach
         # (Approach * Matchup_Hit_Probability, today's schedule/matchup
@@ -308,24 +325,20 @@ def run(
         # this, so DAILY_PICK_MIN_PROBABILITY's calibration is unaffected.
         pick_pool = outputs["wave"]
         rank_metric = "Approach"
-        if schedule_df is not None and not schedule_df.empty:
+        if hitter_schedule_df is not None and not hitter_schedule_df.empty:
             matchup_probability = matchup.compute_matchup_hit_probability(
-                outputs["wave"], outputs["pave"], outputs["confidence"], schedule_df
+                outputs["wave"], outputs["pave"], outputs["confidence"], hitter_schedule_df
             )
+            # Expand wave (one row per batter) by matchup's per-game rows
+            # (key_mlbam + game_pk). Matchup already carries one row per
+            # contest, so this is intentional duplication across a DH, not
+            # a team-only cartesian fan-out against the schedule.
             pick_pool = outputs["wave"].merge(matchup_probability, on="key_mlbam", how="inner")
             pick_pool["Matchup_Approach"] = pick_pool["Approach"] * pick_pool["Matchup_Hit_Probability"]
             rank_metric = "Matchup_Approach"
 
-            # Quant-analytics item #4, slice 2: schedule_df already carries
-            # a real game_pk per team (schedule.normalize_schedule) - merged
-            # in so predictions.select_picks's same-game diversification
-            # tie-break (column-gated, see that function's own docstring)
-            # can actually detect two candidates sharing a real game.
-            if "game_pk" in schedule_df.columns:
-                pick_pool = pick_pool.merge(schedule_df[["team", "game_pk"]], on="team", how="left")
-
             hitter_features = dfs_ml.build_hitter_features(
-                outputs["wave"], outputs["pave"], outputs["confidence"], schedule_df, matchup_probability
+                outputs["wave"], outputs["pave"], outputs["confidence"], hitter_schedule_df, matchup_probability
             )
             model_predictions = dfs_ml.predict_hitter_hit_probability(hitter_features)
             if not model_predictions.empty:
@@ -334,9 +347,12 @@ def run(
                 # Model_Hit_Probability column on a day the model fails to
                 # load would make every row sort last instead of correctly
                 # skipping the shortlist step entirely.
-                pick_pool = pick_pool.merge(model_predictions, on="key_mlbam", how="left")
+                pick_pool = pick_pool.merge(
+                    model_predictions, on=["key_mlbam", "game_pk"], how="left"
+                )
 
-            write_probable_pitchers_export(schedule_df, outputs["pave"], output_dir)
+            if schedule_df is not None and not schedule_df.empty:
+                write_probable_pitchers_export(schedule_df, outputs["pave"], output_dir)
 
         game_hit_picks = predictions.select_picks(
             pick_pool, as_of_date, rank_metric=rank_metric, teams_playing_today=teams_playing_today

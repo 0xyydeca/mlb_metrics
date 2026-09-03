@@ -106,6 +106,26 @@ def test_compute_hitter_dk_points_missing_game_pk_column_is_na_not_a_crash():
     assert pd.isna(result.loc[1, "game_datetime"])
 
 
+def test_compute_hitter_dk_points_doubleheader_does_not_cartesian_duplicate():
+    wave = pd.DataFrame([_wave_row(1, "BOS", 20, 20, 1.5, 0.70)])
+    matchup_probability = pd.DataFrame([
+        {"key_mlbam": 1, "game_pk": 101, "Matchup_Hit_Probability": 0.84},
+        {"key_mlbam": 1, "game_pk": 102, "Matchup_Hit_Probability": 0.60},
+    ])
+    schedule_df = pd.DataFrame([
+        {"team": "BOS", "opponent": "NYY", "is_home": True, "game_pk": 101},
+        {"team": "BOS", "opponent": "NYY", "is_home": True, "game_pk": 102},
+    ])
+
+    result = dfs.compute_hitter_dk_points(wave, matchup_probability, schedule_df)
+
+    assert len(result) == 2
+    assert set(result["game_pk"]) == {101, 102}
+    by_pk = result.set_index("game_pk")
+    assert by_pk.loc[101, "Matchup_Hit_Probability"] == pytest.approx(0.84)
+    assert by_pk.loc[102, "Matchup_Hit_Probability"] == pytest.approx(0.60)
+
+
 def test_compute_hitter_dk_points_excludes_team_with_no_game_today():
     wave = pd.DataFrame([_wave_row(1, "BOS", 20, 20, 1.5, 0.70)])
     matchup_probability = pd.DataFrame([{"key_mlbam": 1, "Matchup_Hit_Probability": 0.84}])

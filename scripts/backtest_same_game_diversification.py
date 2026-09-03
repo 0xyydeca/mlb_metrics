@@ -52,12 +52,10 @@ def build_date_pools(dates, persisted: pd.DataFrame, team_schedule: pd.DataFrame
     """Same shape as scripts/backtest_selection_rule.py's own
     build_date_pools (Matchup_Approach pick_pool per real historical
     date, expensive per-date recompute done once regardless of how many
-    margins get evaluated afterward), plus a real game_pk column merged
-    in from `persisted` (one row per real pitch - deduped to one
-    game_pk per (date, batter))."""
-    game_pk_lookup = persisted.drop_duplicates(subset=["game_date", "batter"])[["game_date", "batter", "game_pk"]]
-    game_pk_lookup = game_pk_lookup.rename(columns={"game_date": "date", "batter": "key_mlbam"})
-
+    margins get evaluated afterward). Matchup already carries a real
+    game_pk per batter-game, so same-game diversification sees both DH
+    halves without a separate (date, batter) lookup that would collapse
+    them."""
     pools = []
     for date in dates:
         day = dfs_backtest._compute_date_outputs(persisted, team_schedule, date)
@@ -66,13 +64,10 @@ def build_date_pools(dates, persisted: pd.DataFrame, team_schedule: pd.DataFrame
 
         pick_pool = day["outputs"]["wave"].merge(day["matchup_probability"], on="key_mlbam", how="inner")
         pick_pool["Matchup_Approach"] = pick_pool["Approach"] * pick_pool["Matchup_Hit_Probability"]
-        pick_pool = pick_pool.merge(
-            game_pk_lookup[game_pk_lookup["date"] == date][["key_mlbam", "game_pk"]], on="key_mlbam", how="left"
-        )
 
         day_events = persisted[persisted["game_date"] == date]
         got_hit = dfs_backtest.compute_actual_hitter_got_hit(
-            data.completed_events(day_events, ["game_date", "batter", "events"])
+            data.completed_events(day_events, ["game_date", "game_pk", "batter", "events"])
         )
         pools.append({"date": date, "pick_pool": pick_pool, "got_hit": got_hit})
     return pools
@@ -81,7 +76,7 @@ def build_date_pools(dates, persisted: pd.DataFrame, team_schedule: pd.DataFrame
 def select_and_resolve(pools: list[dict], rank_metric: str, margin: float) -> pd.DataFrame:
     """Runs predictions.select_picks on each cached date pool at the given
     same_game_diversification_margin, then resolves each returned pick
-    against that date's REAL Got_Hit outcome - same resolve logic as
+    against that contest's REAL Got_Hit outcome - same resolve logic as
     scripts/backtest_selection_rule.py's own select_and_resolve."""
     rows = []
     for entry in pools:
@@ -91,8 +86,11 @@ def select_and_resolve(pools: list[dict], rank_metric: str, margin: float) -> pd
         if picks.empty:
             continue
 
+        resolve_keys = ["key_mlbam"]
+        if "game_pk" in picks.columns and "game_pk" in entry["got_hit"].columns:
+            resolve_keys = ["game_pk", "key_mlbam"]
         picks = picks.merge(
-            entry["got_hit"].rename(columns={"Got_Hit": "resolved_hit"}), on="key_mlbam", how="left"
+            entry["got_hit"].rename(columns={"Got_Hit": "resolved_hit"}), on=resolve_keys, how="left"
         )
         picks["at_bats"] = picks["resolved_hit"].notna().astype(int)
         picks["actual_hit"] = picks["resolved_hit"]
@@ -106,9 +104,8 @@ def _count_same_game_pairs(pools: list[dict], margin: float, rank_metric: str) -
     """How many real dates in this holdout actually had a #1/#2 sharing a
     game_pk under the GIVEN margin's resulting picks - the honest
     denominator for how much this margin could possibly have changed.
-    predictions.select_picks trims its return value to PREDICTION_COLUMNS
-    (game_pk isn't one of them), so game_pk is looked up back on the
-    original pick_pool by key_mlbam, not read off the picks themselves."""
+    game_pk is now part of PREDICTION_COLUMNS, so it is read off the picks
+    themselves."""
     count = 0
     for entry in pools:
         picks = predictions.select_picks(
@@ -116,9 +113,8 @@ def _count_same_game_pairs(pools: list[dict], margin: float, rank_metric: str) -
         )
         if len(picks) < 2:
             continue
-        game_pk_by_key = entry["pick_pool"].set_index("key_mlbam")["game_pk"]
-        top_game = game_pk_by_key.get(picks.iloc[0]["key_mlbam"])
-        second_game = game_pk_by_key.get(picks.iloc[1]["key_mlbam"])
+        top_game = picks.iloc[0]["game_pk"]
+        second_game = picks.iloc[1]["game_pk"]
         if pd.notna(top_game) and top_game == second_game:
             count += 1
     return count

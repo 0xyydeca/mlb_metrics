@@ -224,16 +224,17 @@ def test_run_logs_matchup_probability_when_schedule_fetch_succeeds(monkeypatch, 
 
     schedule_df = pd.DataFrame([{
         "date": pd.Timestamp("2026-06-20"), "team": "NYY", "opponent": "BOS",
-        "probable_pitcher_key_mlbam": 999, "is_home": True,
+        "probable_pitcher_key_mlbam": 999, "is_home": True, "game_pk": 824651,
     }])
     monkeypatch.setattr(pipeline.schedule, "fetch_probable_pitchers", lambda date: schedule_df)
+    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", lambda date: schedule_df)
     # Scoped to hitter-pick metrics only - game picks get their own tests below.
     monkeypatch.setattr(pipeline.schedule, "fetch_todays_games", lambda date: pd.DataFrame())
     # This test is scoped to the Matchup_Approach tier specifically (its
     # own docstring/name), not the Model_Hit_Probability tier - force the
     # fallback so it stays deterministic rather than depending on the real
     # committed model artifact's arbitrary output on this tiny fixture.
-    monkeypatch.setattr(pipeline.dfs_ml, "predict_hitter_hit_probability", lambda features: pd.DataFrame(columns=["key_mlbam", "Model_Hit_Probability"]))
+    monkeypatch.setattr(pipeline.dfs_ml, "predict_hitter_hit_probability", lambda features: pd.DataFrame(columns=["key_mlbam", "game_pk", "Model_Hit_Probability"]))
 
     predictions_dir = str(tmp_path / "predictions")
     pipeline.run(
@@ -283,15 +284,16 @@ def test_run_excludes_pick_with_a_bad_matchup_even_with_strong_probability_and_g
 
     schedule_df = pd.DataFrame([{
         "date": pd.Timestamp("2026-06-20"), "team": "NYY", "opponent": "BOS",
-        "probable_pitcher_key_mlbam": 999, "is_home": True,
+        "probable_pitcher_key_mlbam": 999, "is_home": True, "game_pk": 824651,
     }])
     monkeypatch.setattr(pipeline.schedule, "fetch_probable_pitchers", lambda date: schedule_df)
+    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", lambda date: schedule_df)
     monkeypatch.setattr(pipeline.schedule, "fetch_todays_games", lambda date: pd.DataFrame())
     # Scoped to the Matchup_Approach tier specifically (its own docstring/
     # name) - force the fallback so it stays deterministic rather than
     # depending on the real committed model artifact's arbitrary output on
     # this tiny fixture.
-    monkeypatch.setattr(pipeline.dfs_ml, "predict_hitter_hit_probability", lambda features: pd.DataFrame(columns=["key_mlbam", "Model_Hit_Probability"]))
+    monkeypatch.setattr(pipeline.dfs_ml, "predict_hitter_hit_probability", lambda features: pd.DataFrame(columns=["key_mlbam", "game_pk", "Model_Hit_Probability"]))
 
     predictions_dir = str(tmp_path / "predictions")
     pipeline.run(
@@ -323,14 +325,19 @@ def test_run_logs_model_hit_probability_when_model_predicts(monkeypatch, tmp_pat
     monkeypatch.setattr(pipeline, "compute_outputs", lambda df: _minimal_outputs())
     monkeypatch.setattr(
         pipeline.dfs_ml, "predict_hitter_hit_probability",
-        lambda features: pd.DataFrame({"key_mlbam": features["key_mlbam"], "Model_Hit_Probability": [0.9] * len(features)}),
+        lambda features: pd.DataFrame({
+            "key_mlbam": features["key_mlbam"].values,
+            "game_pk": features["game_pk"].values if "game_pk" in features.columns else [pd.NA] * len(features),
+            "Model_Hit_Probability": [0.9] * len(features),
+        }),
     )
 
     schedule_df = pd.DataFrame([{
         "date": pd.Timestamp("2026-06-20"), "team": "NYY", "opponent": "BOS",
-        "probable_pitcher_key_mlbam": 999, "is_home": True,
+        "probable_pitcher_key_mlbam": 999, "is_home": True, "game_pk": 824651,
     }])
     monkeypatch.setattr(pipeline.schedule, "fetch_probable_pitchers", lambda date: schedule_df)
+    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", lambda date: schedule_df)
     monkeypatch.setattr(pipeline.schedule, "fetch_todays_games", lambda date: pd.DataFrame())
 
     predictions_dir = str(tmp_path / "predictions")
@@ -394,9 +401,10 @@ def test_run_model_shortlist_excludes_heuristic_favorite_outside_model_top_n(mon
 
     schedule_df = pd.DataFrame([{
         "date": pd.Timestamp("2026-06-20"), "team": "NYY", "opponent": "BOS",
-        "probable_pitcher_key_mlbam": 999, "is_home": True,
+        "probable_pitcher_key_mlbam": 999, "is_home": True, "game_pk": 824651,
     }])
     monkeypatch.setattr(pipeline.schedule, "fetch_probable_pitchers", lambda date: schedule_df)
+    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", lambda date: schedule_df)
     monkeypatch.setattr(pipeline.schedule, "fetch_todays_games", lambda date: pd.DataFrame())
 
     # Same Matchup_Hit_Probability for everyone (clears HITTER_MIN_PROBABILITY,
@@ -404,9 +412,11 @@ def test_run_model_shortlist_excludes_heuristic_favorite_outside_model_top_n(mon
     # depend on tuning realistic PAVE/confidence inputs for 11 hitters.
     monkeypatch.setattr(
         pipeline.matchup, "compute_matchup_hit_probability",
-        lambda wave, pave, confidence, schedule_df: pd.DataFrame(
-            {"key_mlbam": wave["key_mlbam"], "Matchup_Hit_Probability": 0.75}
-        ),
+        lambda wave, pave, confidence, schedule_df: pd.DataFrame({
+            "key_mlbam": wave["key_mlbam"].values,
+            "game_pk": schedule_df["game_pk"].iloc[0],
+            "Matchup_Hit_Probability": 0.75,
+        }),
     )
     # The model rates the heuristic favorite (99) WORST of all 11.
     model_scores = {key: 0.60 + key * 0.01 for key in range(1, 11)}
@@ -414,8 +424,9 @@ def test_run_model_shortlist_excludes_heuristic_favorite_outside_model_top_n(mon
     monkeypatch.setattr(
         pipeline.dfs_ml, "predict_hitter_hit_probability",
         lambda features: pd.DataFrame({
-            "key_mlbam": features["key_mlbam"],
-            "Model_Hit_Probability": features["key_mlbam"].map(model_scores),
+            "key_mlbam": features["key_mlbam"].values,
+            "game_pk": features["game_pk"].values,
+            "Model_Hit_Probability": features["key_mlbam"].map(model_scores).values,
         }),
     )
 
@@ -444,6 +455,7 @@ def test_run_continues_without_matchup_when_schedule_fetch_fails(monkeypatch, tm
         raise RuntimeError("statsapi is down")
 
     monkeypatch.setattr(pipeline.schedule, "fetch_probable_pitchers", raise_error)
+    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", raise_error)
     monkeypatch.setattr(pipeline.schedule, "fetch_todays_games", raise_error)
 
     predictions_dir = str(tmp_path / "predictions")

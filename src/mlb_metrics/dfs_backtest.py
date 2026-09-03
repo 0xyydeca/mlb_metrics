@@ -70,11 +70,31 @@ def derive_historical_team_schedule(persisted_statcast: pd.DataFrame) -> pd.Data
     return pd.concat([home[columns], away[columns]], ignore_index=True)
 
 
+def compute_actual_hitter_got_hit(day_completed_batter_events: pd.DataFrame) -> pd.DataFrame:
+    """[game_pk, key_mlbam, Got_Hit] when `game_pk` is present on the events
+    frame - binary "did this batter get at least one hit in this specific
+    game." `.max()`, not `.sum()`/count - one hit already clears the bar.
+
+    Requires `game_pk` so a doubleheader miss in game one and hit in game
+    two never collapse into a single date-level positive label attached to
+    the wrong game's features. Callers that only have date-level events
+    must add game_pk (from Statcast) before calling this.
+    """
+    df = day_completed_batter_events.copy()
+    if "game_pk" not in df.columns:
+        raise ValueError(
+            "compute_actual_hitter_got_hit requires a game_pk column so labels "
+            "are per (game_pk, batter), not per calendar date"
+        )
+    df["hit"] = helpers.is_hit(df["events"])
+    agg = df.groupby(["game_pk", "batter"], as_index=False)["hit"].max()
+    return agg.rename(columns={"batter": "key_mlbam", "hit": "Got_Hit"})
+
+
 def compute_actual_hitter_dk_points(day_completed_batter_events: pd.DataFrame) -> pd.DataFrame:
-    """[key_mlbam, Actual_DK_Points_Modeled] - real DK hit-type + BB/HBP/RBI
-    points (the current full scope dfs.compute_hitter_dk_points models) for
-    one date's real completed at-bat events, keyed by batter. Needs
-    bat_score/post_bat_score columns (helpers.estimate_rbi)."""
+    """[game_pk, key_mlbam, Actual_DK_Points_Modeled] when game_pk is present,
+    else [key_mlbam, Actual_DK_Points_Modeled] for legacy date-pooled callers.
+    Real DK hit-type + BB/HBP/RBI points for completed at-bat events."""
     df = day_completed_batter_events.copy()
     events = df["events"]
     df["points"] = (
@@ -86,23 +106,11 @@ def compute_actual_hitter_dk_points(day_completed_batter_events: pd.DataFrame) -
         + helpers.is_hit_by_pitch(events) * config.DFS_DK_HITTER_HBP_POINTS
         + helpers.estimate_rbi(df) * config.DFS_DK_HITTER_RBI_POINTS
     )
+    if "game_pk" in df.columns:
+        agg = df.groupby(["game_pk", "batter"], as_index=False)["points"].sum()
+        return agg.rename(columns={"batter": "key_mlbam", "points": "Actual_DK_Points_Modeled"})
     agg = df.groupby("batter", as_index=False)["points"].sum()
     return agg.rename(columns={"batter": "key_mlbam", "points": "Actual_DK_Points_Modeled"})
-
-
-def compute_actual_hitter_got_hit(day_completed_batter_events: pd.DataFrame) -> pd.DataFrame:
-    """[key_mlbam, Got_Hit] - binary "did this batter get at least one hit
-    that date" label, for one date's real completed at-bat events, keyed
-    by batter. `.max()`, not `.sum()`/count - one hit already clears the
-    bar, and a double-header's two games are both credited to the same
-    date the same way compute_actual_hitter_dk_points already pools them.
-    Same groupby-max-of-a-hit-indicator shape as
-    hitters.compute_game_hit_probability's own per-game label (hitters.py),
-    just for the label side instead of the historical-rate side."""
-    df = day_completed_batter_events.copy()
-    df["hit"] = helpers.is_hit(df["events"])
-    agg = df.groupby("batter", as_index=False)["hit"].max()
-    return agg.rename(columns={"batter": "key_mlbam", "hit": "Got_Hit"})
 
 
 def compute_actual_pitcher_dk_points(day_completed_pitcher_events: pd.DataFrame) -> pd.DataFrame:
@@ -188,7 +196,7 @@ def _compute_date_outputs(persisted: pd.DataFrame, team_schedule: pd.DataFrame, 
 
     day_events = persisted[persisted["game_date"] == date]
     actual_hitters = compute_actual_hitter_dk_points(
-        data.completed_events(day_events, ["game_date", "batter", "events", "bat_score", "post_bat_score"])
+        data.completed_events(day_events, ["game_date", "game_pk", "batter", "events", "bat_score", "post_bat_score"])
     )
     actual_pitchers = compute_actual_pitcher_dk_points(
         data.completed_events(day_events, ["game_date", "pitcher", "events"])
@@ -238,12 +246,12 @@ def backtest_dfs_projections(raw_dir: str = "data/raw", season: int | None = Non
         if day is None:
             continue
 
-        hitters_scored = day["projected_hitters"].merge(day["actual_hitters"], on="key_mlbam", how="inner")
+        hitters_scored = day["projected_hitters"].merge(day["actual_hitters"], on=["key_mlbam", "game_pk"], how="inner")
         if not hitters_scored.empty:
             hitters_scored = hitters_scored.copy()
             hitters_scored["date"] = date
             hitter_rows.append(
-                hitters_scored[["date", "key_mlbam", "DK_Points_Hitter", "Matchup_Ratio", "Actual_DK_Points_Modeled"]]
+                hitters_scored[["date", "game_pk", "key_mlbam", "DK_Points_Hitter", "Matchup_Ratio", "Actual_DK_Points_Modeled"]]
             )
 
         pitchers_scored = day["projected_pitchers"].merge(day["actual_pitchers"], on="key_mlbam", how="inner")
@@ -307,12 +315,14 @@ def assemble_ml_training_rows(raw_dir: str = "data/raw", season: int | None = No
             day["outputs"]["wave"], day["outputs"]["pave"], day["outputs"]["confidence"],
             day["todays_schedule"], day["matchup_probability"],
         )
-        hitters_scored = hitter_features.merge(day["actual_hitters"], on="key_mlbam", how="inner")
+        hitters_scored = hitter_features.merge(day["actual_hitters"], on=["key_mlbam", "game_pk"], how="inner")
         if not hitters_scored.empty:
             hitters_scored = hitters_scored.copy()
             hitters_scored["date"] = date
             hitter_rows.append(
-                hitters_scored[["date", "key_mlbam"] + dfs_ml.HITTER_FEATURE_COLUMNS + ["Actual_DK_Points_Modeled"]]
+                hitters_scored[
+                    ["date", "game_pk", "key_mlbam"] + dfs_ml.HITTER_FEATURE_COLUMNS + ["Actual_DK_Points_Modeled"]
+                ]
             )
 
         pitchers_scored = day["projected_pitchers"].merge(day["actual_pitchers"], on="key_mlbam", how="inner")
@@ -332,15 +342,19 @@ def assemble_ml_training_rows(raw_dir: str = "data/raw", season: int | None = No
 
 
 def assemble_hitter_hit_log(raw_dir: str = "data/raw", season: int | None = None, days: int | None = None) -> pd.DataFrame:
-    """One row per hitter per game (every hitter with a game that date, not
+    """One row per hitter per game_pk (every hitter with a game that date, not
     just the handful that ever became an official pick) carrying every
     dfs_ml.HITTER_FEATURE_COLUMNS feature - starter_PAVE, Bullpen_PAVE, WAVE,
     Game_Hit_Probability, etc. - computed strictly before that date (same
     no-lookahead recompute as assemble_ml_training_rows), a Total_PA
     convenience column, and a binary Got_Hit label for whether they actually
-    got a hit that date. This is a data asset for a future logistic
-    regression on real hit outcomes - it is not itself a model and feeds
-    nothing live.
+    got a hit in THAT game. This is a data asset for logistic regression on
+    real hit outcomes - it is not itself a model and feeds nothing live.
+
+    Natural uniqueness: (date, game_pk, key_mlbam). A doubleheader produces
+    two rows for the same batter with the correct starter features and
+    independent Got_Hit labels - never a date-level pooled label attached
+    to game-one features.
 
     `days=None` (the default) replays the full persisted history, matching
     assemble_ml_training_rows's own default reasoning: a growing historical
@@ -355,11 +369,11 @@ def assemble_hitter_hit_log(raw_dir: str = "data/raw", season: int | None = None
     scripts/train_hitter_hit_model.py's significance report for whether
     either candidate clears a real bar before going anywhere near the
     live feature set. Days_Rest is Statcast's own real
-    batter_days_since_prev_game for that date's game (already a real,
+    batter_days_since_prev_game for that game (already a real,
     no-lookahead fact about the past - no derivation needed).
     Umpire_Factor is teams.compute_umpire_factor computed from history
     STRICTLY BEFORE this date (same no-lookahead discipline as every
-    other feature here), joined onto each batter via that date's real
+    other feature here), joined onto each batter via that game's real
     home-plate umpire."""
     season = season or config.SEASON_START.year
     persisted = data.load_persisted_statcast(raw_dir, season)
@@ -386,52 +400,43 @@ def assemble_hitter_hit_log(raw_dir: str = "data/raw", season: int | None = None
 
         day_events = persisted[persisted["game_date"] == date]
         got_hit = compute_actual_hitter_got_hit(
-            data.completed_events(day_events, ["game_date", "batter", "events"])
+            data.completed_events(day_events, ["game_date", "game_pk", "batter", "events"])
         )
 
-        # Exploratory candidates (see module docstring) - Days_Rest is a
-        # real fact about that date's game itself; Umpire_Factor uses
-        # history strictly before `date`, same no-lookahead slice every
-        # other feature in this function already uses.
+        # Exploratory candidates (see module docstring) - Days_Rest / umpire
+        # are per game_pk so they align with the feature row for that contest.
         if "batter_days_since_prev_game" in day_events.columns:
-            days_rest = day_events.groupby("batter", as_index=False)["batter_days_since_prev_game"].first()
-            days_rest = days_rest.rename(columns={"batter": "key_mlbam", "batter_days_since_prev_game": "Days_Rest"})
+            days_rest = (
+                day_events.groupby(["game_pk", "batter"], as_index=False)["batter_days_since_prev_game"].first()
+                .rename(columns={"batter": "key_mlbam", "batter_days_since_prev_game": "Days_Rest"})
+            )
         else:
-            days_rest = pd.DataFrame(columns=["key_mlbam", "Days_Rest"])
+            days_rest = pd.DataFrame(columns=["game_pk", "key_mlbam", "Days_Rest"])
 
         if "umpire" in day_events.columns:
             history = persisted[persisted["game_date"] < date]
             umpire_factor = teams.compute_umpire_factor(history)
-            todays_umpire = day_events[["batter", "umpire"]].drop_duplicates(subset="batter")
+            todays_umpire = day_events[["game_pk", "batter", "umpire"]].drop_duplicates(subset=["game_pk", "batter"])
             todays_umpire = todays_umpire.rename(columns={"batter": "key_mlbam"})
-            todays_umpire = todays_umpire.merge(umpire_factor, on="umpire", how="left")[["key_mlbam", "Umpire_Factor"]]
+            todays_umpire = todays_umpire.merge(umpire_factor, on="umpire", how="left")[
+                ["game_pk", "key_mlbam", "Umpire_Factor"]
+            ]
         else:
-            todays_umpire = pd.DataFrame(columns=["key_mlbam", "Umpire_Factor"])
+            todays_umpire = pd.DataFrame(columns=["game_pk", "key_mlbam", "Umpire_Factor"])
 
-        scored = hitter_features.merge(got_hit, on="key_mlbam", how="inner")
+        scored = hitter_features.merge(got_hit, on=["game_pk", "key_mlbam"], how="inner")
         if scored.empty:
             continue
 
-        scored = scored.merge(days_rest, on="key_mlbam", how="left")
-        scored = scored.merge(todays_umpire, on="key_mlbam", how="left")
-
-        # On a doubleheader date, todays_schedule/matchup_probability each
-        # carry one row per game_pk for the doubleheader team - since
-        # build_hitter_features joins on team/key_mlbam only (not game_pk),
-        # that fans out into a same-key_mlbam cartesian duplicate (one row
-        # per game combination) rather than one row per hitter. The date-
-        # level Got_Hit label already correctly pools both games via
-        # compute_actual_hitter_got_hit's max(); keep just the first
-        # feature-row combination per hitter so this log's own uniqueness
-        # invariant (one row per date, key_mlbam) holds too.
-        scored = scored.drop_duplicates(subset="key_mlbam", keep="first")
+        scored = scored.merge(days_rest, on=["game_pk", "key_mlbam"], how="left")
+        scored = scored.merge(todays_umpire, on=["game_pk", "key_mlbam"], how="left")
 
         scored = scored.copy()
         scored["date"] = date
         scored["Total_PA"] = scored["PA_L"] + scored["PA_R"]
         rows.append(
             scored[
-                ["date"] + name_columns + dfs_ml.HITTER_FEATURE_COLUMNS
+                ["date", "game_pk"] + name_columns + dfs_ml.HITTER_FEATURE_COLUMNS
                 + ["Total_PA", "Days_Rest", "Umpire_Factor", "Got_Hit"]
             ]
         )

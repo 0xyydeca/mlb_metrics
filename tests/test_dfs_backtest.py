@@ -54,7 +54,7 @@ def test_derive_historical_team_schedule_widens_to_one_row_per_team():
     assert bos["probable_pitcher_key_mlbam"] == 201
 
 
-def _batter_events(batter, events, date="2026-06-01"):
+def _batter_events(batter, events, date="2026-06-01", game_pk=1):
     """`events` items are either a bare event string (bat_score/post_bat_score
     default to 0, i.e. no RBI) or an (event, bat_score, post_bat_score)
     3-tuple for a row that needs a real RBI delta."""
@@ -65,7 +65,7 @@ def _batter_events(batter, events, date="2026-06-01"):
         else:
             event, bat_score, post_bat_score = item, 0, 0
         rows.append({
-            "game_date": pd.Timestamp(date), "batter": batter, "events": event,
+            "game_date": pd.Timestamp(date), "game_pk": game_pk, "batter": batter, "events": event,
             "bat_score": bat_score, "post_bat_score": post_bat_score,
         })
     return rows
@@ -101,19 +101,37 @@ def test_compute_actual_hitter_dk_points_still_excludes_runs_and_steals():
 
 
 def test_compute_actual_hitter_got_hit_is_max_not_sum():
-    # Two hits in the date's game(s) still yields Got_Hit=1, not 2 - one
-    # hit already clears the bar (compute_game_hit_probability's own
-    # per-game label convention), and this also covers a double-header's
-    # two games correctly pooling to the same date/label.
+    # Two hits in the same game still yields Got_Hit=1, not 2 - one hit
+    # already clears the bar (compute_game_hit_probability's own
+    # per-game label convention).
     rows = _batter_events(1, ["single", "home_run", "field_out"])
     result = dfs_backtest.compute_actual_hitter_got_hit(pd.DataFrame(rows)).set_index("key_mlbam")
     assert result.loc[1, "Got_Hit"] == 1
+    assert result.loc[1, "game_pk"] == 1
 
 
 def test_compute_actual_hitter_got_hit_zero_hits():
     rows = _batter_events(1, ["field_out", "strikeout", "walk"])
     result = dfs_backtest.compute_actual_hitter_got_hit(pd.DataFrame(rows)).set_index("key_mlbam")
     assert result.loc[1, "Got_Hit"] == 0
+
+
+def test_compute_actual_hitter_got_hit_requires_game_pk():
+    rows = [{"game_date": pd.Timestamp("2026-06-01"), "batter": 1, "events": "single"}]
+    with pytest.raises(ValueError, match="game_pk"):
+        dfs_backtest.compute_actual_hitter_got_hit(pd.DataFrame(rows))
+
+
+def test_compute_actual_hitter_got_hit_labels_each_doubleheader_game_separately():
+    # Miss game one, hit game two - never a date-level positive label.
+    rows = (
+        _batter_events(1, ["field_out", "strikeout"], game_pk=101)
+        + _batter_events(1, ["single", "field_out"], game_pk=102)
+    )
+    result = dfs_backtest.compute_actual_hitter_got_hit(pd.DataFrame(rows)).set_index("game_pk")
+    assert result.loc[101, "Got_Hit"] == 0
+    assert result.loc[102, "Got_Hit"] == 1
+    assert (result["key_mlbam"] == 1).all()
 
 
 def _pitcher_events(pitcher, events, date="2026-06-01"):
@@ -310,7 +328,7 @@ def test_assemble_ml_training_rows_full_history_has_expected_schema_and_no_leaka
     result = dfs_backtest.assemble_ml_training_rows(str(raw_dir), season=2026, days=None)
 
     assert not result["hitters"].empty
-    expected_hitter_cols = {"date", "key_mlbam", *dfs_ml.HITTER_FEATURE_COLUMNS, "Actual_DK_Points_Modeled"}
+    expected_hitter_cols = {"date", "game_pk", "key_mlbam", *dfs_ml.HITTER_FEATURE_COLUMNS, "Actual_DK_Points_Modeled"}
     assert set(result["hitters"].columns) == expected_hitter_cols
 
     assert not result["pitchers"].empty
@@ -357,7 +375,7 @@ def test_assemble_hitter_hit_log_has_expected_schema_and_no_lookahead(tmp_path):
 
     assert not result.empty
     expected_cols = {
-        "date", "key_mlbam", "name_first", "name_last", "team",
+        "date", "game_pk", "key_mlbam", "name_first", "name_last", "team",
         *dfs_ml.HITTER_FEATURE_COLUMNS, "Total_PA", "Days_Rest", "Umpire_Factor", "Got_Hit",
     }
     assert set(result.columns) == expected_cols
@@ -418,28 +436,45 @@ def test_assemble_hitter_hit_log_days_truncates_to_most_recent_dates(tmp_path):
     assert full["date"].nunique() >= truncated["date"].nunique()
 
 
-def test_assemble_hitter_hit_log_doubleheader_produces_one_row_per_hitter(tmp_path):
-    # A real doubleheader (two game_pks, same team, same game_date) makes
-    # derive_historical_team_schedule legitimately emit two schedule rows
-    # for that team/date - build_hitter_features's team/key_mlbam-only
-    # merges then fan those out into a same-key_mlbam cartesian duplicate.
-    # assemble_hitter_hit_log must still emit exactly one row per
-    # (date, key_mlbam) despite that.
+def test_assemble_hitter_hit_log_doubleheader_produces_one_row_per_hitter_game(tmp_path):
+    # A real doubleheader (two game_pks, same team, same game_date) must
+    # keep BOTH contests as separate (date, game_pk, key_mlbam) rows -
+    # never collapse via drop_duplicates(keep="first") onto game one.
     raw_dir = tmp_path / "raw"
     raw_dir.mkdir()
 
     rows = _multi_game_statcast(n_games=5).to_dict("records")
     doubleheader_date = pd.Timestamp("2026-05-01") + pd.Timedelta(days=5 * 5)
-    events = ["strikeout"] * 5 + ["field_out"] * 6 + ["walk"] * 3 + ["single"] * 4 + ["double"] * 1 + ["home_run"] * 1
-    rows.extend(_game_rows(101, doubleheader_date, events))
-    rows.extend(_game_rows(102, doubleheader_date, events))
+    miss_events = ["strikeout"] * 5 + ["field_out"] * 10 + ["walk"] * 5
+    hit_events = ["strikeout"] * 5 + ["field_out"] * 6 + ["walk"] * 3 + ["single"] * 4 + ["double"] * 1 + ["home_run"] * 1
+    # Game one: outs only (but a non-zero final score so
+    # derive_historical_schedule_games does not drop a 0-0 artifact).
+    # Game two: includes hits. Same batter (id=1).
+    miss_rows = _game_rows(101, doubleheader_date, miss_events, pitcher=201)
+    miss_rows[-1]["home_score"] = 1
+    miss_rows[-1]["post_home_score"] = 1
+    rows.extend(miss_rows)
+    rows.extend(_game_rows(102, doubleheader_date, hit_events, pitcher=202))
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     result = dfs_backtest.assemble_hitter_hit_log(str(raw_dir), season=2026, days=None)
 
     doubleheader_rows = result[result["date"] == doubleheader_date]
     assert not doubleheader_rows.empty
-    assert not doubleheader_rows.duplicated(subset="key_mlbam").any()
+    assert set(doubleheader_rows["game_pk"]) == {101, 102}
+    # Same batter appears once per game, not once per date.
+    assert doubleheader_rows.duplicated(subset=["game_pk", "key_mlbam"]).sum() == 0
+    batter_rows = doubleheader_rows[doubleheader_rows["key_mlbam"] == 1].set_index("game_pk")
+    assert len(batter_rows) == 2
+    assert batter_rows.loc[101, "Got_Hit"] == 0
+    assert batter_rows.loc[102, "Got_Hit"] == 1
+
+
+def test_assemble_hitter_hit_log_no_drop_duplicates_first_workaround():
+    # Guardrail: the old DH correctness fix must not reappear.
+    import inspect
+    source = inspect.getsource(dfs_backtest.assemble_hitter_hit_log)
+    assert 'drop_duplicates(subset=["date", "key_mlbam"], keep="first")' not in source
 
 
 def test_assemble_hitter_hit_log_no_persisted_data_returns_empty(tmp_path):
