@@ -309,9 +309,26 @@ def predictive_model(train_pool: pd.DataFrame, holdout: pd.DataFrame) -> None:
     # signal (this artifact itself is NOT wired into live picks).
     beats_heuristic = result["log_loss"] < heuristic_result["log_loss"]
     if beats_heuristic:
-        ml_models.save_model(best_model, config.HITTER_HIT_PROBABILITY_MODEL_PATH)
+        ml_models.save_model_bundle(
+            best_model,
+            config.HITTER_HIT_PROBABILITY_MODEL_PATH,
+            model_type="hitter_hit_probability",
+            model_version=config.HITTER_MODEL_VERSION,
+            feature_columns=list(dfs_ml.HITTER_FEATURE_COLUMNS),
+            training_data_start=train_pool["date"].min(),
+            training_data_cutoff=train_pool["date"].max(),
+            hyperparameters=dict(best_search.best_params_),
+            calibration_method=best_name,
+            validation_summary={
+                "holdout_log_loss": result["log_loss"],
+                "holdout_brier_score": result["brier_score"],
+                "holdout_roc_auc": result["roc_auc"],
+                "holdout_n": result["n"],
+                "heuristic_log_loss": heuristic_result["log_loss"],
+            },
+        )
         print(
-            f"  -> SAVED to {config.HITTER_HIT_PROBABILITY_MODEL_PATH} ({best_name}, "
+            f"  -> SAVED bundle to {config.HITTER_HIT_PROBABILITY_MODEL_PATH} ({best_name}, "
             f"beats Game_Hit_Probability - artifact only, NOT wired into live picks)"
         )
     else:

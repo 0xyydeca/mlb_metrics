@@ -143,6 +143,32 @@ dashboard/anyone reading the CSVs directly. Game picks use the identical
 pattern (`config.GAME_PICK_MODEL_VERSION`, `game_evaluation.build_game_picks_export`'s
 own `model_version` filter).
 
+**Prediction / model provenance** (in addition to `model_version`): new
+hitter and game prediction rows also stamp:
+
+- `prediction_timestamp_utc`, `prediction_code_sha` (Actions `GITHUB_SHA`
+  when present, otherwise local `git rev-parse HEAD`, otherwise `"unknown"` -
+  never crashes when `.git` is missing)
+- `model_artifact_id`, `training_data_cutoff`, `feature_schema_hash` from the
+  loaded model bundle when available
+- `selection_logic_version`, `selection_metric`, `selection_score` (exactly
+  which column ranked the pick, and that row's score)
+- `probability_source` (exactly which column was logged as
+  `predicted_probability`)
+- `fallback_used` / `fallback_reason` when a model artifact is missing or
+  fails to load - so a heuristic day caused by a load failure is not
+  silently indistinguishable from a normal no-model day
+- `prediction_snapshot_type` (initially `"morning"`), `lineup_status`
+  (initially `"unconfirmed"`), `starter_status` (`probable` / `missing` /
+  `confirmed` when known)
+
+Legacy CSV rows migrate with null/`"legacy"` provenance defaults and no
+data loss. Newly trained artifacts are saved via
+`ml_models.save_model_bundle` (estimator plus reproducible metadata);
+`ml_models.load_model` still unwraps bundles to the bare estimator so
+existing `.predict` / `.predict_proba` call sites need no changes, and
+plain legacy joblib estimators continue to load.
+
 Even with `model_version` tagging, a change made today still won't show up
 in *live* picks until tomorrow's run - today's picks were already logged
 before the change existed, and the append-only log correctly refuses to

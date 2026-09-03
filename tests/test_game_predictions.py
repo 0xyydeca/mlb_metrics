@@ -38,6 +38,77 @@ def test_select_game_picks_logs_every_game_and_flags_above_threshold():
     assert game2["above_threshold"] == False  # noqa: E712
 
 
+def test_select_game_picks_stamps_provenance_fields():
+    win_probs = _win_probabilities([
+        {"game_pk": 1, "date": pd.Timestamp("2026-07-22"), "home_team": "NYY", "away_team": "BOS",
+         "home_win_probability": 0.65, "home_probable_pitcher_key_mlbam": 99,
+         "away_probable_pitcher_key_mlbam": 88},
+    ])
+    status = {
+        "loaded": True, "fallback_used": False, "fallback_reason": None,
+        "artifact_id": "cal123", "training_data_cutoff": "2026-07-01",
+        "feature_schema_hash": "hash1",
+    }
+
+    picks = game_predictions.select_game_picks(
+        win_probs, pd.Timestamp("2026-07-22"),
+        model_status=status, probability_source="calibrated_home_win_probability",
+    )
+
+    row = picks.iloc[0]
+    assert list(picks.columns) == game_predictions.GAME_PREDICTION_COLUMNS
+    assert row["selection_metric"] == "predicted_probability"
+    assert row["selection_score"] == pytest.approx(0.65)
+    assert row["probability_source"] == "calibrated_home_win_probability"
+    assert row["model_artifact_id"] == "cal123"
+    assert row["prediction_snapshot_type"] == "morning"
+    assert row["lineup_status"] == "unconfirmed"
+    assert row["starter_status"] == "probable"
+    assert row["fallback_used"] == False  # noqa: E712
+
+
+def test_select_game_picks_records_calibration_fallback():
+    win_probs = _win_probabilities([
+        {"game_pk": 1, "date": pd.Timestamp("2026-07-22"), "home_team": "NYY", "away_team": "BOS",
+         "home_win_probability": 0.65},
+    ])
+
+    picks = game_predictions.select_game_picks(
+        win_probs, pd.Timestamp("2026-07-22"),
+        fallback_used=True, fallback_reason="missing_artifact",
+        probability_source="home_win_probability",
+    )
+
+    assert picks.iloc[0]["fallback_used"] == True  # noqa: E712
+    assert picks.iloc[0]["fallback_reason"] == "missing_artifact"
+    assert picks.iloc[0]["probability_source"] == "home_win_probability"
+
+
+def test_append_game_predictions_migrates_provenance_on_legacy_csv(tmp_path):
+    log_path = str(tmp_path / "game_predictions.csv")
+    legacy = pd.DataFrame([{
+        "date": "2026-07-19", "game_pk": 1, "home_team": "NYY", "away_team": "BOS",
+        "predicted_winner": "NYY", "predicted_probability": 0.6, "above_threshold": True,
+        "metric": "GamePick_Win_Probability", "actual_winner": "NYY", "game_played": 1,
+        "model_version": "legacy",
+    }])
+    legacy.to_csv(log_path, index=False)
+
+    fresh = game_predictions.select_game_picks(
+        _win_probabilities([{
+            "game_pk": 2, "date": pd.Timestamp("2026-07-20"), "home_team": "LAD", "away_team": "SF",
+            "home_win_probability": 0.7,
+        }]),
+        pd.Timestamp("2026-07-20"),
+    )
+    combined = game_predictions.append_game_predictions(fresh, log_path)
+
+    assert set(game_predictions.PROVENANCE_COLUMNS).issubset(combined.columns)
+    legacy_row = combined[combined["game_pk"] == 1].iloc[0]
+    assert legacy_row["prediction_code_sha"] == "legacy"
+    assert legacy_row["actual_winner"] == "NYY"  # no data loss
+
+
 def test_append_game_predictions_migrates_a_log_written_before_model_version_existed(tmp_path):
     log_path = str(tmp_path / "game_predictions.csv")
     legacy_log = pd.DataFrame([{

@@ -11,17 +11,38 @@ got a hit once that game's outcome data is available.
 Natural key for new rows: (date, game_pk, key_mlbam, metric). Legacy CSV
 rows may have a null game_pk; resolution then falls back to the old
 (date, key_mlbam) label so already-logged history stays readable.
+
+New rows also carry prediction/model provenance (see PROVENANCE_COLUMNS) so
+a logged pick records which code SHA / model artifact / selection metric
+produced it. Legacy CSV rows migrate with null/"legacy" provenance defaults
+without data loss.
 """
 
 import os
+from datetime import datetime, timezone
 
 import pandas as pd
 
-from mlb_metrics import config, helpers
+from mlb_metrics import config, helpers, ml_models
 
 PREDICTION_COLUMNS = [
     "date", "game_pk", "key_mlbam", "name", "rank", "predicted_probability", "metric",
     "probability", "Matchup_Hit_Probability", "Model_Hit_Probability", "actual_hit", "at_bats", "model_version",
+    # Provenance - see PROVENANCE_COLUMNS. Kept in PREDICTION_COLUMNS so
+    # append/resolve/export always round-trip the full schema.
+    "prediction_timestamp_utc", "prediction_code_sha", "model_artifact_id",
+    "training_data_cutoff", "feature_schema_hash", "selection_logic_version",
+    "selection_metric", "selection_score", "probability_source",
+    "fallback_used", "fallback_reason",
+    "prediction_snapshot_type", "lineup_status", "starter_status",
+]
+
+PROVENANCE_COLUMNS = [
+    "prediction_timestamp_utc", "prediction_code_sha", "model_artifact_id",
+    "training_data_cutoff", "feature_schema_hash", "selection_logic_version",
+    "selection_metric", "selection_score", "probability_source",
+    "fallback_used", "fallback_reason",
+    "prediction_snapshot_type", "lineup_status", "starter_status",
 ]
 
 # Tag applied (via the migration guards in append_predictions/resolve_predictions)
@@ -29,6 +50,25 @@ PREDICTION_COLUMNS = [
 # by a historical replay (see git_backtest.py) - distinguishes "we don't know
 # which logic produced this" from a real current-version live pick.
 LEGACY_MODEL_VERSION = "legacy"
+
+# Defaults applied when migrating a CSV written before provenance columns
+# existed - null/"legacy"/False rather than invented training metadata.
+_PROVENANCE_MIGRATION_DEFAULTS = {
+    "prediction_timestamp_utc": pd.NA,
+    "prediction_code_sha": "legacy",
+    "model_artifact_id": pd.NA,
+    "training_data_cutoff": pd.NA,
+    "feature_schema_hash": pd.NA,
+    "selection_logic_version": "legacy",
+    "selection_metric": pd.NA,
+    "selection_score": pd.NA,
+    "probability_source": pd.NA,
+    "fallback_used": pd.NA,
+    "fallback_reason": pd.NA,
+    "prediction_snapshot_type": "legacy",
+    "lineup_status": "legacy",
+    "starter_status": "legacy",
+}
 
 # The set of probability-like signals select_picks jointly gates on (each
 # must clear min_probability), whichever of them happen to be present on the
@@ -45,6 +85,36 @@ def _ensure_game_pk_column(df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
         df["game_pk"] = pd.NA
     return df
+
+
+def _ensure_provenance_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Migrate a frame written before provenance columns existed."""
+    df = df.copy()
+    for column, default in _PROVENANCE_MIGRATION_DEFAULTS.items():
+        if column not in df.columns:
+            df[column] = default
+    return df
+
+
+def _infer_starter_status(row_frame: pd.DataFrame) -> pd.Series:
+    """probable / missing / confirmed from optional schedule columns."""
+    if "starter_status" in row_frame.columns:
+        return row_frame["starter_status"]
+    if "probable_pitcher_key_mlbam" in row_frame.columns:
+        return row_frame["probable_pitcher_key_mlbam"].notna().map({True: "probable", False: "missing"})
+    if "Matchup_Hit_Probability" in row_frame.columns:
+        # Matchup ran (schedule present) but starter id wasn't carried onto
+        # the pick row - still a probable-starter slate, not a confirmed
+        # lineup announcement.
+        return pd.Series("probable", index=row_frame.index)
+    return pd.Series("missing", index=row_frame.index)
+
+
+def _infer_lineup_status(row_frame: pd.DataFrame) -> pd.Series:
+    if "lineup_status" in row_frame.columns:
+        return row_frame["lineup_status"]
+    # Historical batting-order consistency is not a confirmed today's lineup.
+    return pd.Series("unconfirmed", index=row_frame.index)
 
 
 def _diversify_second_pick(ranked: pd.DataFrame, rank_column: str, margin: float) -> pd.DataFrame:
@@ -99,6 +169,10 @@ def select_picks(
     teams_playing_today: set[str] | None = None,
     model_version: str = config.HITTER_MODEL_VERSION,
     same_game_diversification_margin: float = config.SAME_GAME_DIVERSIFICATION_MARGIN,
+    model_status: dict | None = None,
+    fallback_used: bool | None = None,
+    fallback_reason: str | None = None,
+    prediction_snapshot_type: str = "morning",
 ) -> pd.DataFrame:
     """Rank a computed hitters table (the wave.csv-equivalent output of
     hitters.assemble_hitters, optionally already merged with per-game
@@ -198,7 +272,15 @@ def select_picks(
     above. See `_diversify_second_pick`'s own docstring for the real
     rule. 0.0 (the live default) is the exact null hypothesis - today's
     unmodified single-column ranking, bit-for-bit.
+
+    Provenance kwargs (`model_status` / `fallback_used` / `fallback_reason`
+    / `prediction_snapshot_type`) do not change which players are selected -
+    they only stamp PROVENANCE_COLUMNS onto the returned rows so a logged
+    pick records exactly which selection metric ranked it, which column
+    supplied `predicted_probability`, and whether a model-load failure
+    forced the heuristic path.
     """
+    used_rank_metric = rank_metric or metric
     qualified = hitters[(hitters["PA_L"] + hitters["PA_R"]) >= min_plate_appearances].copy()
     if "avg_batting_order" in qualified.columns:
         qualified = qualified[qualified["avg_batting_order"] <= max_avg_batting_order]
@@ -224,9 +306,9 @@ def select_picks(
             if gate_column in qualified.columns:
                 qualified = qualified[qualified[gate_column] >= min_probability]
 
-    ranked = qualified.sort_values(rank_metric or metric, ascending=False).reset_index(drop=True)
+    ranked = qualified.sort_values(used_rank_metric, ascending=False).reset_index(drop=True)
     if "game_pk" in ranked.columns and same_game_diversification_margin > 0:
-        ranked = _diversify_second_pick(ranked, rank_metric or metric, same_game_diversification_margin)
+        ranked = _diversify_second_pick(ranked, used_rank_metric, same_game_diversification_margin)
     picks = ranked.head(top_n).reset_index(drop=True)
 
     picks["rank"] = picks.index + 1
@@ -243,8 +325,39 @@ def select_picks(
     picks["at_bats"] = pd.NA
     picks["model_version"] = model_version
 
-    return picks[PREDICTION_COLUMNS]
+    # Provenance stamps - selection/probability sources reflect the
+    # columns actually used above; model fields come from model_status
+    # when the caller inspected the artifact (pipeline.run).
+    if model_status is not None:
+        provenance = ml_models.provenance_fields_from_model_status(model_status)
+    else:
+        provenance = {
+            "model_artifact_id": pd.NA,
+            "training_data_cutoff": pd.NA,
+            "feature_schema_hash": pd.NA,
+            "fallback_used": False,
+            "fallback_reason": None,
+        }
+    if fallback_used is not None:
+        provenance["fallback_used"] = bool(fallback_used)
+        provenance["fallback_reason"] = fallback_reason
 
+    picks["prediction_timestamp_utc"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    picks["prediction_code_sha"] = ml_models.resolve_code_sha()
+    picks["model_artifact_id"] = provenance["model_artifact_id"]
+    picks["training_data_cutoff"] = provenance["training_data_cutoff"]
+    picks["feature_schema_hash"] = provenance["feature_schema_hash"]
+    picks["selection_logic_version"] = model_version
+    picks["selection_metric"] = used_rank_metric
+    picks["selection_score"] = picks[used_rank_metric] if used_rank_metric in picks.columns else pd.NA
+    picks["probability_source"] = metric
+    picks["fallback_used"] = provenance["fallback_used"]
+    picks["fallback_reason"] = provenance["fallback_reason"]
+    picks["prediction_snapshot_type"] = prediction_snapshot_type
+    picks["lineup_status"] = _infer_lineup_status(picks)
+    picks["starter_status"] = _infer_starter_status(picks)
+
+    return picks[PREDICTION_COLUMNS]
 
 def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     """Append `picks` to the predictions log at `log_path`, deduping on
@@ -280,6 +393,7 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     already-resolved backtest history exactly as before."""
     os.makedirs(os.path.dirname(log_path) or ".", exist_ok=True)
     picks = _ensure_game_pk_column(picks)
+    picks = _ensure_provenance_columns(picks)
     picks["date"] = pd.to_datetime(picks["date"])
 
     if os.path.exists(log_path):
@@ -287,6 +401,7 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
         if "model_version" not in existing.columns:
             existing["model_version"] = LEGACY_MODEL_VERSION  # migrate a log written before model_version existed
         existing = _ensure_game_pk_column(existing)
+        existing = _ensure_provenance_columns(existing)
         existing["date"] = pd.to_datetime(existing["date"])
         fresh_dates = set(picks["date"])
         resolved_dates = set(existing.loc[existing["at_bats"].notna(), "date"])
@@ -334,6 +449,7 @@ def resolve_predictions(log_path: str, completed_events_by_date: pd.DataFrame) -
     if "model_version" not in log.columns:
         log["model_version"] = LEGACY_MODEL_VERSION  # migrate a log written before model_version existed
     log = _ensure_game_pk_column(log)
+    log = _ensure_provenance_columns(log)
 
     events = completed_events_by_date.copy()
     events["had_hit"] = helpers.is_hit(events["events"])

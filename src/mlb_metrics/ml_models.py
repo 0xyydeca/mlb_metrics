@@ -17,6 +17,10 @@ CV protocol so GridSearchCV respects it automatically.
 """
 
 import os
+import subprocess
+import hashlib
+import json
+from datetime import datetime, timezone
 
 import joblib
 import numpy as np
@@ -233,19 +237,306 @@ def fit_probability_calibration(raw_probability: pd.Series, actual: pd.Series, m
 def save_model(model, path: str) -> None:
     """joblib.dump, creating parent directories as needed - matches this
     project's existing pattern of committing binary data artifacts to git
-    (data/raw/*.parquet, data/raw/lahman/*.parquet)."""
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    (data/raw/*.parquet, data/raw/lahman/*.parquet).
+
+    Prefer `save_model_bundle` for newly trained live models so prediction
+    rows can carry reproducible provenance. This plain dump remains for
+    older training scripts/tests and for callers that intentionally store
+    an estimator without metadata."""
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     joblib.dump(model, path)
 
 
 def load_model(path: str):
-    """Returns None (never raises) on any load failure - missing file,
-    corrupt file, a scikit-learn version mismatch - so callers can use the
-    same "fall back to the heuristic" pattern pipeline.run() already uses
-    for a failed schedule fetch, rather than crashing the daily build."""
-    if not os.path.exists(path):
+    """Returns the estimator (never raises) on any load failure - missing
+    file, corrupt file, a scikit-learn version mismatch - so callers can
+    use the same "fall back to the heuristic" pattern pipeline.run()
+    already uses for a failed schedule fetch, rather than crashing the
+    daily build.
+
+    Backward compatible with both legacy plain joblib estimators and the
+    newer model-bundle format (`save_model_bundle`): bundles are unwrapped
+    to their `.estimator` so existing `.predict` / `.predict_proba`
+    callers need no changes."""
+    payload = _safe_joblib_load(path)
+    if payload is None:
+        return None
+    if _is_bundle_payload(payload):
+        return payload.get("estimator")
+    return payload
+
+
+# ---------------------------------------------------------------------------
+# Model-bundle format (backward compatible with plain joblib estimators)
+# ---------------------------------------------------------------------------
+
+MODEL_BUNDLE_FORMAT = "mlb_metrics_model_bundle_v1"
+
+MODEL_BUNDLE_REQUIRED_FIELDS = (
+    "estimator",
+    "model_type",
+    "artifact_id",
+    "trained_at_utc",
+    "training_data_start",
+    "training_data_cutoff",
+    "feature_columns",
+    "feature_schema_hash",
+    "hyperparameters",
+    "calibration_method",
+    "training_code_sha",
+    "validation_summary",
+    "model_version",
+)
+
+
+def feature_schema_hash(feature_columns) -> str:
+    """Stable, reproducible hash of an ordered feature-column schema.
+    Column order matters (train/serve parity); names are taken as-is."""
+    columns = [str(c) for c in list(feature_columns)]
+    payload = "\n".join(columns).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def resolve_code_sha() -> str:
+    """Best-effort code SHA for provenance stamps.
+
+    Order: `GITHUB_SHA` (Actions) → `git rev-parse HEAD` (local checkout)
+    → `"unknown"`. Never raises - a missing `.git`, a failed subprocess,
+    or a non-git working tree all degrade to `"unknown"`."""
+    env_sha = os.environ.get("GITHUB_SHA")
+    if env_sha:
+        return str(env_sha).strip() or "unknown"
+
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            sha = (result.stdout or "").strip()
+            if sha:
+                return sha
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return "unknown"
+
+
+def compute_artifact_id(
+    *,
+    model_type: str,
+    model_version: str,
+    feature_schema_hash_value: str,
+    training_data_cutoff,
+    hyperparameters: dict | None = None,
+    calibration_method: str | None = None,
+    training_code_sha: str | None = None,
+) -> str:
+    """Stable artifact id derived only from reproducible metadata (not
+    wall-clock trained_at). Same inputs → same id across re-saves."""
+    canonical = {
+        "model_type": model_type,
+        "model_version": model_version,
+        "feature_schema_hash": feature_schema_hash_value,
+        "training_data_cutoff": None if training_data_cutoff is None else str(training_data_cutoff),
+        "hyperparameters": hyperparameters or {},
+        "calibration_method": calibration_method,
+        "training_code_sha": training_code_sha or "unknown",
+    }
+    payload = json.dumps(canonical, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()[:32]
+
+
+def _safe_joblib_load(path: str):
+    if not path or not os.path.exists(path):
         return None
     try:
         return joblib.load(path)
     except Exception:
         return None
+
+
+def _is_bundle_payload(payload) -> bool:
+    return isinstance(payload, dict) and payload.get("format") == MODEL_BUNDLE_FORMAT
+
+
+def build_model_bundle(
+    estimator,
+    *,
+    model_type: str,
+    model_version: str,
+    feature_columns,
+    training_data_start=None,
+    training_data_cutoff=None,
+    hyperparameters: dict | None = None,
+    calibration_method: str | None = None,
+    validation_summary: dict | None = None,
+    trained_at_utc: str | None = None,
+    training_code_sha: str | None = None,
+    artifact_id: str | None = None,
+) -> dict:
+    """Build a serializable model-bundle dict (not yet written to disk)."""
+    columns = list(feature_columns)
+    schema_hash = feature_schema_hash(columns)
+    code_sha = training_code_sha if training_code_sha is not None else resolve_code_sha()
+    artifact = artifact_id or compute_artifact_id(
+        model_type=model_type,
+        model_version=model_version,
+        feature_schema_hash_value=schema_hash,
+        training_data_cutoff=training_data_cutoff,
+        hyperparameters=hyperparameters,
+        calibration_method=calibration_method,
+        training_code_sha=code_sha,
+    )
+    return {
+        "format": MODEL_BUNDLE_FORMAT,
+        "estimator": estimator,
+        "model_type": model_type,
+        "artifact_id": artifact,
+        "trained_at_utc": trained_at_utc or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "training_data_start": None if training_data_start is None else str(training_data_start),
+        "training_data_cutoff": None if training_data_cutoff is None else str(training_data_cutoff),
+        "feature_columns": columns,
+        "feature_schema_hash": schema_hash,
+        "hyperparameters": hyperparameters or {},
+        "calibration_method": calibration_method,
+        "training_code_sha": code_sha,
+        "validation_summary": validation_summary or {},
+        "model_version": model_version,
+    }
+
+
+def save_model_bundle(estimator, path: str, **bundle_kwargs) -> dict:
+    """Save a newly trained model as a provenance-bearing bundle and
+    return the bundle dict that was written."""
+    bundle = build_model_bundle(estimator, **bundle_kwargs)
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    joblib.dump(bundle, path)
+    return bundle
+
+
+def load_model_bundle(path: str) -> dict | None:
+    """Load a model bundle (or wrap a legacy plain estimator). Returns
+    None when the file is missing/corrupt - never raises.
+
+    Legacy plain estimators are returned as a bundle-shaped dict with
+    `artifact_id="legacy"`, null training metadata, and the estimator in
+    place - so callers can branch on provenance without a second code path
+    for "was this a bundle." """
+    payload = _safe_joblib_load(path)
+    if payload is None:
+        return None
+    if _is_bundle_payload(payload):
+        return payload
+    # Legacy plain estimator - readable provenance defaults, no guessing
+    # at training windows or feature schemas that were never recorded.
+    return {
+        "format": MODEL_BUNDLE_FORMAT,
+        "estimator": payload,
+        "model_type": "legacy_plain_estimator",
+        "artifact_id": "legacy",
+        "trained_at_utc": None,
+        "training_data_start": None,
+        "training_data_cutoff": None,
+        "feature_columns": [],
+        "feature_schema_hash": None,
+        "hyperparameters": {},
+        "calibration_method": None,
+        "training_code_sha": "unknown",
+        "validation_summary": {},
+        "model_version": "legacy",
+        "is_legacy_plain_estimator": True,
+    }
+
+
+def inspect_model_path(path: str) -> dict:
+    """Status dict for a model path - always returns, never raises.
+
+    Distinguishes a missing/corrupt artifact (fallback_used=True with an
+    explicit reason) from a successfully loaded estimator/bundle so
+    prediction logs can record heuristic fallbacks that would otherwise
+    look identical to a normal no-model day."""
+    empty = {
+        "loaded": False,
+        "is_bundle": False,
+        "is_legacy_plain_estimator": False,
+        "fallback_used": True,
+        "fallback_reason": "missing_artifact",
+        "estimator": None,
+        "artifact_id": None,
+        "training_data_cutoff": None,
+        "feature_schema_hash": None,
+        "model_version": None,
+        "model_type": None,
+        "calibration_method": None,
+        "training_code_sha": None,
+        "feature_columns": [],
+        "validation_summary": {},
+    }
+    if not path or not os.path.exists(path):
+        return empty
+
+    try:
+        payload = joblib.load(path)
+    except Exception:
+        empty["fallback_reason"] = "load_error"
+        return empty
+
+    if _is_bundle_payload(payload):
+        return {
+            "loaded": payload.get("estimator") is not None,
+            "is_bundle": True,
+            "is_legacy_plain_estimator": False,
+            "fallback_used": payload.get("estimator") is None,
+            "fallback_reason": "empty_estimator" if payload.get("estimator") is None else None,
+            "estimator": payload.get("estimator"),
+            "artifact_id": payload.get("artifact_id"),
+            "training_data_cutoff": payload.get("training_data_cutoff"),
+            "feature_schema_hash": payload.get("feature_schema_hash"),
+            "model_version": payload.get("model_version"),
+            "model_type": payload.get("model_type"),
+            "calibration_method": payload.get("calibration_method"),
+            "training_code_sha": payload.get("training_code_sha"),
+            "feature_columns": list(payload.get("feature_columns") or []),
+            "validation_summary": payload.get("validation_summary") or {},
+        }
+
+    return {
+        "loaded": True,
+        "is_bundle": False,
+        "is_legacy_plain_estimator": True,
+        "fallback_used": False,
+        "fallback_reason": None,
+        "estimator": payload,
+        "artifact_id": "legacy",
+        "training_data_cutoff": None,
+        "feature_schema_hash": None,
+        "model_version": "legacy",
+        "model_type": "legacy_plain_estimator",
+        "calibration_method": None,
+        "training_code_sha": "unknown",
+        "feature_columns": [],
+        "validation_summary": {},
+    }
+
+
+def provenance_fields_from_model_status(status: dict | None) -> dict:
+    """Subset of inspect_model_path output stamped onto prediction rows."""
+    status = status or {}
+    if not status.get("loaded"):
+        return {
+            "model_artifact_id": pd.NA,
+            "training_data_cutoff": pd.NA,
+            "feature_schema_hash": pd.NA,
+            "fallback_used": True,
+            "fallback_reason": status.get("fallback_reason") or "missing_artifact",
+        }
+    return {
+        "model_artifact_id": status.get("artifact_id"),
+        "training_data_cutoff": status.get("training_data_cutoff"),
+        "feature_schema_hash": status.get("feature_schema_hash"),
+        "fallback_used": bool(status.get("fallback_used")),
+        "fallback_reason": status.get("fallback_reason"),
+    }

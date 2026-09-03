@@ -197,9 +197,26 @@ def predictive_model(train_pool: pd.DataFrame, holdout: pd.DataFrame) -> None:
     # been saved to GAME_PICK_WIN_PROBABILITY_MODEL_PATH.
     beats_heuristic = result["log_loss"] < heuristic_result["log_loss"]
     if beats_heuristic:
-        ml_models.save_model(search.best_estimator_, config.GAME_PICK_WIN_PROBABILITY_MODEL_PATH)
+        ml_models.save_model_bundle(
+            search.best_estimator_,
+            config.GAME_PICK_WIN_PROBABILITY_MODEL_PATH,
+            model_type="game_pick_win_probability",
+            model_version=config.GAME_PICK_MODEL_VERSION,
+            feature_columns=list(game_picks.GAME_PICK_FEATURE_COLUMNS),
+            training_data_start=train_pool["date"].min(),
+            training_data_cutoff=train_pool["date"].max(),
+            hyperparameters=dict(search.best_params_),
+            calibration_method=None,
+            validation_summary={
+                "holdout_log_loss": result["log_loss"],
+                "holdout_brier_score": result["brier_score"],
+                "holdout_roc_auc": result["roc_auc"],
+                "holdout_n": result["n"],
+                "heuristic_log_loss": heuristic_result["log_loss"],
+            },
+        )
         print(
-            f"  -> SAVED to {config.GAME_PICK_WIN_PROBABILITY_MODEL_PATH} "
+            f"  -> SAVED bundle to {config.GAME_PICK_WIN_PROBABILITY_MODEL_PATH} "
             f"(beats the home_win_probability heuristic - artifact only, NOT wired into live picks)"
         )
     else:

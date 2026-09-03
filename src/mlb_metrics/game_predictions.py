@@ -27,10 +27,11 @@ column always tells the whole story on its own.
 """
 
 import os
+from datetime import datetime, timezone
 
 import pandas as pd
 
-from mlb_metrics import config, game_picks, kelly, market_odds
+from mlb_metrics import config, game_picks, kelly, market_odds, ml_models
 
 GAME_PREDICTION_COLUMNS = [
     "date", "game_pk", "home_team", "away_team", "predicted_winner",
@@ -47,7 +48,38 @@ GAME_PREDICTION_COLUMNS = [
     # produced them isn't cheaply recomputable from a lightweight report
     # script. NaN for any game where `confidence` wasn't given/empty.
     "home_win_probability_pessimistic", "away_win_probability_pessimistic",
+    # Provenance - see PROVENANCE_COLUMNS.
+    "prediction_timestamp_utc", "prediction_code_sha", "model_artifact_id",
+    "training_data_cutoff", "feature_schema_hash", "selection_logic_version",
+    "selection_metric", "selection_score", "probability_source",
+    "fallback_used", "fallback_reason",
+    "prediction_snapshot_type", "lineup_status", "starter_status",
 ]
+
+PROVENANCE_COLUMNS = [
+    "prediction_timestamp_utc", "prediction_code_sha", "model_artifact_id",
+    "training_data_cutoff", "feature_schema_hash", "selection_logic_version",
+    "selection_metric", "selection_score", "probability_source",
+    "fallback_used", "fallback_reason",
+    "prediction_snapshot_type", "lineup_status", "starter_status",
+]
+
+_PROVENANCE_MIGRATION_DEFAULTS = {
+    "prediction_timestamp_utc": pd.NA,
+    "prediction_code_sha": "legacy",
+    "model_artifact_id": pd.NA,
+    "training_data_cutoff": pd.NA,
+    "feature_schema_hash": pd.NA,
+    "selection_logic_version": "legacy",
+    "selection_metric": pd.NA,
+    "selection_score": pd.NA,
+    "probability_source": pd.NA,
+    "fallback_used": pd.NA,
+    "fallback_reason": pd.NA,
+    "prediction_snapshot_type": "legacy",
+    "lineup_status": "legacy",
+    "starter_status": "legacy",
+}
 
 BET_ADVICE_COLUMNS = [
     "date", "game_pk", "side", "team", "opponent", "moneyline",
@@ -207,6 +239,29 @@ def advise_bets(
     return result
 
 
+def _ensure_provenance_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    for column, default in _PROVENANCE_MIGRATION_DEFAULTS.items():
+        if column not in df.columns:
+            df[column] = default
+    return df
+
+
+def _infer_game_starter_status(row_frame: pd.DataFrame) -> pd.Series:
+    if "starter_status" in row_frame.columns:
+        return row_frame["starter_status"]
+    home_col = "home_probable_pitcher_key_mlbam"
+    away_col = "away_probable_pitcher_key_mlbam"
+    if home_col in row_frame.columns and away_col in row_frame.columns:
+        both = row_frame[home_col].notna() & row_frame[away_col].notna()
+        either = row_frame[home_col].notna() | row_frame[away_col].notna()
+        status = pd.Series("missing", index=row_frame.index)
+        status = status.mask(either, "probable")
+        status = status.mask(both, "probable")
+        return status
+    return pd.Series("probable", index=row_frame.index)
+
+
 def select_game_picks(
     win_probabilities: pd.DataFrame,
     date,
@@ -217,6 +272,11 @@ def select_game_picks(
     kelly_fraction_multiplier: float = config.KELLY_FRACTION_MULTIPLIER,
     min_edge: float = config.KELLY_MIN_EDGE,
     confidence: pd.DataFrame | None = None,
+    model_status: dict | None = None,
+    fallback_used: bool | None = None,
+    fallback_reason: str | None = None,
+    probability_source: str = "home_win_probability",
+    prediction_snapshot_type: str = "morning",
 ) -> pd.DataFrame:
     """Turn game_picks.compute_game_win_probabilities' output into the
     day's logged games - EVERY scheduled game, not just the ones that clear
@@ -275,7 +335,13 @@ def select_game_picks(
     `kelly_fraction_multiplier` still applied on top of it (see that
     function's own docstring for why - "we need the units risked to not
     be arbitrary," and its 2026-08-26 follow-up on why the flat
-    multiplier isn't dropped once this pessimistic probability exists)."""
+    multiplier isn't dropped once this pessimistic probability exists).
+
+    Provenance kwargs (`model_status` / `fallback_used` / `fallback_reason`
+    / `probability_source` / `prediction_snapshot_type`) do not change which
+    games are logged or how bets are sized - they only stamp
+    PROVENANCE_COLUMNS onto returned rows.
+    """
     df = win_probabilities.copy()
     favors_home = df["home_win_probability"] >= 0.5
     df["predicted_winner"] = df["home_team"].where(favors_home, df["away_team"])
@@ -350,6 +416,37 @@ def select_game_picks(
 
     picks["bet_profit_units"] = pd.NA
 
+    if model_status is not None:
+        provenance = ml_models.provenance_fields_from_model_status(model_status)
+    else:
+        provenance = {
+            "model_artifact_id": pd.NA,
+            "training_data_cutoff": pd.NA,
+            "feature_schema_hash": pd.NA,
+            "fallback_used": False,
+            "fallback_reason": None,
+        }
+    if fallback_used is not None:
+        provenance["fallback_used"] = bool(fallback_used)
+        provenance["fallback_reason"] = fallback_reason
+
+    picks["prediction_timestamp_utc"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    picks["prediction_code_sha"] = ml_models.resolve_code_sha()
+    picks["model_artifact_id"] = provenance["model_artifact_id"]
+    picks["training_data_cutoff"] = provenance["training_data_cutoff"]
+    picks["feature_schema_hash"] = provenance["feature_schema_hash"]
+    picks["selection_logic_version"] = model_version
+    # Game picks log the full slate (not a top-N rank). The score that
+    # determines the predicted side is predicted_probability itself.
+    picks["selection_metric"] = "predicted_probability"
+    picks["selection_score"] = picks["predicted_probability"]
+    picks["probability_source"] = probability_source
+    picks["fallback_used"] = provenance["fallback_used"]
+    picks["fallback_reason"] = provenance["fallback_reason"]
+    picks["prediction_snapshot_type"] = prediction_snapshot_type
+    picks["lineup_status"] = "unconfirmed"
+    picks["starter_status"] = _infer_game_starter_status(picks)
+
     return picks[GAME_PREDICTION_COLUMNS]
 
 
@@ -389,8 +486,11 @@ def append_game_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
             # own backfill above).
             existing["home_win_probability_pessimistic"] = pd.NA
             existing["away_win_probability_pessimistic"] = pd.NA
+        existing = _ensure_provenance_columns(existing)
+        picks = _ensure_provenance_columns(picks)
         combined = pd.concat([picks, existing], ignore_index=True)
     else:
+        picks = _ensure_provenance_columns(picks)
         combined = picks
 
     combined = combined.drop_duplicates(subset=["date", "game_pk", "metric"], keep="last")
@@ -440,6 +540,7 @@ def resolve_game_predictions(log_path: str, fetch_results_fn, as_of_date) -> pd.
         log["bet_units"] = 0.0
         for col in ("bet_side", "bet_team", "bet_moneyline", "bet_stake_fraction", "bet_profit_units"):
             log[col] = pd.NA
+    log = _ensure_provenance_columns(log)
     # A log with no resolved games yet round-trips actual_winner as an
     # all-null float64 column (empty strings -> NaN on read) - cast back to
     # object so assigning a team abbreviation string into it doesn't raise.

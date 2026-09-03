@@ -182,9 +182,25 @@ def main():
         final_calibrator = ml_models.fit_probability_calibration(
             rows["home_win_probability"], rows["Home_Won"], method=best_method
         )
-        ml_models.save_model(final_calibrator, config.GAME_PICK_CALIBRATION_MODEL_PATH)
+        ml_models.save_model_bundle(
+            final_calibrator,
+            config.GAME_PICK_CALIBRATION_MODEL_PATH,
+            model_type="game_pick_calibration",
+            model_version=config.GAME_PICK_MODEL_VERSION,
+            feature_columns=["home_win_probability"],
+            training_data_start=train_pool["date"].min(),
+            training_data_cutoff=train_pool["date"].max(),
+            hyperparameters={},
+            calibration_method=best_method,
+            validation_summary={
+                "holdout_log_loss": calibrated_result["log_loss"],
+                "holdout_brier_score": calibrated_result["brier_score"],
+                "raw_log_loss": raw_result["log_loss"],
+                "holdout_n": calibrated_result["n"],
+            },
+        )
         print(
-            f"\n  -> SAVED to {config.GAME_PICK_CALIBRATION_MODEL_PATH} "
+            f"\n  -> SAVED bundle to {config.GAME_PICK_CALIBRATION_MODEL_PATH} "
             f"(beats the raw heuristic on the real holdout - refit on the FULL log "
             f"before saving, same as train_game_pick_model.py's own pattern; wired live via "
             f"game_picks.apply_calibration)"

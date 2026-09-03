@@ -20,7 +20,7 @@ import pandas as pd
 
 from mlb_metrics import (
     config, data, dfs_ml, evaluation, game_evaluation, game_picks, game_predictions,
-    hitters, lineup, market_odds, matchup, pitchers, predictions, schedule, teams,
+    hitters, lineup, market_odds, matchup, ml_models, pitchers, predictions, schedule, teams,
 )
 
 
@@ -325,6 +325,9 @@ def run(
         # this, so DAILY_PICK_MIN_PROBABILITY's calibration is unaffected.
         pick_pool = outputs["wave"]
         rank_metric = "Approach"
+        hitter_model_status = None
+        hitter_fallback_used = False
+        hitter_fallback_reason = None
         if hitter_schedule_df is not None and not hitter_schedule_df.empty:
             matchup_probability = matchup.compute_matchup_hit_probability(
                 outputs["wave"], outputs["pave"], outputs["confidence"], hitter_schedule_df
@@ -340,6 +343,7 @@ def run(
             hitter_features = dfs_ml.build_hitter_features(
                 outputs["wave"], outputs["pave"], outputs["confidence"], hitter_schedule_df, matchup_probability
             )
+            hitter_model_status = ml_models.inspect_model_path(config.HITTER_HIT_PROBABILITY_MODEL_PATH)
             model_predictions = dfs_ml.predict_hitter_hit_probability(hitter_features)
             if not model_predictions.empty:
                 # Guard on non-empty BEFORE merging: select_picks' shortlist
@@ -350,12 +354,29 @@ def run(
                 pick_pool = pick_pool.merge(
                     model_predictions, on=["key_mlbam", "game_pk"], how="left"
                 )
+                hitter_fallback_used = False
+                hitter_fallback_reason = None
+            else:
+                # Model shortlist did not engage - record why so a load
+                # failure is not indistinguishable from a normal heuristic day.
+                hitter_fallback_used = True
+                hitter_fallback_reason = (
+                    hitter_model_status.get("fallback_reason")
+                    if not hitter_model_status.get("loaded")
+                    else "empty_predictions"
+                )
 
             if schedule_df is not None and not schedule_df.empty:
                 write_probable_pitchers_export(schedule_df, outputs["pave"], output_dir)
 
         game_hit_picks = predictions.select_picks(
-            pick_pool, as_of_date, rank_metric=rank_metric, teams_playing_today=teams_playing_today
+            pick_pool,
+            as_of_date,
+            rank_metric=rank_metric,
+            teams_playing_today=teams_playing_today,
+            model_status=hitter_model_status,
+            fallback_used=hitter_fallback_used,
+            fallback_reason=hitter_fallback_reason,
         )
         predictions.append_predictions(game_hit_picks, predictions_log_path)
 
@@ -370,7 +391,16 @@ def run(
             # one has been trained and cleared its own real-holdout bar
             # (see game_picks.apply_calibration's own docstring) - a no-op
             # returning win_probabilities completely unchanged otherwise.
+            calibration_status = ml_models.inspect_model_path(config.GAME_PICK_CALIBRATION_MODEL_PATH)
             win_probabilities = game_picks.apply_calibration(win_probabilities)
+            if calibration_status.get("loaded"):
+                game_fallback_used = False
+                game_fallback_reason = None
+                game_probability_source = "calibrated_home_win_probability"
+            else:
+                game_fallback_used = True
+                game_fallback_reason = calibration_status.get("fallback_reason") or "missing_artifact"
+                game_probability_source = "home_win_probability"
             # A real market-odds fetch failure must never suppress real
             # game-pick logging - deliberately a separate try/except from
             # schedule_games_df's own above, not shared with it. Quant-
@@ -388,6 +418,10 @@ def run(
                 as_of_date,
                 market_probabilities=market_probabilities,
                 confidence=outputs["confidence"],
+                model_status=calibration_status,
+                fallback_used=game_fallback_used,
+                fallback_reason=game_fallback_reason,
+                probability_source=game_probability_source,
             )
             game_predictions.append_game_predictions(todays_game_picks, game_predictions_log_path)
 

@@ -668,3 +668,89 @@ def test_select_picks_carries_game_pk_when_present():
 
     assert picks.iloc[0]["game_pk"] == 824651
     assert list(picks.columns) == predictions.PREDICTION_COLUMNS
+
+
+def test_select_picks_stamps_selection_and_probability_provenance():
+    hitters = _hitters([(1, 0, 40, 0.9), (2, 0, 40, 0.8)])
+    hitters["Matchup_Approach"] = [0.5, 0.7]
+
+    picks = predictions.select_picks(
+        hitters, "2026-06-20", top_n=1, min_plate_appearances=30, rank_metric="Matchup_Approach"
+    )
+
+    row = picks.iloc[0]
+    assert row["key_mlbam"] == 2
+    assert row["selection_metric"] == "Matchup_Approach"
+    assert row["selection_score"] == pytest.approx(0.7)
+    assert row["probability_source"] == "Game_Hit_Probability"
+    assert row["predicted_probability"] == pytest.approx(0.8)
+    assert row["selection_logic_version"] == config.HITTER_MODEL_VERSION
+    assert row["prediction_snapshot_type"] == "morning"
+    assert row["lineup_status"] == "unconfirmed"
+    assert row["fallback_used"] == False  # noqa: E712
+    assert pd.isna(row["fallback_reason"]) or row["fallback_reason"] is None
+    assert row["prediction_code_sha"]  # non-empty
+
+
+def test_select_picks_records_heuristic_fallback_from_model_load_failure():
+    hitters = _hitters([(1, 0, 40, 0.9)])
+    status = {
+        "loaded": False,
+        "fallback_used": True,
+        "fallback_reason": "missing_artifact",
+        "artifact_id": None,
+        "training_data_cutoff": None,
+        "feature_schema_hash": None,
+    }
+
+    picks = predictions.select_picks(
+        hitters, "2026-06-20", top_n=1, min_plate_appearances=30,
+        model_status=status, fallback_used=True, fallback_reason="missing_artifact",
+    )
+
+    assert picks.iloc[0]["fallback_used"] == True  # noqa: E712
+    assert picks.iloc[0]["fallback_reason"] == "missing_artifact"
+    assert pd.isna(picks.iloc[0]["model_artifact_id"])
+
+
+def test_select_picks_records_model_artifact_metadata_when_loaded():
+    hitters = _hitters([(1, 0, 40, 0.9)])
+    hitters["Model_Hit_Probability"] = 0.85
+    status = {
+        "loaded": True,
+        "fallback_used": False,
+        "fallback_reason": None,
+        "artifact_id": "abc123",
+        "training_data_cutoff": "2026-07-01",
+        "feature_schema_hash": "deadbeef",
+    }
+
+    picks = predictions.select_picks(
+        hitters, "2026-06-20", top_n=1, min_plate_appearances=30, model_status=status,
+    )
+
+    assert picks.iloc[0]["model_artifact_id"] == "abc123"
+    assert picks.iloc[0]["training_data_cutoff"] == "2026-07-01"
+    assert picks.iloc[0]["feature_schema_hash"] == "deadbeef"
+    assert picks.iloc[0]["fallback_used"] == False  # noqa: E712
+
+
+def test_append_predictions_migrates_provenance_columns_on_legacy_csv(tmp_path):
+    log_path = str(tmp_path / "predictions.csv")
+    legacy = pd.DataFrame([
+        {"date": "2026-06-18", "key_mlbam": 1, "name": "A", "rank": 1, "predicted_probability": 0.9,
+         "metric": "Game_Hit_Probability", "actual_hit": 1, "at_bats": 1, "model_version": "legacy"},
+    ])
+    legacy.to_csv(log_path, index=False)
+
+    new_pick = predictions.select_picks(_hitters([(2, 0, 40, 0.9)]), "2026-06-19", top_n=1, min_plate_appearances=30)
+    combined = predictions.append_predictions(new_pick, log_path)
+
+    assert set(predictions.PROVENANCE_COLUMNS).issubset(combined.columns)
+    row_18 = combined[combined["date"] == "2026-06-18"].iloc[0]
+    assert row_18["prediction_code_sha"] == "legacy"
+    assert row_18["selection_logic_version"] == "legacy"
+    assert row_18["prediction_snapshot_type"] == "legacy"
+    row_19 = combined[combined["date"] == "2026-06-19"].iloc[0]
+    assert row_19["prediction_snapshot_type"] == "morning"
+    assert pd.isna(row_19["actual_hit"])

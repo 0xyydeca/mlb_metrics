@@ -210,6 +210,115 @@ def test_save_and_load_model_round_trips(tmp_path):
     assert loaded.predict([[4]])[0] == pytest.approx(model.predict([[4]])[0])
 
 
+def test_load_model_unwraps_bundle_to_estimator(tmp_path):
+    model = Ridge(alpha=2.0).fit([[1], [2]], [2, 4])
+    path = str(tmp_path / "bundle.joblib")
+    ml_models.save_model_bundle(
+        model, path,
+        model_type="test", model_version="v1",
+        feature_columns=["x"], training_data_start="2026-01-01", training_data_cutoff="2026-06-01",
+        hyperparameters={"alpha": 2.0}, calibration_method=None,
+        validation_summary={"mae": 0.1}, training_code_sha="abc123",
+    )
+
+    loaded = ml_models.load_model(path)
+    assert loaded.alpha == 2.0
+    assert loaded.predict([[3]])[0] == pytest.approx(model.predict([[3]])[0])
+
+
+def test_load_legacy_plain_estimator_still_works(tmp_path):
+    path = str(tmp_path / "legacy.joblib")
+    plain = Ridge(alpha=1.5).fit([[1], [2]], [1, 2])
+    joblib = __import__("joblib")
+    joblib.dump(plain, path)
+
+    loaded = ml_models.load_model(path)
+    assert loaded.alpha == 1.5
+
+    bundle = ml_models.load_model_bundle(path)
+    assert bundle["artifact_id"] == "legacy"
+    assert bundle["is_legacy_plain_estimator"] is True
+    assert bundle["estimator"].alpha == 1.5
+
+
+def test_save_and_load_model_bundle_round_trips_metadata(tmp_path):
+    model = Ridge(alpha=3.0).fit([[1], [2]], [2, 4])
+    path = str(tmp_path / "bundle.joblib")
+    saved = ml_models.save_model_bundle(
+        model, path,
+        model_type="dfs_hitter",
+        model_version="v1",
+        feature_columns=["a", "b"],
+        training_data_start="2026-03-01",
+        training_data_cutoff="2026-07-01",
+        hyperparameters={"alpha": 3.0},
+        calibration_method="none",
+        validation_summary={"n": 10},
+        training_code_sha="deadbeef",
+    )
+
+    loaded = ml_models.load_model_bundle(path)
+    assert loaded["format"] == ml_models.MODEL_BUNDLE_FORMAT
+    assert loaded["model_type"] == "dfs_hitter"
+    assert loaded["model_version"] == "v1"
+    assert loaded["feature_columns"] == ["a", "b"]
+    assert loaded["feature_schema_hash"] == ml_models.feature_schema_hash(["a", "b"])
+    assert loaded["training_data_cutoff"] == "2026-07-01"
+    assert loaded["training_code_sha"] == "deadbeef"
+    assert loaded["artifact_id"] == saved["artifact_id"]
+    assert loaded["estimator"].alpha == 3.0
+
+
+def test_feature_schema_hash_is_deterministic_and_order_sensitive():
+    a = ml_models.feature_schema_hash(["WAVE", "PA_L", "PA_R"])
+    b = ml_models.feature_schema_hash(["WAVE", "PA_L", "PA_R"])
+    c = ml_models.feature_schema_hash(["PA_L", "WAVE", "PA_R"])
+    assert a == b
+    assert a != c
+    assert len(a) == 64
+
+
+def test_compute_artifact_id_is_stable_for_same_metadata():
+    kwargs = dict(
+        model_type="hitter_hit_probability",
+        model_version="v4",
+        feature_schema_hash_value=ml_models.feature_schema_hash(["a", "b"]),
+        training_data_cutoff="2026-07-01",
+        hyperparameters={"C": 1.0},
+        calibration_method="isotonic",
+        training_code_sha="abc",
+    )
+    assert ml_models.compute_artifact_id(**kwargs) == ml_models.compute_artifact_id(**kwargs)
+
+
+def test_inspect_model_path_missing_and_corrupt(tmp_path):
+    missing = ml_models.inspect_model_path(str(tmp_path / "nope.joblib"))
+    assert missing["loaded"] is False
+    assert missing["fallback_used"] is True
+    assert missing["fallback_reason"] == "missing_artifact"
+
+    corrupt = tmp_path / "corrupt.joblib"
+    corrupt.write_text("not a real joblib file")
+    bad = ml_models.inspect_model_path(str(corrupt))
+    assert bad["loaded"] is False
+    assert bad["fallback_reason"] == "load_error"
+
+
+def test_resolve_code_sha_uses_github_sha_env(monkeypatch):
+    monkeypatch.setenv("GITHUB_SHA", "actionsha123")
+    assert ml_models.resolve_code_sha() == "actionsha123"
+
+
+def test_resolve_code_sha_unknown_when_git_unavailable(monkeypatch):
+    monkeypatch.delenv("GITHUB_SHA", raising=False)
+
+    def raise_os_error(*args, **kwargs):
+        raise OSError("no git")
+
+    monkeypatch.setattr(ml_models.subprocess, "run", raise_os_error)
+    assert ml_models.resolve_code_sha() == "unknown"
+
+
 def test_load_model_missing_file_returns_none(tmp_path):
     assert ml_models.load_model(str(tmp_path / "does_not_exist.joblib")) is None
 
