@@ -1,15 +1,25 @@
 """Score scripts/backtest_pick_strategies.py's output: for each candidate
 strategy, the PRIMARY comparison metric is per-pick hit rate (with a real
 Wilson confidence interval and a binomial significance test against a
-coin flip) among "recommended" picks - top DAILY_PICK_MAX picks/day whose
-real combined probability clears DAILY_PICK_MIN_PROBABILITY, the exact
-same real, currently-live bar evaluation.graded_daily_picks/the dashboard
-use. Real Beat the Streak longest/current streak is reported too, but as
-a SECONDARY/illustrative stat only - a single extreme-value number that a
-lucky or unlucky stretch can swing a lot, unsuitable as the primary
-comparison target for a bias-resistant test (see this project's own
-config.py precedent of preferring Wilson CIs over point-in-time streak
-records wherever real statistical significance is at stake).
+coin flip) among the top DAILY_PICK_MAX picks/day - unconditional, no
+extra probability floor. Real Beat the Streak longest/current streak
+(also computed unconditionally) is reported too, but as a SECONDARY/
+illustrative stat only - a single extreme-value number that a lucky or
+unlucky stretch can swing a lot, unsuitable as the primary comparison
+target for a bias-resistant test (see this project's own config.py
+precedent of preferring Wilson CIs over point-in-time streak records
+wherever real statistical significance is at stake).
+
+NOT gated on DAILY_PICK_MIN_PROBABILITY (0.77), unlike the live
+dashboard's "recommended" grade: confirmed empirically against this
+backtest's own output that the row-wise mean of predicted_probability/
+probability/Matchup_Hit_Probability never once reaches 0.77 across all
+2160 logged picks (max observed: 0.75) - that bar was calibrated
+alongside the ML shortlist (Model_Hit_Probability), which is deliberately
+excluded from every candidate here for leak-safety (see
+backtest_pick_strategies.py's module docstring). Applying an
+ML-calibrated bar to a no-ML backtest would silently zero out every
+candidate's "recommended" pool rather than measure anything real.
 
 The full backtested window is also split into first-half/second-half so
 an apparent winner can be checked for holding up in BOTH halves
@@ -36,31 +46,31 @@ STRATEGIES = {
 
 
 def _score_slice(df: pd.DataFrame, model_version: str) -> dict:
-    recommended = evaluation._recommended_picks(
-        df, metric="Game_Hit_Probability", max_picks=config.DAILY_PICK_MAX,
-        min_probability=config.DAILY_PICK_MIN_PROBABILITY, model_version=model_version,
-    )
-    resolved = evaluation.resolved_only(recommended)
+    subset = df[df["model_version"] == model_version]
+    top_picks = subset[subset["rank"] <= config.DAILY_PICK_MAX]
+    resolved = evaluation.resolved_only(top_picks)
     n = len(resolved)
     successes = int(resolved["actual_hit"].sum()) if n else 0
     hit_rate = successes / n if n else float("nan")
     lo, hi = evaluation.wilson_confidence_interval(successes, n)
     p_value = evaluation.binomial_significance(successes, n, null_probability=0.5)
 
-    day_success_rate = evaluation.top_k_hit_rate(df[df["model_version"] == model_version], k=config.DAILY_PICK_MAX, require_all=True)
-    brier = evaluation.brier_score(evaluation._filter_model_version(df, model_version))
+    day_success_rate = evaluation.top_k_hit_rate(subset, k=config.DAILY_PICK_MAX, require_all=True)
+    brier = evaluation.brier_score(subset)
 
+    # Unconditional (min_probability=0.0, the function's own default) -
+    # every day's top DAILY_PICK_MAX picks count toward the streak, since
+    # DAILY_PICK_MIN_PROBABILITY isn't a meaningful bar without the ML
+    # shortlist (see module docstring).
     longest = evaluation.longest_streak(
-        df, metric="Game_Hit_Probability", max_picks=config.DAILY_PICK_MAX,
-        min_probability=config.DAILY_PICK_MIN_PROBABILITY, model_version=model_version,
+        df, metric="Game_Hit_Probability", max_picks=config.DAILY_PICK_MAX, model_version=model_version,
     )
     current = evaluation.current_streak(
-        df, metric="Game_Hit_Probability", max_picks=config.DAILY_PICK_MAX,
-        min_probability=config.DAILY_PICK_MIN_PROBABILITY, model_version=model_version,
+        df, metric="Game_Hit_Probability", max_picks=config.DAILY_PICK_MAX, model_version=model_version,
     )
 
     return {
-        "n_recommended_picks": n,
+        "n_top_picks": n,
         "hit_rate": hit_rate,
         "wilson_ci_low": lo,
         "wilson_ci_high": hi,
