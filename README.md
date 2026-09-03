@@ -4394,7 +4394,7 @@ time. `daily_update.yml`'s GitHub Actions runner is UTC, so a manual
 3:45am UTC, already past UTC midnight) would otherwise publish tomorrow's
 slate a day early for an Arizona audience. Same reasoning applies to
 `scripts/build_dfs_rankings.py`/`build_hitter_hit_predictions.py`'s own
-`--as-of-date` defaults.
+`--as-of-date` defaults. :)
 
 ## Tests
 
