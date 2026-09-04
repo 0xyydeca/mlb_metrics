@@ -95,6 +95,140 @@ BET_ADVICE_COLUMNS = [
 LEGACY_MODEL_VERSION = "legacy"
 
 
+def _required_advise_bets_columns(frame: pd.DataFrame) -> None:
+    required = (
+        "game_pk",
+        "home_team",
+        "away_team",
+        "predicted_winner",
+        "predicted_probability",
+    )
+    missing = [c for c in required if c not in frame.columns]
+    if missing:
+        raise KeyError(
+            "advise_bets requires canonical columns before sizing bets; "
+            f"missing {missing}. Available columns: {list(frame.columns)}"
+        )
+
+
+def _validate_market_teams_agree_with_picks(
+    picks: pd.DataFrame,
+    market: pd.DataFrame,
+) -> None:
+    """Fail closed when market teams disagree with picks for the same game_pk."""
+    if picks is None or market is None or picks.empty or market.empty:
+        return
+    if "game_pk" not in picks.columns or "game_pk" not in market.columns:
+        return
+    if not {"home_team", "away_team"}.issubset(picks.columns):
+        return
+    if not {"home_team", "away_team"}.issubset(market.columns):
+        return
+
+    left = (
+        picks.dropna(subset=["game_pk"])[["game_pk", "home_team", "away_team"]]
+        .drop_duplicates("game_pk", keep="last")
+        .copy()
+    )
+    right = (
+        market.dropna(subset=["game_pk"])[["game_pk", "home_team", "away_team"]]
+        .drop_duplicates("game_pk", keep="last")
+        .copy()
+    )
+    compared = left.merge(right, on="game_pk", how="inner", suffixes=("_pick", "_market"))
+    if compared.empty:
+        return
+    mismatch = compared[
+        (compared["home_team_pick"].astype(str) != compared["home_team_market"].astype(str))
+        | (compared["away_team_pick"].astype(str) != compared["away_team_market"].astype(str))
+    ]
+    if not mismatch.empty:
+        samples = mismatch.head(5).to_dict(orient="records")
+        raise ValueError(
+            "Market team mapping disagrees with game-pick teams for the same "
+            f"game_pk (n={len(mismatch)}). Refusing to size bets on a bad match. "
+            f"Examples: {samples}"
+        )
+
+
+def _market_value_columns_for_game_pk_merge(market: pd.DataFrame) -> list[str]:
+    """Odds / snapshot columns safe to attach on game_pk (never team labels)."""
+    return [
+        c for c in (
+            "game_pk",
+            "home_moneyline",
+            "away_moneyline",
+            "market_home_win_probability",
+            "market_odds_snapshot_id",
+            "market_odds_snapshot_role",
+            "market_provider_event_id",
+            "market_sportsbook",
+            "market_captured_at_utc",
+            "market_home_moneyline",
+            "market_away_moneyline",
+            "snapshot_id",
+            "snapshot_role",
+            "provider_event_id",
+            "sportsbook",
+            "captured_at_utc",
+        )
+        if c in market.columns
+    ]
+
+
+def _merge_market_on_game_pk(
+    picks: pd.DataFrame,
+    market: pd.DataFrame,
+    *,
+    value_columns: list[str] | None = None,
+) -> pd.DataFrame:
+    """Left-merge market values onto picks by game_pk without team suffix collisions.
+
+    Game-pick ``home_team`` / ``away_team`` remain the canonical unsuffixed
+    columns. Market team columns are validated for agreement then discarded
+    before the merge so pandas never invents ``home_team_x`` / ``home_team_y``.
+    """
+    if market is None or market.empty or "game_pk" not in market.columns:
+        return picks.copy()
+
+    _validate_market_teams_agree_with_picks(picks, market)
+
+    cols = value_columns if value_columns is not None else _market_value_columns_for_game_pk_merge(market)
+    # Never merge team labels on a game_pk join — picks own those columns.
+    cols = [c for c in cols if c not in ("home_team", "away_team") and c in market.columns]
+    if "game_pk" not in cols:
+        cols = ["game_pk", *cols]
+    # Preserve order while dropping duplicates (attach lists often re-include game_pk).
+    deduped = []
+    seen = set()
+    for c in cols:
+        if c not in seen:
+            deduped.append(c)
+            seen.add(c)
+    cols = deduped
+
+    market_by_pk = (
+        market.dropna(subset=["game_pk"])[cols]
+        .drop_duplicates(subset=["game_pk"], keep="last")
+    )
+    drop_from_picks = [c for c in cols if c != "game_pk" and c in picks.columns]
+    base = picks.drop(columns=drop_from_picks, errors="ignore")
+    merged = base.merge(market_by_pk, on="game_pk", how="left")
+
+    # Hard guard: never silently ship suffix collisions downstream.
+    suffix_hits = [
+        c for c in merged.columns
+        if c.endswith("_x") or c.endswith("_y")
+    ]
+    team_suffix = [c for c in suffix_hits if c.startswith("home_team") or c.startswith("away_team")]
+    if team_suffix:
+        raise RuntimeError(
+            "game_pk market merge produced team-column suffixes "
+            f"{team_suffix}; canonical home_team/away_team must be preserved."
+        )
+    return merged
+
+
 def advise_bets(
     todays_picks: pd.DataFrame,
     market: pd.DataFrame,
@@ -179,6 +313,8 @@ def advise_bets(
     that date is scaled down proportionally so the day's total lands
     exactly at the cap, preserving each bet's relative size rather than
     favoring whichever game happened to be evaluated first."""
+    _required_advise_bets_columns(todays_picks)
+
     # Prefer game_pk join when the market frame carries matched game_pk
     # (timestamped odds snapshots) — avoids doubleheader collisions.
     if (
@@ -186,19 +322,17 @@ def advise_bets(
         and market["game_pk"].notna().any()
         and "game_pk" in todays_picks.columns
     ):
-        market_by_pk = market.dropna(subset=["game_pk"]).drop_duplicates(subset=["game_pk"], keep="last")
-        pk_cols = [
-            c for c in (
-                "game_pk", "home_moneyline", "away_moneyline",
-                "market_home_win_probability", "home_team", "away_team",
-            )
-            if c in market_by_pk.columns
-        ]
-        base = todays_picks.drop(
-            columns=[c for c in ("home_moneyline", "away_moneyline", "market_home_win_probability") if c in todays_picks.columns],
-            errors="ignore",
+        merged = _merge_market_on_game_pk(
+            todays_picks,
+            market,
+            value_columns=[
+                c for c in (
+                    "game_pk", "home_moneyline", "away_moneyline",
+                    "market_home_win_probability",
+                )
+                if c in market.columns
+            ],
         )
-        merged = base.merge(market_by_pk[pk_cols], on="game_pk", how="left")
     else:
         # Drop moneylines already on picks so a second merge (select_game_picks
         # already attached odds) does not create home_moneyline_x/_y ghosts.
@@ -208,6 +342,8 @@ def advise_bets(
         )
         money_cols = [c for c in ("home_team", "away_team", "home_moneyline", "away_moneyline") if c in market.columns]
         merged = base.merge(market[money_cols], on=["home_team", "away_team"], how="left")
+
+    _required_advise_bets_columns(merged)
 
     rows = []
     for _, pick in merged.iterrows():
@@ -443,17 +579,26 @@ def select_game_picks(
                 "market_home_win_probability", "market_odds_snapshot_id", "market_odds_snapshot_role",
                 "market_provider_event_id", "market_sportsbook", "market_captured_at_utc",
                 "market_home_moneyline", "market_away_moneyline",
-                "home_moneyline", "away_moneyline", "game_pk", "home_team", "away_team",
+                "home_moneyline", "away_moneyline", "game_pk",
             )
             if c in market.columns
         ]
         if "game_pk" in market.columns and market["game_pk"].notna().any():
-            mkt = market.dropna(subset=["game_pk"])[attach_cols].drop_duplicates("game_pk", keep="last")
-            picks = picks.drop(columns=[c for c in attach_cols if c in picks.columns and c != "game_pk"], errors="ignore")
-            picks = picks.merge(mkt, on="game_pk", how="left")
+            # Keep pick-frame home_team/away_team canonical; validate market
+            # teams then attach odds/snapshot columns on game_pk only.
+            picks = _merge_market_on_game_pk(
+                picks,
+                market,
+                value_columns=["game_pk", *attach_cols],
+            )
         else:
             key_cols = ["home_team", "away_team"]
-            mkt = market[attach_cols].drop_duplicates(key_cols, keep="last")
+            # Team-keyed path: market may still carry home_team/away_team as keys.
+            attach_with_teams = [
+                c for c in (*attach_cols, "home_team", "away_team")
+                if c in market.columns
+            ]
+            mkt = market[attach_with_teams].drop_duplicates(key_cols, keep="last")
             picks = picks.drop(
                 columns=[c for c in attach_cols if c in picks.columns and c not in key_cols],
                 errors="ignore",

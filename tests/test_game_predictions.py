@@ -715,6 +715,104 @@ def test_advise_bets_falls_back_to_flat_multiplier_when_pessimistic_columns_are_
     assert recs.iloc[0]["kelly_stake_fraction"] == pytest.approx(expected_stake, abs=1e-9)
 
 
+def test_advise_bets_game_pk_market_merge_preserves_canonical_home_team():
+    """Production Daily Update regression: snapshot market carries game_pk +
+    home_team/away_team; merge must not invent home_team_x/home_team_y."""
+    picks = pd.DataFrame([_bet_pick_row(824424, "CLE", "DET", "CLE", 0.70)])
+    market = pd.DataFrame([{
+        "game_pk": 824424,
+        "home_team": "CLE",
+        "away_team": "DET",
+        "home_moneyline": -150,
+        "away_moneyline": 130,
+        "market_home_win_probability": 0.58,
+        "snapshot_id": "odds_prod",
+        "snapshot_role": "morning",
+        "source_status": "ok",
+        "sportsbook": "DraftKings",
+        "captured_at_utc": "2026-09-04T10:23:00Z",
+    }])
+
+    recs = game_predictions.advise_bets(picks, market, kelly_fraction_multiplier=1.0, min_edge=0.02)
+
+    assert len(recs) == 1
+    assert recs.iloc[0]["team"] == "CLE"
+    assert recs.iloc[0]["side"] == "home"
+
+
+def test_select_game_picks_game_pk_market_keeps_canonical_teams_no_suffixes():
+    """Exact production shape: win probs have teams; market snapshots have
+    game_pk + teams + moneylines; select_game_picks must keep unsuffixed
+    home_team/away_team and still run advise_bets."""
+    win_probs = _win_probabilities([
+        {"game_pk": 824424, "date": pd.Timestamp("2026-09-04"), "home_team": "CLE",
+         "away_team": "DET", "home_win_probability": 0.70},
+    ])
+    market = pd.DataFrame([{
+        "game_pk": 824424,
+        "home_team": "CLE",
+        "away_team": "DET",
+        "home_moneyline": -150,
+        "away_moneyline": 130,
+        "market_home_win_probability": 0.58,
+        "snapshot_id": "odds_prod",
+        "snapshot_role": "morning",
+        "provider_event_id": "401816800",
+        "sportsbook": "DraftKings",
+        "captured_at_utc": "2026-09-04T10:23:00Z",
+        "source_status": "ok",
+    }])
+
+    picks = game_predictions.select_game_picks(
+        win_probs, pd.Timestamp("2026-09-04"), market_probabilities=market,
+    )
+
+    assert "home_team" in picks.columns
+    assert "away_team" in picks.columns
+    assert "home_team_x" not in picks.columns
+    assert "home_team_y" not in picks.columns
+    assert "away_team_x" not in picks.columns
+    assert "away_team_y" not in picks.columns
+    assert picks.iloc[0]["home_team"] == "CLE"
+    assert picks.iloc[0]["away_team"] == "DET"
+    assert picks.iloc[0]["bet_units"] > 0
+    assert picks.iloc[0]["bet_team"] == "CLE"
+
+
+def test_select_game_picks_rejects_mismatched_market_teams_for_same_game_pk():
+    win_probs = _win_probabilities([
+        {"game_pk": 1, "date": pd.Timestamp("2026-09-04"), "home_team": "CLE",
+         "away_team": "DET", "home_win_probability": 0.70},
+    ])
+    market = pd.DataFrame([{
+        "game_pk": 1,
+        "home_team": "NYY",  # disagrees with pick-frame mapping
+        "away_team": "BOS",
+        "home_moneyline": -150,
+        "away_moneyline": 130,
+        "market_home_win_probability": 0.58,
+    }])
+
+    with pytest.raises(ValueError, match="Market team mapping disagrees"):
+        game_predictions.select_game_picks(
+            win_probs, pd.Timestamp("2026-09-04"), market_probabilities=market,
+        )
+
+
+def test_advise_bets_rejects_mismatched_market_teams_for_same_game_pk():
+    picks = pd.DataFrame([_bet_pick_row(1, "CLE", "DET", "CLE", 0.70)])
+    market = pd.DataFrame([{
+        "game_pk": 1,
+        "home_team": "NYY",
+        "away_team": "BOS",
+        "home_moneyline": -150,
+        "away_moneyline": 130,
+    }])
+
+    with pytest.raises(ValueError, match="Market team mapping disagrees"):
+        game_predictions.advise_bets(picks, market, kelly_fraction_multiplier=1.0, min_edge=0.02)
+
+
 def test_select_game_picks_no_bet_advised_when_no_real_edge():
     win_probs = _win_probabilities([
         {"game_pk": 1, "date": pd.Timestamp("2026-08-24"), "home_team": "NYY", "away_team": "TOR",
