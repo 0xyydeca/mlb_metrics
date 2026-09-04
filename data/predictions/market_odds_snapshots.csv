@@ -1,1 +1,10 @@
 provider_event_id,sportsbook,captured_at_utc,game_datetime,date,home_team,away_team,home_moneyline,away_moneyline,market_home_win_probability,source_status,game_pk,match_method,snapshot_id,snapshot_role
+401816789,DraftKings,2026-09-04T04:03:51Z,2026-09-03T16:35Z,2026-09-03 00:00:00,PIT,SF,-175,144,0.6082621082621081,post_start,823337,unique_matchup,odds_99bb19ec3fb3,raw
+401816790,DraftKings,2026-09-04T04:03:51Z,2026-09-03T17:10Z,2026-09-03 00:00:00,CLE,TOR,-110,-110,0.5,post_start,824388,unique_matchup,odds_0dd5d783b25b,raw
+401816791,DraftKings,2026-09-04T04:03:51Z,2026-09-03T18:10Z,2026-09-03 00:00:00,HOU,CWS,-157,130,0.5842096748099014,post_start,824144,unique_matchup,odds_291a4104f2c7,raw
+401816788,DraftKings,2026-09-04T04:03:51Z,2026-09-03T23:15Z,2026-09-03 00:00:00,BAL,BOS,100,-120,0.4782608695652174,post_start,824796,unique_matchup,odds_b482a1ffce9e,raw
+401816793,DraftKings,2026-09-04T04:03:51Z,2026-09-03T23:15Z,2026-09-03 00:00:00,CHC,MIL,100,-121,0.4773218142548596,post_start,824632,unique_matchup,odds_463277a5cc9b,raw
+401816792,DraftKings,2026-09-04T04:03:51Z,2026-09-03T23:40Z,2026-09-03 00:00:00,KC,MIA,-125,104,0.53125,post_start,824069,unique_matchup,odds_d447265f0822,raw
+401816794,DraftKings,2026-09-04T04:03:51Z,2026-09-04T00:05Z,2026-09-03 00:00:00,TEX,TB,104,-125,0.46874999999999994,post_start,822853,unique_matchup,odds_d08ac91b7d01,raw
+401816795,DraftKings,2026-09-04T04:03:51Z,2026-09-04T01:40Z,2026-09-03 00:00:00,SEA,ATH,-223,181,0.6598675273527584,post_start,823095,unique_matchup,odds_68fee597f7dd,raw
+401816796,DraftKings,2026-09-04T04:03:51Z,2026-09-04T02:10Z,2026-09-03 00:00:00,LAD,STL,-298,237,0.7161724644502446,post_start,823907,unique_matchup,odds_bf9ae6a4dec5,raw
