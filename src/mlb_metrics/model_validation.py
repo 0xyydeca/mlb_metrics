@@ -233,6 +233,51 @@ class StandardizePreprocessor:
         return self.fit(X).transform(X)
 
 
+class ImputeStandardizePreprocessor:
+    """Train-only median imputation + missingness indicators + z-score.
+
+    Fit exclusively on the training fold:
+    - per-column training median (league-prior style constant fill)
+    - a binary ``{col}__missing`` indicator for every column that had any
+      training missingness (indicators stay raw 0/1; not z-scored)
+    - then standardize the imputed source columns with positive training variance
+
+    Test rows never update medians, means, or stds.
+    """
+
+    def __init__(self):
+        self.median_: pd.Series | None = None
+        self.missing_indicator_cols_: list[str] = []
+        self.source_columns_: list[str] = []
+        self.scaler_ = StandardizePreprocessor()
+
+    def fit(self, X: pd.DataFrame) -> ImputeStandardizePreprocessor:
+        X = pd.DataFrame(X).apply(pd.to_numeric, errors="coerce")
+        self.source_columns_ = list(X.columns)
+        self.median_ = X.median(axis=0, skipna=True).fillna(0.0)
+        # Columns with any train missingness get an indicator.
+        self.missing_indicator_cols_ = [
+            c for c in self.source_columns_ if X[c].isna().any()
+        ]
+        filled = X.fillna(self.median_)
+        self.scaler_.fit(filled)
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        if self.median_ is None:
+            raise RuntimeError("ImputeStandardizePreprocessor.transform called before fit")
+        X = pd.DataFrame(X).apply(pd.to_numeric, errors="coerce")
+        X = X.reindex(columns=self.source_columns_)
+        filled = X.fillna(self.median_)
+        scaled = self.scaler_.transform(filled)
+        for c in self.missing_indicator_cols_:
+            scaled[f"{c}__missing"] = X[c].isna().astype(float).to_numpy()
+        return scaled
+
+    def fit_transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        return self.fit(X).transform(X)
+
+
 def assert_preprocessor_fit_only_on_train(preprocessor: StandardizePreprocessor, X_train: pd.DataFrame) -> None:
     """Test helper: refitting on the same train frame reproduces state."""
     other = StandardizePreprocessor().fit(X_train)
@@ -240,6 +285,29 @@ def assert_preprocessor_fit_only_on_train(preprocessor: StandardizePreprocessor,
     if preprocessor.columns_:
         pd.testing.assert_series_equal(preprocessor.mean_, other.mean_)
         pd.testing.assert_series_equal(preprocessor.std_, other.std_)
+
+
+def assert_imputer_fit_only_on_train(
+    preprocessor: ImputeStandardizePreprocessor,
+    X_train: pd.DataFrame,
+) -> None:
+    """Test helper: refitting on the same train frame reproduces imputer state."""
+    other = ImputeStandardizePreprocessor().fit(X_train)
+    assert preprocessor.source_columns_ == other.source_columns_
+    assert preprocessor.missing_indicator_cols_ == other.missing_indicator_cols_
+    pd.testing.assert_series_equal(preprocessor.median_, other.median_)
+    X = pd.DataFrame(X_train).apply(pd.to_numeric, errors="coerce").reindex(
+        columns=other.source_columns_
+    )
+    assert_preprocessor_fit_only_on_train(preprocessor.scaler_, X.fillna(other.median_))
+
+
+def _impute_frame_for_assert(
+    X_train: pd.DataFrame,
+    fitted: ImputeStandardizePreprocessor,
+) -> pd.DataFrame:
+    X = pd.DataFrame(X_train).apply(pd.to_numeric, errors="coerce").reindex(columns=fitted.source_columns_)
+    return X.fillna(fitted.median_)
 
 
 # ---------------------------------------------------------------------------

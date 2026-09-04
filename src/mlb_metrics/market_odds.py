@@ -15,6 +15,7 @@ from __future__ import annotations
 import hashlib
 import os
 from datetime import datetime, timezone
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -57,6 +58,9 @@ SNAPSHOT_ROLE_MORNING = "morning"
 SNAPSHOT_ROLE_LINEUP_LOCK = "lineup_lock"
 SNAPSHOT_ROLE_CLOSING = "closing"
 SNAPSHOT_ROLE_RAW = "raw"
+# Continuous intraday captures (every ~30 min). Not a prediction-time prior
+# role — used for closing selection and audit, never relabeled as morning.
+SNAPSHOT_ROLE_INTRADAY = "intraday"
 
 SOURCE_OK = "ok"
 SOURCE_MISSING_ODDS = "missing_odds"
@@ -779,6 +783,76 @@ def fetch_and_persist_odds_snapshots(
 
     append_odds_snapshots(matched, snapshots_path)
     return matched
+
+
+REQUIRED_LIVE_MARKET_COLUMNS = (
+    "game_pk",
+    "snapshot_id",
+    "captured_at_utc",
+    "snapshot_role",
+    "source_status",
+    "market_home_win_probability",
+    "home_moneyline",
+    "away_moneyline",
+)
+
+LIVE_RECOMMENDATION_ROLES = frozenset({
+    SNAPSHOT_ROLE_MORNING,
+    SNAPSHOT_ROLE_LINEUP_LOCK,
+})
+
+
+def load_odds_snapshots(path: str | None = None) -> pd.DataFrame:
+    path = path or config.MARKET_ODDS_SNAPSHOTS_PATH
+    if not path or not os.path.exists(path):
+        return empty_snapshot_frame()
+    return normalize_snapshot_frame(pd.read_csv(path))
+
+
+def market_for_live_recommendations(
+    snapshots: pd.DataFrame,
+    *,
+    required_game_pks: Sequence | None = None,
+) -> pd.DataFrame:
+    """Snapshot-backed market frame for live bet sizing.
+
+    Requires exact ``game_pk`` match, ``SOURCE_OK``,
+    ``captured_at_utc < game_datetime``, and role in
+    {morning, lineup_lock}. Rejects legacy team-only frames that lack
+    snapshot provenance columns.
+    """
+    if snapshots is None or (isinstance(snapshots, pd.DataFrame) and snapshots.empty):
+        return empty_snapshot_frame()
+
+    missing_cols = [c for c in REQUIRED_LIVE_MARKET_COLUMNS if c not in snapshots.columns]
+    if missing_cols:
+        raise ValueError(
+            "Legacy team-only market frame rejected for live betting; "
+            f"missing columns: {missing_cols}"
+        )
+
+    # Prediction-time filter already enforces SOURCE_OK + pre-start + role set.
+    valid = filter_valid_prediction_time_snapshots(snapshots)
+    valid = valid[valid["snapshot_role"].isin(list(LIVE_RECOMMENDATION_ROLES))].copy()
+    if valid.empty:
+        return valid
+
+    valid["_ts"] = valid["captured_at_utc"].map(_to_utc_ts)
+    valid = valid.sort_values("_ts").drop_duplicates(subset=["game_pk"], keep="last")
+    valid = valid.drop(columns=["_ts"], errors="ignore")
+
+    if required_game_pks is not None:
+        needed = {int(pk) for pk in required_game_pks if pd.notna(pk)}
+        have = {int(pk) for pk in valid["game_pk"].dropna().tolist()}
+        missing = sorted(needed - have)
+        if missing:
+            raise ValueError(
+                "No valid prediction-time market snapshot for game_pk(s): "
+                f"{missing}"
+            )
+        valid = valid[valid["game_pk"].isin(list(needed))].copy()
+
+    return valid.reset_index(drop=True)
 
 
 def snapshots_for_predictions(

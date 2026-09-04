@@ -147,9 +147,10 @@ def _refuse_legacy_or_fallback_probabilities(picks: pd.DataFrame) -> None:
                 "Refusing recommend_bets.py: picks use legacy/heuristic/fallback "
                 "probabilities, not the residual model. READY FOR LIVE BETTING: NO"
             )
-    if "model_fallback_used" in picks.columns and picks["model_fallback_used"].fillna(False).any():
+    # Schema uses ``fallback_used`` (not ``model_fallback_used``).
+    if "fallback_used" in picks.columns and picks["fallback_used"].fillna(False).astype(bool).any():
         raise SystemExit(
-            "Refusing recommend_bets.py: model fallback was used on one or more picks. "
+            "Refusing recommend_bets.py: fallback_used=True on one or more picks. "
             "READY FOR LIVE BETTING: NO"
         )
 
@@ -160,20 +161,52 @@ def _refuse_invalid_market(market: pd.DataFrame, picks: pd.DataFrame) -> pd.Data
             "Refusing recommend_bets.py: no market data available. "
             "READY FOR LIVE BETTING: NO"
         )
-    # Prefer snapshot-backed rows when present.
-    if "source_status" in market.columns:
-        bad = market[market["source_status"] != market_odds.SOURCE_OK]
-        if not bad.empty:
-            raise SystemExit(
-                "Refusing recommend_bets.py: market rows are unmatched/ambiguous/"
-                "post-start. READY FOR LIVE BETTING: NO"
-            )
-    if "game_pk" in market.columns and market["game_pk"].isna().any():
+    missing = [c for c in market_odds.REQUIRED_LIVE_MARKET_COLUMNS if c not in market.columns]
+    if missing:
+        raise SystemExit(
+            "Refusing recommend_bets.py: legacy team-only market frame rejected "
+            f"(missing {missing}). READY FOR LIVE BETTING: NO"
+        )
+    if (market["source_status"] != market_odds.SOURCE_OK).any():
+        raise SystemExit(
+            "Refusing recommend_bets.py: market rows are unmatched/ambiguous/"
+            "post-start. READY FOR LIVE BETTING: NO"
+        )
+    if market["game_pk"].isna().any():
         raise SystemExit(
             "Refusing recommend_bets.py: market rows missing game_pk. "
             "READY FOR LIVE BETTING: NO"
         )
+    roles = set(market["snapshot_role"].astype(str))
+    if not roles.issubset(market_odds.LIVE_RECOMMENDATION_ROLES):
+        raise SystemExit(
+            "Refusing recommend_bets.py: market snapshot_role must be morning "
+            f"or lineup_lock (got {sorted(roles)}). READY FOR LIVE BETTING: NO"
+        )
+    # Exact game_pk coverage for every pending pick.
+    needed = {int(pk) for pk in picks["game_pk"].dropna().tolist()}
+    have = {int(pk) for pk in market["game_pk"].dropna().tolist()}
+    missing_pks = sorted(needed - have)
+    if missing_pks:
+        raise SystemExit(
+            "Refusing recommend_bets.py: no exact game_pk market match for "
+            f"{missing_pks}. READY FOR LIVE BETTING: NO"
+        )
     return market
+
+
+def _load_snapshot_backed_market(picks: pd.DataFrame) -> pd.DataFrame:
+    """Load persisted odds snapshots; never use legacy team-only fetch."""
+    snaps = market_odds.load_odds_snapshots()
+    try:
+        return market_odds.market_for_live_recommendations(
+            snaps,
+            required_game_pks=picks["game_pk"].tolist(),
+        )
+    except ValueError as exc:
+        raise SystemExit(
+            f"Refusing recommend_bets.py: {exc}. READY FOR LIVE BETTING: NO"
+        ) from exc
 
 
 def main():
@@ -211,7 +244,7 @@ def main():
         print(f"No real still-scheduled games left to evaluate for {target_date.date()}.")
         return
 
-    market = market_odds.fetch_market_home_win_probabilities(target_date)
+    market = _load_snapshot_backed_market(todays_picks)
     market = _refuse_invalid_market(market, todays_picks)
 
     recommendations = game_predictions.advise_bets(

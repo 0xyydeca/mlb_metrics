@@ -273,7 +273,7 @@ class MarketResidualLogistic:
     C: float = 0.01
     residual_cap: float = config.GAME_RESIDUAL_LOGIT_RESIDUAL_CAP
     feature_columns: list[str] = field(default_factory=lambda: list(RESIDUAL_FEATURE_COLUMNS))
-    preprocessor: model_validation.StandardizePreprocessor | None = None
+    preprocessor: model_validation.ImputeStandardizePreprocessor | None = None
     coef_: np.ndarray | None = None
     params_index_: list[str] | None = None
 
@@ -283,7 +283,7 @@ class MarketResidualLogistic:
 
     def fit(self, X: pd.DataFrame, y: pd.Series, market_p: pd.Series) -> MarketResidualLogistic:
         assert_no_closing_odds_in_features(X, self.feature_columns)
-        self.preprocessor = model_validation.StandardizePreprocessor().fit(
+        self.preprocessor = model_validation.ImputeStandardizePreprocessor().fit(
             residual_feature_matrix(X, self.feature_columns)
         )
         Xs = self.preprocessor.transform(residual_feature_matrix(X, self.feature_columns))
@@ -325,16 +325,16 @@ class MarketResidualNonlinear:
     shrink: float = 0.5
     residual_cap: float = config.GAME_RESIDUAL_LOGIT_RESIDUAL_CAP
     feature_columns: list[str] = field(default_factory=lambda: list(RESIDUAL_FEATURE_COLUMNS))
-    preprocessor: model_validation.StandardizePreprocessor | None = None
+    preprocessor: model_validation.ImputeStandardizePreprocessor | None = None
     estimator_: HistGradientBoostingClassifier | None = None
 
     def fit(self, X: pd.DataFrame, y: pd.Series, market_p: pd.Series) -> MarketResidualNonlinear:
         del market_p  # market enters only at predict time as the prior
         assert_no_closing_odds_in_features(X, self.feature_columns)
-        self.preprocessor = model_validation.StandardizePreprocessor().fit(
+        self.preprocessor = model_validation.ImputeStandardizePreprocessor().fit(
             residual_feature_matrix(X, self.feature_columns)
         )
-        Xs = self.preprocessor.transform(residual_feature_matrix(X, self.feature_columns)).fillna(0.0)
+        Xs = self.preprocessor.transform(residual_feature_matrix(X, self.feature_columns))
         y_arr = pd.to_numeric(y, errors="coerce").astype(int).to_numpy()
         if Xs.shape[1] == 0 or len(np.unique(y_arr)) < 2:
             self.estimator_ = None
@@ -354,7 +354,7 @@ class MarketResidualNonlinear:
             raise RuntimeError("MarketResidualNonlinear.predict called before fit")
         if self.estimator_ is None:
             return np.zeros(len(X), dtype=float)
-        Xs = self.preprocessor.transform(residual_feature_matrix(X, self.feature_columns)).fillna(0.0)
+        Xs = self.preprocessor.transform(residual_feature_matrix(X, self.feature_columns))
         p_gbm = self.estimator_.predict_proba(Xs.to_numpy(dtype=float))[:, 1]
         raw = logit(p_gbm) - logit(market_p)
         return float(self.shrink) * np.clip(raw, -self.residual_cap, self.residual_cap)
@@ -697,21 +697,42 @@ def _slice_dates(df: pd.DataFrame, dates: Sequence) -> pd.DataFrame:
 
 def _select_edge_threshold_inner(
     train: pd.DataFrame,
-    model_prob_col: str,
+    method: str,
     inner_folds: Sequence[model_validation.DateFold],
+    *,
+    feature_columns: Sequence[str],
+    logistic_C: float | None = None,
+    nonlinear_params: dict | None = None,
+    calibrate_heuristic: bool = False,
 ) -> float:
-    """Pick edge threshold on inner folds only (includes vig via moneylines)."""
+    """Pick edge threshold on inner folds only (never on outer-test outcomes).
+
+    For each candidate threshold, re-fit the method on each inner-train
+    block, score bets on that fold's inner-test block, and choose the
+    threshold with the best mean inner-test ROI. Includes vig via
+    moneylines on the inner-test games.
+    """
     best_thr = float(config.GAME_RESIDUAL_EDGE_THRESHOLD_GRID[0])
     best_roi = float("-inf")
     for thr in config.GAME_RESIDUAL_EDGE_THRESHOLD_GRID:
         rois = []
         for fold in inner_folds:
-            block = _slice_dates(train, fold.test_dates)
-            # Fit is outer-train already; here we only score threshold on
-            # inner-test blocks using already-computed model probs when present.
-            if model_prob_col not in block.columns:
+            tr = _slice_dates(train, fold.train_dates)
+            te = _slice_dates(train, fold.test_dates)
+            if tr.empty or te.empty:
                 continue
-            bets = hypothetical_bets_from_probabilities(block, model_prob_col=model_prob_col, edge_threshold=thr)
+            pred = _fit_predict_method(
+                method, tr, te,
+                feature_columns=feature_columns,
+                logistic_C=logistic_C,
+                nonlinear_params=nonlinear_params,
+                calibrate_heuristic=calibrate_heuristic,
+            )
+            block = te.copy()
+            block["model_p"] = pred.to_numpy()
+            bets = hypothetical_bets_from_probabilities(
+                block, model_prob_col="model_p", edge_threshold=thr,
+            )
             rois.append(settle_hypothetical_roi(bets).get("roi", float("nan")))
         mean_roi = float(np.nanmean(rois)) if rois else float("nan")
         if mean_roi == mean_roi and mean_roi > best_roi:
@@ -839,7 +860,12 @@ def run_game_residual_nested_validation(
         outer_test_block_dates=config.GAME_RESIDUAL_OUTER_TEST_BLOCK_DATES,
         inner_min_train_dates=config.GAME_RESIDUAL_INNER_MIN_TRAIN_DATES,
         inner_test_block_dates=config.GAME_RESIDUAL_INNER_TEST_BLOCK_DATES,
-        freeze_dates=config.NESTED_VALIDATION_FREEZE_DATES if freeze_dates is None else freeze_dates,
+        # Betting-research freeze only — does not change global nested defaults.
+        freeze_dates=(
+            config.GAME_RESIDUAL_BETTING_FREEZE_DATES
+            if freeze_dates is None
+            else freeze_dates
+        ),
     )
     if not nested:
         return {
@@ -853,6 +879,9 @@ def run_game_residual_nested_validation(
         METHOD_MARKET, METHOD_HEURISTIC, METHOD_HEURISTIC_CAL,
         METHOD_RESIDUAL_LOGISTIC, METHOD_RESIDUAL_NONLINEAR,
     )}
+    # Outer-test bets only — threshold chosen per fold from inner folds.
+    method_bets: dict[str, list[pd.DataFrame]] = {m: [] for m in method_rows}
+    method_edge_thresholds: dict[str, list[float]] = {m: [] for m in method_rows}
     outer_reports = []
     selected_configs = []
 
@@ -880,11 +909,28 @@ def run_game_residual_nested_validation(
 
         best_C = _inner_select_residual_logistic(train, nested_fold.inner_folds, feature_columns)
         best_nl = _inner_select_residual_nonlinear(train, nested_fold.inner_folds, feature_columns)
+
+        # Edge thresholds: one selection per method from this outer fold's
+        # inner folds only. Never choose using pooled outer-test outcomes.
+        fold_edges: dict[str, float] = {}
+        for method in method_rows:
+            fold_edges[method] = _select_edge_threshold_inner(
+                train,
+                method,
+                nested_fold.inner_folds,
+                feature_columns=feature_columns,
+                logistic_C=best_C,
+                nonlinear_params=best_nl,
+                calibrate_heuristic=use_cal,
+            )
+            method_edge_thresholds[method].append(fold_edges[method])
+
         selected_configs.append({
             "outer_fold_id": nested_fold.outer.fold_id,
             "logistic_C": best_C,
             "nonlinear": best_nl,
             "heuristic_calibrated": use_cal,
+            "edge_thresholds": dict(fold_edges),
         })
 
         fold_preds = {"date": test["date"], "game_pk": test["game_pk"], HOME_WON_LABEL: test[HOME_WON_LABEL]}
@@ -907,6 +953,25 @@ def run_game_residual_nested_validation(
             block["predicted_probability"] = pred.to_numpy()
             method_rows[method].append(block)
             fold_preds[method] = pred.to_numpy()
+
+            # Apply this fold's inner-selected threshold once to untouched outer test.
+            bet_block = block.rename(columns={"predicted_probability": "model_p"})
+            bets = hypothetical_bets_from_probabilities(
+                bet_block,
+                model_prob_col="model_p",
+                edge_threshold=fold_edges[method],
+            )
+            if not bets.empty:
+                bets = bets.drop(columns=[HOME_WON_LABEL, CLOSING_MARKET_COL], errors="ignore").merge(
+                    block[["game_pk", "date", HOME_WON_LABEL] + (
+                        [CLOSING_MARKET_COL] if CLOSING_MARKET_COL in block.columns else []
+                    )],
+                    on=["game_pk", "date"],
+                    how="left",
+                )
+                bets["outer_fold_id"] = nested_fold.outer.fold_id
+                bets["edge_threshold_used"] = fold_edges[method]
+                method_bets[method].append(bets)
 
         market_metrics = score_probabilities(test[HOME_WON_LABEL], test[MARKET_AT_PRED_COL])
         residual_metrics = score_probabilities(
@@ -961,23 +1026,11 @@ def run_game_residual_nested_validation(
             metric="log_loss",
             n_bootstrap=min(200, config.NESTED_VALIDATION_BOOTSTRAP_SAMPLES),
         )
-        # Edge threshold from a pooled inner-style heuristic: use grid median
-        # when method-specific inner selection is unavailable post-hoc.
-        edge_thr = float(np.median(config.GAME_RESIDUAL_EDGE_THRESHOLD_GRID))
-        bets = hypothetical_bets_from_probabilities(
-            aligned.rename(columns={"predicted_probability": "model_p"}),
-            model_prob_col="model_p",
-            edge_threshold=edge_thr,
-        )
-        # Attach labels already on aligned via merge
-        if not bets.empty:
-            bets = bets.drop(columns=[HOME_WON_LABEL, CLOSING_MARKET_COL], errors="ignore").merge(
-                aligned[["game_pk", "date", HOME_WON_LABEL] + (
-                    [CLOSING_MARKET_COL] if CLOSING_MARKET_COL in aligned.columns else []
-                )],
-                on=["game_pk", "date"],
-                how="left",
-            )
+        # Aggregate ONLY outer-test bets (threshold never chosen on these outcomes).
+        bet_parts = method_bets.get(method) or []
+        bets = pd.concat(bet_parts, ignore_index=True) if bet_parts else pd.DataFrame()
+        edge_list = method_edge_thresholds.get(method) or []
+        edge_thr = float(np.median(edge_list)) if edge_list else float("nan")
         roi = date_block_bootstrap_roi(bets)
         clv = true_closing_line_value(bets)
         week = single_week_profit_concentration(bets)
@@ -990,7 +1043,9 @@ def run_game_residual_nested_validation(
             "true_closing_line_value": clv,
             "week_concentration": week,
             "edge_threshold_used": edge_thr,
+            "edge_thresholds_by_outer_fold": list(edge_list),
             "n_games": int(len(aligned)),
+            "n_bets": int(len(bets)) if bets is not None else 0,
         }
         all_bets[method] = bets
 
@@ -1018,8 +1073,12 @@ def run_game_residual_nested_validation(
         "notes": [
             "Closing odds are evaluation-only and never residual features.",
             "Calibration and residual hypers selected on inner folds only.",
+            "Betting edge threshold selected per outer fold from that fold's "
+            "inner folds only; applied once to untouched outer-test bets.",
+            "Never choose the edge threshold using pooled outer-test outcomes.",
             "Kelly sizing is hypothetical and does not gate probability accuracy.",
             "Do not treat config.KELLY_MIN_EDGE as proof of residual skill.",
+            "GAME_RESIDUAL_BETTING_FREEZE_DATES is reserved and not auto-inspected.",
         ],
     }
 
@@ -1077,7 +1136,28 @@ def build_betting_promotion_gate(
     paired_ll = residual.get("model_minus_market_log_loss", float("nan"))
     n_folds = len(outer_reports)
     n_games = int(residual.get("n_games", 0) or 0)
+    # Prefer hypothetical_roi["n_blocks"] (actual report structure).
     n_blocks = int(roi.get("n_blocks", 0) or 0)
+
+    n_bets = int(len(bets)) if bets is not None and not getattr(bets, "empty", True) else 0
+    if n_bets == 0:
+        n_bets = int(residual.get("n_bets", 0) or 0)
+
+    bet_dates = 0
+    bet_weeks = 0
+    if bets is not None and not getattr(bets, "empty", True) and "date" in bets.columns:
+        dates = pd.to_datetime(bets["date"], errors="coerce").dropna()
+        bet_dates = int(dates.dt.normalize().nunique())
+        bet_weeks = int(dates.dt.to_period("W-SUN").nunique()) if len(dates) else 0
+
+    # Policy thresholds (conservative placeholders — NOT power calculations).
+    policy_thresholds = {
+        "BETTING_PROMOTION_MIN_EVALUATED_GAMES": int(config.BETTING_PROMOTION_MIN_EVALUATED_GAMES),
+        "BETTING_PROMOTION_MIN_BETS": int(config.BETTING_PROMOTION_MIN_BETS),
+        "BETTING_PROMOTION_MIN_BET_DATES": int(config.BETTING_PROMOTION_MIN_BET_DATES),
+        "BETTING_PROMOTION_MIN_BET_WEEKS": int(config.BETTING_PROMOTION_MIN_BET_WEEKS),
+        "note": "policy thresholds, not statistically derived sample-size calculations",
+    }
 
     checks = {
         "positive_paired_brier_vs_market": bool(paired_brier == paired_brier and paired_brier < 0),
@@ -1092,8 +1172,12 @@ def build_betting_promotion_gate(
             and roi.get("roi_ci_low", -1) > float(config.BETTING_PROMOTION_MATERIAL_NEGATIVE_ROI)
         ),
         "adequate_sample_size": n_games >= int(config.BETTING_PROMOTION_MIN_GAMES),
+        "adequate_evaluated_games": n_games >= int(config.BETTING_PROMOTION_MIN_EVALUATED_GAMES),
         "adequate_outer_folds": n_folds >= int(config.BETTING_PROMOTION_MIN_OUTER_FOLDS),
         "adequate_date_blocks": n_blocks >= int(config.BETTING_PROMOTION_MIN_DATE_BLOCKS),
+        "adequate_bets": n_bets >= int(config.BETTING_PROMOTION_MIN_BETS),
+        "adequate_bet_dates": bet_dates >= int(config.BETTING_PROMOTION_MIN_BET_DATES),
+        "adequate_bet_weeks": bet_weeks >= int(config.BETTING_PROMOTION_MIN_BET_WEEKS),
         "no_single_week_dependence": not bool(week.get("worst_week_dependence")),
         "based_on_untouched_outer_folds": n_folds > 0,
         # Explicit: Kelly fraction never appears as an accuracy gate.
@@ -1105,7 +1189,12 @@ def build_betting_promotion_gate(
         "hypothetical_roi": roi,
         "true_closing_line_value": clv,
         "week_concentration": week,
-        "n_bets": int(len(bets)) if bets is not None else 0,
+        "n_bets": n_bets,
+        "n_bet_dates": bet_dates,
+        "n_bet_weeks": bet_weeks,
+        "n_games_evaluated": n_games,
+        "n_blocks": n_blocks,
+        "policy_thresholds": policy_thresholds,
     }
 
 

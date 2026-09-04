@@ -132,6 +132,33 @@ def test_preprocessor_fit_only_on_training_data():
     mv.assert_preprocessor_fit_only_on_train(pre, train)
 
 
+def test_imputer_fit_only_on_training_data_test_cannot_affect_medians():
+    train = pd.DataFrame({
+        "a": [1.0, np.nan, 3.0],
+        "b": [10.0, 20.0, 30.0],
+    })
+    test = pd.DataFrame({
+        "a": [1000.0, np.nan],
+        "b": [np.nan, 999.0],
+    })
+    pre = mv.ImputeStandardizePreprocessor().fit(train)
+    assert pre.median_["a"] == pytest.approx(2.0)
+    assert "a" in pre.missing_indicator_cols_
+    assert "b" not in pre.missing_indicator_cols_
+
+    # Transforming test must not mutate fitted medians.
+    out = pre.transform(test)
+    assert pre.median_["a"] == pytest.approx(2.0)
+    assert "a__missing" in out.columns
+    assert list(out["a__missing"]) == [0.0, 1.0]
+
+    # Fitting on train+test would pull the median of a toward 1000; prove we didn't.
+    contaminated = pd.concat([train, test], ignore_index=True)
+    sneak = mv.ImputeStandardizePreprocessor().fit(contaminated)
+    assert sneak.median_["a"] != pre.median_["a"]
+    mv.assert_imputer_fit_only_on_train(pre, train)
+
+
 def test_nested_validation_deterministic_with_fixed_seed(tmp_path):
     df = _synthetic_classifier_frame(n_dates=36, rows_per_date=10, seed=1)
     candidates = mv.expand_candidate_grid(

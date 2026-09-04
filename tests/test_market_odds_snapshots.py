@@ -341,3 +341,68 @@ def test_build_game_picks_export_includes_paired_primary_metrics():
     assert summary.loc[0, "n_paired_market_compared"] == 2
     # Secondary metric still present
     assert "beat_closing_line_rate" in summary.columns
+
+
+def test_market_for_live_recommendations_requires_snapshot_provenance():
+    legacy = pd.DataFrame([{
+        "home_team": "NYY", "away_team": "BOS",
+        "market_home_win_probability": 0.55,
+        "home_moneyline": -120, "away_moneyline": 100,
+    }])
+    with pytest.raises(ValueError, match="Legacy team-only"):
+        market_odds.market_for_live_recommendations(legacy, required_game_pks=[100])
+
+
+def test_market_for_live_recommendations_exact_game_pk_and_roles():
+    snaps = pd.DataFrame([
+        {
+            "provider_event_id": "e1", "sportsbook": "DraftKings",
+            "captured_at_utc": "2026-09-03T16:00:00Z",
+            "game_datetime": "2026-09-03T23:10:00Z",
+            "date": pd.Timestamp("2026-09-03"),
+            "home_team": "NYY", "away_team": "BOS",
+            "home_moneyline": -130, "away_moneyline": 110,
+            "market_home_win_probability": 0.54,
+            "source_status": market_odds.SOURCE_OK,
+            "game_pk": 100,
+            "match_method": "unique_matchup",
+            "snapshot_id": "odds_morning",
+            "snapshot_role": market_odds.SNAPSHOT_ROLE_MORNING,
+        },
+        {
+            "provider_event_id": "e1", "sportsbook": "DraftKings",
+            "captured_at_utc": "2026-09-03T20:00:00Z",
+            "game_datetime": "2026-09-03T23:10:00Z",
+            "date": pd.Timestamp("2026-09-03"),
+            "home_team": "NYY", "away_team": "BOS",
+            "home_moneyline": -140, "away_moneyline": 120,
+            "market_home_win_probability": 0.56,
+            "source_status": market_odds.SOURCE_OK,
+            "game_pk": 100,
+            "match_method": "unique_matchup",
+            "snapshot_id": "odds_lock",
+            "snapshot_role": market_odds.SNAPSHOT_ROLE_LINEUP_LOCK,
+        },
+        {
+            "provider_event_id": "e1", "sportsbook": "DraftKings",
+            "captured_at_utc": "2026-09-03T23:30:00Z",
+            "game_datetime": "2026-09-03T23:10:00Z",
+            "date": pd.Timestamp("2026-09-03"),
+            "home_team": "NYY", "away_team": "BOS",
+            "home_moneyline": -150, "away_moneyline": 130,
+            "market_home_win_probability": 0.58,
+            "source_status": market_odds.SOURCE_OK,
+            "game_pk": 100,
+            "match_method": "unique_matchup",
+            "snapshot_id": "odds_post",
+            "snapshot_role": market_odds.SNAPSHOT_ROLE_INTRADAY,
+        },
+    ])
+    out = market_odds.market_for_live_recommendations(snaps, required_game_pks=[100])
+    assert len(out) == 1
+    assert int(out.iloc[0]["game_pk"]) == 100
+    assert out.iloc[0]["snapshot_role"] == market_odds.SNAPSHOT_ROLE_LINEUP_LOCK
+    assert out.iloc[0]["snapshot_id"] == "odds_lock"
+
+    with pytest.raises(ValueError, match="game_pk"):
+        market_odds.market_for_live_recommendations(snaps, required_game_pks=[100, 999])

@@ -195,6 +195,7 @@ def test_nested_validation_compares_all_methods_on_same_games(tmp_path, monkeypa
     monkeypatch.setattr(config, "GAME_RESIDUAL_NONLINEAR_MAX_DEPTH_GRID", [2])
     monkeypatch.setattr(config, "GAME_RESIDUAL_NONLINEAR_MIN_SAMPLES_LEAF_GRID", [40])
     monkeypatch.setattr(config, "GAME_RESIDUAL_NONLINEAR_SHRINK_GRID", [0.5])
+    monkeypatch.setattr(config, "GAME_RESIDUAL_EDGE_THRESHOLD_GRID", [0.02])
     monkeypatch.setattr(config, "NESTED_VALIDATION_BOOTSTRAP_SAMPLES", 20)
 
     frame = _synthetic_residual_frame(n_dates=40, games_per_date=6)
@@ -217,10 +218,17 @@ def test_nested_validation_compares_all_methods_on_same_games(tmp_path, monkeypa
         assert "high_conf_brier" in methods[name]
         assert "hypothetical_roi" in methods[name]
         assert "true_closing_line_value" in methods[name]
+        assert "edge_thresholds_by_outer_fold" in methods[name]
 
     assert "promotion_gate" in report
     assert "betting_promotion_gate" in report
     assert report["betting_promotion_gate"]["checks"]["kelly_not_used_as_accuracy_gate"] is True
+    assert "adequate_bets" in report["betting_promotion_gate"]["checks"]
+    assert "policy_thresholds" in report["betting_promotion_gate"]
+    # Per-outer-fold edge selection recorded; never a single pooled outer-test pick.
+    for cfg in report["selected_configs"]:
+        assert "edge_thresholds" in cfg
+        assert grm.METHOD_RESIDUAL_LOGISTIC in cfg["edge_thresholds"]
 
 
 def test_nested_validation_excludes_games_without_prediction_time_market(monkeypatch):
@@ -232,6 +240,7 @@ def test_nested_validation_excludes_games_without_prediction_time_market(monkeyp
     monkeypatch.setattr(config, "GAME_RESIDUAL_NONLINEAR_MAX_DEPTH_GRID", [2])
     monkeypatch.setattr(config, "GAME_RESIDUAL_NONLINEAR_MIN_SAMPLES_LEAF_GRID", [40])
     monkeypatch.setattr(config, "GAME_RESIDUAL_NONLINEAR_SHRINK_GRID", [0.5])
+    monkeypatch.setattr(config, "GAME_RESIDUAL_EDGE_THRESHOLD_GRID", [0.02])
     monkeypatch.setattr(config, "NESTED_VALIDATION_BOOTSTRAP_SAMPLES", 10)
 
     frame = _synthetic_residual_frame(n_dates=35, games_per_date=4)
@@ -264,14 +273,46 @@ def test_betting_promotion_gate_requires_clv_roi_and_no_week_dependence():
         "positive_hypothetical_roi": True,
         "roi_ci_not_materially_negative": True,
         "adequate_sample_size": True,
+        "adequate_evaluated_games": True,
         "adequate_outer_folds": True,
         "adequate_date_blocks": True,
+        "adequate_bets": True,
+        "adequate_bet_dates": True,
+        "adequate_bet_weeks": True,
         "no_single_week_dependence": False,
         "based_on_untouched_outer_folds": True,
         "kelly_not_used_as_accuracy_gate": True,
     }}})
     assert ok is False
     assert details["checks"]["no_single_week_dependence"] is False
+
+
+def test_betting_promotion_gate_rejects_tiny_lucky_bet_sample():
+    """100 evaluated games with a handful of bets must not pass the gate."""
+    bets = pd.DataFrame([
+        {"date": pd.Timestamp("2026-05-01") + pd.Timedelta(days=i), "bet_units": 1.0}
+        for i in range(5)
+    ])
+    residual = {
+        "n_games": 100,
+        "n_bets": 5,
+        "model_minus_market_brier": -0.01,
+        "model_minus_market_log_loss": -0.01,
+        "hypothetical_roi": {
+            "roi": 0.5, "roi_ci_low": 0.1, "n_blocks": 20,
+        },
+        "true_closing_line_value": {"mean_probability_clv": 0.02},
+        "week_concentration": {"worst_week_dependence": False},
+    }
+    gate = grm.build_betting_promotion_gate(
+        residual, bets, [{"fold_id": i} for i in range(4)],
+    )
+    assert gate["checks"]["adequate_evaluated_games"] is True
+    assert gate["checks"]["adequate_bets"] is False
+    assert gate["checks"]["adequate_bet_dates"] is False
+    assert gate["passed"] is False
+    assert "policy_thresholds" in gate
+    assert gate["policy_thresholds"]["note"].startswith("policy thresholds")
 
 
 def test_resolve_live_modes_fall_back_without_gate():

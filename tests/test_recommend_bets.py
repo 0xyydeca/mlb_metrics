@@ -78,3 +78,30 @@ def test_load_target_date_picks_returns_only_pending_rows(tmp_path):
     pending = module._load_target_date_picks(log_path, pd.Timestamp("2026-08-24"))
 
     assert list(pending["game_pk"]) == [1]
+
+
+def test_refuse_fallback_used_true_row():
+    """Regression: schema column is fallback_used (not model_fallback_used)."""
+    module = _load_module()
+    picks = pd.DataFrame([{
+        "game_pk": 1,
+        "probability_source": "residual_logistic",
+        "fallback_used": True,
+        "predicted_probability": 0.6,
+    }])
+    with pytest.raises(SystemExit, match="fallback_used=True"):
+        module._refuse_legacy_or_fallback_probabilities(picks)
+
+
+def test_refuse_legacy_team_only_market_frame():
+    module = _load_module()
+    picks = pd.DataFrame([{"game_pk": 1}])
+    legacy = pd.DataFrame([{
+        "home_team": "NYY",
+        "away_team": "BOS",
+        "market_home_win_probability": 0.55,
+        "home_moneyline": -120,
+        "away_moneyline": 100,
+    }])
+    with pytest.raises(SystemExit, match="legacy team-only"):
+        module._refuse_invalid_market(legacy, picks)

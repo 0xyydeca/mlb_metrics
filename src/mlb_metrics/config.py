@@ -941,6 +941,10 @@ NESTED_VALIDATION_INNER_TEST_BLOCK_DATES = 5
 # from every train/test fold and from every selection decision - do not
 # peek at them while iterating on models or policy.
 NESTED_VALIDATION_FREEZE_DATES = 0
+# Betting-research freeze for the market-residual challenger only. Does
+# not change unrelated nested validation defaults. Do not automatically
+# inspect this reserved tail while iterating on residual/betting policy.
+GAME_RESIDUAL_BETTING_FREEZE_DATES = 10
 NESTED_VALIDATION_REPORT_DIR = "reports/model_validation"
 NESTED_VALIDATION_BOOTSTRAP_SAMPLES = 1000
 NESTED_VALIDATION_RANDOM_SEED = 0
@@ -1104,6 +1108,14 @@ BETTING_PROMOTION_GATE_REPORT_PATH = (
 BETTING_PROMOTION_MIN_OUTER_FOLDS = 3
 BETTING_PROMOTION_MIN_GAMES = 100
 BETTING_PROMOTION_MIN_DATE_BLOCKS = 10
+# Independent betting-volume floors (policy thresholds - conservative
+# placeholders, NOT statistically derived sample-size calculations).
+# Prevents "100 evaluated games but only a handful of lucky bets" from
+# satisfying the betting promotion gate.
+BETTING_PROMOTION_MIN_EVALUATED_GAMES = 100  # policy threshold, not a power calc
+BETTING_PROMOTION_MIN_BETS = 30  # policy threshold, not a power calc
+BETTING_PROMOTION_MIN_BET_DATES = 15  # policy threshold, not a power calc
+BETTING_PROMOTION_MIN_BET_WEEKS = 4  # policy threshold, not a power calc
 BETTING_PROMOTION_MAX_SINGLE_WEEK_PROFIT_SHARE = 0.45
 BETTING_PROMOTION_MATERIAL_NEGATIVE_ROI = -0.02
 # Nested CV sizing for the residual challenger (game-level rows are sparse).

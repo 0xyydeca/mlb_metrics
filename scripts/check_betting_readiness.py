@@ -207,9 +207,18 @@ def _report_and_gate_checks() -> list[Check]:
         or 0
     )
     n_folds = int((residual or {}).get("n_outer_folds") or 0)
+
+    # Date-block counts live on nested bootstrap / ROI objects, not a top-level
+    # residual_m["n_date_blocks"] field (which is often absent).
+    hypo = residual_m.get("hypothetical_roi") or {}
+    boot_brier = residual_m.get("paired_brier_bootstrap") or {}
+    boot_ll = residual_m.get("paired_log_loss_bootstrap") or {}
+    bet_gate = ((betting or residual or {}).get("betting_promotion_gate") or {})
     n_blocks = int(
-        residual_m.get("n_date_blocks")
-        or (residual or {}).get("n_date_blocks")
+        hypo.get("n_blocks")
+        or boot_brier.get("n_blocks")
+        or boot_ll.get("n_blocks")
+        or bet_gate.get("n_blocks")
         or 0
     )
 
@@ -226,7 +235,39 @@ def _report_and_gate_checks() -> list[Check]:
     checks.append(Check(
         "at_least_10_independent_date_blocks",
         n_blocks >= int(config.BETTING_PROMOTION_MIN_DATE_BLOCKS),
-        f"n_date_blocks={n_blocks}",
+        f"n_blocks={n_blocks} (from hypothetical_roi / paired bootstrap)",
+    ))
+
+    # Independent betting-volume policy floors (placeholders, not power calcs).
+    n_bets = int(bet_gate.get("n_bets") or residual_m.get("n_bets") or 0)
+    n_bet_dates = int(bet_gate.get("n_bet_dates") or 0)
+    n_bet_weeks = int(bet_gate.get("n_bet_weeks") or 0)
+    policy = bet_gate.get("policy_thresholds") or {
+        "BETTING_PROMOTION_MIN_EVALUATED_GAMES": config.BETTING_PROMOTION_MIN_EVALUATED_GAMES,
+        "BETTING_PROMOTION_MIN_BETS": config.BETTING_PROMOTION_MIN_BETS,
+        "BETTING_PROMOTION_MIN_BET_DATES": config.BETTING_PROMOTION_MIN_BET_DATES,
+        "BETTING_PROMOTION_MIN_BET_WEEKS": config.BETTING_PROMOTION_MIN_BET_WEEKS,
+        "note": "policy thresholds, not statistically derived",
+    }
+    checks.append(Check(
+        "policy_min_evaluated_games",
+        n_games >= int(config.BETTING_PROMOTION_MIN_EVALUATED_GAMES),
+        f"n_games={n_games} min={policy.get('BETTING_PROMOTION_MIN_EVALUATED_GAMES')} (policy)",
+    ))
+    checks.append(Check(
+        "policy_min_bets",
+        n_bets >= int(config.BETTING_PROMOTION_MIN_BETS),
+        f"n_bets={n_bets} min={policy.get('BETTING_PROMOTION_MIN_BETS')} (policy)",
+    ))
+    checks.append(Check(
+        "policy_min_bet_dates",
+        n_bet_dates >= int(config.BETTING_PROMOTION_MIN_BET_DATES),
+        f"n_bet_dates={n_bet_dates} min={policy.get('BETTING_PROMOTION_MIN_BET_DATES')} (policy)",
+    ))
+    checks.append(Check(
+        "policy_min_bet_weeks",
+        n_bet_weeks >= int(config.BETTING_PROMOTION_MIN_BET_WEEKS),
+        f"n_bet_weeks={n_bet_weeks} min={policy.get('BETTING_PROMOTION_MIN_BET_WEEKS')} (policy)",
     ))
 
     brier_delta = residual_m.get("model_minus_market_brier")
