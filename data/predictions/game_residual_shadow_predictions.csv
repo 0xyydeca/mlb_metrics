@@ -1,0 +1,17 @@
+date,game_pk,home_team,away_team,market_home_win_probability,home_win_probability,residual_home_win_probability,residual_logit,probability_source,model_version,artifact_id,game_prediction_mode,prediction_snapshot_type
+2026-09-04,824424,CLE,DET,0.5403677058353318,0.5634496167483001,0.5403677058353318,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824387,CLE,DET,0.5630832299476779,0.609982683219805,0.5630832299476779,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824471,CIN,MIL,0.4070892345793669,0.4821262662598161,0.4070892345793669,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823418,PHI,ATL,0.5205006473888649,0.5346971091910081,0.5205006473888649,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823338,PIT,LAA,0.6360260888682611,0.5139294997277052,0.6360260888682611,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824797,BAL,BOS,0.4782608695652174,0.5483298076566744,0.4782608695652174,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823579,NYM,SF,0.6295547070574253,0.538159585305494,0.6295547070574253,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823824,MIA,CHC,0.4086853434828726,0.5297902817446632,0.4086853434828726,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824554,CWS,MIN,0.5151837230488916,0.5217029578118949,0.5151837230488916,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,822852,TEX,TB,0.5120034919249236,0.49626631180600045,0.5120034919249236,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824146,HOU,AZ,0.5423839616474178,0.5281184854796024,0.5423839616474178,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824067,KC,TOR,0.5183284457478006,0.5195115675932309,0.5183284457478006,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,824311,COL,STL,0.46578434390068735,0.4829205258059509,0.46578434390068735,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823256,SD,NYY,0.48167155425219943,0.5134811442931627,0.48167155425219943,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823905,LAD,WSH,0.7126858014013896,0.5635621475138584,0.7126858014013896,0.0,market_residual,v1-market-residual,,shadow,morning
+2026-09-04,823093,SEA,ATH,0.6656300180905339,0.5220023915227816,0.6656300180905339,0.0,market_residual,v1-market-residual,,shadow,morning
