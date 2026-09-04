@@ -42,6 +42,8 @@ def test_derive_historical_schedule_games_uses_real_game_pk_not_reconstructed_id
     assert games.loc[100, "away_probable_pitcher_key_mlbam"] == 201
     assert games.loc[101, "home_score"] == 1 and games.loc[101, "away_score"] == 3
     assert games.loc[101, "status"] == "Final"
+    assert (games["schedule_backtest_mode"] == "actual_starter").all()
+    assert (games["schedule_source"] == "actual_starter_diagnostic").all()
 
 
 def test_derive_historical_schedule_games_excludes_zero_zero_artifacts():
@@ -111,7 +113,8 @@ def test_reconstruct_historical_game_picks_replays_and_resolves_immediately(tmp_
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     picks = game_picks_backtest.reconstruct_historical_game_picks(
-        repo_dir=str(repo), raw_dir=str(raw_dir), season=2026, days=40
+        repo_dir=str(repo), raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert len(picks) == 1
@@ -146,7 +149,8 @@ def test_reconstruct_historical_game_picks_skips_commits_missing_required_column
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     picks = game_picks_backtest.reconstruct_historical_game_picks(
-        repo_dir=str(repo), raw_dir=str(raw_dir), season=2026, days=40
+        repo_dir=str(repo), raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert picks.empty
@@ -183,7 +187,8 @@ def test_reconstruct_historical_game_picks_days_limits_the_replay_window(tmp_pat
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     picks = game_picks_backtest.reconstruct_historical_game_picks(
-        repo_dir=str(repo), raw_dir=str(raw_dir), season=2026, days=1
+        repo_dir=str(repo), raw_dir=str(raw_dir), season=2026, days=1,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert len(picks) == 1
@@ -220,7 +225,8 @@ def test_reconstruct_historical_game_picks_from_persisted_tags_current_model_ver
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     picks = game_picks_backtest.reconstruct_historical_game_picks_from_persisted(
-        raw_dir=str(raw_dir), season=2026, days=40
+        raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert len(picks) == 1
@@ -250,7 +256,8 @@ def test_reconstruct_historical_game_picks_from_persisted_skips_a_date_with_no_p
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     picks = game_picks_backtest.reconstruct_historical_game_picks_from_persisted(
-        raw_dir=str(raw_dir), season=2026, days=40
+        raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert len(picks) == 1
@@ -270,7 +277,8 @@ def test_reconstruct_historical_game_picks_from_persisted_days_limits_the_replay
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
     picks = game_picks_backtest.reconstruct_historical_game_picks_from_persisted(
-        raw_dir=str(raw_dir), season=2026, days=1
+        raw_dir=str(raw_dir), season=2026, days=1,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert len(picks) == 1
@@ -279,7 +287,8 @@ def test_reconstruct_historical_game_picks_from_persisted_days_limits_the_replay
 
 def test_reconstruct_historical_game_picks_from_persisted_no_persisted_data_returns_empty(tmp_path):
     picks = game_picks_backtest.reconstruct_historical_game_picks_from_persisted(
-        raw_dir=str(tmp_path / "nonexistent"), season=2026, days=40
+        raw_dir=str(tmp_path / "nonexistent"), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
     )
 
     assert picks.empty
@@ -302,7 +311,10 @@ def test_assemble_game_pick_log_has_expected_schema_and_no_lookahead(tmp_path, m
     )
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
-    log = game_picks_backtest.assemble_game_pick_log(raw_dir=str(raw_dir), season=2026, days=40)
+    log = game_picks_backtest.assemble_game_pick_log(
+        raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
+    )
 
     assert list(log.columns) == game_picks_backtest.GAME_PICK_LOG_COLUMNS
     assert len(log) == 1  # 05-31 skipped (no prior history), only 06-01 logged
@@ -359,7 +371,10 @@ def test_assemble_game_pick_log_populates_bullpen_recent_workload(tmp_path, monk
         row["events"] = None
     pd.DataFrame(day1 + day2).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
-    log = game_picks_backtest.assemble_game_pick_log(raw_dir=str(raw_dir), season=2026, days=40)
+    log = game_picks_backtest.assemble_game_pick_log(
+        raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
+    )
 
     assert len(log) == 1
     row = log.iloc[0]
@@ -409,7 +424,10 @@ def test_assemble_game_pick_log_populates_back_to_back_relievers_when_real(tmp_p
         row["events"] = None
     pd.DataFrame(day_minus_2 + day_minus_1 + day0).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
-    log = game_picks_backtest.assemble_game_pick_log(raw_dir=str(raw_dir), season=2026, days=40)
+    log = game_picks_backtest.assemble_game_pick_log(
+        raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
+    )
 
     assert len(log) == 1
     assert log.iloc[0]["home_bullpen_back_to_back_relievers"] == 1
@@ -425,7 +443,10 @@ def test_assemble_game_pick_log_home_loss_recorded_correctly(tmp_path, monkeypat
     )
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
-    log = game_picks_backtest.assemble_game_pick_log(raw_dir=str(raw_dir), season=2026, days=40)
+    log = game_picks_backtest.assemble_game_pick_log(
+        raw_dir=str(raw_dir), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
+    )
 
     assert log.iloc[0]["Home_Won"] == 0
 
@@ -442,14 +463,20 @@ def test_assemble_game_pick_log_days_limits_the_replay_window(tmp_path, monkeypa
     )
     pd.DataFrame(rows).to_parquet(raw_dir / "statcast_2026.parquet", index=False)
 
-    log = game_picks_backtest.assemble_game_pick_log(raw_dir=str(raw_dir), season=2026, days=1)
+    log = game_picks_backtest.assemble_game_pick_log(
+        raw_dir=str(raw_dir), season=2026, days=1,
+        schedule_backtest_mode="actual_starter",
+    )
 
     assert len(log) == 1
     assert log.iloc[0]["game_pk"] == 557
 
 
 def test_assemble_game_pick_log_no_persisted_data_returns_empty(tmp_path):
-    log = game_picks_backtest.assemble_game_pick_log(raw_dir=str(tmp_path / "nonexistent"), season=2026, days=40)
+    log = game_picks_backtest.assemble_game_pick_log(
+        raw_dir=str(tmp_path / "nonexistent"), season=2026, days=40,
+        schedule_backtest_mode="actual_starter",
+    )
 
     assert log.empty
     assert list(log.columns) == game_picks_backtest.GAME_PICK_LOG_COLUMNS

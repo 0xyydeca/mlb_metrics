@@ -21,8 +21,8 @@ import pandas as pd
 from mlb_metrics import (
     config, data, dfs_ml, evaluation, game_evaluation, game_picks, game_predictions,
     game_residual_model, hitter_probability_model, hitters, lineup, lineup_snapshots,
-    market_odds, matchup, ml_models, pitchers, predictions, schedule, streak_policy,
-    teams,
+    market_odds, matchup, ml_models, pitchers, predictions, schedule, schedule_snapshots,
+    streak_policy, teams,
 )
 
 
@@ -314,6 +314,18 @@ def run(
         except Exception as exc:
             print(f"WARNING: failed to fetch today's game schedule ({exc}); "
                   f"skipping Automated Game Picks for this run.")
+
+        # Persist as-of schedule / probable-starter snapshot for production-
+        # equivalent backtests. Failures never abort the daily run.
+        if schedule_games_df is not None and not schedule_games_df.empty:
+            try:
+                schedule_snapshots.persist_schedule_from_live_games(
+                    schedule_games_df,
+                    prediction_target_date=as_of_date,
+                    source=schedule_snapshots.SOURCE_STATSAPI,
+                )
+            except Exception as exc:
+                print(f"WARNING: failed to persist schedule snapshots ({exc})")
 
         # None (fetch failed) means "unknown, don't filter"; an empty set
         # (fetch succeeded, zero games today) correctly excludes every pick.

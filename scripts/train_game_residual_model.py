@@ -60,6 +60,13 @@ def main():
         help="Market role used as the residual prior (never closing).",
     )
     parser.add_argument(
+        "--schedule-backtest-mode",
+        default=config.SCHEDULE_BACKTEST_MODE_DEFAULT,
+        choices=list(config.SCHEDULE_BACKTEST_MODES),
+        help="as_of_snapshot (production-equivalent, default) vs actual_starter "
+             "(retrospective diagnostic). Modes are never merged.",
+    )
+    parser.add_argument(
         "--report-path",
         type=str,
         default=None,
@@ -80,6 +87,7 @@ def main():
         raw_dir=args.raw_dir,
         season=args.season,
         days=args.days,
+        schedule_backtest_mode=args.schedule_backtest_mode,
     )
     if log.empty:
         print("No training rows; aborting.")

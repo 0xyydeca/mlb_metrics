@@ -1,0 +1,8 @@
+snapshot_id,captured_at_utc,prediction_target_date,game_pk,game_datetime,home_team,away_team,home_probable_pitcher_key_mlbam,away_probable_pitcher_key_mlbam,starter_announcement_status,game_status,source
+sched_b4f5ae7fd33a,2026-09-04T02:03:31Z,2026-06-20,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule
+sched_4f41292bc2f5,2026-09-04T02:03:34Z,2026-06-19,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule
+sched_8f8ea9080eed,2026-09-04T02:16:00Z,2026-06-19,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule
+sched_0251f91e8289,2026-09-04T02:19:16Z,2026-06-19,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule
+sched_f77956df1441,2026-09-04T02:19:47Z,2026-06-19,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule
+sched_313f3820ebf6,2026-09-04T02:21:51Z,2026-06-20,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule
+sched_281b0b1615a0,2026-09-04T02:21:55Z,2026-06-19,100,,NYY,BOS,501,502,both_announced,Scheduled,statsapi_schedule

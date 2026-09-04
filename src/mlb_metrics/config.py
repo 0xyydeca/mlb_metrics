@@ -416,6 +416,23 @@ LINEUP_SNAPSHOT_AUDIT_PATH = "data/predictions/lineup_snapshots_audit.csv"
 LINEUP_SNAPSHOT_LATEST_PATH = "data/predictions/lineup_snapshots_latest.csv"
 LINEUP_LOCK_WINDOW_HOURS = 6.0  # only recompute unstarted games starting within this window
 LINEUP_LOCK_SHADOW_DECISIONS_PATH = "data/predictions/lineup_lock_runs.csv"
+
+# As-of schedule / probable-starter snapshots (mlb_metrics.schedule_snapshots).
+# Append-only captures of the slate the live pipeline actually saw, so
+# game-model backtests can use production-equivalent information rather
+# than silently substituting the actual starter.
+SCHEDULE_SNAPSHOTS_PATH = "data/predictions/schedule_snapshots.csv"
+SCHEDULE_BACKTEST_MODES = ("as_of_snapshot", "actual_starter", "missing_snapshot")
+# Primary backtest mode: production-equivalent as-of snapshots.
+SCHEDULE_BACKTEST_MODE_DEFAULT = "as_of_snapshot"
+# Morning prediction hour (UTC) used when a backtest has a target date but
+# no recorded pipeline capture time. Arizona ~8am is UTC 15:00 year-round.
+SCHEDULE_BACKTEST_MORNING_HOUR_UTC = 15
+# Honest floor before treating as-of evaluation as an adequate
+# production-equivalent sample. Below this, label insufficient and do not
+# merge actual-starter diagnostic rows into the as-of set.
+SCHEDULE_AS_OF_MIN_PRODUCTION_GAMES = 100
+
 # Immutable audit copies of every published prediction batch (morning +
 # lineup_lock). The published predictions.csv / game_predictions.csv files
 # keep only the latest valid pregame row per key.
@@ -931,6 +948,39 @@ NESTED_VALIDATION_RANDOM_SEED = 0
 DFS_HITTER_MODEL_PATH = "data/models/dfs_hitter_model.joblib"
 DFS_PITCHER_H_ALLOWED_MODEL_PATH = "data/models/dfs_pitcher_h_allowed_model.joblib"
 DFS_PITCHER_BB_MODEL_PATH = "data/models/dfs_pitcher_bb_model.joblib"
+
+# Complete DraftKings-style target construction (mlb_metrics.dfs_complete_targets).
+# Evaluates against full official/reconstructed game outcomes, not the
+# partial Actual_DK_Points_Modeled subset. Legacy partial-target models
+# remain the live/heuristic benchmark until the promotion gate passes.
+DFS_COMPLETE_TARGET_MODE = "shadow"  # legacy | shadow | live
+DFS_COMPLETE_TARGET_MODES = ("legacy", "shadow", "live")
+DFS_COMPLETE_HITTER_MODEL_PATH = "data/models/dfs_complete_hitter_model.joblib"
+DFS_COMPLETE_PITCHER_MODEL_PATH = "data/models/dfs_complete_pitcher_model.joblib"
+DFS_COMPLETE_SHADOW_PREDICTIONS_PATH = (
+    "data/predictions/dfs_complete_shadow_predictions.csv"
+)
+DFS_COMPLETE_PROMOTION_GATE_REPORT_PATH = (
+    "reports/model_validation/dfs_complete_targets_nested.json"
+)
+DFS_COMPLETE_VALIDATION_REPORT_NAME = "dfs_complete_targets_nested.json"
+# Promotion requires meaningful lineup-level / ranking improvement - not a
+# trivial player-MAE tick alone.
+DFS_COMPLETE_MIN_LINEUP_SCORE_IMPROVEMENT = 0.5  # mean abs lineup error reduction
+DFS_COMPLETE_MIN_RANK_CORR_IMPROVEMENT = 0.02
+DFS_COMPLETE_MIN_TOP_DECILE_RECALL_IMPROVEMENT = 0.02
+DFS_COMPLETE_TRIVIAL_MAE_EPSILON = 0.05  # MAE-only wins below this do not promote
+DFS_COMPLETE_OUTER_MIN_TRAIN_DATES = 30
+DFS_COMPLETE_OUTER_TEST_BLOCK_DATES = 10
+DFS_COMPLETE_INNER_MIN_TRAIN_DATES = 15
+DFS_COMPLETE_INNER_TEST_BLOCK_DATES = 5
+DFS_COMPLETE_RIDGE_ALPHA_GRID = [0.3, 1, 3, 10, 30]
+DFS_COMPLETE_GBM_PARAM_GRID = {
+    "max_depth": [2, 3],
+    "learning_rate": [0.05, 0.1],
+    "max_iter": [100, 200],
+    "min_samples_leaf": [50, 200],
+}
 AGE_CURVE_HR9_MODEL_PATH = "data/models/age_curve_hr9_model.joblib"
 HITTER_HIT_PROBABILITY_MODEL_PATH = "data/models/hitter_hit_probability_model.joblib"
 

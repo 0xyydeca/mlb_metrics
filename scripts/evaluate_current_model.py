@@ -62,9 +62,12 @@ def evaluate_hitter_picks(repo_dir: str, raw_dir: str, days: int | None) -> pd.D
     return evaluation.summarize(resolved, model_version=config.HITTER_MODEL_VERSION)
 
 
-def evaluate_game_picks(raw_dir: str, days: int) -> pd.DataFrame:
+def evaluate_game_picks(raw_dir: str, days: int, schedule_backtest_mode: str | None = None) -> pd.DataFrame:
     picks = game_picks_backtest.reconstruct_historical_game_picks_from_persisted(
-        raw_dir=raw_dir, days=days, model_version=config.GAME_PICK_MODEL_VERSION
+        raw_dir=raw_dir,
+        days=days,
+        model_version=config.GAME_PICK_MODEL_VERSION,
+        schedule_backtest_mode=schedule_backtest_mode,
     )
     if picks.empty:
         return pd.DataFrame()
@@ -86,6 +89,12 @@ def main():
         help="Number of most recent game dates to replay for game picks. Recomputes the full pipeline "
         "per date, so keep this modest for interactive use.",
     )
+    parser.add_argument(
+        "--schedule-backtest-mode",
+        default=config.SCHEDULE_BACKTEST_MODE_DEFAULT,
+        choices=list(config.SCHEDULE_BACKTEST_MODES),
+        help="as_of_snapshot (default) vs actual_starter diagnostic for game picks.",
+    )
     args = parser.parse_args()
 
     print(f"Evaluating current hitter-pick model (model_version={config.HITTER_MODEL_VERSION})...")
@@ -95,8 +104,13 @@ def main():
     else:
         print(hitter_summary.to_string(index=False))
 
-    print(f"\nEvaluating current game-pick model (model_version={config.GAME_PICK_MODEL_VERSION})...")
-    game_summary = evaluate_game_picks(args.raw_dir, args.game_days)
+    print(
+        f"\nEvaluating current game-pick model (model_version={config.GAME_PICK_MODEL_VERSION}, "
+        f"schedule_mode={args.schedule_backtest_mode})..."
+    )
+    game_summary = evaluate_game_picks(
+        args.raw_dir, args.game_days, schedule_backtest_mode=args.schedule_backtest_mode,
+    )
     if game_summary.empty:
         print("  No resolved game picks to evaluate.")
     else:

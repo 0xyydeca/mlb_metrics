@@ -2705,22 +2705,15 @@ instead of a player id). Resolution uses final scores fetched via
 `schedule.fetch_game_results`, not Statcast.
 
 **Historical backtest** (`scripts/run_game_picks_backtest.py`,
-`game_picks_backtest.py`): unlike probable-pitcher/live-schedule data
-(never persisted - see `Matchup_Hit_Probability`'s equivalent limitation
-above), schedule/game *outcomes* are already fully reconstructable from
-data this project already has: `confidence.csv`/`pave.csv` have been
-committed daily (same commit as `wave.csv`) since the project started, in
-exactly the as-of-that-date snapshot shape the model needs, and Statcast
-itself already contains each game's real `game_pk`, actual starting
-pitchers, and actual final score - no separate schedule-API history
-needed. This replays the last N days (default 40) of `confidence.csv`/
-`pave.csv` git history through `game_picks.compute_game_win_probabilities`,
-using the *actual* starter in place of the announced "probable" one (a
-reasonable stand-in in hindsight - the two agree the vast majority of the
-time) and resolves every pick immediately against the real final score,
-since a backtested pick's outcome is already known at reconstruction time
-(no pending state, unlike a live pick). Writes into the same
-`data/predictions/game_predictions.csv` log and
+`game_picks_backtest.py`): schedule/game *outcomes* are reconstructable from
+persisted Statcast (`game_pk`, final scores) plus as-of `confidence.csv`/
+`pave.csv` history. **Default production-equivalent mode is
+`as_of_snapshot`** (`SCHEDULE_BACKTEST_MODE_DEFAULT`), which uses captured
+probable-starter snapshots and never silently substitutes actual starters.
+`actual_starter` remains an explicitly labeled diagnostic mode only.
+Modes are evaluated separately and must not be merged. Insufficient as-of
+snapshot history is reported rather than backfilled with hindsight starters.
+Writes into the same `data/predictions/game_predictions.csv` log and
 `docs/data/game_picks_picks.csv`/`game_picks_summary.csv` exports used by
 the live daily system, exactly like `git_backtest.py` does for hitter
 picks - so the dashboard shows one continuous history, not two separate

@@ -2,15 +2,15 @@
 git history plus already-persisted Statcast, and report how well the
 model would have performed.
 
-Uses ACTUAL starting pitchers and ACTUAL final scores (both already fully
-contained in persisted Statcast), not statsapi's "probable" pitcher
-announcements or a live final-score fetch - neither was ever persisted to
-git history (see schedule.py). This runs entirely offline: no network
-access needed at all, unlike the hitter-pick backtest's --fetch-missing.
+Default schedule mode is ``as_of_snapshot`` (production-equivalent probable
+starters from append-only schedule snapshots). Pass
+``--schedule-backtest-mode actual_starter`` for the labeled retrospective
+diagnostic that uses Statcast actual starters. Modes are never merged.
 
 Usage:
-    python scripts/run_game_picks_backtest.py               # backfill last 40 days + report
-    python scripts/run_game_picks_backtest.py --days 60      # backfill a longer/shorter window
+    python scripts/run_game_picks_backtest.py
+    python scripts/run_game_picks_backtest.py --days 60
+    python scripts/run_game_picks_backtest.py --schedule-backtest-mode actual_starter
 """
 
 import argparse
@@ -32,12 +32,22 @@ def main():
     parser.add_argument("--repo-dir", default=".", help="Git checkout to replay confidence.csv/pave.csv history from.")
     parser.add_argument("--days", type=int, default=40, help="How many of the most recent daily commits to replay.")
     parser.add_argument("--season", type=int, default=config.SEASON_START.year)
+    parser.add_argument(
+        "--schedule-backtest-mode",
+        default=config.SCHEDULE_BACKTEST_MODE_DEFAULT,
+        choices=list(config.SCHEDULE_BACKTEST_MODES),
+        help="as_of_snapshot (default) vs actual_starter diagnostic.",
+    )
     args = parser.parse_args()
 
     historical_picks = game_picks_backtest.reconstruct_historical_game_picks(
         repo_dir=args.repo_dir, raw_dir=args.raw_dir, season=args.season, days=args.days,
+        schedule_backtest_mode=args.schedule_backtest_mode,
     )
-    print(f"Reconstructed {len(historical_picks)} historical game picks from the last {args.days} day(s).")
+    print(
+        f"Reconstructed {len(historical_picks)} historical game picks from the last "
+        f"{args.days} day(s) (schedule_mode={args.schedule_backtest_mode})."
+    )
     game_predictions.append_game_predictions(historical_picks, args.predictions_log)
 
     pipeline.write_game_picks_export(args.predictions_log, args.docs_data_dir)

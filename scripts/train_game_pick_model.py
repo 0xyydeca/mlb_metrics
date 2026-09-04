@@ -234,11 +234,26 @@ def main():
              "history - each date recomputes the full pipeline, which is expensive. Full history "
              "is the default (None), matching train_hitter_hit_model.py's own --days flag.",
     )
+    parser.add_argument(
+        "--schedule-backtest-mode",
+        default=config.SCHEDULE_BACKTEST_MODE_DEFAULT,
+        choices=list(config.SCHEDULE_BACKTEST_MODES),
+        help="as_of_snapshot (production-equivalent, default) vs actual_starter "
+             "(retrospective diagnostic). Modes are never merged.",
+    )
     args = parser.parse_args()
 
     season = args.season or config.SEASON_START.year
-    print(f"Assembling game pick log (season={season}, days={args.days or 'all'})...")
-    rows = game_picks_backtest.assemble_game_pick_log(args.raw_dir, season=season, days=args.days)
+    print(
+        f"Assembling game pick log (season={season}, days={args.days or 'all'}, "
+        f"schedule_mode={args.schedule_backtest_mode})..."
+    )
+    rows = game_picks_backtest.assemble_game_pick_log(
+        args.raw_dir,
+        season=season,
+        days=args.days,
+        schedule_backtest_mode=args.schedule_backtest_mode,
+    )
 
     if rows.empty:
         print("No game pick log rows assembled - nothing to fit.")
