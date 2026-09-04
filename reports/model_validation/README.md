@@ -4,3 +4,5 @@ Machine-readable nested rolling-origin validation output (`nested_validation_rep
 
 Complete DraftKings-style DFS targets write `dfs_complete_targets_nested.json` (see `scripts/train_dfs_complete_model.py`). Legacy partial-target models remain the live benchmark until that report's promotion gate passes.
 
+Betting readiness is checked by `scripts/check_betting_readiness.py` (fail-closed). Do not fabricate gate reports. `GAME_PREDICTION_MODE` and `BETTING_MODE` must stay shadow/disabled until every readiness check passes.
+

@@ -1211,7 +1211,10 @@ def attach_prediction_time_market(
 ) -> pd.DataFrame:
     """Merge the market snapshot available at the configured prediction role.
 
-    Never selects closing for prediction features.
+    Never selects closing for prediction features. Only
+    ``filter_valid_prediction_time_snapshots`` rows are eligible — missing
+    ``game_pk``, unmatched/ambiguous, post-start, and historical postgame
+    captures are rejected rather than silently used.
     """
     if snapshot_role == "closing":
         raise ValueError("closing snapshots cannot be attached as prediction-time market priors")
@@ -1220,24 +1223,14 @@ def attach_prediction_time_market(
         out[MARKET_AT_PRED_COL] = pd.NA
         return out
 
+    valid = market_odds.filter_valid_prediction_time_snapshots(
+        snapshots, required_role=snapshot_role,
+    )
     rows = []
     for gpk in out["game_pk"].dropna().unique():
-        snap = market_odds.select_role_snapshot(snapshots, gpk, snapshot_role)
+        snap = market_odds.select_role_snapshot(valid, gpk, snapshot_role)
         if snap is None:
-            # Fall back to latest snapshot for that game that is not closing-tagged
-            # when an exact role tag is missing - still never uses post-start close
-            # selection helpers.
-            frame_s = market_odds.normalize_snapshot_frame(snapshots)
-            cand = frame_s[
-                (frame_s["game_pk"] == gpk)
-                & frame_s[MARKET_AT_PRED_COL].notna()
-                & (frame_s.get("snapshot_role", pd.Series(dtype=str)) != "closing")
-            ] if "snapshot_role" in frame_s.columns else frame_s[
-                (frame_s["game_pk"] == gpk) & frame_s[MARKET_AT_PRED_COL].notna()
-            ]
-            if cand.empty:
-                continue
-            snap = cand.sort_values("captured_at_utc").iloc[-1]
+            continue
         rows.append({
             "game_pk": gpk,
             MARKET_AT_PRED_COL: snap.get(MARKET_AT_PRED_COL),
@@ -1262,13 +1255,21 @@ def prepare_training_frame(
     prediction_snapshot_role: str = "morning",
     closing_snapshots: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Assemble residual training rows; closing joined only for evaluation labels."""
+    """Assemble residual training rows; closing joined only for evaluation labels.
+
+    Prediction-time market priors are filtered through
+    ``market_odds.filter_valid_prediction_time_snapshots`` — invalid /
+    post-start / historically backfilled "morning" rows never enter.
+    """
     if game_pick_log is None or game_pick_log.empty:
         return pd.DataFrame()
     frame = enrich_residual_features(game_pick_log)
     if market_snapshots is not None and not market_snapshots.empty:
+        valid_pred = market_odds.filter_valid_prediction_time_snapshots(
+            market_snapshots, required_role=prediction_snapshot_role,
+        )
         frame = attach_prediction_time_market(
-            frame, market_snapshots, snapshot_role=prediction_snapshot_role,
+            frame, valid_pred, snapshot_role=prediction_snapshot_role,
         )
     if CLOSING_MARKET_COL not in frame.columns:
         frame[CLOSING_MARKET_COL] = pd.NA

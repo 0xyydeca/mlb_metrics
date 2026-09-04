@@ -63,6 +63,20 @@ SOURCE_MISSING_ODDS = "missing_odds"
 SOURCE_AMBIGUOUS_MATCH = "ambiguous_match"
 SOURCE_UNMATCHED = "unmatched"
 SOURCE_POST_START = "post_start"
+SOURCE_HISTORICAL_POSTGAME = "historical_postgame_fetch"
+
+PREDICTION_TIME_ROLES = frozenset({
+    SNAPSHOT_ROLE_OPENING,
+    SNAPSHOT_ROLE_MORNING,
+    SNAPSHOT_ROLE_LINEUP_LOCK,
+})
+INVALID_PREDICTION_TIME_STATUSES = frozenset({
+    SOURCE_MISSING_ODDS,
+    SOURCE_AMBIGUOUS_MATCH,
+    SOURCE_UNMATCHED,
+    SOURCE_POST_START,
+    SOURCE_HISTORICAL_POSTGAME,
+})
 
 # Backward-compatible columns previously returned by fetch_market_home_win_probabilities.
 LEGACY_MARKET_COLUMNS = [
@@ -498,6 +512,110 @@ def mark_post_start_snapshots(snapshots: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def coerce_requested_snapshot_role(
+    snapshots: pd.DataFrame,
+    requested_role: str,
+) -> pd.DataFrame:
+    """Never relabel post-start / post-completion captures as morning (etc.).
+
+    Historical odds fetched after a game was completed must not be stored
+    as a prediction-time ``morning`` / ``lineup_lock`` / ``opening`` snapshot.
+    Those rows keep their prices but are forced to ``raw`` with
+    ``historical_postgame_fetch`` (or keep ``post_start``).
+    """
+    frame = mark_post_start_snapshots(normalize_snapshot_frame(snapshots))
+    if frame.empty:
+        return frame
+    out = frame.copy()
+    roles = []
+    statuses = []
+    for _, row in out.iterrows():
+        start = _to_utc_ts(row.get("game_datetime"))
+        captured = _to_utc_ts(row.get("captured_at_utc"))
+        status = row.get("source_status") or SOURCE_OK
+        role = requested_role
+        if requested_role in PREDICTION_TIME_ROLES:
+            post_start = (
+                pd.notna(start)
+                and pd.notna(captured)
+                and captured >= start
+            )
+            # Also refuse morning labels when the calendar game date is
+            # strictly before the capture calendar day (historical backfill).
+            game_day = pd.to_datetime(row.get("date"), errors="coerce")
+            if pd.notna(game_day):
+                game_day = pd.Timestamp(game_day).tz_localize(None).normalize()
+            capture_day = (
+                captured.tz_convert(None).normalize()
+                if pd.notna(captured)
+                else pd.NaT
+            )
+            historical_day = (
+                pd.notna(game_day)
+                and pd.notna(capture_day)
+                and capture_day > game_day
+            )
+            if post_start or historical_day:
+                role = SNAPSHOT_ROLE_RAW
+                if status == SOURCE_OK or status == SOURCE_POST_START:
+                    status = (
+                        SOURCE_POST_START if post_start else SOURCE_HISTORICAL_POSTGAME
+                    )
+                elif status not in INVALID_PREDICTION_TIME_STATUSES:
+                    status = SOURCE_HISTORICAL_POSTGAME
+        roles.append(role)
+        statuses.append(status)
+    out["snapshot_role"] = roles
+    out["source_status"] = statuses
+    return out
+
+
+def filter_valid_prediction_time_snapshots(
+    snapshots: pd.DataFrame,
+    *,
+    required_role: str | None = None,
+) -> pd.DataFrame:
+    """Rows eligible as prediction-time market priors for model training.
+
+    Rejects missing ``game_pk``, unmatched/ambiguous/post-start/historical
+    statuses, captures at/after first pitch, and roles inconsistent with
+    capture time. Closing is never returned.
+    """
+    frame = normalize_snapshot_frame(snapshots)
+    if frame.empty:
+        return frame
+    frame = mark_post_start_snapshots(frame)
+    ok = frame[
+        frame["game_pk"].notna()
+        & frame["market_home_win_probability"].notna()
+        & (frame["source_status"] == SOURCE_OK)
+        & frame["snapshot_role"].isin(list(PREDICTION_TIME_ROLES))
+    ].copy()
+    if required_role is not None:
+        if required_role == "closing":
+            raise ValueError("closing cannot be a prediction-time market prior")
+        ok = ok[ok["snapshot_role"] == required_role]
+    if ok.empty:
+        return ok
+
+    keep = []
+    for idx, row in ok.iterrows():
+        start = _to_utc_ts(row.get("game_datetime"))
+        captured = _to_utc_ts(row.get("captured_at_utc"))
+        if pd.isna(captured):
+            continue
+        if pd.notna(start) and captured >= start:
+            continue
+        game_day = pd.to_datetime(row.get("date"), errors="coerce")
+        if pd.notna(game_day):
+            game_day = pd.Timestamp(game_day).tz_localize(None).normalize()
+            capture_day = captured.tz_convert(None).normalize()
+            if capture_day > game_day:
+                continue
+        keep.append(idx)
+    return ok.loc[keep] if keep else ok.iloc[0:0]
+
+
 def select_opening_snapshot(snapshots: pd.DataFrame, game_pk) -> pd.Series | None:
     """Earliest observed ok snapshot for ``game_pk``."""
     frame = normalize_snapshot_frame(snapshots)
@@ -546,13 +664,15 @@ def select_closing_snapshot(snapshots: pd.DataFrame, game_pk, game_datetime=None
 
 
 def select_role_snapshot(snapshots: pd.DataFrame, game_pk, role: str) -> pd.Series | None:
-    """Latest snapshot explicitly tagged with ``snapshot_role`` for a game."""
-    frame = normalize_snapshot_frame(snapshots)
-    scoped = frame[
-        (frame["game_pk"] == game_pk)
-        & (frame["snapshot_role"] == role)
-        & frame["market_home_win_probability"].notna()
-    ]
+    """Latest valid prediction-time snapshot tagged with ``snapshot_role``.
+
+    Uses ``filter_valid_prediction_time_snapshots`` so unmatched / post-start /
+    historically backfilled rows never enter training or inference priors.
+    """
+    if role == "closing":
+        raise ValueError("use select_closing_snapshot for closing")
+    frame = filter_valid_prediction_time_snapshots(snapshots, required_role=role)
+    scoped = frame[frame["game_pk"] == game_pk]
     if scoped.empty:
         return None
     scoped = scoped.copy()
@@ -645,14 +765,14 @@ def fetch_and_persist_odds_snapshots(
         )
 
     matched = mark_post_start_snapshots(matched)
+    matched = coerce_requested_snapshot_role(matched, snapshot_role)
     matched = matched.copy()
-    matched["snapshot_role"] = snapshot_role
     matched["snapshot_id"] = [make_snapshot_id(r) for _, r in matched.iterrows()]
 
     ok_map = matched[
         matched["game_pk"].notna()
         & matched["provider_event_id"].notna()
-        & matched["source_status"].isin([SOURCE_OK, SOURCE_POST_START])
+        & matched["source_status"].isin([SOURCE_OK, SOURCE_POST_START, SOURCE_HISTORICAL_POSTGAME])
     ][["provider_event_id", "game_pk", "home_team", "away_team", "date", "match_method"]]
     if not ok_map.empty:
         save_event_map(ok_map, event_map_path)

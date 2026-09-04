@@ -1,46 +1,26 @@
-"""Daily bet-sizing report - a follow-up to quant-analytics item #6 (the
-market benchmark). Turns "the model's probability disagrees with the
-market's real price" into an actual recommended stake for that day's
-still-unresolved logged game picks. The actual edge/Kelly-sizing decision
-logic lives in `game_predictions.advise_bets` (shared with
-`pipeline.run()`, which logs the same real decision onto each day's
-game-predictions row as it happens) - this script is CLI/reporting and
-two independent safety guards wrapped around that one shared function,
-not a second implementation of it.
+"""Daily bet-sizing report — hard-gated behind live betting readiness.
 
-This is a REPORT a human reads and acts on manually, nothing more:
-- Single straight bets only, never parlays. Parlays compound the book's
-  vig across every leg (worse EV by construction) and would need real
-  joint-probability modeling this project doesn't have
-  (predictions._diversify_second_pick is an explicit sign-only proxy,
-  not a real correlation estimate) to ever be justified.
-- No execution/order-placement anywhere. Retail sportsbooks don't offer
-  public betting APIs to individuals, and actively limit/ban bettors who
-  show a persistent edge - "physically placing the bet" means a human
-  reads this report's table and does it themselves.
-- "Favorite" is irrelevant here - a bet is recommended on whichever SIDE
-  (home or away) the model's own probability diverges enough from that
-  side's real market price, in either direction.
+This script is intentionally fail-closed. It does NOT place bets and must
+not print actionable "Real bet recommendations" unless:
 
-**Real, current validation status**: game_evaluation.py's own
-beat_closing_line_rate is NOT yet backed by a real statistically
-meaningful sample (see the confidence banner this script always prints).
-This script shows real, honestly-computed numbers - it is not a proven
-betting strategy, and never claims to be.
+- ``resolve_betting_mode()`` effective mode is exactly ``live``
+- the betting promotion report exists and every required check passes
+- a loadable residual artifact exists whose artifact_id matches the report
+- picks use residual (non-legacy / non-fallback) probabilities
+- market data is matched, pre-start, and not stale
 
-Stakes are reported in UNITS (config.UNIT_SIZE_FRACTION of bankroll per
-unit - the standard sports-betting convention, bankroll-agnostic by
-design), not dollars - `--bankroll` is optional and only adds a real
-dollar-amount column for convenience when actually placing a bet.
+When ``BETTING_MODE`` is ``disabled`` (the default) or resolves to
+``shadow``, this script hard-exits without generating real-money advice.
 
-Usage:
+Usage (will exit nonzero under current defaults):
     python scripts/recommend_bets.py
-    python scripts/recommend_bets.py --date 2026-08-24 --bankroll 1000
-    python scripts/recommend_bets.py --kelly-fraction 0.25 --min-edge 0.03 --out bets.csv
 """
+
+from __future__ import annotations
 
 import argparse
 import datetime
+import json
 import os
 import sys
 
@@ -48,14 +28,13 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from mlb_metrics import config, game_evaluation, game_predictions, market_odds, schedule
+from mlb_metrics import (
+    config, game_evaluation, game_predictions, game_residual_model,
+    market_odds, schedule,
+)
 
 
 def _print_confidence_banner(log_path: str) -> None:
-    """Always prints the real beat_closing_line_rate/n so far - real
-    numbers, honestly labeled, not hidden and not oversold (same
-    convention decision_theory.py's own streak=0 caveat already
-    establishes for this project)."""
     if not os.path.exists(log_path):
         print("No game-predictions log found yet - nothing to base a confidence check on.")
         return
@@ -64,34 +43,76 @@ def _print_confidence_banner(log_path: str) -> None:
     n = int(summary.loc[0, "n_beat_closing_line_compared"]) if not summary.empty else 0
     rate = summary.loc[0, "beat_closing_line_rate"] if not summary.empty else float("nan")
     rate_str = f"{rate:.1%}" if pd.notna(rate) else "n/a"
-
-    # flush=True on every line here: this banner MUST appear before any
-    # later SystemExit message (which Python writes straight to stderr,
-    # unbuffered) in a real CI log - stdout is block-buffered when not
-    # attached to a terminal, so without an explicit flush this banner
-    # can print AFTER a later refusal message despite running first,
-    # confirmed for real via a GitHub Actions dispatch (run 32679390305).
     print("=" * 72, flush=True)
-    print(f"Real beat_closing_line_rate so far: {rate_str} (n={n} real market-compared games)", flush=True)
+    print(
+        f"Real beat_closing_line_rate so far: {rate_str} "
+        f"(n={n} real market-compared games)",
+        flush=True,
+    )
     if n < config.KELLY_MIN_GAMES_FOR_CONFIDENCE:
         print(
             f"WARNING: n={n} is well below a real statistically meaningful sample "
-            f"(config.KELLY_MIN_GAMES_FOR_CONFIDENCE={config.KELLY_MIN_GAMES_FOR_CONFIDENCE}). "
-            "The numbers below are real, honestly computed edges - NOT a validated betting "
-            "strategy. Do not size real money off this until beat_closing_line_rate has real "
-            "statistical power behind it.",
+            f"(config.KELLY_MIN_GAMES_FOR_CONFIDENCE={config.KELLY_MIN_GAMES_FOR_CONFIDENCE}).",
             flush=True,
         )
     print("=" * 72, flush=True)
 
 
+def assert_live_betting_cli_allowed() -> tuple[str, dict]:
+    """Hard-refuse unless betting mode resolves to live with a passed gate."""
+    mode, meta = game_residual_model.resolve_betting_mode()
+    if mode != "live":
+        raise SystemExit(
+            f"Refusing recommend_bets.py: effective BETTING_MODE is '{mode}' "
+            f"(configured={meta.get('configured')}, "
+            f"fallback={meta.get('fallback_reason')}). "
+            "No real-money recommendations are generated while betting is "
+            "disabled or shadow-only. READY FOR LIVE BETTING: NO"
+        )
+
+    ok, details = game_residual_model.evaluate_betting_promotion_gate(
+        _load_betting_report()
+    )
+    if not ok:
+        raise SystemExit(
+            f"Refusing recommend_bets.py: betting promotion gate failed "
+            f"({details.get('reason')}). READY FOR LIVE BETTING: NO"
+        )
+
+    art = game_residual_model.load_residual_model()
+    if art is None:
+        raise SystemExit(
+            "Refusing recommend_bets.py: residual model artifact missing. "
+            "READY FOR LIVE BETTING: NO"
+        )
+    report = _load_betting_report() or {}
+    report_artifact = report.get("artifact_id")
+    model_artifact = (art.metadata or {}).get("artifact_id")
+    if not model_artifact or report_artifact != model_artifact:
+        raise SystemExit(
+            "Refusing recommend_bets.py: residual artifact_id does not match "
+            f"validation report (model={model_artifact!r}, report={report_artifact!r}). "
+            "READY FOR LIVE BETTING: NO"
+        )
+    return mode, meta
+
+
+def _load_betting_report() -> dict | None:
+    path = config.BETTING_PROMOTION_GATE_REPORT_PATH
+    if not path or not os.path.exists(path):
+        # Fall back to nested residual report which also carries the gate.
+        alt = config.GAME_RESIDUAL_PROMOTION_GATE_REPORT_PATH
+        if not alt or not os.path.exists(alt):
+            return None
+        path = alt
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
 def _load_target_date_picks(log_path: str, target_date: pd.Timestamp) -> pd.DataFrame:
-    """Real, unresolved logged game picks for `target_date` - HARD refuses
-    (raises SystemExit) rather than silently falling back to a different
-    date or a stale one, since this script's output is literally an
-    instruction to place real money. Same "safe failure mode, not a
-    wrong-data one" philosophy game_predictions.resolve_game_predictions
-    already applies to its own ambiguous-status games."""
     if not os.path.exists(log_path):
         raise SystemExit(f"{log_path} does not exist - run the daily pipeline first.")
 
@@ -105,24 +126,60 @@ def _load_target_date_picks(log_path: str, target_date: pd.Timestamp) -> pd.Data
 
     pending = day[day["game_played"].isna()]
     if pending.empty:
-        raise SystemExit(f"Every logged game pick for {target_date.date()} is already resolved - nothing to bet on.")
+        raise SystemExit(
+            f"Every logged game pick for {target_date.date()} is already resolved - nothing to bet on."
+        )
     return pending
 
 
 def _real_game_statuses(target_date) -> dict:
-    """game_pk -> real MLB Stats API status for `target_date`, via
-    schedule.fetch_todays_games - a second, independent, cheap guard
-    against ever recommending a stake on a game that's already started or
-    finished. Both game_predictions.csv's game_pk and this function's
-    game_pk come from the same MLB Stats API source, so matching on it
-    here is exact (unlike matching against ESPN's market data, which
-    needs the team-abbreviation crosswalk in market_odds.py)."""
     games = schedule.fetch_todays_games(target_date)
     return dict(zip(games["game_pk"], games["status"]))
 
 
+def _refuse_legacy_or_fallback_probabilities(picks: pd.DataFrame) -> None:
+    if "probability_source" in picks.columns:
+        bad = picks[
+            ~picks["probability_source"].astype(str).str.contains("residual", case=False, na=False)
+        ]
+        if not bad.empty:
+            raise SystemExit(
+                "Refusing recommend_bets.py: picks use legacy/heuristic/fallback "
+                "probabilities, not the residual model. READY FOR LIVE BETTING: NO"
+            )
+    if "model_fallback_used" in picks.columns and picks["model_fallback_used"].fillna(False).any():
+        raise SystemExit(
+            "Refusing recommend_bets.py: model fallback was used on one or more picks. "
+            "READY FOR LIVE BETTING: NO"
+        )
+
+
+def _refuse_invalid_market(market: pd.DataFrame, picks: pd.DataFrame) -> pd.DataFrame:
+    if market is None or market.empty:
+        raise SystemExit(
+            "Refusing recommend_bets.py: no market data available. "
+            "READY FOR LIVE BETTING: NO"
+        )
+    # Prefer snapshot-backed rows when present.
+    if "source_status" in market.columns:
+        bad = market[market["source_status"] != market_odds.SOURCE_OK]
+        if not bad.empty:
+            raise SystemExit(
+                "Refusing recommend_bets.py: market rows are unmatched/ambiguous/"
+                "post-start. READY FOR LIVE BETTING: NO"
+            )
+    if "game_pk" in market.columns and market["game_pk"].isna().any():
+        raise SystemExit(
+            "Refusing recommend_bets.py: market rows missing game_pk. "
+            "READY FOR LIVE BETTING: NO"
+        )
+    return market
+
+
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--log-path", default="data/predictions/game_predictions.csv")
     parser.add_argument("--date", type=datetime.date.fromisoformat, default=schedule.today_local())
     parser.add_argument("--bankroll", type=float, default=None)
@@ -131,10 +188,14 @@ def main():
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
 
+    # Fail closed BEFORE any recommendation table is computed.
+    assert_live_betting_cli_allowed()
+
     _print_confidence_banner(args.log_path)
 
     target_date = pd.Timestamp(args.date)
     todays_picks = _load_target_date_picks(args.log_path, target_date)
+    _refuse_legacy_or_fallback_probabilities(todays_picks)
 
     real_statuses = _real_game_statuses(args.date)
     scheduled_mask = todays_picks["game_pk"].map(real_statuses) == "Scheduled"
@@ -146,14 +207,16 @@ def main():
             f"never bet on those."
         )
     todays_picks = todays_picks[scheduled_mask]
-
     if todays_picks.empty:
         print(f"No real still-scheduled games left to evaluate for {target_date.date()}.")
         return
 
     market = market_odds.fetch_market_home_win_probabilities(target_date)
-    recommendations = game_predictions.advise_bets(todays_picks, market, args.kelly_fraction, args.min_edge)
+    market = _refuse_invalid_market(market, todays_picks)
 
+    recommendations = game_predictions.advise_bets(
+        todays_picks, market, args.kelly_fraction, args.min_edge,
+    )
     if recommendations.empty:
         print(
             f"No qualifying edge found for {target_date.date()} - no bets recommended. "
@@ -161,15 +224,14 @@ def main():
         )
         return
 
-    # Units - config.UNIT_SIZE_FRACTION of bankroll per unit, the standard
-    # bankroll-agnostic sports-betting convention. Always shown; a real
-    # dollar amount is only added when --bankroll is given, purely for
-    # convenience at the moment of actually placing the bet.
     recommendations["units"] = recommendations["kelly_stake_fraction"] / config.UNIT_SIZE_FRACTION
     if args.bankroll is not None:
-        recommendations["recommended_stake_dollars"] = recommendations["kelly_stake_fraction"] * args.bankroll
+        recommendations["recommended_stake_dollars"] = (
+            recommendations["kelly_stake_fraction"] * args.bankroll
+        )
 
-    print(f"\nReal bet recommendations for {target_date.date()}:")
+    # Live mode only reaches here; still label honestly.
+    print(f"\nLive-gated bet sizing table for {target_date.date()} (manual placement only):")
     print(recommendations.to_string(index=False))
 
     if args.out:
