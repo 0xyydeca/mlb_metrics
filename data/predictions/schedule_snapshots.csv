@@ -1,1 +1,10 @@
 snapshot_id,captured_at_utc,prediction_target_date,game_pk,game_datetime,home_team,away_team,home_probable_pitcher_key_mlbam,away_probable_pitcher_key_mlbam,starter_announcement_status,game_status,source
+sched_fd1a5208a9af,2026-09-04T04:03:51Z,2026-09-03,823337,2026-09-03T16:35:00Z,PIT,SF,669199,694918,both_announced,Final,statsapi_schedule
+sched_013054950e23,2026-09-04T04:03:51Z,2026-09-03,824388,2026-09-03T17:10:00Z,CLE,TOR,676440,667755,both_announced,Final,statsapi_schedule
+sched_5801d9b016b6,2026-09-04T04:03:51Z,2026-09-03,824144,2026-09-03T18:10:00Z,HOU,CWS,686613,622491,both_announced,Final,statsapi_schedule
+sched_628d3419a868,2026-09-04T04:03:51Z,2026-09-03,824796,2026-09-03T23:15:00Z,BAL,BOS,687064,687562,both_announced,Final,statsapi_schedule
+sched_a15c123013a1,2026-09-04T04:03:51Z,2026-09-03,824632,2026-09-03T23:15:00Z,CHC,MIL,592332,701656,both_announced,Final,statsapi_schedule
+sched_5aa1a885b47d,2026-09-04T04:03:51Z,2026-09-03,824069,2026-09-03T23:40:00Z,KC,MIA,608379,645261,both_announced,Final,statsapi_schedule
+sched_297bcca21a0e,2026-09-04T04:03:51Z,2026-09-03,822853,2026-09-04T00:05:00Z,TEX,TB,615698,663556,both_announced,Final,statsapi_schedule
+sched_b38bd32b70c6,2026-09-04T04:03:51Z,2026-09-03,823095,2026-09-04T01:40:00Z,SEA,ATH,807739,678022,both_announced,In Progress,statsapi_schedule
+sched_c974ebf235be,2026-09-04T04:03:51Z,2026-09-03,823907,2026-09-04T02:10:00Z,LAD,STL,669373,687273,both_announced,In Progress,statsapi_schedule
