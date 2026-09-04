@@ -1799,25 +1799,29 @@ const pnlColor = hasBets
 // profit (evaluation.mean_significance), not a win-rate coin-flip test.
 const pnlSub = hasBets ? significanceLabel(s.roi_p_value) : ""
 
-// Quant-analytics item #6, slice 2 - "beat the closing line," the
-// item's literal stated goal. "-" until n_beat_closing_line_compared
-// clears 0, i.e. until real ESPN market odds have actually been
-// logged/backfilled for resolved games. Unchanged by the bet-P&L pivot
-// above - a genuinely separate "are we better forecasters than the
-// market" question, not what's being replaced.
+// Primary market skill: paired Brier difference vs true closing line
+// (model − market; negative is better). beat_closing_line_rate remains
+// secondary (win-count style) and does not replace magnitude-aware scoring.
+const hasPairedMarket = s.n_paired_market_compared > 0 && s.model_minus_market_brier !== "" && s.model_minus_market_brier != null
+const pairedBrier = hasPairedMarket
+  ? Number(s.model_minus_market_brier).toFixed(4)
+  : "-"
+const pairedBrierSub = hasPairedMarket
+  ? [
+      ciLabel(s.model_minus_market_brier_ci_low, s.model_minus_market_brier_ci_high),
+      s.n_paired_market_compared ? `n=${s.n_paired_market_compared}` : "",
+    ].filter(Boolean).join(" · ")
+  : ""
+
+// Secondary: % of games with lower squared error vs closing line.
 const hasClosingLineData = s.beat_closing_line_rate && s.n_beat_closing_line_compared > 0
 const beatClosingLine = hasClosingLineData
-? (Number(s.beat_closing_line_rate) * 100).toFixed(1) + "%"
-: "-"
-
-// Quant-analytics item #5: THE real answer to "n=12, 33% - is that
-// evidence of an edge, or noise" - a real Wilson CI plus a real exact
-// binomial test against a null of 0.5 (a well-posed coin-flip null here,
-// see game_evaluation._beat_closing_line_rate's own docstring).
+  ? (Number(s.beat_closing_line_rate) * 100).toFixed(1) + "%"
+  : "-"
 const beatClosingLineSub = hasClosingLineData
-? [ciLabel(s.beat_closing_line_rate_ci_low, s.beat_closing_line_rate_ci_high), significanceLabel(s.beat_closing_line_rate_p_value)]
-.filter(Boolean).join(" · ")
-: ""
+  ? [ciLabel(s.beat_closing_line_rate_ci_low, s.beat_closing_line_rate_ci_high), significanceLabel(s.beat_closing_line_rate_p_value)]
+      .filter(Boolean).join(" · ")
+  : ""
 
 // Streak is DAYS, not bets (2026-08-25 - "the streak should be days...
 // if the cumulative bets made money that day" - see
@@ -1830,7 +1834,8 @@ stat(s.best_bet_streak || 0, "Best Day Streak") +
 stat(winRate, "Win Rate", winRateSub) +
 stat(s.n_bets_advised || 0, "Bets Tracked") +
 `<div class="streakStat"><div class="value" style="color:${pnlColor}">${pnl}</div><div class="label">P&amp;L</div>${pnlSub ? `<div class="sub">${pnlSub}</div>` : ""}</div>` +
-stat(beatClosingLine, "Beat Closing Line", beatClosingLineSub)
+stat(pairedBrier, "Δ Brier vs Close", pairedBrierSub) +
+stat(beatClosingLine, "% Lower SE", beatClosingLineSub)
 
 }
 

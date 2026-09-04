@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Nested model-validation reports (machine-readable JSON; not raw fold dumps)
+reports/model_validation/**
+!reports/model_validation/README.md
+!reports/model_validation/.gitkeep

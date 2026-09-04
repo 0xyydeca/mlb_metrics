@@ -514,7 +514,16 @@ def calibration_table(predictions: pd.DataFrame, n_bins: int = 10, outcome_col: 
 
 
 def _filter_metric(predictions: pd.DataFrame, metric: str | None) -> pd.DataFrame:
-    return predictions if metric is None else predictions[predictions["metric"] == metric]
+    if metric is None:
+        return predictions
+    # Game_Hit_Probability's live successor is Final_Hit_Probability - include
+    # both when the caller asks for the historical default metric name so
+    # dashboard exports spanning the cutover stay complete.
+    if metric == "Game_Hit_Probability":
+        return predictions[
+            predictions["metric"].isin(["Game_Hit_Probability", "Final_Hit_Probability"])
+        ]
+    return predictions[predictions["metric"] == metric]
 
 
 def _filter_model_version(predictions: pd.DataFrame, model_version: str | None) -> pd.DataFrame:
@@ -531,24 +540,42 @@ def _filter_model_version(predictions: pd.DataFrame, model_version: str | None) 
     return predictions[predictions["model_version"] == model_version]
 
 
-def _combined_probability(df: pd.DataFrame) -> pd.Series:
-    """A blended recommendation score from whichever of
-    predicted_probability (Game_Hit_Probability, always present),
-    probability (the WAVE-based binomial estimate), and
-    Matchup_Hit_Probability (opposing-pitcher-adjusted, only present on
-    days schedule/matchup data was available - see predictions.select_picks)
-    exist as columns - a row-wise mean, skipping any that are missing for
-    that row rather than requiring all three.
-
-    This is the same three signals select_picks already jointly requires to
-    clear HITTER_MIN_PROBABILITY at selection time (see
-    JOINT_PROBABILITY_GATE_COLUMNS) - gating "recommended" on
-    Game_Hit_Probability alone ignored the other two entirely, and produced
-    a string of zero-pick days whenever GHP landed just under the bar
-    despite `probability`/`Matchup_Hit_Probability` being strong (see
-    config.DAILY_PICK_MIN_PROBABILITY)."""
+def _legacy_combined_probability(df: pd.DataFrame) -> pd.Series:
+    """Legacy blended recommendation score (pre-Final_Hit_Probability)."""
     columns = [c for c in ("predicted_probability", "probability", "Matchup_Hit_Probability") if c in df.columns]
     return df[columns].astype(float).mean(axis=1, skipna=True)
+
+
+def _uses_final_hit_probability(df: pd.DataFrame) -> pd.Series:
+    """Per-row: True when Final_Hit_Probability is the authoritative score."""
+    source = df["probability_source"] if "probability_source" in df.columns else pd.Series(pd.NA, index=df.index)
+    sel = df["selection_metric"] if "selection_metric" in df.columns else pd.Series(pd.NA, index=df.index)
+    metric = df["metric"] if "metric" in df.columns else pd.Series(pd.NA, index=df.index)
+    mode = df["selection_mode"] if "selection_mode" in df.columns else pd.Series(pd.NA, index=df.index)
+    return (
+        (source == "Final_Hit_Probability")
+        | (sel == "Final_Hit_Probability")
+        | (metric == "Final_Hit_Probability")
+        | (mode == "live")
+    )
+
+
+def _combined_probability(df: pd.DataFrame) -> pd.Series:
+    """Recommendation / grading score for dashboard + streak logic.
+
+    Live / Final_Hit_Probability rows use ``predicted_probability`` alone
+    (which equals Final_Hit_Probability). Older rows without that authority
+    keep the legacy three-signal mean. Never silently mixes the two on a
+    live row.
+    """
+    if df.empty:
+        return pd.Series(dtype=float)
+    legacy = _legacy_combined_probability(df)
+    if not _uses_final_hit_probability(df).any():
+        return legacy
+    authoritative = pd.to_numeric(df["predicted_probability"], errors="coerce")
+    use_final = _uses_final_hit_probability(df)
+    return authoritative.where(use_final, legacy)
 
 
 def _recommended_picks(

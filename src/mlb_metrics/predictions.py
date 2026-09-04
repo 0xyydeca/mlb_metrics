@@ -27,7 +27,11 @@ from mlb_metrics import config, helpers, ml_models
 
 PREDICTION_COLUMNS = [
     "date", "game_pk", "key_mlbam", "name", "rank", "predicted_probability", "metric",
-    "probability", "Matchup_Hit_Probability", "Model_Hit_Probability", "actual_hit", "at_bats", "model_version",
+    "probability", "Matchup_Hit_Probability", "Model_Hit_Probability",
+    "Game_Hit_Probability", "Final_Hit_Probability",
+    "P_Appear", "Expected_PA_hat", "P_Hit_Given_Appearance",
+    "shadow_rank", "shadow_model_artifact_id", "selection_mode",
+    "actual_hit", "at_bats", "model_version",
     # Provenance - see PROVENANCE_COLUMNS. Kept in PREDICTION_COLUMNS so
     # append/resolve/export always round-trip the full schema.
     "prediction_timestamp_utc", "prediction_code_sha", "model_artifact_id",
@@ -44,6 +48,10 @@ PROVENANCE_COLUMNS = [
     "fallback_used", "fallback_reason",
     "prediction_snapshot_type", "lineup_status", "starter_status",
 ]
+
+# Authoritative probability column name used in live mode (and logged as
+# diagnostics in shadow mode).
+FINAL_HIT_PROBABILITY = "Final_Hit_Probability"
 
 # Tag applied (via the migration guards in append_predictions/resolve_predictions)
 # to any row logged before the model_version column existed, or reconstructed
@@ -70,6 +78,17 @@ _PROVENANCE_MIGRATION_DEFAULTS = {
     "starter_status": "legacy",
 }
 
+_FINAL_HIT_MIGRATION_DEFAULTS = {
+    "Game_Hit_Probability": pd.NA,
+    "Final_Hit_Probability": pd.NA,
+    "P_Appear": pd.NA,
+    "Expected_PA_hat": pd.NA,
+    "P_Hit_Given_Appearance": pd.NA,
+    "shadow_rank": pd.NA,
+    "shadow_model_artifact_id": pd.NA,
+    "selection_mode": "legacy",
+}
+
 # The set of probability-like signals select_picks jointly gates on (each
 # must clear min_probability), whichever of them happen to be present on the
 # `hitters` table passed in - see select_picks's docstring.
@@ -88,9 +107,12 @@ def _ensure_game_pk_column(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _ensure_provenance_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Migrate a frame written before provenance columns existed."""
+    """Migrate a frame written before provenance / Final_Hit columns existed."""
     df = df.copy()
     for column, default in _PROVENANCE_MIGRATION_DEFAULTS.items():
+        if column not in df.columns:
+            df[column] = default
+    for column, default in _FINAL_HIT_MIGRATION_DEFAULTS.items():
         if column not in df.columns:
             df[column] = default
     return df
@@ -154,133 +176,17 @@ def _diversify_second_pick(ranked: pd.DataFrame, rank_column: str, margin: float
     return ranked.iloc[order].reset_index(drop=True)
 
 
-def select_picks(
+def _apply_base_qualifiers(
     hitters: pd.DataFrame,
     date,
-    top_n: int = config.BACKTEST_TOP_N,
-    min_plate_appearances: int = config.BACKTEST_MIN_PLATE_APPEARANCES,
-    metric: str = "Game_Hit_Probability",
-    rank_metric: str | None = None,
-    min_probability: float = config.HITTER_MIN_PROBABILITY,
-    model_shortlist_size: int = config.HITTER_MODEL_SHORTLIST_SIZE,
-    max_avg_batting_order: float = config.LINEUP_TOP_HALF_MAX_SLOT,
-    min_start_rate: float = config.LINEUP_MIN_START_RATE,
-    max_days_since_last_game: int = config.HITTER_MAX_DAYS_SINCE_LAST_GAME,
-    teams_playing_today: set[str] | None = None,
-    model_version: str = config.HITTER_MODEL_VERSION,
-    same_game_diversification_margin: float = config.SAME_GAME_DIVERSIFICATION_MARGIN,
-    model_status: dict | None = None,
-    fallback_used: bool | None = None,
-    fallback_reason: str | None = None,
-    prediction_snapshot_type: str = "morning",
+    *,
+    min_plate_appearances: int,
+    max_avg_batting_order: float,
+    min_start_rate: float,
+    max_days_since_last_game: int,
+    teams_playing_today: set[str] | None,
 ) -> pd.DataFrame:
-    """Rank a computed hitters table (the wave.csv-equivalent output of
-    hitters.assemble_hitters, optionally already merged with per-game
-    matchup / model columns) by `rank_metric` (defaults to `metric`) and
-    return the top `top_n` qualified picks for `date`, in PREDICTION_COLUMNS
-    shape with `actual_hit` left null (unresolved). `predicted_probability`
-    and the logged `metric` name always come from `metric`, regardless of
-    which column was used to rank - `rank_metric` only changes *which*
-    qualified hitters get chosen, not what probability gets reported/scored.
-
-    When `hitters` carries `game_pk` (live matchup path / hitter schedule),
-    each returned row is keyed to that specific contest. New logged rows
-    must have a non-null game_pk; git-history replays without schedule data
-    still produce null game_pk and are tagged as legacy-readable.
-
-    `max_avg_batting_order`/`min_start_rate` only take effect if `hitters`
-    has avg_batting_order/start_rate columns (see hitters.assemble_hitters's
-    optional `lineup_consistency` param) - absent columns mean a no-op, so
-    old wave.csv snapshots in git history (which predate this feature) are
-    unaffected. A null avg_batting_order (never started for their current
-    team) fails the comparison and is correctly excluded, not treated as 0.
-
-    `min_probability` requires EVERY column in JOINT_PROBABILITY_GATE_COLUMNS
-    that's actually present on `hitters` to clear this bar (see
-    config.HITTER_MIN_PROBABILITY) - a hitter can look good on one signal
-    while being unreliable on another (see config.py for what each
-    divergence means). On a normal day that's `probability` and
-    `Game_Hit_Probability`; on a day `Matchup_Hit_Probability` has been
-    merged in too (see pipeline.run), a good matchup is required just as
-    much as the other two. Column-gated like the lineup qualifiers, so a
-    missing column is simply skipped, not a required 0.
-
-    If `Model_Hit_Probability` is present on `hitters` (see pipeline.run),
-    it's used as a BROAD QUALITY FILTER, not the final ranker: the
-    qualified pool is narrowed to its top `model_shortlist_size` (or fewer,
-    never padded, if fewer survive the qualifiers above) by
-    `Model_Hit_Probability`, and `rank_metric` then decides the final order
-    among THAT shortlist - same as it would across the whole qualified pool
-    on a day the model isn't available. This REPLACES the
-    JOINT_PROBABILITY_GATE_COLUMNS gate entirely rather than being added as
-    a fourth required column - it's a learned function OF `probability`/
-    `Game_Hit_Probability`/`Matchup_Hit_Probability` (plus more raw
-    ingredients, see dfs_ml.HITTER_FEATURE_COLUMNS), so requiring all four
-    to independently clear the same bar would be circular, unlike the
-    original three-column gate where each genuinely captures a different
-    failure mode. A null `Model_Hit_Probability` sorts last (pandas'
-    default) and is excluded exactly like a real low score, same "null
-    loses" precedent as `avg_batting_order`/`Last_Game_Date` below.
-
-    This is a deliberate reversal of an earlier design (v3,
-    `HITTER_MODEL_VERSION`) that let the model rank the WHOLE pool
-    directly, gated on a probability threshold
-    (`HITTER_MIN_MODEL_PROBABILITY`, now removed) - real live feedback
-    surfaced a day that dropped a hitter batting high in the lineup in
-    favor of the model's single favorite, since the model doesn't see
-    lineup-order/everyday-player signals directly the way
-    `Approach`/`Matchup_Approach` implicitly do (via the
-    `avg_batting_order`/`start_rate` qualifiers below). Keeping the model
-    as a broad shortlist gate still kills pure hot-streak outliers (the
-    model's original purpose) while handing the final call back to the
-    heuristic signal that captures what the model doesn't.
-
-    `max_days_since_last_game` excludes a hitter whose most recent completed
-    game (`hitters.compute_last_game_dates`'s `Last_Game_Date`) is more than
-    this many days before `date` - column-gated like the lineup qualifiers
-    (a missing `Last_Game_Date` column is a no-op, so old wave.csv snapshots
-    from before this feature existed are unaffected), and a NaT (a batter
-    with zero completed events at all) correctly fails the comparison, same
-    "null loses, isn't filled to a value that would wrongly pass" precedent
-    `avg_batting_order` already established.
-
-    `teams_playing_today`, if given, additionally requires a batter's team
-    to be in the set - unlike the lineup qualifiers this isn't column-gated
-    (whether a team is playing today isn't a property of the hitters table
-    itself); defaults to None, i.e. off.
-
-    `model_version` is stamped onto every returned row (see
-    config.HITTER_MODEL_VERSION) so evaluation.py/the dashboard can segment
-    accuracy stats by which selection logic actually produced a given pick -
-    without this, a qualifier/ranking change never visibly moves the
-    dashboard's stats until the (much larger) pre-change history stops
-    dominating the aggregate.
-
-    `probability` and `Matchup_Hit_Probability` are logged alongside
-    `predicted_probability` (which stays Game_Hit_Probability - a real,
-    calibratable per-game rate, needed as-is for Brier/log-loss scoring) so
-    evaluation.py's Beat the Streak "recommended" gate can blend all three
-    signals instead of thresholding Game_Hit_Probability alone (see
-    evaluation._combined_probability). `Matchup_Hit_Probability` is NaN
-    whenever `hitters` doesn't carry it (no schedule/matchup data that
-    day, or a historical wave.csv-only replay - see git_backtest.py).
-
-    `same_game_diversification_margin` (quant-analytics item #4, slice 2)
-    is a #2-pick-only tie-break: column-gated on a real `game_pk` being
-    present on `hitters` (see pipeline.run) - a no-op whenever it's
-    absent, same convention as the lineup/model-shortlist qualifiers
-    above. See `_diversify_second_pick`'s own docstring for the real
-    rule. 0.0 (the live default) is the exact null hypothesis - today's
-    unmodified single-column ranking, bit-for-bit.
-
-    Provenance kwargs (`model_status` / `fallback_used` / `fallback_reason`
-    / `prediction_snapshot_type`) do not change which players are selected -
-    they only stamp PROVENANCE_COLUMNS onto the returned rows so a logged
-    pick records exactly which selection metric ranked it, which column
-    supplied `predicted_probability`, and whether a model-load failure
-    forced the heuristic path.
-    """
-    used_rank_metric = rank_metric or metric
+    """Shared PA / lineup / recency / slate filters (all modes)."""
     qualified = hitters[(hitters["PA_L"] + hitters["PA_R"]) >= min_plate_appearances].copy()
     if "avg_batting_order" in qualified.columns:
         qualified = qualified[qualified["avg_batting_order"] <= max_avg_batting_order]
@@ -291,43 +197,44 @@ def select_picks(
         qualified = qualified[days_since_last_game <= max_days_since_last_game]
     if teams_playing_today is not None:
         qualified = qualified[qualified["team"].isin(teams_playing_today)]
-    if "Model_Hit_Probability" in qualified.columns:
-        # Broad quality filter, not the final ranker: top model_shortlist_size
-        # (or fewer, never padded, if the qualified pool is smaller) by
-        # Model_Hit_Probability - excludes anyone the model doesn't rate at
-        # all, but rank_metric (below) still decides the final order among
-        # survivors. Replaces (not adds to) JOINT_PROBABILITY_GATE_COLUMNS,
-        # same reasoning as the old threshold gate this replaced. A NaN
-        # Model_Hit_Probability sorts last (pandas' default na_position) and
-        # is therefore excluded exactly like a real low score.
-        qualified = qualified.sort_values("Model_Hit_Probability", ascending=False).head(model_shortlist_size)
-    else:
-        for gate_column in JOINT_PROBABILITY_GATE_COLUMNS:
-            if gate_column in qualified.columns:
-                qualified = qualified[qualified[gate_column] >= min_probability]
+    return qualified
 
-    ranked = qualified.sort_values(used_rank_metric, ascending=False).reset_index(drop=True)
-    if "game_pk" in ranked.columns and same_game_diversification_margin > 0:
-        ranked = _diversify_second_pick(ranked, used_rank_metric, same_game_diversification_margin)
-    picks = ranked.head(top_n).reset_index(drop=True)
 
+def _stamp_pick_identity(picks: pd.DataFrame, date, metric: str) -> pd.DataFrame:
+    picks = picks.copy()
     picks["rank"] = picks.index + 1
     picks["date"] = pd.Timestamp(date)
     picks["name"] = picks["name_first"].fillna("").astype(str) + " " + picks["name_last"].fillna("").astype(str)
-    picks["predicted_probability"] = picks[metric]
     picks["metric"] = metric
     if "game_pk" not in picks.columns:
         picks["game_pk"] = pd.NA
-    for optional_column in ("probability", "Matchup_Hit_Probability", "Model_Hit_Probability"):
+    for optional_column in (
+        "probability", "Matchup_Hit_Probability", "Model_Hit_Probability",
+        "Game_Hit_Probability", FINAL_HIT_PROBABILITY,
+        "P_Appear", "Expected_PA_hat", "P_Hit_Given_Appearance",
+        "shadow_rank", "shadow_model_artifact_id",
+    ):
         if optional_column not in picks.columns:
             picks[optional_column] = pd.NA
     picks["actual_hit"] = pd.NA
     picks["at_bats"] = pd.NA
-    picks["model_version"] = model_version
+    return picks
 
-    # Provenance stamps - selection/probability sources reflect the
-    # columns actually used above; model fields come from model_status
-    # when the caller inspected the artifact (pipeline.run).
+
+def _stamp_provenance(
+    picks: pd.DataFrame,
+    *,
+    model_version: str,
+    used_rank_metric: str,
+    probability_source: str,
+    selection_mode: str,
+    model_status: dict | None,
+    fallback_used: bool | None,
+    fallback_reason: str | None,
+    prediction_snapshot_type: str,
+) -> pd.DataFrame:
+    picks = picks.copy()
+    picks["model_version"] = model_version
     if model_status is not None:
         provenance = ml_models.provenance_fields_from_model_status(model_status)
     else:
@@ -350,14 +257,325 @@ def select_picks(
     picks["selection_logic_version"] = model_version
     picks["selection_metric"] = used_rank_metric
     picks["selection_score"] = picks[used_rank_metric] if used_rank_metric in picks.columns else pd.NA
-    picks["probability_source"] = metric
+    picks["probability_source"] = probability_source
     picks["fallback_used"] = provenance["fallback_used"]
     picks["fallback_reason"] = provenance["fallback_reason"]
     picks["prediction_snapshot_type"] = prediction_snapshot_type
+    picks["selection_mode"] = selection_mode
     picks["lineup_status"] = _infer_lineup_status(picks)
     picks["starter_status"] = _infer_starter_status(picks)
+    return picks
+
+
+def _attach_shadow_diagnostics(
+    picks: pd.DataFrame,
+    hitters: pd.DataFrame,
+    *,
+    shadow_model_artifact_id=None,
+) -> pd.DataFrame:
+    """Copy Final_Hit_Probability components + shadow_rank onto official picks.
+
+    Does not change rank / predicted_probability / selection_metric.
+    """
+    picks = picks.copy()
+    shadow_cols = [
+        FINAL_HIT_PROBABILITY, "P_Appear", "Expected_PA_hat", "P_Hit_Given_Appearance",
+        "shadow_rank",
+    ]
+    keys = [c for c in ("key_mlbam", "game_pk") if c in picks.columns and c in hitters.columns]
+    if not keys or FINAL_HIT_PROBABILITY not in hitters.columns:
+        for col in shadow_cols:
+            if col not in picks.columns:
+                picks[col] = pd.NA
+        picks["shadow_model_artifact_id"] = shadow_model_artifact_id if shadow_model_artifact_id is not None else pd.NA
+        return picks
+
+    src = hitters[keys + [c for c in shadow_cols if c in hitters.columns]].drop_duplicates(keys)
+    merged = picks.drop(columns=[c for c in shadow_cols if c in picks.columns], errors="ignore")
+    merged = merged.merge(src, on=keys, how="left")
+    merged["shadow_model_artifact_id"] = shadow_model_artifact_id if shadow_model_artifact_id is not None else pd.NA
+    for col in shadow_cols:
+        if col not in merged.columns:
+            merged[col] = pd.NA
+    return merged
+
+
+def select_picks(
+    hitters: pd.DataFrame,
+    date,
+    top_n: int = config.BACKTEST_TOP_N,
+    min_plate_appearances: int = config.BACKTEST_MIN_PLATE_APPEARANCES,
+    metric: str = "Game_Hit_Probability",
+    rank_metric: str | None = None,
+    min_probability: float = config.HITTER_MIN_PROBABILITY,
+    model_shortlist_size: int = config.HITTER_MODEL_SHORTLIST_SIZE,
+    max_avg_batting_order: float = config.LINEUP_TOP_HALF_MAX_SLOT,
+    min_start_rate: float = config.LINEUP_MIN_START_RATE,
+    max_days_since_last_game: int = config.HITTER_MAX_DAYS_SINCE_LAST_GAME,
+    teams_playing_today: set[str] | None = None,
+    model_version: str = config.HITTER_MODEL_VERSION,
+    same_game_diversification_margin: float = config.SAME_GAME_DIVERSIFICATION_MARGIN,
+    model_status: dict | None = None,
+    fallback_used: bool | None = None,
+    fallback_reason: str | None = None,
+    prediction_snapshot_type: str = "morning",
+    selection_mode: str | None = None,
+    force_live: bool = False,
+    shadow_model_status: dict | None = None,
+) -> pd.DataFrame:
+    """Rank a computed hitters table and return top ``top_n`` qualified picks.
+
+    ``selection_mode`` (``legacy`` | ``shadow`` | ``live``, default from
+    ``config.HITTER_SELECTION_MODE`` via the promotion-gate resolver):
+
+    - **legacy**: current production behavior (optional Model_Hit shortlist,
+      rank by ``rank_metric``, log ``metric`` as ``predicted_probability``).
+    - **shadow**: identical official picks to legacy, plus Final_Hit_Probability
+      components / shadow_rank / shadow artifact id on each logged row.
+    - **live**: ``Final_Hit_Probability`` is the sole quantity for ranking,
+      thresholding, and logged ``predicted_probability`` /
+      ``selection_score``. No ML top-10 shortlist; older signals stay as
+      diagnostics only. Bumps ``model_version`` to
+      ``HITTER_MODEL_VERSION_LIVE``.
+
+    Live requires ``Final_Hit_Probability`` on ``hitters``. If missing, falls
+    back to legacy/shadow behavior with ``fallback_used`` /
+    ``fallback_reason`` recorded (never silent).
+
+    In legacy/shadow, ``rank_metric`` may differ from ``metric`` (historical
+    Matchup_Approach rank + Game_Hit_Probability log). In live they are
+    forced equal to ``Final_Hit_Probability``.
+    """
+    from mlb_metrics import hitter_probability_model as hpm
+
+    configured = selection_mode if selection_mode is not None else config.HITTER_SELECTION_MODE
+    mode, mode_meta = hpm.resolve_hitter_selection_mode(configured, force_live=force_live)
+
+    # Live without Final_Hit_Probability → explicit fallback, never silent.
+    live_fallback = False
+    live_fallback_reason = None
+    if mode == "live" and (
+        FINAL_HIT_PROBABILITY not in hitters.columns
+        or hitters[FINAL_HIT_PROBABILITY].isna().all()
+    ):
+        live_fallback = True
+        live_fallback_reason = "missing_final_hit_probability"
+        mode = "shadow" if configured in ("live", "shadow") else "legacy"
+        if fallback_used is None:
+            fallback_used = True
+            fallback_reason = live_fallback_reason
+        elif not fallback_used:
+            fallback_used = True
+            fallback_reason = live_fallback_reason
+
+    if mode == "live":
+        return _select_picks_live(
+            hitters, date,
+            top_n=top_n,
+            min_plate_appearances=min_plate_appearances,
+            min_probability=min_probability,
+            max_avg_batting_order=max_avg_batting_order,
+            min_start_rate=min_start_rate,
+            max_days_since_last_game=max_days_since_last_game,
+            teams_playing_today=teams_playing_today,
+            same_game_diversification_margin=same_game_diversification_margin,
+            model_status=model_status if model_status is not None else shadow_model_status,
+            fallback_used=fallback_used if fallback_used is not None else False,
+            fallback_reason=fallback_reason,
+            prediction_snapshot_type=prediction_snapshot_type,
+            selection_mode="live",
+        )
+
+    picks = _select_picks_legacy(
+        hitters, date,
+        top_n=top_n,
+        min_plate_appearances=min_plate_appearances,
+        metric=metric,
+        rank_metric=rank_metric,
+        min_probability=min_probability,
+        model_shortlist_size=model_shortlist_size,
+        max_avg_batting_order=max_avg_batting_order,
+        min_start_rate=min_start_rate,
+        max_days_since_last_game=max_days_since_last_game,
+        teams_playing_today=teams_playing_today,
+        model_version=model_version,
+        same_game_diversification_margin=same_game_diversification_margin,
+        model_status=model_status,
+        fallback_used=fallback_used,
+        fallback_reason=fallback_reason,
+        prediction_snapshot_type=prediction_snapshot_type,
+        selection_mode=mode,
+    )
+
+    if mode == "shadow":
+        artifact = None
+        if shadow_model_status:
+            artifact = shadow_model_status.get("artifact_id")
+        elif model_status and model_status.get("model_type") == hpm.MODEL_TYPE:
+            artifact = model_status.get("artifact_id")
+        picks = _attach_shadow_diagnostics(
+            picks, hitters, shadow_model_artifact_id=artifact,
+        )
+        # Mode-resolution fallback (e.g. live→shadow) must remain visible.
+        if mode_meta.get("fallback_used") and not bool(picks["fallback_used"].iloc[0] if len(picks) else False):
+            picks["fallback_used"] = True
+            picks["fallback_reason"] = mode_meta.get("fallback_reason")
+        elif live_fallback:
+            picks["fallback_used"] = True
+            picks["fallback_reason"] = live_fallback_reason
 
     return picks[PREDICTION_COLUMNS]
+
+
+def _select_picks_live(
+    hitters: pd.DataFrame,
+    date,
+    *,
+    top_n: int,
+    min_plate_appearances: int,
+    min_probability: float,
+    max_avg_batting_order: float,
+    min_start_rate: float,
+    max_days_since_last_game: int,
+    teams_playing_today: set[str] | None,
+    same_game_diversification_margin: float,
+    model_status: dict | None,
+    fallback_used: bool | None,
+    fallback_reason: str | None,
+    prediction_snapshot_type: str,
+    selection_mode: str,
+) -> pd.DataFrame:
+    """Live: Final_Hit_Probability is the only ranking / threshold / log score."""
+    authoritative = FINAL_HIT_PROBABILITY
+    qualified = _apply_base_qualifiers(
+        hitters, date,
+        min_plate_appearances=min_plate_appearances,
+        max_avg_batting_order=max_avg_batting_order,
+        min_start_rate=min_start_rate,
+        max_days_since_last_game=max_days_since_last_game,
+        teams_playing_today=teams_playing_today,
+    )
+    # No Model_Hit_Probability shortlist. Threshold on Final_Hit_Probability only.
+    qualified = qualified[qualified[authoritative].astype(float) >= min_probability]
+    ranked = qualified.sort_values(authoritative, ascending=False).reset_index(drop=True)
+    if "game_pk" in ranked.columns and same_game_diversification_margin > 0:
+        ranked = _diversify_second_pick(ranked, authoritative, same_game_diversification_margin)
+    picks = ranked.head(top_n).reset_index(drop=True)
+
+    picks = _stamp_pick_identity(picks, date, metric=authoritative)
+    picks["predicted_probability"] = picks[authoritative].astype(float)
+    # Diagnostics only — never used for ranking/thresholding in live mode.
+    if "Game_Hit_Probability" not in picks.columns or picks["Game_Hit_Probability"].isna().all():
+        if "Game_Hit_Probability" in hitters.columns:
+            # Already on picks via head(); ensure column exists
+            pass
+    picks["shadow_rank"] = pd.NA
+    picks["shadow_model_artifact_id"] = pd.NA
+    picks = _stamp_provenance(
+        picks,
+        model_version=config.HITTER_MODEL_VERSION_LIVE,
+        used_rank_metric=authoritative,
+        probability_source=authoritative,
+        selection_mode=selection_mode,
+        model_status=model_status,
+        fallback_used=fallback_used,
+        fallback_reason=fallback_reason,
+        prediction_snapshot_type=prediction_snapshot_type,
+    )
+    # Hard invariants: one column owns rank, threshold, log, and score.
+    picks["selection_metric"] = authoritative
+    picks["selection_score"] = picks[authoritative].astype(float)
+    picks["predicted_probability"] = picks[authoritative].astype(float)
+    picks["probability_source"] = authoritative
+    return picks[PREDICTION_COLUMNS]
+
+
+def _select_picks_legacy(
+    hitters: pd.DataFrame,
+    date,
+    *,
+    top_n: int,
+    min_plate_appearances: int,
+    metric: str,
+    rank_metric: str | None,
+    min_probability: float,
+    model_shortlist_size: int,
+    max_avg_batting_order: float,
+    min_start_rate: float,
+    max_days_since_last_game: int,
+    teams_playing_today: set[str] | None,
+    model_version: str,
+    same_game_diversification_margin: float,
+    model_status: dict | None,
+    fallback_used: bool | None,
+    fallback_reason: str | None,
+    prediction_snapshot_type: str,
+    selection_mode: str,
+) -> pd.DataFrame:
+    """Preserve v4 production selection (shortlist + rank_metric ≠ metric OK)."""
+    used_rank_metric = rank_metric or metric
+    qualified = _apply_base_qualifiers(
+        hitters, date,
+        min_plate_appearances=min_plate_appearances,
+        max_avg_batting_order=max_avg_batting_order,
+        min_start_rate=min_start_rate,
+        max_days_since_last_game=max_days_since_last_game,
+        teams_playing_today=teams_playing_today,
+    )
+    if "Model_Hit_Probability" in qualified.columns:
+        qualified = qualified.sort_values("Model_Hit_Probability", ascending=False).head(model_shortlist_size)
+    else:
+        for gate_column in JOINT_PROBABILITY_GATE_COLUMNS:
+            if gate_column in qualified.columns:
+                qualified = qualified[qualified[gate_column] >= min_probability]
+
+    ranked = qualified.sort_values(used_rank_metric, ascending=False).reset_index(drop=True)
+    if "game_pk" in ranked.columns and same_game_diversification_margin > 0:
+        ranked = _diversify_second_pick(ranked, used_rank_metric, same_game_diversification_margin)
+    picks = ranked.head(top_n).reset_index(drop=True)
+
+    picks = _stamp_pick_identity(picks, date, metric=metric)
+    picks["predicted_probability"] = picks[metric]
+    if "Game_Hit_Probability" not in picks.columns or picks["Game_Hit_Probability"].isna().all():
+        if metric == "Game_Hit_Probability":
+            picks["Game_Hit_Probability"] = picks["predicted_probability"]
+    picks = _stamp_provenance(
+        picks,
+        model_version=model_version,
+        used_rank_metric=used_rank_metric,
+        probability_source=metric,
+        selection_mode=selection_mode,
+        model_status=model_status,
+        fallback_used=fallback_used,
+        fallback_reason=fallback_reason,
+        prediction_snapshot_type=prediction_snapshot_type,
+    )
+    return picks
+
+def append_prediction_audit(
+    picks: pd.DataFrame,
+    audit_path: str | None = None,
+    *,
+    published_log_path: str | None = None,
+) -> None:
+    """Append-only immutable audit of every prediction batch (morning / lineup_lock)."""
+    if audit_path is None:
+        if published_log_path:
+            root, ext = os.path.splitext(published_log_path)
+            audit_path = f"{root}_audit{ext}"
+        else:
+            audit_path = config.PREDICTIONS_AUDIT_PATH
+    frame = picks.copy()
+    if frame.empty:
+        return
+    os.makedirs(os.path.dirname(audit_path) or ".", exist_ok=True)
+    if os.path.exists(audit_path):
+        existing = pd.read_csv(audit_path)
+        combined = pd.concat([existing, frame], ignore_index=True)
+    else:
+        combined = frame
+    combined.to_csv(audit_path, index=False)
+
 
 def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     """Append `picks` to the predictions log at `log_path`, deduping on
@@ -388,13 +606,19 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     date still has a null at_bats, matching resolve_predictions's own
     "still pending" definition), the ENTIRE date's existing rows are
     dropped before the new batch is appended - a full resupersede, not a
-    per-player upsert. A date with even one resolved row is never touched
-    this way; only the per-key dedup below applies there, preserving
-    already-resolved backtest history exactly as before."""
+    per-player upsert.
+
+    Lineup-lock refreshes are narrower: when the fresh batch carries
+    non-null ``game_pk`` values, unresolved rows for those
+    ``(date, game_pk)`` keys are superseded even if *other* games on the
+    same calendar date are already resolved. Started/resolved rows
+    (``at_bats`` not null) are never rewritten. Every batch is also
+    appended to the immutable audit log (``PREDICTIONS_AUDIT_PATH``)."""
     os.makedirs(os.path.dirname(log_path) or ".", exist_ok=True)
     picks = _ensure_game_pk_column(picks)
     picks = _ensure_provenance_columns(picks)
     picks["date"] = pd.to_datetime(picks["date"])
+    append_prediction_audit(picks, published_log_path=log_path)
 
     if os.path.exists(log_path):
         existing = pd.read_csv(log_path, parse_dates=["date"])
@@ -403,10 +627,31 @@ def append_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
         existing = _ensure_game_pk_column(existing)
         existing = _ensure_provenance_columns(existing)
         existing["date"] = pd.to_datetime(existing["date"])
+
+        # Full-date supersede when nothing on that date has resolved yet
+        # (morning re-run / mid-day deploy case).
         fresh_dates = set(picks["date"])
         resolved_dates = set(existing.loc[existing["at_bats"].notna(), "date"])
         supersede_dates = fresh_dates - resolved_dates
         existing = existing[~existing["date"].isin(supersede_dates)]
+
+        # Per-game supersede for lineup-lock: drop unresolved rows whose
+        # (date, game_pk) appears in the fresh batch, even when other games
+        # on the same date are already resolved. Null game_pk rows keep
+        # the date-level rule only.
+        existing["game_pk"] = pd.to_numeric(existing["game_pk"], errors="coerce")
+        picks["game_pk"] = pd.to_numeric(picks["game_pk"], errors="coerce")
+        fresh_games = picks.loc[picks["game_pk"].notna(), ["date", "game_pk"]].drop_duplicates()
+        if not fresh_games.empty:
+            existing = existing.merge(
+                fresh_games.assign(_fresh_game=1),
+                on=["date", "game_pk"],
+                how="left",
+            )
+            is_resolved = existing["at_bats"].notna()
+            drop_mask = existing["_fresh_game"].eq(1) & ~is_resolved
+            existing = existing.loc[~drop_mask].drop(columns=["_fresh_game"], errors="ignore")
+
         combined = pd.concat([picks, existing], ignore_index=True)
     else:
         combined = picks

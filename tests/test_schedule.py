@@ -173,6 +173,7 @@ def test_normalize_schedule_games_one_row_per_game_with_status_and_scores():
         game_pks=[824409],
         statuses=["In Progress"],
         scores=[(2, 2)],
+        game_datetimes=["2026-07-21T23:05:00Z"],
     )
 
     result = schedule.normalize_schedule_games(raw)
@@ -187,6 +188,7 @@ def test_normalize_schedule_games_one_row_per_game_with_status_and_scores():
     assert row["status"] == "In Progress"
     assert row["home_score"] == 2
     assert row["away_score"] == 2
+    assert row["game_datetime"] == "2026-07-21T23:05:00Z"
 
 
 def test_normalize_schedule_games_final_game_scores():

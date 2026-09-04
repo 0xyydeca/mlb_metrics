@@ -14,12 +14,26 @@ to `docs/` as a GitHub Pages dashboard.
   (MLB Stats API - probable pitchers, game schedules, final scores),
   `matchup.py` (batter-level opponent-pitching blend), `game_picks.py`/
   `game_predictions.py`/`game_evaluation.py` (Automated Game Picks - see
-  below).
+  below), `hitter_training_data.py` (no-lookahead hitter-opportunity
+  training table - data asset only, not live), `model_validation.py`
+  (nested rolling-origin validation for date-based models - research
+  reports only; does not change live serving).
 - `scripts/wave.py` - daily pipeline entrypoint (`python scripts/wave.py`).
 - `scripts/run_backtest.py` - backtest entrypoint (`python scripts/run_backtest.py`).
 - `scripts/evaluate_current_model.py` - read-only backtest report for the
   currently-live hitter-pick and game-pick models (see "Model versioning"
   below); doesn't write to `data/predictions/` or `docs/data/`.
+- `scripts/build_hitter_opportunity_log.py` /
+  `scripts/report_hitter_opportunity_log.py` - historical candidate-per-game
+  opportunity dataset and coverage report (not wired live).
+- `scripts/train_hitter_probability_model.py` - opportunity-aware
+  probability model (appearance × conditional hit); nested validation +
+  shadow/live wiring via `HITTER_SELECTION_MODE` (default shadow).
+- `scripts/backtest_streak_policy.py` - sit / one / two streak-action
+  policy backtest vs legacy fixed two-pick and threshold policies
+  (`STREAK_POLICY_MODE`, default shadow).
+- `scripts/run_nested_model_validation.py` - nested rolling-origin
+  validation report writer (`reports/model_validation/`).
 - `scripts/fetch_lahman.py` / `scripts/build_age_curves.py` /
   `scripts/backtest_age_curve.py` - the Age Curves page's data pipeline
   (see "Age Curves" below); occasional-cadence, not part of the daily
@@ -158,9 +172,24 @@ hitter and game prediction rows also stamp:
 - `fallback_used` / `fallback_reason` when a model artifact is missing or
   fails to load - so a heuristic day caused by a load failure is not
   silently indistinguishable from a normal no-model day
-- `prediction_snapshot_type` (initially `"morning"`), `lineup_status`
-  (initially `"unconfirmed"`), `starter_status` (`probable` / `missing` /
-  `confirmed` when known)
+- `prediction_snapshot_type` (`morning` for the early Daily Update,
+  `lineup_lock` for the confirmed-lineup refresh workflow), `lineup_status`
+  (`unconfirmed` / `confirmed` / `scratched` when known), `starter_status`
+  (`probable` / `missing` / `confirmed` when known)
+
+**Confirmed lineups (two-stage):** Stage A
+(`scripts/debug_statsapi_lineups.py` + workflow `debug_statsapi_lineups.yml`)
+inspects the live Stats API response shape and prints a sanitized schema
+summary — production parsing stays gated behind
+`config.LINEUP_API_SCHEMA_CONFIRMED` until that shape is confirmed. Stage B
+(`mlb_metrics.lineup_snapshots`, `scripts/run_lineup_lock_update.py`,
+workflow `lineup_lock_update.yml`) persists immutable lineup snapshots,
+overlays confirmed batting order / scratch-risk appearance onto hitter
+inference, and refreshes only games with newly confirmed or changed
+lineups inside a configurable upcoming window. Same-day unresolved
+published picks may be superseded; started/resolved rows never are.
+Audit CSVs keep every morning and lineup-lock batch; published logs keep
+the latest valid pregame snapshot per key.
 
 Legacy CSV rows migrate with null/`"legacy"` provenance defaults and no
 data loss. Newly trained artifacts are saved via
@@ -659,6 +688,139 @@ This log is **purely a data asset today** - it feeds nothing live. Fitting
 the actual logistic regression against it (and deciding whether it ever
 replaces or augments `predictions.select_picks`'s probability gate) is a
 follow-up once the log has accumulated real history.
+
+### Hitter opportunity log (`data/predictions/hitter_opportunity_log.csv`, data asset - not a live signal)
+
+A separate no-lookahead training table for **appearance / opportunity**
+models: one row per *pregame candidate* per `game_pk`, including players
+who did not appear (essential negatives). Candidates are **not** the
+game's actual lineup. For each historical team-game, a batter is a
+candidate only when:
+
+1. their latest known team strictly before the game is the team playing, and
+2. they appeared for that team within the previous
+   `config.HITTER_OPPORTUNITY_LOOKBACK_TEAM_GAMES` (default 10) of that
+   team's games **or** within
+   `config.HITTER_OPPORTUNITY_LOOKBACK_CALENDAR_DAYS` (default 14)
+   calendar days.
+
+The actual lineup is labels only (`Started`, `Appeared`, `Batting_Order`
+null when not started, `Plate_Appearances`, `Official_At_Bats`, `Got_Hit`,
+`Hits`, `No_Game`). Pregame features reuse `dfs_ml.build_hitter_features`
+plus historical lineup-consistency and recency (`avg_batting_order`,
+`start_rate`, `Last_Game_Date`, `Days_Rest` from history) - never any
+column calculated from the target game. Doubleheaders stay separate via
+`game_pk`. The default morning snapshot uses `game_date < date` for every
+contest that calendar day, so game-one results do not leak into game-two
+features or candidate coverage; a later `prediction_timestamp_utc` may
+include a same-date earlier game only when that game carries a real
+`game_completed_at` strictly before the timestamp.
+
+Coverage is written beside the log
+(`hitter_opportunity_log_coverage.csv`): % of actual starters included, %
+of appearing hitters included, and omitted rookies/call-ups with no
+pregame history. Same-day outcomes are never used to "fix" historical
+coverage. A documented live-only path
+(`hitter_training_data.add_confirmed_lineup_candidates`) can add
+previously unseen players from a confirmed lineup snapshot using league
+priors; historical training never calls it.
+
+```
+python scripts/build_hitter_opportunity_log.py
+python scripts/build_hitter_opportunity_log.py --days 10
+python scripts/report_hitter_opportunity_log.py
+```
+
+Re-running is idempotent: append + dedupe on `(date, game_pk, key_mlbam)`,
+keep-last, with an assertion that duplicates do not exist. Training lives in
+the shadow opportunity model below; this log still does not wire live picks.
+
+### Shadow opportunity probability model (`mlb_metrics.hitter_probability_model`)
+
+Builds on the opportunity log + nested validation. Explicitly models:
+
+1. ``P(Appeared)`` on all candidates (including DNPs)
+2. ``E[PA | Appeared]`` on appeared rows only
+3. ``P(Got_Hit | Appeared)`` on appeared rows only (optional OOF
+   ``Predicted_Expected_PA`` feature; never actual target-game PA)
+
+Primary score: ``Final_Hit_Probability = P_Appear × P_Hit_Given_Appearance``.
+A documented PA-distribution challenger uses
+``Σ_n P(PA=n|appear) × [1-(1-p_hit_per_PA)^n]``. Inner folds choose family
+(logit vs HistGBM), calibration, reduced vs expanded features, and
+formulation; outer folds compare once.
+
+**Selection modes** (`config.HITTER_SELECTION_MODE`):
+
+- ``legacy`` — production picks unchanged (v4 shortlist + Matchup_Approach)
+- ``shadow`` (default) — production picks unchanged; log Final_Hit_Probability,
+  components, shadow_rank, and artifact id on each official pick
+- ``live`` — Final_Hit_Probability is the only ranking / threshold / log /
+  Brier / dashboard / streak-grading score (`HITTER_MODEL_VERSION_LIVE`).
+  Requires the nested-validation promotion gate; without it, configured
+  ``live`` falls back to ``shadow`` with ``fallback_used`` recorded.
+
+```
+python scripts/train_hitter_probability_model.py
+python scripts/train_hitter_probability_model.py --full-grids
+```
+
+Artifacts: ``config.HITTER_OPPORTUNITY_PROBABILITY_MODEL_PATH``,
+``config.HITTER_OPPORTUNITY_SHADOW_PREDICTIONS_PATH``, and a nested report
+under ``reports/model_validation/``.
+
+### Streak-action policy (`mlb_metrics.streak_policy`)
+
+Chooses among **sit / play one / play two** from each candidate's
+``(P(hit), P(miss), P(void))`` triple derived from
+``Final_Hit_Probability`` and ``P_Appear``. Exact two-pick transitions
+(any miss resets; two hits add two; one hit adds one; two voids preserve).
+Joint outcomes start independent; optional conservative dependence
+penalties (same game/team/park/opposing) default to **0** until earned in
+nested validation. Backward induction compares expected terminal utility
+(expected final streak, P(reach 57 / target), streak-gain with reset
+penalty). Live default is **shadow**
+(``config.STREAK_POLICY_MODE``); promote only after untouched outer-fold
+improvement vs legacy fixed two-pick / threshold policies.
+
+```
+python scripts/backtest_streak_policy.py
+```
+
+### Nested rolling-origin validation (`mlb_metrics.model_validation`)
+
+Research previously re-inspected the same recent-date holdout for model
+family, calibration, feature additions, shortlist size, and one-vs-two-pick
+policy. `model_validation.py` replaces that with **nested time-aware
+folds**:
+
+1. **Outer** rolling-origin folds: train only on dates strictly before the
+   outer test block; test the next configurable block; repeat.
+2. **Inner** rolling-origin folds inside each outer training block select
+   model family, hyperparameters, calibration method, feature subset,
+   threshold, shortlist size, and one-vs-two-pick policy.
+3. Each outer test block is evaluated **once** after inner selection.
+4. No date appears in both train and test within a fold; preprocessing
+   statistics (e.g. z-score mean/std) are fit only on the corresponding
+   training fold.
+5. Aggregate metrics across outer folds (log loss, Brier, ROC AUC,
+   calibration intercept/slope, top-one advance, two-pick survival/reset,
+   coverage, no-game rate) rather than selecting on one final 20-date
+   block.
+6. Optional **freeze** period (`NESTED_VALIDATION_FREEZE_DATES`): the most
+   recent N dates are excluded from every fold and every selection
+   decision. **Do not repeatedly inspect the freeze period during
+   development.**
+
+Paired date-block bootstrap intervals compare challenger minus champion
+(aligned by date/game/player). Reports write under
+`reports/model_validation/` (gitignored JSON; README stub committed). Live
+prediction loaders are unchanged.
+
+```
+python scripts/run_nested_model_validation.py
+python scripts/train_hitter_hit_model.py   # uses nested validation for the predictive model
+```
 
 ### Fitting the predictive model: logistic regression vs. gradient boosting (`scripts/train_hitter_hit_model.py`)
 
@@ -1251,7 +1413,34 @@ comparison, and a real historical "beat the closing line" backtest once
 depth is confirmed further back - is a plausible next step but not yet
 scoped or committed to.
 
-### Real market wiring + "beat the closing line" (`market_odds.py`)
+### Real market wiring + closing-line evaluation (`market_odds.py`)
+
+Odds are persisted as an **append-only timestamped snapshot table**
+(`data/predictions/market_odds_snapshots.csv`). Each capture stores
+provider event id, sportsbook, `captured_at_utc`, `game_datetime`,
+moneylines, de-vigged home probability, and match status.
+
+**Closing line** means the latest valid snapshot *strictly before first
+pitch* - not the morning Daily Update capture. Standard roles:
+`opening` (earliest), `morning`, `lineup_lock`, `closing`.
+
+Provider events are mapped to MLB `game_pk` using date, start time, slate
+order, and a persisted event map. Ambiguous doubleheaders are rejected
+and logged (`source_status=ambiguous_match`), never guessed.
+
+Each game prediction stores which odds snapshot it used
+(`market_odds_snapshot_id` / `market_odds_snapshot_role`).
+
+**Primary skill metrics** (paired on the same games vs closing market):
+
+- `model_minus_market_brier` / `model_minus_market_log_loss` (negative =
+  model better), with date-block bootstrap CIs
+- `mean_model_minus_market_probability` and mean squared-error difference
+  (magnitude, not just win count)
+
+**Secondary:** `beat_closing_line_rate` (% of games with lower squared
+error). Hypothetical bets also report probability / moneyline CLV vs the
+true closing snapshot.
 
 Quant-analytics item #6, slice 2 - promotes slice 1's confirmation-only
 script into a real module (`src/mlb_metrics/market_odds.py`) and wires it

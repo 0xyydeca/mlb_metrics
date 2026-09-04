@@ -27,13 +27,14 @@ scope on the team side:
    whether either earns a permanent place in the model.
 
 2. **Walk-forward-validated predictive model** (sklearn LogisticRegression +
-   ml_models.py's WalkForwardDateSplit machinery): the SAME no-lookahead,
-   nested-holdout methodology train_hitter_hit_model.py already uses. The
-   selected model is evaluated ONCE on an untouched final holdout and must
-   beat BOTH a naive baseline (always predict the base home-win rate) AND
-   the existing home_win_probability heuristic column (carried through the
-   log unchanged, from game_picks.compute_game_win_probabilities) before
-   being saved to config.GAME_PICK_WIN_PROBABILITY_MODEL_PATH.
+   ml_models.py's WalkForwardDateSplit machinery): the SAME no-lookahead
+   methodology as before. Prefer `mlb_metrics.model_validation` nested
+   rolling-origin folds for new family/calibration/policy research (see
+   README "Nested rolling-origin validation") instead of repeatedly
+   inspecting the same final holdout. The selected model is evaluated on
+   an untouched final holdout here and must beat BOTH a naive baseline
+   AND the existing home_win_probability heuristic before being saved to
+   config.GAME_PICK_WIN_PROBABILITY_MODEL_PATH.
 
 **Scope**: this fits and reports. The saved model artifact is NOT wired
 into game_picks.compute_game_win_probabilities, game_predictions.select_game_picks,

@@ -1,0 +1,67 @@
+name: Lineup Lock Update
+
+# Second prediction pass after the morning Daily Update. Confirmed lineups
+# typically post ~1–2 hours before first pitch — too late for the morning
+# run. This workflow polls on a short interval; the script exits immediately
+# when no unstarted game falls within LINEUP_LOCK_WINDOW_HOURS, and only
+# recomputes games whose lineup content newly confirmed or changed.
+
+on:
+  schedule:
+    # Every 30 minutes from 15:00–02:00 UTC (~8am–7pm AZ / covers most
+    # first-pitch windows). Off the half-hour to avoid top-of-hour GHA load.
+    - cron: "7,37 15-23 * * *"
+    - cron: "7,37 0-2 * * *"
+  workflow_dispatch:
+
+jobs:
+  lineup-lock:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Create output folders
+        run: |
+          mkdir -p docs/data
+          mkdir -p data/raw
+          mkdir -p data/predictions
+
+      - name: Run lineup-lock update
+        run: |
+          python scripts/run_lineup_lock_update.py
+
+      - name: Commit updates
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add docs/data/ data/predictions/
+
+          git commit -m "Lineup-lock update" || echo "No changes"
+
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push attempt $attempt failed - pulling/rebasing and retrying..."
+            git pull --rebase origin "$branch"
+            sleep 5
+          done
+          echo "::error::Failed to push after 5 attempts"
+          exit 1

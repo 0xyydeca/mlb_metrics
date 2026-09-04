@@ -23,6 +23,10 @@ on:
   # that date's still-pending picks (append_game_predictions keeps the
   # existing logged row over a freshly-recomputed one) - only a fresh
   # calendar date benefits from this earlier schedule automatically.
+  # Fixed: append_game_predictions now refreshes unresolved same-day
+  # rows; the Lineup Lock Update workflow handles confirmed-lineup
+  # refreshes separately. Morning Daily Update remains the preliminary
+  # snapshot (prediction_snapshot_type=morning).
   schedule:
     - cron: "23 10 * * *"
   workflow_dispatch:

@@ -14,6 +14,13 @@ actually have. Every other backtest in this project
 backtest_projection_accuracy) enforces "only data strictly before the test
 date" - WalkForwardDateSplit is that same discipline, wired into sklearn's
 CV protocol so GridSearchCV respects it automatically.
+
+For **nested** rolling-origin research (outer folds for honest reporting,
+inner folds for family / hyperparameter / calibration / feature / policy
+selection, optional untouched freeze period), see
+`mlb_metrics.model_validation` - that module replaces repeatedly
+inspecting the same final holdout block. Live prediction loaders in this
+file are unchanged.
 """
 
 import os

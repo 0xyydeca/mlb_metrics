@@ -20,7 +20,9 @@ import pandas as pd
 
 from mlb_metrics import (
     config, data, dfs_ml, evaluation, game_evaluation, game_picks, game_predictions,
-    hitters, lineup, market_odds, matchup, ml_models, pitchers, predictions, schedule, teams,
+    game_residual_model, hitter_probability_model, hitters, lineup, lineup_snapshots,
+    market_odds, matchup, ml_models, pitchers, predictions, schedule, streak_policy,
+    teams,
 )
 
 
@@ -170,11 +172,17 @@ def write_beat_the_streak_export(predictions_log_path: str, output_dir: str) -> 
     picks, summary = evaluation.build_beat_the_streak_export(
         log, max_picks=config.DAILY_PICK_MAX, min_probability=config.DAILY_PICK_MIN_PROBABILITY
     )
-    _, current_version_summary = evaluation.build_beat_the_streak_export(
-        log, max_picks=config.DAILY_PICK_MAX, min_probability=config.DAILY_PICK_MIN_PROBABILITY,
-        model_version=config.HITTER_MODEL_VERSION,
-    )
-    by_version_summary = pd.concat([summary, current_version_summary], ignore_index=True)
+    version_rows = [summary]
+    for version in dict.fromkeys([
+        config.HITTER_MODEL_VERSION,
+        config.HITTER_MODEL_VERSION_LIVE,
+    ]):
+        _, version_summary = evaluation.build_beat_the_streak_export(
+            log, max_picks=config.DAILY_PICK_MAX, min_probability=config.DAILY_PICK_MIN_PROBABILITY,
+            model_version=version,
+        )
+        version_rows.append(version_summary)
+    by_version_summary = pd.concat(version_rows, ignore_index=True)
 
     os.makedirs(output_dir, exist_ok=True)
     picks.to_csv(os.path.join(output_dir, "beat_the_streak_picks.csv"), index=False)
@@ -200,13 +208,25 @@ def write_game_picks_export(game_predictions_log_path: str, output_dir: str) -> 
     and a small by-version summary (all_time plus config.GAME_PICK_MODEL_VERSION -
     see game_evaluation.build_game_picks_export), same reasoning as
     write_beat_the_streak_export's own by-version split. No-op if nothing's
-    logged yet."""
+    logged yet. When ``MARKET_ODDS_SNAPSHOTS_PATH`` exists, closing-line
+    metrics use real timestamped pregame prices rather than morning-only
+    logged market probabilities.
+    """
     if not os.path.exists(game_predictions_log_path):
         return
     log = pd.read_csv(game_predictions_log_path, parse_dates=["date"])
-    picks, summary = game_evaluation.build_game_picks_export(log)
+    odds_snapshots = None
+    if os.path.exists(config.MARKET_ODDS_SNAPSHOTS_PATH):
+        try:
+            odds_snapshots = market_odds.normalize_snapshot_frame(
+                pd.read_csv(config.MARKET_ODDS_SNAPSHOTS_PATH)
+            )
+        except Exception as exc:
+            print(f"WARNING: failed to load odds snapshots for export ({exc})")
+            odds_snapshots = None
+    picks, summary = game_evaluation.build_game_picks_export(log, odds_snapshots=odds_snapshots)
     _, current_version_summary = game_evaluation.build_game_picks_export(
-        log, model_version=config.GAME_PICK_MODEL_VERSION
+        log, model_version=config.GAME_PICK_MODEL_VERSION, odds_snapshots=odds_snapshots,
     )
     by_version_summary = pd.concat([summary, current_version_summary], ignore_index=True)
 
@@ -223,7 +243,19 @@ def run(
     predictions_dir: str = "data/predictions",
     persist_raw: bool = True,
     log_predictions: bool = True,
+    prediction_snapshot_type: str = "morning",
+    lineup_snapshot_frame: pd.DataFrame | None = None,
+    game_pk_filter: set | None = None,
 ) -> dict[str, pd.DataFrame]:
+    """Run the daily pipeline.
+
+    ``prediction_snapshot_type`` is ``morning`` (early Daily Update) or
+    ``lineup_lock`` (confirmed-lineup refresh). Optional
+    ``lineup_snapshot_frame`` injects normalized snapshots (tests / lock
+    script); otherwise the pipeline fetches when the Stage A schema gate
+    allows. ``game_pk_filter`` limits which games are logged (lineup-lock
+    only recomputes changed games).
+    """
     fetch_start = config.SEASON_START
     fetch_end = min(config.SEASON_END, as_of_date - datetime.timedelta(days=1))
     if fetch_end < fetch_start:
@@ -301,33 +333,33 @@ def run(
 
         teams_playing_today = set(hitter_schedule_df["team"]) if hitter_schedule_df is not None else None
 
-        # Two-tier rank_metric, best available first: Matchup_Approach
-        # (Approach * Matchup_Hit_Probability, today's schedule/matchup
-        # available) > Approach (own-form-only, no schedule at all) - falls
-        # back on a failed schedule fetch, same resilience pattern as
-        # schedule_df itself. Separately, independent of rank_metric: when
-        # the validated logistic regression (config.HITTER_HIT_PROBABILITY_MODEL_PATH,
-        # treats matchup ingredients as independent learned features instead
-        # of one hand-picked multiplier, see dfs_ml.py's module docstring)
-        # loads and predicts for today's schedule, its Model_Hit_Probability
-        # column gets merged onto pick_pool - select_picks then uses that
-        # column's mere PRESENCE (not rank_metric) to narrow the qualified
-        # pool to a broad model-approved shortlist BEFORE rank_metric picks
-        # the final order among survivors (see select_picks's own docstring
-        # for why the model shortlists rather than ranks directly - a
-        # deliberate reversal of an earlier design, HITTER_MODEL_VERSION's
-        # v3, that let it rank the whole pool). A model artifact that hasn't
-        # been trained/fails to load (dfs_ml.predict_hitter_hit_probability's
-        # own "return empty, never raise" contract) just means the shortlist
-        # step never engages that day - rank_metric alone decides, same as
-        # before this model existed at all. predicted_probability/metric
-        # logged still reflect Game_Hit_Probability regardless of any of
-        # this, so DAILY_PICK_MIN_PROBABILITY's calibration is unaffected.
+        # Confirmed-lineup snapshots (Stage B). Injected frames win; else
+        # soft-fetch when LINEUP_API_SCHEMA_CONFIRMED. Failures never abort.
+        snapshots = lineup_snapshots.empty_snapshot_frame()
+        if lineup_snapshot_frame is not None:
+            snapshots = lineup_snapshots.normalize_snapshot_frame(lineup_snapshot_frame)
+        else:
+            try:
+                snapshots = lineup_snapshots.fetch_lineup_snapshots(as_of_date)
+            except Exception as exc:
+                print(f"WARNING: failed to fetch lineup snapshots ({exc}); continuing unconfirmed.")
+                snapshots = lineup_snapshots.empty_snapshot_frame()
+        if not snapshots.empty:
+            try:
+                lineup_snapshots.persist_snapshots(snapshots)
+            except Exception as exc:
+                print(f"WARNING: failed to persist lineup snapshots ({exc})")
+
+        # Selection mode (legacy | shadow | live). Default shadow: production
+        # picks unchanged while Final_Hit_Probability is logged as a challenger.
+        # Live requires the promotion gate + a loaded opportunity model.
+        selection_mode, mode_meta = hitter_probability_model.resolve_hitter_selection_mode()
         pick_pool = outputs["wave"]
         rank_metric = "Approach"
         hitter_model_status = None
-        hitter_fallback_used = False
-        hitter_fallback_reason = None
+        hitter_fallback_used = bool(mode_meta.get("fallback_used"))
+        hitter_fallback_reason = mode_meta.get("fallback_reason")
+        shadow_model_status = None
         if hitter_schedule_df is not None and not hitter_schedule_df.empty:
             matchup_probability = matchup.compute_matchup_hit_probability(
                 outputs["wave"], outputs["pave"], outputs["confidence"], hitter_schedule_df
@@ -354,8 +386,9 @@ def run(
                 pick_pool = pick_pool.merge(
                     model_predictions, on=["key_mlbam", "game_pk"], how="left"
                 )
-                hitter_fallback_used = False
-                hitter_fallback_reason = None
+                if not hitter_fallback_used:
+                    hitter_fallback_used = False
+                    hitter_fallback_reason = None
             else:
                 # Model shortlist did not engage - record why so a load
                 # failure is not indistinguishable from a normal heuristic day.
@@ -366,66 +399,327 @@ def run(
                     else "empty_predictions"
                 )
 
+            # Opportunity / Final_Hit_Probability for shadow + live modes.
+            if selection_mode in ("shadow", "live"):
+                feature_frame = pick_pool.copy()
+                feature_keys = [c for c in ("key_mlbam", "game_pk") if c in hitter_features.columns and c in feature_frame.columns]
+                extra = [c for c in hitter_features.columns if c not in feature_frame.columns or c in feature_keys]
+                if feature_keys and extra:
+                    feature_frame = feature_frame.drop(
+                        columns=[c for c in extra if c in feature_frame.columns and c not in feature_keys],
+                        errors="ignore",
+                    )
+                    feature_frame = feature_frame.merge(
+                        hitter_features[list(dict.fromkeys(feature_keys + [
+                            c for c in hitter_features.columns if c not in feature_keys
+                        ]))].drop_duplicates(feature_keys),
+                        on=feature_keys,
+                        how="left",
+                        suffixes=("", "_feat"),
+                    )
+                scored, shadow_model_status = hitter_probability_model.predict_final_hit_probability(
+                    feature_frame, as_of_date=as_of_date,
+                )
+                scored = hitter_probability_model.attach_shadow_ranks(scored)
+                component_cols = [
+                    c for c in hitter_probability_model.COMPONENT_PROBABILITY_COLUMNS + ["shadow_rank"]
+                    if c in scored.columns
+                ]
+                if component_cols and "key_mlbam" in scored.columns:
+                    merge_keys = [c for c in ("key_mlbam", "game_pk") if c in scored.columns and c in pick_pool.columns]
+                    pick_pool = pick_pool.drop(columns=[c for c in component_cols if c in pick_pool.columns], errors="ignore")
+                    pick_pool = pick_pool.merge(
+                        scored[merge_keys + component_cols].drop_duplicates(merge_keys),
+                        on=merge_keys, how="left",
+                    )
+                if selection_mode == "live" and not shadow_model_status.get("loaded"):
+                    hitter_fallback_used = True
+                    hitter_fallback_reason = (
+                        shadow_model_status.get("fallback_reason") or "missing_final_hit_probability"
+                    )
+
             if schedule_df is not None and not schedule_df.empty:
                 write_probable_pitchers_export(schedule_df, outputs["pave"], output_dir)
+
+        # Overlay confirmed lineup onto the pick pool (appearance + order).
+        # Unconfirmed / empty snapshots leave historical appearance intact.
+        if not pick_pool.empty:
+            pick_pool = lineup_snapshots.apply_confirmed_lineup_to_pool(pick_pool, snapshots)
 
         game_hit_picks = predictions.select_picks(
             pick_pool,
             as_of_date,
             rank_metric=rank_metric,
             teams_playing_today=teams_playing_today,
-            model_status=hitter_model_status,
+            model_status=hitter_model_status if selection_mode != "live" else shadow_model_status,
             fallback_used=hitter_fallback_used,
             fallback_reason=hitter_fallback_reason,
+            selection_mode=selection_mode,
+            shadow_model_status=shadow_model_status,
+            prediction_snapshot_type=prediction_snapshot_type,
         )
-        predictions.append_predictions(game_hit_picks, predictions_log_path)
+        if game_pk_filter is not None and not game_hit_picks.empty and "game_pk" in game_hit_picks.columns:
+            game_hit_picks = game_hit_picks[game_hit_picks["game_pk"].isin(game_pk_filter)].copy()
+        if not game_hit_picks.empty:
+            predictions.append_predictions(game_hit_picks, predictions_log_path)
+
+        # Streak-action decision layer (sit / one / two). Default shadow:
+        # log the recommended action without changing official picks.
+        streak_mode, streak_meta = streak_policy.resolve_streak_policy_mode()
+        if streak_mode in ("shadow", "live") and not pick_pool.empty:
+            try:
+                cands = streak_policy.candidates_from_frame(pick_pool)
+                # Current streak from the Beat the Streak export log when
+                # available; otherwise start from 0 for the shadow record.
+                current_streak = 0
+                if os.path.exists(predictions_log_path):
+                    try:
+                        hist = pd.read_csv(predictions_log_path, parse_dates=["date"])
+                        progression = evaluation.streak_progression(
+                            hist,
+                            max_picks=config.DAILY_PICK_MAX,
+                            min_probability=config.DAILY_PICK_MIN_PROBABILITY,
+                        )
+                        if len(progression):
+                            current_streak = int(progression["streak"].iloc[-1])
+                    except Exception:
+                        current_streak = 0
+                decision = streak_policy.choose_action(
+                    cands,
+                    streak=current_streak,
+                    days_remaining=max(1, config.STREAK_POLICY_TARGET - current_streak),
+                    utility_name=config.STREAK_POLICY_UTILITY,
+                    target=config.STREAK_POLICY_TARGET,
+                )
+                record = streak_policy.shadow_decision_record(
+                    decision, date=as_of_date, current_streak=current_streak, mode=streak_mode,
+                )
+                record.update({
+                    "fallback_used": streak_meta.get("fallback_used"),
+                    "fallback_reason": streak_meta.get("fallback_reason"),
+                })
+                shadow_path = config.STREAK_POLICY_SHADOW_DECISIONS_PATH
+                os.makedirs(os.path.dirname(shadow_path) or ".", exist_ok=True)
+                shadow_df = pd.DataFrame([record])
+                if os.path.exists(shadow_path):
+                    prev = pd.read_csv(shadow_path)
+                    shadow_df = pd.concat([prev, shadow_df], ignore_index=True)
+                    if "date" in shadow_df.columns:
+                        shadow_df = shadow_df.drop_duplicates(subset=["date"], keep="last")
+                shadow_df.to_csv(shadow_path, index=False)
+                # Live mode may trim official picks to the DP action — only
+                # when the promotion gate has allowed live. Shadow never
+                # mutates game_hit_picks already appended above.
+                if streak_mode == "live" and decision.action == "sit":
+                    print(
+                        f"STREAK_POLICY live recommends sit "
+                        f"(streak={current_streak}, eu={decision.expected_utility:.4f}); "
+                        f"official picks already logged — review shadow file."
+                    )
+            except Exception as exc:
+                print(f"WARNING: streak_policy decision failed ({exc}); continuing without it.")
 
         write_beat_the_streak_export(predictions_log_path, output_dir)
 
         if schedule_games_df is not None and not schedule_games_df.empty:
-            win_probabilities = game_picks.compute_game_win_probabilities(
-                outputs["confidence"], outputs["pave"], schedule_games_df
-            )
-            # Quant-analytics follow-up "dig into calibration": rescales
-            # the raw heuristic ratio through the saved recalibration, if
-            # one has been trained and cleared its own real-holdout bar
-            # (see game_picks.apply_calibration's own docstring) - a no-op
-            # returning win_probabilities completely unchanged otherwise.
-            calibration_status = ml_models.inspect_model_path(config.GAME_PICK_CALIBRATION_MODEL_PATH)
-            win_probabilities = game_picks.apply_calibration(win_probabilities)
-            if calibration_status.get("loaded"):
-                game_fallback_used = False
-                game_fallback_reason = None
-                game_probability_source = "calibrated_home_win_probability"
+            if game_pk_filter is not None:
+                schedule_games_df = schedule_games_df[
+                    schedule_games_df["game_pk"].isin(game_pk_filter)
+                ].copy()
+            if schedule_games_df.empty:
+                write_game_picks_export(game_predictions_log_path, output_dir)
             else:
-                game_fallback_used = True
-                game_fallback_reason = calibration_status.get("fallback_reason") or "missing_artifact"
-                game_probability_source = "home_win_probability"
-            # A real market-odds fetch failure must never suppress real
-            # game-pick logging - deliberately a separate try/except from
-            # schedule_games_df's own above, not shared with it. Quant-
-            # analytics item #6, slice 2 (market_odds.py).
-            try:
-                market_probabilities = market_odds.fetch_market_home_win_probabilities(as_of_date)
-            except Exception as exc:
-                print(
-                    f"WARNING: failed to fetch real ESPN market odds for {as_of_date} ({exc}); "
-                    f"logging today's game picks without a market comparison."
+                win_probabilities = game_picks.compute_game_win_probabilities(
+                    outputs["confidence"], outputs["pave"], schedule_games_df
                 )
-                market_probabilities = None
-            todays_game_picks = game_predictions.select_game_picks(
-                win_probabilities,
-                as_of_date,
-                market_probabilities=market_probabilities,
-                confidence=outputs["confidence"],
-                model_status=calibration_status,
-                fallback_used=game_fallback_used,
-                fallback_reason=game_fallback_reason,
-                probability_source=game_probability_source,
-            )
-            game_predictions.append_game_predictions(todays_game_picks, game_predictions_log_path)
+                # Quant-analytics follow-up "dig into calibration": rescales
+                # the raw heuristic ratio through the saved recalibration, if
+                # one has been trained and cleared its own real-holdout bar
+                # (see game_picks.apply_calibration's own docstring) - a no-op
+                # returning win_probabilities completely unchanged otherwise.
+                calibration_status = ml_models.inspect_model_path(config.GAME_PICK_CALIBRATION_MODEL_PATH)
+                win_probabilities = game_picks.apply_calibration(win_probabilities)
+                if calibration_status.get("loaded"):
+                    game_fallback_used = False
+                    game_fallback_reason = None
+                    game_probability_source = "calibrated_home_win_probability"
+                else:
+                    game_fallback_used = True
+                    game_fallback_reason = calibration_status.get("fallback_reason") or "missing_artifact"
+                    game_probability_source = "home_win_probability"
+                # A real market-odds fetch failure must never suppress real
+                # game-pick logging - deliberately a separate try/except from
+                # schedule_games_df's own above, not shared with it. Quant-
+                # analytics item #6, slice 2 (market_odds.py).
+                try:
+                    market_probabilities = market_odds.fetch_and_persist_odds_snapshots(
+                        as_of_date,
+                        schedule_games_df,
+                        snapshot_role=prediction_snapshot_type,
+                    )
+                    market_probabilities = market_odds.snapshots_for_predictions(market_probabilities)
+                except Exception as exc:
+                    print(
+                        f"WARNING: failed to fetch real ESPN market odds for {as_of_date} ({exc}); "
+                        f"logging today's game picks without a market comparison."
+                    )
+                    market_probabilities = None
 
-        write_game_picks_export(game_predictions_log_path, output_dir)
+                game_pred_mode, game_pred_meta = game_residual_model.resolve_game_prediction_mode()
+                betting_mode, betting_meta = game_residual_model.resolve_betting_mode()
+                residual_status = {
+                    "loaded": False,
+                    "fallback_used": True,
+                    "fallback_reason": "not_requested",
+                    "artifact_id": None,
+                    "model_version": None,
+                }
+                residual_probs = None
+                heuristic_win_probabilities = win_probabilities.copy()
+
+                if game_pred_mode in ("shadow", "live") and market_probabilities is not None:
+                    try:
+                        features = game_picks.build_game_features(
+                            outputs["confidence"], outputs["pave"], schedule_games_df,
+                        )
+                        features = game_residual_model.enrich_residual_features(
+                            features,
+                            schedule_games=schedule_games_df,
+                            confidence=outputs["confidence"],
+                        )
+                        market_series = None
+                        if "game_pk" in market_probabilities.columns:
+                            mkt = market_probabilities.dropna(subset=["game_pk"]).drop_duplicates(
+                                "game_pk", keep="last"
+                            )
+                            features = features.merge(
+                                mkt[["game_pk", "market_home_win_probability"]],
+                                on="game_pk",
+                                how="left",
+                            )
+                            market_series = features["market_home_win_probability"]
+                        if market_series is not None and market_series.notna().any():
+                            residual_probs, residual_status = (
+                                game_residual_model.predict_residual_home_win_probability(
+                                    features, market_series,
+                                )
+                            )
+                            shadow_base = features.merge(
+                                heuristic_win_probabilities[["game_pk", "home_win_probability"]],
+                                on="game_pk",
+                                how="left",
+                            )
+                            shadow_frame = game_residual_model.build_shadow_prediction_frame(
+                                shadow_base,
+                                residual_probs,
+                                market_series,
+                                model_status=residual_status,
+                                game_prediction_mode=game_pred_mode,
+                                prediction_snapshot_type=prediction_snapshot_type,
+                            )
+                            game_residual_model.write_shadow_predictions(shadow_frame)
+
+                            if betting_mode == "shadow":
+                                hypo = shadow_base.copy()
+                                hypo["residual_home_win_probability"] = residual_probs.to_numpy()
+                                ml_cols = [
+                                    c for c in ("game_pk", "home_moneyline", "away_moneyline")
+                                    if c in market_probabilities.columns
+                                ]
+                                if "home_moneyline" in ml_cols and "away_moneyline" in ml_cols:
+                                    mkt_ml = market_probabilities.dropna(subset=["game_pk"])[
+                                        ml_cols
+                                    ].drop_duplicates("game_pk")
+                                    hypo = hypo.drop(
+                                        columns=[
+                                            c for c in ("home_moneyline", "away_moneyline")
+                                            if c in hypo.columns
+                                        ],
+                                        errors="ignore",
+                                    ).merge(mkt_ml, on="game_pk", how="left")
+                                    shadow_bets = game_residual_model.hypothetical_bets_from_probabilities(
+                                        hypo,
+                                        model_prob_col="residual_home_win_probability",
+                                        edge_threshold=float(
+                                            config.GAME_RESIDUAL_EDGE_THRESHOLD_GRID[
+                                                len(config.GAME_RESIDUAL_EDGE_THRESHOLD_GRID) // 2
+                                            ]
+                                        ),
+                                    )
+                                    if not shadow_bets.empty:
+                                        game_residual_model.write_shadow_bets(shadow_bets)
+
+                            if (
+                                game_pred_mode == "live"
+                                and residual_status.get("loaded")
+                                and not residual_status.get("fallback_used")
+                            ):
+                                win_probabilities = heuristic_win_probabilities.copy()
+                                residual_df = pd.DataFrame({
+                                    "game_pk": features["game_pk"].to_numpy(),
+                                    "residual_home_win_probability": residual_probs.to_numpy(),
+                                })
+                                win_probabilities = win_probabilities.merge(
+                                    residual_df, on="game_pk", how="left",
+                                )
+                                use_residual = win_probabilities["residual_home_win_probability"].notna()
+                                win_probabilities.loc[use_residual, "home_win_probability"] = (
+                                    win_probabilities.loc[use_residual, "residual_home_win_probability"]
+                                )
+                                game_probability_source = "market_residual_home_win_probability"
+                                game_fallback_used = False
+                                game_fallback_reason = None
+                                calibration_status = residual_status
+                    except Exception as exc:
+                        print(
+                            f"WARNING: game residual shadow/live path failed ({exc}); "
+                            f"continuing with heuristic win probabilities."
+                        )
+
+                model_version = game_residual_model.effective_game_model_version(game_pred_mode)
+                todays_game_picks = game_predictions.select_game_picks(
+                    win_probabilities,
+                    as_of_date,
+                    market_probabilities=market_probabilities,
+                    confidence=outputs["confidence"],
+                    model_status=calibration_status,
+                    fallback_used=game_fallback_used,
+                    fallback_reason=game_fallback_reason,
+                    probability_source=game_probability_source,
+                    prediction_snapshot_type=prediction_snapshot_type,
+                    model_version=model_version,
+                )
+                # Official stakes only when betting mode resolves to live.
+                if betting_mode != "live":
+                    todays_game_picks = game_residual_model.suppress_official_bets(todays_game_picks)
+                    if betting_meta.get("fallback_used") and betting_meta.get("configured") == "live":
+                        print(
+                            f"BETTING_MODE live blocked by promotion gate "
+                            f"({betting_meta.get('fallback_reason')}); official bet_units zeroed."
+                        )
+                if game_pred_meta.get("fallback_used") and game_pred_meta.get("configured") == "live":
+                    print(
+                        f"GAME_PREDICTION_MODE live blocked by promotion gate "
+                        f"({game_pred_meta.get('fallback_reason')}); using shadow/heuristic path."
+                    )
+
+                if not todays_game_picks.empty:
+                    # Stamp lineup_status from snapshots when available.
+                    if not snapshots.empty and "game_pk" in todays_game_picks.columns:
+                        confirmed_games = set(
+                            snapshots.loc[
+                                snapshots["is_confirmed_starter"] == True, "game_pk"  # noqa: E712
+                            ].dropna().astype(int)
+                        )
+                        todays_game_picks = todays_game_picks.copy()
+                        todays_game_picks["lineup_status"] = todays_game_picks["game_pk"].map(
+                            lambda g: "confirmed" if int(g) in confirmed_games else "unconfirmed"
+                        )
+                    game_predictions.append_game_predictions(todays_game_picks, game_predictions_log_path)
+
+                write_game_picks_export(game_predictions_log_path, output_dir)
+        else:
+            write_game_picks_export(game_predictions_log_path, output_dir)
 
     return outputs
 
@@ -453,6 +747,13 @@ def main():
         action="store_true",
         help="Skip logging today's picks / resolving past ones (useful for local/backtest runs).",
     )
+    parser.add_argument(
+        "--prediction-snapshot-type",
+        type=str,
+        default="morning",
+        choices=["morning", "lineup_lock"],
+        help="Stamp prediction_snapshot_type on logged picks (morning vs lineup_lock).",
+    )
     args = parser.parse_args()
 
     as_of_date = (
@@ -465,6 +766,7 @@ def main():
         predictions_dir=args.predictions_dir,
         persist_raw=not args.no_persist_raw,
         log_predictions=not args.no_log_predictions,
+        prediction_snapshot_type=args.prediction_snapshot_type,
     )
 
 

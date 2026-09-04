@@ -180,7 +180,7 @@ HITTER_MIN_PROBABILITY = 0.7
 # let the model rank the WHOLE pool directly, gated only by the now-removed
 # HITTER_MIN_MODEL_PROBABILITY - real live feedback after v3 shipped: a day
 # it surfaced Freddie Freeman as the lone recommended pick and dropped
-# Jeremy Peña, even though the user explicitly values hitters like Peña/
+# Jeremy Pena, even though the user explicitly values hitters like Pena/
 # Freeman "because of their place in the lineup" - a signal Approach/
 # Matchup_Approach implicitly captures via the avg_batting_order/start_rate
 # qualifiers (see LINEUP_TOP_HALF_MAX_SLOT/LINEUP_MIN_START_RATE) that
@@ -238,8 +238,8 @@ HITTER_MAX_DAYS_SINCE_LAST_GAME = 5
 #
 # v4: reverses v3's "model ranks the whole pool" design. Real feedback
 # after v3 shipped live: on a day the model surfaced Freddie Freeman as the
-# LONE recommended pick and dropped Jeremy Peña, even though the user
-# explicitly values hitters like Peña/Freeman "because of their place in
+# LONE recommended pick and dropped Jeremy Pena, even though the user
+# explicitly values hitters like Pena/Freeman "because of their place in
 # the lineup" - the model doesn't see lineup-order/everyday-player signals
 # directly, while Approach/Matchup_Approach implicitly do via the
 # avg_batting_order/start_rate qualifiers. v4 keeps Model_Hit_Probability
@@ -251,6 +251,24 @@ HITTER_MAX_DAYS_SINCE_LAST_GAME = 5
 # min_model_probability threshold entirely (see HITTER_MODEL_SHORTLIST_SIZE)
 # - a rank-based cutoff needs no probability bar to calibrate.
 HITTER_MODEL_VERSION = "v4-model-shortlist"
+
+# Champion/challenger integration for a single authoritative hitter
+# probability (`Final_Hit_Probability`). Modes:
+#   legacy - production selection unchanged (v4 shortlist + Matchup_Approach)
+#   shadow - production picks unchanged; log Final_Hit_Probability + components
+#           + shadow_rank without changing official picks
+#   live   - Final_Hit_Probability is the only quantity for ranking, thresholding,
+#            logging, Brier/log-loss, dashboard display, and streak grading
+#
+# Default is shadow unless a committed nested-validation report clearly
+# satisfies the promotion gate (see hitter_probability_model.promotion_gate_satisfied).
+# Do not flip this to live without that gate.
+HITTER_SELECTION_MODES = ("legacy", "shadow", "live")
+HITTER_SELECTION_MODE = "shadow"
+HITTER_MODEL_VERSION_LIVE = "v5-final-hit-probability"
+HITTER_PROMOTION_GATE_REPORT_PATH = (
+    "reports/model_validation/hitter_opportunity_probability_nested.json"
+)
 
 # Beat the Streak Tracker (dashboard): a batter is only "recommended" if
 # evaluation._combined_probability (the mean of whichever of
@@ -305,6 +323,31 @@ HITTER_MODEL_VERSION = "v4-model-shortlist"
 DAILY_PICK_MAX = 2
 DAILY_PICK_MIN_PROBABILITY = 0.77
 
+# Streak-action decision layer (mlb_metrics.streak_policy): sit / one / two
+# based on Final_Hit_Probability outcome triples + DP expected utility.
+# Default shadow - does not change official picks until a promotion gate
+# shows untouched outer-fold improvement vs legacy fixed two-pick /
+# threshold policies.
+STREAK_POLICY_MODES = ("off", "shadow", "live")
+STREAK_POLICY_MODE = "shadow"
+STREAK_POLICY_UTILITY = "expected_final_streak"
+STREAK_POLICY_TARGET = 57
+STREAK_POLICY_MAX_CANDIDATES = 12
+STREAK_POLICY_DEFAULT_APPEAR = 0.85
+# Conservative dependence penalties (additive). Default 0 until earned
+# inside nested validation - never a claimed learned correlation.
+STREAK_POLICY_DEPENDENCE_SAME_GAME = 0.0
+STREAK_POLICY_DEPENDENCE_SAME_TEAM = 0.0
+STREAK_POLICY_DEPENDENCE_SHARED_PARK = 0.0
+STREAK_POLICY_DEPENDENCE_OPPOSING_SAME_GAME = 0.0
+STREAK_POLICY_SHADOW_DECISIONS_PATH = (
+    "data/predictions/streak_policy_shadow_decisions.csv"
+)
+STREAK_POLICY_PROMOTION_GATE_REPORT_PATH = (
+    "reports/model_validation/streak_policy_nested.json"
+)
+STREAK_POLICY_REPORT_NAME = "streak_policy_backtest.json"
+
 # Quant-analytics item #4, slice 2 ("decision theory for the actual game
 # structure" - correlation from being in the same game): predictions.
 # select_picks's #2-pick diversification tie-break. When the #1 and #2
@@ -351,6 +394,33 @@ LINEUP_TOP_HALF_MAX_SLOT = 4.5
 # A rate, not an absolute game count, so it doesn't hard-disqualify every
 # batter before a team has played LINEUP_WINDOW_GAMES games.
 LINEUP_MIN_START_RATE = 0.6
+
+# Historical hitter-opportunity training rows (hitter_training_data.py): a
+# batter is a pregame candidate for a team-game iff their latest known team
+# strictly before the game is that team AND they appeared for that team in
+# at least one of (a) the team's previous N games or (b) any game for that
+# team within D calendar days. Either window is sufficient (OR). The actual
+# lineup is never used to decide historical candidates - it is labels only.
+# Live confirmed-lineup snapshots may add previously unseen players via
+# league priors (add_confirmed_lineup_candidates); that path is not used in
+# historical training and must not be used to "fix" candidate coverage.
+HITTER_OPPORTUNITY_LOOKBACK_TEAM_GAMES = 10
+HITTER_OPPORTUNITY_LOOKBACK_CALENDAR_DAYS = 14
+
+# Confirmed-lineup snapshots (mlb_metrics.lineup_snapshots). Stage A
+# (scripts/debug_statsapi_lineups.py) must confirm the live Stats API
+# field paths before flipping LINEUP_API_SCHEMA_CONFIRMED to True.
+LINEUP_API_SCHEMA_CONFIRMED = False
+LINEUP_CONFIRMED_SCRATCH_RISK = 0.02  # P(scratch | confirmed starter) before first pitch
+LINEUP_SNAPSHOT_AUDIT_PATH = "data/predictions/lineup_snapshots_audit.csv"
+LINEUP_SNAPSHOT_LATEST_PATH = "data/predictions/lineup_snapshots_latest.csv"
+LINEUP_LOCK_WINDOW_HOURS = 6.0  # only recompute unstarted games starting within this window
+LINEUP_LOCK_SHADOW_DECISIONS_PATH = "data/predictions/lineup_lock_runs.csv"
+# Immutable audit copies of every published prediction batch (morning +
+# lineup_lock). The published predictions.csv / game_predictions.csv files
+# keep only the latest valid pregame row per key.
+PREDICTIONS_AUDIT_PATH = "data/predictions/predictions_audit.csv"
+GAME_PREDICTIONS_AUDIT_PATH = "data/predictions/game_predictions_audit.csv"
 
 # --- Matchup awareness (Part B) ---
 #
@@ -832,13 +902,58 @@ ML_WALK_FORWARD_TEST_BLOCK_DATES_PITCHER = 15
 # come exclusively from predicting this untouched block, refit on
 # everything before it. Matches the size of the original 15-20 date
 # heuristic-only backtest sample, so it's a fair head-to-head comparison.
+#
+# Prefer nested rolling-origin validation (model_validation.py) for new
+# research: outer/inner folds replace repeatedly inspecting this same
+# block for family/calibration/features/policy. When a freeze period is
+# reserved via NESTED_VALIDATION_FREEZE_DATES, that tail is also untouched
+# and must not be repeatedly inspected during development.
 ML_FINAL_HOLDOUT_DATES = 20
+
+# Nested rolling-origin validation (mlb_metrics.model_validation). Outer
+# folds grow training forward through the season; inner folds select
+# model family / hyperparameters / calibration / features / threshold /
+# shortlist / one-vs-two-pick policy. Outer test is scored once after
+# inner selection. Defaults reuse the hitter walk-forward block sizes.
+NESTED_VALIDATION_OUTER_MIN_TRAIN_DATES = ML_WALK_FORWARD_MIN_TRAIN_DATES_HITTER
+NESTED_VALIDATION_OUTER_TEST_BLOCK_DATES = ML_WALK_FORWARD_TEST_BLOCK_DATES_HITTER
+NESTED_VALIDATION_INNER_MIN_TRAIN_DATES = 20
+NESTED_VALIDATION_INNER_TEST_BLOCK_DATES = 5
+# Optional untouched freeze tail AFTER all nested fold construction.
+# Default 0 (no freeze). When > 0, those most-recent dates are excluded
+# from every train/test fold and from every selection decision - do not
+# peek at them while iterating on models or policy.
+NESTED_VALIDATION_FREEZE_DATES = 0
+NESTED_VALIDATION_REPORT_DIR = "reports/model_validation"
+NESTED_VALIDATION_BOOTSTRAP_SAMPLES = 1000
+NESTED_VALIDATION_RANDOM_SEED = 0
 
 DFS_HITTER_MODEL_PATH = "data/models/dfs_hitter_model.joblib"
 DFS_PITCHER_H_ALLOWED_MODEL_PATH = "data/models/dfs_pitcher_h_allowed_model.joblib"
 DFS_PITCHER_BB_MODEL_PATH = "data/models/dfs_pitcher_bb_model.joblib"
 AGE_CURVE_HR9_MODEL_PATH = "data/models/age_curve_hr9_model.joblib"
 HITTER_HIT_PROBABILITY_MODEL_PATH = "data/models/hitter_hit_probability_model.joblib"
+
+# Shadow opportunity-aware hitter probability model
+# (mlb_metrics.hitter_probability_model / scripts/train_hitter_probability_model.py).
+# Explicitly models P(Appear), E[PA|Appear], and P(Got_Hit|Appear).
+# Wired into the pipeline only via HITTER_SELECTION_MODE (shadow logs
+# diagnostics; live uses Final_Hit_Probability as the sole authoritative
+# score). Never silently replaces legacy selection without the promotion gate.
+HITTER_OPPORTUNITY_PROBABILITY_MODEL_PATH = (
+    "data/models/hitter_opportunity_probability_model.joblib"
+)
+HITTER_OPPORTUNITY_SHADOW_PREDICTIONS_PATH = (
+    "data/predictions/hitter_opportunity_shadow_predictions.csv"
+)
+HITTER_OPPORTUNITY_VALIDATION_REPORT_NAME = "hitter_opportunity_probability_nested.json"
+HITTER_OPPORTUNITY_LOGIT_C_GRID = [0.01, 0.03, 0.1, 0.3, 1, 3, 10]
+HITTER_OPPORTUNITY_GBM_PARAM_GRID = {
+    "max_depth": [2, 3],
+    "learning_rate": [0.03, 0.1],
+    "max_iter": [100, 200],
+    "min_samples_leaf": [50, 200],
+}
 
 # Deliberately narrow grids (1-2 hyperparameters, <10 combinations) given
 # the modest walk-forward fold count on the DFS side (~116 dates -> ~6-8
@@ -902,6 +1017,51 @@ GAME_PICK_ML_WALK_FORWARD_TEST_BLOCK_DATES = 15
 # with that earlier attempt, not new ones.
 GAME_PICK_CALIBRATION_MODEL_PATH = "data/models/game_pick_calibration_model.joblib"
 
+# Market-residual game-win challenger (mlb_metrics.game_residual_model):
+# logit(P_final) = logit(P_market_at_prediction_time) + residual(features).
+# Modes mirror hitter selection: legacy keeps the calibrated heuristic;
+# shadow logs residual probs without changing official picks; live requires
+# the promotion gate. Default shadow - do not flip to live without the gate.
+GAME_PREDICTION_MODES = ("legacy", "shadow", "live")
+GAME_PREDICTION_MODE = "shadow"
+GAME_RESIDUAL_MODEL_VERSION = "v1-market-residual"
+GAME_RESIDUAL_MODEL_VERSION_LIVE = "v2-market-residual-live"
+GAME_RESIDUAL_MODEL_PATH = "data/models/game_residual_win_probability_model.joblib"
+GAME_RESIDUAL_SHADOW_PREDICTIONS_PATH = (
+    "data/predictions/game_residual_shadow_predictions.csv"
+)
+GAME_RESIDUAL_SHADOW_BETS_PATH = "data/predictions/game_residual_shadow_bets.csv"
+GAME_RESIDUAL_PROMOTION_GATE_REPORT_PATH = (
+    "reports/model_validation/game_residual_nested.json"
+)
+GAME_RESIDUAL_VALIDATION_REPORT_NAME = "game_residual_nested.json"
+# Strong regularization toward a near-zero residual (small C / large alpha).
+GAME_RESIDUAL_LOGISTIC_C_GRID = [0.001, 0.005, 0.01, 0.05, 0.1]
+GAME_RESIDUAL_LOGIT_RESIDUAL_CAP = 0.75  # clip residual logits (~+/-17pp near 0.5)
+GAME_RESIDUAL_NONLINEAR_MAX_DEPTH_GRID = [2, 3]
+GAME_RESIDUAL_NONLINEAR_MIN_SAMPLES_LEAF_GRID = [40, 80]
+GAME_RESIDUAL_NONLINEAR_SHRINK_GRID = [0.25, 0.5, 0.75]
+GAME_RESIDUAL_EDGE_THRESHOLD_GRID = [0.01, 0.02, 0.03, 0.04, 0.05]
+# Betting advice is a separate promotion surface from probability accuracy.
+# disabled: no stakes written to the official game-predictions log
+# shadow: hypothetical bets only (shadow CSV); official bet_units stay 0
+# live: requires the betting promotion gate (never the default)
+BETTING_MODES = ("disabled", "shadow", "live")
+BETTING_MODE = "disabled"
+BETTING_PROMOTION_GATE_REPORT_PATH = (
+    "reports/model_validation/game_residual_betting_gate.json"
+)
+BETTING_PROMOTION_MIN_OUTER_FOLDS = 3
+BETTING_PROMOTION_MIN_GAMES = 100
+BETTING_PROMOTION_MIN_DATE_BLOCKS = 10
+BETTING_PROMOTION_MAX_SINGLE_WEEK_PROFIT_SHARE = 0.45
+BETTING_PROMOTION_MATERIAL_NEGATIVE_ROI = -0.02
+# Nested CV sizing for the residual challenger (game-level rows are sparse).
+GAME_RESIDUAL_OUTER_MIN_TRAIN_DATES = 30
+GAME_RESIDUAL_OUTER_TEST_BLOCK_DATES = 10
+GAME_RESIDUAL_INNER_MIN_TRAIN_DATES = 15
+GAME_RESIDUAL_INNER_TEST_BLOCK_DATES = 5
+
 # Market benchmark (ESPN odds, mlb_metrics.market_odds) - quant-analytics
 # item #6, slice 2. "DraftKings" is the only provider seen in every real
 # pickcenter row slice 1's confirmation dispatch found (GitHub Actions run
@@ -916,6 +1076,13 @@ GAME_PICK_CALIBRATION_MODEL_PATH = "data/models/game_pick_calibration_model.jobl
 # back empty rather than being blocked outright.
 MARKET_ODDS_PREFERRED_PROVIDER = "DraftKings"
 MARKET_ODDS_BACKFILL_DAYS_BACK = 5
+# Append-only ESPN/odds snapshot log. Closing line = latest valid snapshot
+# strictly before game start - never the morning-only capture.
+MARKET_ODDS_SNAPSHOTS_PATH = "data/predictions/market_odds_snapshots.csv"
+MARKET_ODDS_EVENT_MAP_PATH = "data/predictions/market_odds_event_map.csv"
+MARKET_ODDS_MATCH_TIME_TOLERANCE_MINUTES = 45
+MARKET_ODDS_BOOTSTRAP_SAMPLES = 1000
+MARKET_ODDS_BOOTSTRAP_SEED = 0
 
 # Kelly-criterion bet sizing (kelly.py, scripts/recommend_bets.py) - a
 # follow-up to the market benchmark above: turns "model probability

@@ -37,6 +37,9 @@ GAME_PREDICTION_COLUMNS = [
     "date", "game_pk", "home_team", "away_team", "predicted_winner",
     "predicted_probability", "above_threshold", "metric", "actual_winner", "game_played", "model_version",
     "market_home_win_probability",
+    "market_odds_snapshot_id", "market_odds_snapshot_role",
+    "market_provider_event_id", "market_sportsbook",
+    "market_captured_at_utc", "market_home_moneyline", "market_away_moneyline",
     "bet_units", "bet_side", "bet_team", "bet_moneyline", "bet_stake_fraction", "bet_profit_units",
     # Real per-game conservative probabilities (game_picks.apply_kelly_uncertainty,
     # 2026-08-25 - "we need the units risked to not be arbitrary") - persisted
@@ -176,7 +179,35 @@ def advise_bets(
     that date is scaled down proportionally so the day's total lands
     exactly at the cap, preserving each bet's relative size rather than
     favoring whichever game happened to be evaluated first."""
-    merged = todays_picks.merge(market, on=["home_team", "away_team"], how="left")
+    # Prefer game_pk join when the market frame carries matched game_pk
+    # (timestamped odds snapshots) — avoids doubleheader collisions.
+    if (
+        "game_pk" in market.columns
+        and market["game_pk"].notna().any()
+        and "game_pk" in todays_picks.columns
+    ):
+        market_by_pk = market.dropna(subset=["game_pk"]).drop_duplicates(subset=["game_pk"], keep="last")
+        pk_cols = [
+            c for c in (
+                "game_pk", "home_moneyline", "away_moneyline",
+                "market_home_win_probability", "home_team", "away_team",
+            )
+            if c in market_by_pk.columns
+        ]
+        base = todays_picks.drop(
+            columns=[c for c in ("home_moneyline", "away_moneyline", "market_home_win_probability") if c in todays_picks.columns],
+            errors="ignore",
+        )
+        merged = base.merge(market_by_pk[pk_cols], on="game_pk", how="left")
+    else:
+        # Drop moneylines already on picks so a second merge (select_game_picks
+        # already attached odds) does not create home_moneyline_x/_y ghosts.
+        base = todays_picks.drop(
+            columns=[c for c in ("home_moneyline", "away_moneyline") if c in todays_picks.columns],
+            errors="ignore",
+        )
+        money_cols = [c for c in ("home_team", "away_team", "home_moneyline", "away_moneyline") if c in market.columns]
+        merged = base.merge(market[money_cols], on=["home_team", "away_team"], how="left")
 
     rows = []
     for _, pick in merged.iterrows():
@@ -242,6 +273,23 @@ def advise_bets(
 def _ensure_provenance_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     for column, default in _PROVENANCE_MIGRATION_DEFAULTS.items():
+        if column not in df.columns:
+            df[column] = default
+    return df
+
+
+def _ensure_market_odds_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    defaults = {
+        "market_odds_snapshot_id": pd.NA,
+        "market_odds_snapshot_role": pd.NA,
+        "market_provider_event_id": pd.NA,
+        "market_sportsbook": pd.NA,
+        "market_captured_at_utc": pd.NA,
+        "market_home_moneyline": pd.NA,
+        "market_away_moneyline": pd.NA,
+    }
+    for column, default in defaults.items():
         if column not in df.columns:
             df[column] = default
     return df
@@ -355,20 +403,92 @@ def select_game_picks(
     picks["game_played"] = pd.NA
     picks["model_version"] = model_version
 
-    has_moneylines = (
-        market_probabilities is not None
-        and not market_probabilities.empty
-        and {"home_moneyline", "away_moneyline"}.issubset(market_probabilities.columns)
-    )
+    # Attach the exact odds snapshot this prediction used.
+    for col in (
+        "market_home_win_probability", "market_odds_snapshot_id", "market_odds_snapshot_role",
+        "market_provider_event_id", "market_sportsbook", "market_captured_at_utc",
+        "market_home_moneyline", "market_away_moneyline",
+    ):
+        if col not in picks.columns:
+            picks[col] = pd.NA
 
+    market_for_advice = None
     if market_probabilities is not None and not market_probabilities.empty:
-        picks = picks.merge(
-            market_probabilities[["home_team", "away_team", "market_home_win_probability"]],
-            on=["home_team", "away_team"],
-            how="left",
-        )
+        market = market_probabilities.copy()
+        # Normalize sportsbook / snapshot column names from odds snapshots.
+        if "sportsbook" in market.columns:
+            market["market_sportsbook"] = market["sportsbook"]
+            if "market_provider" not in market.columns:
+                market["market_provider"] = market["sportsbook"]
+        if "market_provider" in market.columns and "market_sportsbook" not in market.columns:
+            market["market_sportsbook"] = market["market_provider"]
+        if "snapshot_id" in market.columns and "market_odds_snapshot_id" not in market.columns:
+            market["market_odds_snapshot_id"] = market["snapshot_id"]
+        if "snapshot_role" in market.columns and "market_odds_snapshot_role" not in market.columns:
+            market["market_odds_snapshot_role"] = market["snapshot_role"]
+        if "provider_event_id" in market.columns and "market_provider_event_id" not in market.columns:
+            market["market_provider_event_id"] = market["provider_event_id"]
+        if "captured_at_utc" in market.columns and "market_captured_at_utc" not in market.columns:
+            market["market_captured_at_utc"] = market["captured_at_utc"]
+        if "home_moneyline" in market.columns and "market_home_moneyline" not in market.columns:
+            market["market_home_moneyline"] = market["home_moneyline"]
+        if "away_moneyline" in market.columns and "market_away_moneyline" not in market.columns:
+            market["market_away_moneyline"] = market["away_moneyline"]
+        if "home_moneyline" not in market.columns and "market_home_moneyline" in market.columns:
+            market["home_moneyline"] = market["market_home_moneyline"]
+            market["away_moneyline"] = market["market_away_moneyline"]
+
+        attach_cols = [
+            c for c in (
+                "market_home_win_probability", "market_odds_snapshot_id", "market_odds_snapshot_role",
+                "market_provider_event_id", "market_sportsbook", "market_captured_at_utc",
+                "market_home_moneyline", "market_away_moneyline",
+                "home_moneyline", "away_moneyline", "game_pk", "home_team", "away_team",
+            )
+            if c in market.columns
+        ]
+        if "game_pk" in market.columns and market["game_pk"].notna().any():
+            mkt = market.dropna(subset=["game_pk"])[attach_cols].drop_duplicates("game_pk", keep="last")
+            picks = picks.drop(columns=[c for c in attach_cols if c in picks.columns and c != "game_pk"], errors="ignore")
+            picks = picks.merge(mkt, on="game_pk", how="left")
+        else:
+            key_cols = ["home_team", "away_team"]
+            mkt = market[attach_cols].drop_duplicates(key_cols, keep="last")
+            picks = picks.drop(
+                columns=[c for c in attach_cols if c in picks.columns and c not in key_cols],
+                errors="ignore",
+            )
+            picks = picks.merge(mkt, on=key_cols, how="left")
+
+        if "market_odds_snapshot_role" in picks.columns:
+            picks["market_odds_snapshot_role"] = picks["market_odds_snapshot_role"].fillna(prediction_snapshot_type)
+        else:
+            picks["market_odds_snapshot_role"] = prediction_snapshot_type
+        market_for_advice = market
     else:
         picks["market_home_win_probability"] = pd.NA
+        picks["market_odds_snapshot_id"] = pd.NA
+        picks["market_odds_snapshot_role"] = pd.NA
+        picks["market_provider_event_id"] = pd.NA
+        picks["market_sportsbook"] = pd.NA
+        picks["market_captured_at_utc"] = pd.NA
+        picks["market_home_moneyline"] = pd.NA
+        picks["market_away_moneyline"] = pd.NA
+
+    # advise_bets still expects home_moneyline/away_moneyline column names.
+    if "home_moneyline" not in picks.columns and "market_home_moneyline" in picks.columns:
+        picks["home_moneyline"] = picks["market_home_moneyline"]
+    if "away_moneyline" not in picks.columns and "market_away_moneyline" in picks.columns:
+        picks["away_moneyline"] = picks["market_away_moneyline"]
+
+    has_moneylines = (
+        market_for_advice is not None
+        and not market_for_advice.empty
+        and (
+            {"home_moneyline", "away_moneyline"}.issubset(market_for_advice.columns)
+            or {"market_home_moneyline", "market_away_moneyline"}.issubset(market_for_advice.columns)
+        )
+    )
 
     if confidence is not None and not confidence.empty:
         pessimistic = game_picks.apply_kelly_uncertainty(win_probabilities, confidence)
@@ -382,7 +502,7 @@ def select_game_picks(
         picks["away_win_probability_pessimistic"] = pd.NA
 
     if has_moneylines:
-        advice = advise_bets(picks, market_probabilities, kelly_fraction_multiplier, min_edge)
+        advice = advise_bets(picks, market_for_advice, kelly_fraction_multiplier, min_edge)
         dupe_game_pks = advice.loc[advice["game_pk"].duplicated(keep=False), "game_pk"].unique()
         if len(dupe_game_pks) > 0:
             print(
@@ -447,15 +567,52 @@ def select_game_picks(
     picks["lineup_status"] = "unconfirmed"
     picks["starter_status"] = _infer_game_starter_status(picks)
 
+    picks = _ensure_market_odds_columns(picks)
+    for col in GAME_PREDICTION_COLUMNS:
+        if col not in picks.columns:
+            picks[col] = pd.NA
     return picks[GAME_PREDICTION_COLUMNS]
+
+
+def append_game_prediction_audit(
+    picks: pd.DataFrame,
+    audit_path: str | None = None,
+    *,
+    published_log_path: str | None = None,
+) -> None:
+    """Append-only immutable audit of every game-prediction batch."""
+    if audit_path is None:
+        if published_log_path:
+            root, ext = os.path.splitext(published_log_path)
+            audit_path = f"{root}_audit{ext}"
+        else:
+            audit_path = config.GAME_PREDICTIONS_AUDIT_PATH
+    frame = picks.copy()
+    if frame.empty:
+        return
+    os.makedirs(os.path.dirname(audit_path) or ".", exist_ok=True)
+    if os.path.exists(audit_path):
+        existing = pd.read_csv(audit_path)
+        combined = pd.concat([existing, frame], ignore_index=True)
+    else:
+        combined = frame
+    combined.to_csv(audit_path, index=False)
 
 
 def append_game_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
     """Append `picks` to the game-predictions log at `log_path`, deduping
-    on (date, game_pk, metric) so a re-run doesn't create duplicate log
-    entries. Existing rows (including already-resolved outcomes) always win
-    over a re-logged pick for the same key."""
+    on (date, game_pk, metric).
+
+    Unresolved same-day (or same game_pk) rows may be refreshed by a newer
+    batch. Already-resolved rows (``game_played`` not null) are immutable and
+    always win over a re-logged pick for the same key — mirroring the
+    hitter-side ``append_predictions`` supersede rules. Every batch is also
+    written to the immutable audit log beside the published CSV.
+    """
     os.makedirs(os.path.dirname(log_path) or ".", exist_ok=True)
+    picks = picks.copy()
+    picks["date"] = pd.to_datetime(picks["date"])
+    append_game_prediction_audit(picks, published_log_path=log_path)
 
     if os.path.exists(log_path):
         existing = pd.read_csv(log_path, parse_dates=["date"])
@@ -487,10 +644,35 @@ def append_game_predictions(picks: pd.DataFrame, log_path: str) -> pd.DataFrame:
             existing["home_win_probability_pessimistic"] = pd.NA
             existing["away_win_probability_pessimistic"] = pd.NA
         existing = _ensure_provenance_columns(existing)
+        existing = _ensure_market_odds_columns(existing)
         picks = _ensure_provenance_columns(picks)
+        picks = _ensure_market_odds_columns(picks)
+        existing["date"] = pd.to_datetime(existing["date"])
+
+        # Drop unresolved existing rows for keys present in the fresh batch
+        # so a lineup-lock / re-run can refresh still-pending game picks.
+        # Resolved rows (game_played notna) are never dropped. Key-level only
+        # — do not wipe other same-day games that were not recomputed.
+        fresh_keys = picks[["date", "game_pk", "metric"]].drop_duplicates()
+        existing = existing.merge(
+            fresh_keys.assign(_fresh=1),
+            on=["date", "game_pk", "metric"],
+            how="left",
+        )
+        is_resolved = (
+            existing["game_played"].notna()
+            if "game_played" in existing.columns
+            else pd.Series(False, index=existing.index)
+        )
+        drop_mask = existing["_fresh"].eq(1) & ~is_resolved
+        existing = existing.loc[~drop_mask].drop(columns=["_fresh"], errors="ignore")
+
+        # picks first, then existing: keep="last" lets resolved rows that
+        # remained in `existing` win over a re-logged unresolved duplicate.
         combined = pd.concat([picks, existing], ignore_index=True)
     else:
         picks = _ensure_provenance_columns(picks)
+        picks = _ensure_market_odds_columns(picks)
         combined = picks
 
     combined = combined.drop_duplicates(subset=["date", "game_pk", "metric"], keep="last")
@@ -541,6 +723,7 @@ def resolve_game_predictions(log_path: str, fetch_results_fn, as_of_date) -> pd.
         for col in ("bet_side", "bet_team", "bet_moneyline", "bet_stake_fraction", "bet_profit_units"):
             log[col] = pd.NA
     log = _ensure_provenance_columns(log)
+    log = _ensure_market_odds_columns(log)
     # A log with no resolved games yet round-trips actual_winner as an
     # all-null float64 column (empty strings -> NaN on read) - cast back to
     # object so assigning a team abbreviation string into it doesn't raise.

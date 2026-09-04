@@ -1,17 +1,24 @@
 """Game-pick backtest scoring - the game-level analog of evaluation.py's
 Beat the Streak Tracker export (build_beat_the_streak_export). See
 game_picks.py/game_predictions.py.
+
+Market comparison uses a real timestamped closing snapshot (latest valid
+pregame price) when available. Primary skill metrics are paired scoring-rule
+differences (model − market Brier / log loss) with date-block bootstrap CIs;
+``beat_closing_line_rate`` is retained only as a secondary win-rate style
+readout and does not treat a 0.0001 edge the same as a 0.20 edge.
 """
 
+from __future__ import annotations
+
+import numpy as np
 import pandas as pd
 
-from mlb_metrics import config, evaluation
+from mlb_metrics import config, evaluation, market_odds
 
 
 def _classify_outcome(df: pd.DataFrame) -> pd.Series:
-    """Per-pick outcome: "pending" (game_played unknown yet), "not_played"
-    (confirmed postponed/cancelled - game_played=0), "win" (predicted_winner
-    matched actual_winner), or "loss" (it didn't)."""
+    """Per-pick outcome: "pending", "not_played", "win", or "loss"."""
     game_played = pd.to_numeric(df["game_played"], errors="coerce")
 
     outcome = pd.Series("pending", index=df.index)
@@ -23,53 +30,262 @@ def _classify_outcome(df: pd.DataFrame) -> pd.Series:
     return outcome
 
 
+def _model_home_probability(frame: pd.DataFrame) -> pd.Series:
+    model_favors_home = frame["predicted_winner"] == frame["home_team"]
+    return frame["predicted_probability"].where(
+        model_favors_home, 1 - frame["predicted_probability"]
+    )
+
+
+def _resolve_closing_market_probability(
+    picks: pd.DataFrame,
+    odds_snapshots: pd.DataFrame | None = None,
+) -> pd.Series:
+    """Per-row closing de-vigged home probability.
+
+    Prefers the latest valid pregame snapshot from ``odds_snapshots``.
+    Falls back to the prediction's own ``market_home_win_probability``
+    (legacy morning-only logs) when no closing snapshot exists.
+    """
+    out = pd.Series(pd.NA, index=picks.index, dtype="Float64")
+    if odds_snapshots is not None and not odds_snapshots.empty and "game_pk" in picks.columns:
+        snaps = market_odds.normalize_snapshot_frame(odds_snapshots)
+        for idx, row in picks.iterrows():
+            gpk = row.get("game_pk")
+            if pd.isna(gpk):
+                continue
+            closing = market_odds.select_closing_snapshot(
+                snaps, int(gpk), game_datetime=row.get("game_datetime"),
+            )
+            if closing is not None and pd.notna(closing.get("market_home_win_probability")):
+                out.at[idx] = float(closing["market_home_win_probability"])
+    if "market_home_win_probability" in picks.columns:
+        legacy = pd.to_numeric(picks["market_home_win_probability"], errors="coerce")
+        out = out.fillna(legacy)
+    return out
+
+
+def paired_market_scoring_differences(
+    picks: pd.DataFrame,
+    *,
+    odds_snapshots: pd.DataFrame | None = None,
+    n_bootstrap: int | None = None,
+    random_seed: int | None = None,
+    alpha: float = 0.05,
+) -> dict:
+    """Paired model-vs-closing-market scoring on the same resolved games."""
+    n_bootstrap = int(
+        config.MARKET_ODDS_BOOTSTRAP_SAMPLES if n_bootstrap is None else n_bootstrap
+    )
+    random_seed = int(
+        config.MARKET_ODDS_BOOTSTRAP_SEED if random_seed is None else random_seed
+    )
+
+    empty = {
+        "n_compared": 0,
+        "brier_diff": float("nan"),
+        "log_loss_diff": float("nan"),
+        "mean_prob_diff": float("nan"),
+        "mean_squared_error_diff": float("nan"),
+        "pct_model_error_lower": float("nan"),
+        "brier_diff_ci_low": float("nan"),
+        "brier_diff_ci_high": float("nan"),
+        "log_loss_diff_ci_low": float("nan"),
+        "log_loss_diff_ci_high": float("nan"),
+        "n_bootstrap": n_bootstrap,
+        "n_date_blocks": 0,
+        "beat_closing_line_rate": float("nan"),
+        "n_beat_closing_line_compared": 0,
+    }
+    if picks is None or picks.empty:
+        return empty
+
+    frame = picks.copy()
+    frame["closing_market_home_probability"] = _resolve_closing_market_probability(
+        frame, odds_snapshots=odds_snapshots,
+    )
+    scoped = frame[
+        frame["closing_market_home_probability"].notna()
+        & frame["actual_winner"].notna()
+        & frame["predicted_probability"].notna()
+    ].copy()
+    if scoped.empty:
+        return empty
+
+    y = (scoped["actual_winner"] == scoped["home_team"]).astype(float)
+    model_p = _model_home_probability(scoped).astype(float)
+    market_p = pd.to_numeric(scoped["closing_market_home_probability"], errors="coerce").astype(float)
+    valid = model_p.notna() & market_p.notna() & y.notna()
+    scoped = scoped.loc[valid].copy()
+    y, model_p, market_p = y.loc[valid], model_p.loc[valid], market_p.loc[valid]
+    if scoped.empty:
+        return empty
+
+    model_se = (model_p - y) ** 2
+    market_se = (market_p - y) ** 2
+    eps = 1e-6
+    model_ll = -(
+        y * np.log(model_p.clip(eps, 1 - eps))
+        + (1 - y) * np.log((1 - model_p).clip(eps, 1 - eps))
+    )
+    market_ll = -(
+        y * np.log(market_p.clip(eps, 1 - eps))
+        + (1 - y) * np.log((1 - market_p).clip(eps, 1 - eps))
+    )
+
+    brier_diff = float(model_se.mean() - market_se.mean())
+    log_loss_diff = float(model_ll.mean() - market_ll.mean())
+    mean_prob_diff = float((model_p - market_p).mean())
+    mean_se_diff = float((model_se - market_se).mean())
+
+    compared = model_se != market_se
+    n_tie_excluded = int(compared.sum())
+    pct_lower = float((model_se < market_se).sum() / n_tie_excluded) if n_tie_excluded else float("nan")
+
+    scoped = scoped.copy()
+    scoped["_model_se"] = model_se.to_numpy()
+    scoped["_market_se"] = market_se.to_numpy()
+    scoped["_model_ll"] = model_ll.to_numpy()
+    scoped["_market_ll"] = market_ll.to_numpy()
+    scoped["date"] = pd.to_datetime(scoped["date"])
+    blocks = scoped["date"].drop_duplicates().sort_values().to_numpy()
+    n_blocks = len(blocks)
+    rng = np.random.default_rng(random_seed)
+    brier_boots = np.empty(n_bootstrap, dtype=float)
+    ll_boots = np.empty(n_bootstrap, dtype=float)
+    for i in range(n_bootstrap):
+        if n_blocks == 0:
+            brier_boots[i] = ll_boots[i] = float("nan")
+            continue
+        sampled = blocks[rng.integers(0, n_blocks, size=n_blocks)]
+        parts = [scoped[scoped["date"] == blk] for blk in sampled]
+        boot = pd.concat(parts, ignore_index=True) if parts else scoped.iloc[0:0]
+        if boot.empty:
+            brier_boots[i] = ll_boots[i] = float("nan")
+        else:
+            brier_boots[i] = float(boot["_model_se"].mean() - boot["_market_se"].mean())
+            ll_boots[i] = float(boot["_model_ll"].mean() - boot["_market_ll"].mean())
+
+    def _ci(arr):
+        finite = arr[np.isfinite(arr)]
+        if finite.size == 0:
+            return float("nan"), float("nan")
+        return float(np.quantile(finite, alpha / 2)), float(np.quantile(finite, 1 - alpha / 2))
+
+    brier_lo, brier_hi = _ci(brier_boots)
+    ll_lo, ll_hi = _ci(ll_boots)
+
+    return {
+        "n_compared": int(len(scoped)),
+        "brier_diff": brier_diff,
+        "log_loss_diff": log_loss_diff,
+        "mean_prob_diff": mean_prob_diff,
+        "mean_squared_error_diff": mean_se_diff,
+        "pct_model_error_lower": pct_lower,
+        "brier_diff_ci_low": brier_lo,
+        "brier_diff_ci_high": brier_hi,
+        "log_loss_diff_ci_low": ll_lo,
+        "log_loss_diff_ci_high": ll_hi,
+        "n_bootstrap": n_bootstrap,
+        "n_date_blocks": n_blocks,
+        "beat_closing_line_rate": pct_lower,
+        "n_beat_closing_line_compared": n_tie_excluded,
+    }
+
+
+def closing_line_value_table(
+    picks: pd.DataFrame,
+    odds_snapshots: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Per advised-bet CLV vs the true closing snapshot for the same side."""
+    cols = [
+        "date", "game_pk", "bet_side", "bet_team", "bet_moneyline",
+        "bet_implied_probability", "closing_implied_probability",
+        "probability_clv", "moneyline_clv", "closing_moneyline",
+        "market_odds_snapshot_id", "closing_snapshot_id",
+    ]
+    if picks is None or picks.empty or "bet_units" not in picks.columns:
+        return pd.DataFrame(columns=cols)
+
+    advised = picks[pd.to_numeric(picks["bet_units"], errors="coerce").fillna(0) > 0].copy()
+    if advised.empty:
+        return pd.DataFrame(columns=cols)
+
+    snaps = (
+        market_odds.normalize_snapshot_frame(odds_snapshots)
+        if odds_snapshots is not None
+        else market_odds.empty_snapshot_frame()
+    )
+    rows = []
+    for _, row in advised.iterrows():
+        side = row.get("bet_side")
+        if side not in ("home", "away"):
+            continue
+        bet_ml = row.get("bet_moneyline")
+        if pd.isna(bet_ml):
+            continue
+        bet_implied = market_odds.moneyline_to_implied_probability(float(bet_ml))
+
+        closing_ml = pd.NA
+        closing_implied = pd.NA
+        closing_id = pd.NA
+        gpk = row.get("game_pk")
+        if pd.notna(gpk) and not snaps.empty:
+            closing = market_odds.select_closing_snapshot(
+                snaps, int(gpk), game_datetime=row.get("game_datetime"),
+            )
+            if closing is not None:
+                closing_id = closing.get("snapshot_id")
+                closing_ml = closing.get("home_moneyline") if side == "home" else closing.get("away_moneyline")
+                if pd.notna(closing_ml):
+                    closing_implied = market_odds.moneyline_to_implied_probability(float(closing_ml))
+
+        rows.append({
+            "date": row.get("date"),
+            "game_pk": gpk,
+            "bet_side": side,
+            "bet_team": row.get("bet_team"),
+            "bet_moneyline": bet_ml,
+            "bet_implied_probability": bet_implied,
+            "closing_implied_probability": closing_implied,
+            "probability_clv": (
+                market_odds.probability_clv(bet_implied, closing_implied)
+                if pd.notna(closing_implied) else pd.NA
+            ),
+            "moneyline_clv": (
+                market_odds.moneyline_clv(float(bet_ml), float(closing_ml))
+                if pd.notna(closing_ml) else pd.NA
+            ),
+            "closing_moneyline": closing_ml,
+            "market_odds_snapshot_id": row.get("market_odds_snapshot_id"),
+            "closing_snapshot_id": closing_id,
+        })
+    return pd.DataFrame(rows, columns=cols)
+
+
 def build_game_picks_export(
     predictions: pd.DataFrame,
     metric: str = "GamePick_Win_Probability",
     min_probability: float = config.GAME_PICK_MIN_PROBABILITY,
     model_version: str | None = None,
+    odds_snapshots: pd.DataFrame | None = None,
 ):
-    """Build the two tables the dashboard's Automated Game Picks section
-    reads: (picks_table, summary_row). picks_table is EVERY logged game for
-    `metric` (no longer filtered by predicted_probability - see
-    game_predictions.select_game_picks, which now logs every scheduled game
-    with an `above_threshold` flag instead of dropping sub-threshold ones)
-    with a win/loss/not_played/pending status, most recent day first, plus
-    that `above_threshold` flag so the dashboard can highlight the model's
-    own confident picks alongside the rest. summary_row's real tracking
-    (`n_bets_advised`/`total_profit_units`/etc., see `_bet_pnl_metrics`
-    below) is scoped to `bet_units > 0` - NOT `above_threshold` - since the
-    real question worth tracking is "did the bets the market actually
-    disagreed with make money," not "was the model's own favorite right."
-    (`above_threshold` still flags/publishes every game, it just no longer
-    drives the headline scoring - see `_market_comparison_metrics`/
-    `_beat_closing_line_rate` below for the genuinely separate "are we
-    better forecasters than the market" question, which IS still scoped to
-    `above_threshold` and untouched by this.)
-
-    `model_version` (default None, i.e. every version blended together -
-    unchanged behavior) restricts to picks tagged with a specific
-    game_predictions.select_game_picks model_version (see
-    config.GAME_PICK_MODEL_VERSION) - same reasoning as
-    evaluation.summarize's own model_version filter."""
+    """Build dashboard tables; primary market skill = paired score diffs vs closing."""
     picks = predictions[predictions["metric"] == metric].copy()
     if model_version is not None:
         picks = picks[picks["model_version"] == model_version] if "model_version" in picks.columns else picks.iloc[0:0]
     if "above_threshold" not in picks.columns:
-        # Migrate a log written before this column existed - every row in
-        # it was already filtered to predicted_probability >= min_probability
-        # at logging time (see game_predictions.select_game_picks), so
-        # recomputing the flag from that same comparison is exact, not a guess.
         picks["above_threshold"] = picks["predicted_probability"] >= min_probability
     if "market_home_win_probability" not in picks.columns:
-        # Migrate a log written before slice 2's market column existed -
-        # genuinely no real market data for those rows, NaN not a guess.
         picks["market_home_win_probability"] = pd.NA
     if "bet_units" not in picks.columns:
-        # A row logged before bet advice existed genuinely never had a bet
-        # advised - 0.0 units is the factually correct backfill, not a guess.
         picks["bet_units"] = 0.0
         for col in ("bet_side", "bet_team", "bet_moneyline", "bet_stake_fraction", "bet_profit_units"):
+            picks[col] = pd.NA
+    if "bet_profit_units" not in picks.columns:
+        picks["bet_profit_units"] = pd.NA
+    for col in ("bet_side", "bet_team", "bet_moneyline", "bet_stake_fraction"):
+        if col not in picks.columns:
             picks[col] = pd.NA
     picks["status"] = _classify_outcome(picks)
     picks["actual_correct"] = pd.NA
@@ -80,48 +296,54 @@ def build_game_picks_export(
     (
         market_accuracy, market_brier, market_ll, n_market_resolved,
         market_accuracy_ci_low, market_accuracy_ci_high,
-    ) = _market_comparison_metrics(recommended)
-    (
-        beat_closing_line_rate, n_beat_closing_line_compared,
-        beat_closing_line_rate_ci_low, beat_closing_line_rate_ci_high, beat_closing_line_rate_p_value,
-    ) = _beat_closing_line_rate(recommended)
+    ) = _market_comparison_metrics(recommended, odds_snapshots=odds_snapshots)
+    paired = paired_market_scoring_differences(recommended, odds_snapshots=odds_snapshots)
+    beat_closing_line_rate = paired["pct_model_error_lower"]
+    n_beat_closing_line_compared = paired["n_beat_closing_line_compared"]
+    if n_beat_closing_line_compared > 0 and beat_closing_line_rate == beat_closing_line_rate:
+        n_beat = int(round(beat_closing_line_rate * n_beat_closing_line_compared))
+        beat_ci_low, beat_ci_high = evaluation.wilson_confidence_interval(
+            n_beat, n_beat_closing_line_compared,
+        )
+        beat_p = evaluation.binomial_significance(
+            n_beat, n_beat_closing_line_compared, null_probability=0.5,
+        )
+    else:
+        beat_ci_low = beat_ci_high = beat_p = float("nan")
+
     (
         n_bets_advised, bets_won, bets_lost, win_rate_on_advised_bets,
         total_staked_units, total_profit_units, roi, current_bet_streak, best_bet_streak,
         win_rate_on_advised_bets_ci_low, win_rate_on_advised_bets_ci_high, roi_p_value,
     ) = _bet_pnl_metrics(picks)
 
-    # Real follow-up (2026-08-28 - "we're dumping almost everything data
-    # wise into the [History] table"): predicted_loser and
-    # market_predicted_winner_probability are new, DERIVED display
-    # columns - the dashboard's History table shows only these plus a
-    # small, curated set of the existing ones (see docs/app.js's
-    # renderGamePickHistory), while renderTodaysGamePicks keeps reading
-    # the full row for its own cards (home_team/away_team/bet_moneyline/
-    # etc. are still real, needed data - not removed here, just not all
-    # surfaced in the History table).
+    clv = closing_line_value_table(picks, odds_snapshots=odds_snapshots)
+    mean_prob_clv = (
+        float(pd.to_numeric(clv["probability_clv"], errors="coerce").mean())
+        if not clv.empty else float("nan")
+    )
+    n_clv = (
+        int(pd.to_numeric(clv["probability_clv"], errors="coerce").notna().sum())
+        if not clv.empty else 0
+    )
+
     home_favored = picks["predicted_winner"] == picks["home_team"]
     picks["predicted_loser"] = picks["away_team"].where(home_favored, picks["home_team"])
-    # The market's own real probability for the SAME side the model
-    # favored - de-vigged market_home_win_probability is always the HOME
-    # team's probability, so when the model favors the away team this
-    # needs flipping (1 - p) to stay an apples-to-apples "model prob vs.
-    # market prob for the predicted winner" comparison, not a home-vs-
-    # picked-side mismatch. NaN-safe: 1 - NaN stays NaN, same "no real
-    # market data" signal market_home_win_probability's own NaN already
-    # carries.
     picks["market_predicted_winner_probability"] = picks["market_home_win_probability"].where(
         home_favored, 1 - picks["market_home_win_probability"]
     )
 
-    picks_out = picks[
-        [
-            "date", "game_pk", "home_team", "away_team", "predicted_winner", "predicted_loser",
-            "predicted_probability", "above_threshold", "status", "market_home_win_probability",
-            "market_predicted_winner_probability",
-            "bet_units", "bet_side", "bet_team", "bet_moneyline", "bet_profit_units",
-        ]
-    ].sort_values("date", ascending=False).reset_index(drop=True)
+    out_cols = [
+        "date", "game_pk", "home_team", "away_team", "predicted_winner", "predicted_loser",
+        "predicted_probability", "above_threshold", "status", "market_home_win_probability",
+        "market_predicted_winner_probability",
+        "market_odds_snapshot_id", "market_odds_snapshot_role",
+        "bet_units", "bet_side", "bet_team", "bet_moneyline", "bet_profit_units",
+    ]
+    for col in out_cols:
+        if col not in picks.columns:
+            picks[col] = pd.NA
+    picks_out = picks[out_cols].sort_values("date", ascending=False).reset_index(drop=True)
 
     summary = pd.DataFrame(
         [
@@ -146,11 +368,23 @@ def build_game_picks_export(
                 "market_accuracy_ci_high": market_accuracy_ci_high,
                 "market_brier_score": market_brier,
                 "market_log_loss": market_ll,
+                "n_paired_market_compared": paired["n_compared"],
+                "model_minus_market_brier": paired["brier_diff"],
+                "model_minus_market_brier_ci_low": paired["brier_diff_ci_low"],
+                "model_minus_market_brier_ci_high": paired["brier_diff_ci_high"],
+                "model_minus_market_log_loss": paired["log_loss_diff"],
+                "model_minus_market_log_loss_ci_low": paired["log_loss_diff_ci_low"],
+                "model_minus_market_log_loss_ci_high": paired["log_loss_diff_ci_high"],
+                "mean_model_minus_market_probability": paired["mean_prob_diff"],
+                "mean_squared_error_diff": paired["mean_squared_error_diff"],
+                "paired_bootstrap_n_date_blocks": paired["n_date_blocks"],
                 "n_beat_closing_line_compared": n_beat_closing_line_compared,
                 "beat_closing_line_rate": beat_closing_line_rate,
-                "beat_closing_line_rate_ci_low": beat_closing_line_rate_ci_low,
-                "beat_closing_line_rate_ci_high": beat_closing_line_rate_ci_high,
-                "beat_closing_line_rate_p_value": beat_closing_line_rate_p_value,
+                "beat_closing_line_rate_ci_low": beat_ci_low,
+                "beat_closing_line_rate_ci_high": beat_ci_high,
+                "beat_closing_line_rate_p_value": beat_p,
+                "n_clv_bets": n_clv,
+                "mean_probability_clv": mean_prob_clv,
             }
         ]
     )
@@ -158,40 +392,7 @@ def build_game_picks_export(
 
 
 def _bet_pnl_metrics(picks: pd.DataFrame):
-    """Real units won/lost, scoped to games where a bet was actually
-    ADVISED (game_predictions.advise_bets' real Kelly-edge gate cleared,
-    i.e. bet_units > 0) - NOT the model's own above_threshold confidence
-    gate. This project's real quant-facing question is "did the advised
-    bets make money," not "was the model's favorite pick accurate" - see
-    build_game_picks_export's own docstring. Scoped to
-    bet_profit_units.notna() - real, resolved, advised bets only; a still-
-    pending advised bet doesn't count yet, and a non-advised game
-    (bet_units == 0) never gets a bet_profit_units value at all (see
-    game_predictions.resolve_game_predictions).
-
-    `current_bet_streak`/`best_bet_streak` are DAY streaks (2026-08-25 -
-    direct follow-up to the uncertainty-scaled Kelly change above), not
-    per-bet streaks: a day extends the streak by exactly 1 if that day's
-    real advised bets, summed together, made money overall - and resets
-    it to 0 otherwise - regardless of how many individual bets were
-    advised that day or how they each did. A day with two winners and one
-    bigger loser is a losing day for the streak; a single-bet day and a
-    five-bet day both count for at most one real streak step.
-
-    Also returns two quant-analytics item #5 ("backtest scope and
-    statistical significance") additions:
-    - `win_rate_ci_low`/`win_rate_ci_high`: a Wilson CI on win_rate,
-      informational only (see evaluation.binomial_significance's own
-      docstring for why a win-rate p-value against 0.5 would be
-      statistically wrong here - moneylines vary bet to bet, so a raw
-      win/loss count alone can't tell a good -150 favorite bet apart
-      from a bad one the way real profit can).
-    - `roi_p_value`: the real, correctly-posed test - a one-sample
-      t-test (evaluation.mean_significance) on each advised bet's real
-      bet_profit_units against a null of 0 ("breaking even"). This is
-      the honest answer to "is this edge distinguishable from noise
-      yet," not just reporting a P&L number that could flip sign with
-      the next handful of bets."""
+    """Real units won/lost, scoped to advised bets (bet_units > 0)."""
     resolved = picks[picks["bet_profit_units"].notna()].copy()
     n_bets_advised = len(resolved)
     if n_bets_advised == 0:
@@ -209,46 +410,41 @@ def _bet_pnl_metrics(picks: pd.DataFrame):
     roi = total_profit / total_staked if total_staked else float("nan")
     roi_p_value = evaluation.mean_significance(resolved["bet_profit_units"], null_value=0.0)
 
-    # Streak is DAYS, not bets (2026-08-25 - "the streak should be days...
-    # if the cumulative bets made money that day"): a day can carry several
-    # advised bets, but it counts for at most +1 (or a reset to 0) toward
-    # the streak, scored on that day's TOTAL real profit, not on any one
-    # bet in isolation - a day with a winner and a bigger loser is a losing
-    # day, not a streak-extending one. Only days that actually had a
-    # resolved advised bet enter this at all (grouping by date on
-    # `resolved`), so a day with no advice neither extends nor breaks it.
-    daily_profit = resolved.groupby("date")["bet_profit_units"].sum().sort_index()
-    current_streak = 0
-    best_streak = 0
-    for day_profit in daily_profit:
-        current_streak = current_streak + 1 if day_profit > 0 else 0
-        best_streak = max(best_streak, current_streak)
-
+    daily = (
+        resolved.groupby("date", as_index=False)["bet_profit_units"]
+        .sum()
+        .sort_values("date")
+    )
+    current = best = streak = 0
+    for profit in daily["bet_profit_units"]:
+        if profit > 0:
+            streak += 1
+            current = streak
+            best = max(best, streak)
+        else:
+            streak = 0
+            current = 0
     return (
-        n_bets_advised, bets_won, bets_lost, win_rate, total_staked, total_profit, roi, current_streak, best_streak,
+        n_bets_advised, bets_won, bets_lost, win_rate,
+        total_staked, total_profit, roi, current, best,
         win_rate_ci_low, win_rate_ci_high, roi_p_value,
     )
 
 
-def _market_comparison_metrics(recommended: pd.DataFrame):
-    """The market's own accuracy/Brier/log-loss on the same
-    above_threshold-scoped picks, computed the same way as the model's own
-    (game_evaluation.build_game_picks_export above): reuses
-    evaluation.resolved_only/brier_score/log_loss by building a local frame
-    with the market's probability of ITS OWN predicted winner renamed to
-    "predicted_probability" - not a reimplementation, the same reuse
-    pattern already used for the model side. Restricted to rows that
-    actually have real market data (market_home_win_probability not null);
-    real games slice 1/2 haven't backfilled yet correctly return NaN/0
-    here, not a fabricated number. Quant-analytics item #6, slice 2."""
-    if "market_home_win_probability" not in recommended.columns:
+def _market_comparison_metrics(recommended: pd.DataFrame, odds_snapshots: pd.DataFrame | None = None):
+    """Market accuracy/Brier/log-loss using closing probabilities when available."""
+    if recommended is None or recommended.empty:
         return float("nan"), float("nan"), float("nan"), 0, float("nan"), float("nan")
 
-    with_market = recommended[recommended["market_home_win_probability"].notna()].copy()
+    with_market = recommended.copy()
+    with_market["closing_market_home_probability"] = _resolve_closing_market_probability(
+        with_market, odds_snapshots=odds_snapshots,
+    )
+    with_market = with_market[with_market["closing_market_home_probability"].notna()].copy()
     if with_market.empty:
         return float("nan"), float("nan"), float("nan"), 0, float("nan"), float("nan")
 
-    market_home_prob = pd.to_numeric(with_market["market_home_win_probability"], errors="coerce")
+    market_home_prob = pd.to_numeric(with_market["closing_market_home_probability"], errors="coerce")
     favors_home = market_home_prob >= 0.5
     with_market["market_predicted_winner"] = with_market["home_team"].where(favors_home, with_market["away_team"])
     with_market["predicted_probability"] = market_home_prob.where(favors_home, 1 - market_home_prob)
@@ -263,66 +459,21 @@ def _market_comparison_metrics(recommended: pd.DataFrame):
     accuracy = float(resolved["market_correct"].mean()) if n_resolved else float("nan")
     brier = evaluation.brier_score(with_market, outcome_col="market_correct")
     ll = evaluation.log_loss(with_market, outcome_col="market_correct")
-    # Quant-analytics item #5: CI only, deliberately no p-value here - real
-    # MLB home teams win somewhat more than half their games, so 0.5 isn't
-    # a genuine "no skill" null for an unconditional accuracy rate the way
-    # it is for _beat_closing_line_rate's symmetric win/loss-per-game
-    # comparison below (see evaluation.binomial_significance's docstring).
-    ci_low, ci_high = evaluation.wilson_confidence_interval(int(resolved["market_correct"].sum()), n_resolved) if n_resolved else (float("nan"), float("nan"))
+    ci_low, ci_high = (
+        evaluation.wilson_confidence_interval(int(resolved["market_correct"].sum()), n_resolved)
+        if n_resolved else (float("nan"), float("nan"))
+    )
     return accuracy, brier, ll, n_resolved, ci_low, ci_high
 
 
-def _beat_closing_line_rate(recommended: pd.DataFrame):
-    """The item's literal stated goal: "we beat the closing line," not
-    just "we beat our own heuristic." Puts both the model's and the
-    market's probabilities on the SAME basis (probability the HOME team
-    wins - not each side's own predicted-winner probability, which would
-    silently flip basis whenever the model and market favor different
-    teams) and compares each side's squared error against the real
-    actual-home-win outcome, per game. Reports the fraction of resolved,
-    market-available games where the model's squared error is strictly
-    lower than the market's - ties (equal squared error) are excluded
-    from both the numerator and the denominator, and the real comparison
-    base is reported separately as n_beat_closing_line_compared so a rate
-    can never hide a tiny n.
-
-    Also returns a real Wilson CI and, unlike the other rate metrics in
-    this module, a real binomial_significance p-value against a null of
-    0.5 (quant-analytics item #5, "backtest scope and statistical
-    significance") - this IS a well-posed 0.5 null, unlike a raw
-    accuracy rate: "whose squared error is lower on this game" is a
-    genuinely symmetric coin flip under "no real skill difference
-    between the model and the market," so a small n like the 12-game
-    read this project started with can be honestly flagged as not yet
-    distinguishable from chance instead of read as real evidence of an
-    edge."""
-    if "market_home_win_probability" not in recommended.columns:
+def _beat_closing_line_rate(recommended: pd.DataFrame, odds_snapshots: pd.DataFrame | None = None):
+    """Secondary metric: fraction of games where model SE < closing-market SE."""
+    paired = paired_market_scoring_differences(recommended, odds_snapshots=odds_snapshots)
+    rate = paired["pct_model_error_lower"]
+    n_compared = paired["n_beat_closing_line_compared"]
+    if n_compared == 0 or rate != rate:
         return float("nan"), 0, float("nan"), float("nan"), float("nan")
-
-    scoped = recommended[
-        recommended["market_home_win_probability"].notna() & recommended["actual_winner"].notna()
-    ].copy()
-    if scoped.empty:
-        return float("nan"), 0, float("nan"), float("nan"), float("nan")
-
-    actual_home_win = (scoped["actual_winner"] == scoped["home_team"]).astype(float)
-    model_favors_home = scoped["predicted_winner"] == scoped["home_team"]
-    model_home_probability = scoped["predicted_probability"].where(
-        model_favors_home, 1 - scoped["predicted_probability"]
-    )
-    market_home_probability = pd.to_numeric(scoped["market_home_win_probability"], errors="coerce")
-
-    model_error = (model_home_probability - actual_home_win) ** 2
-    market_error = (market_home_probability - actual_home_win) ** 2
-
-    compared = model_error != market_error
-    n_compared = int(compared.sum())
-    if n_compared == 0:
-        return float("nan"), 0, float("nan"), float("nan"), float("nan")
-
-    beat = (model_error < market_error) & compared
-    n_beat = int(beat.sum())
-    rate = float(n_beat / n_compared)
+    n_beat = int(round(rate * n_compared))
     ci_low, ci_high = evaluation.wilson_confidence_interval(n_beat, n_compared)
     p_value = evaluation.binomial_significance(n_beat, n_compared, null_probability=0.5)
     return rate, n_compared, ci_low, ci_high, p_value

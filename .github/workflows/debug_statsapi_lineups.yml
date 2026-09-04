@@ -1,0 +1,44 @@
+name: Debug statsapi lineups
+
+# Stage A: inspect real MLB Stats API lineup response shapes.
+# Does not write fixtures or change production code paths.
+# Run manually after confirming network access to statsapi.mlb.com.
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Date to query (YYYY-MM-DD). Leave blank for today."
+        required: false
+      game_pk:
+        description: "Optional gamePk for boxscore/game probes."
+        required: false
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install MLB-StatsAPI
+
+      - name: Print lineup-related response shapes
+        run: |
+          ARGS=()
+          if [ -n "${{ inputs.date }}" ]; then
+            ARGS+=("${{ inputs.date }}")
+          fi
+          if [ -n "${{ inputs.game_pk }}" ]; then
+            ARGS+=(--game-pk "${{ inputs.game_pk }}")
+          fi
+          python scripts/debug_statsapi_lineups.py "${ARGS[@]}"

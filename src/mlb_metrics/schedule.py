@@ -158,12 +158,14 @@ def normalize_schedule_games(raw: dict, fallback_date=None) -> pd.DataFrame:
     """Parse a raw `statsapi.get("schedule", ...)` response into one row per
     GAME (not per team, unlike normalize_schedule): [game_pk, date,
     home_team, away_team, home_probable_pitcher_key_mlbam,
-    away_probable_pitcher_key_mlbam, status, home_score, away_score].
-    `status` is the raw `detailedState` string (e.g. "Scheduled",
-    "In Progress", "Final") - callers should treat anything other than
-    "Final" as not-yet-resolvable rather than special-casing every possible
-    in-between state. `home_score`/`away_score` are null until the game
-    starts posting a score.
+    away_probable_pitcher_key_mlbam, status, home_score, away_score,
+    game_datetime]. `status` is the raw `detailedState` string (e.g.
+    "Scheduled", "In Progress", "Final") - callers should treat anything
+    other than "Final" as not-yet-resolvable rather than special-casing
+    every possible in-between state. `home_score`/`away_score` are null
+    until the game starts posting a score. `game_datetime` is the raw
+    `gameDate` ISO-8601 string (UTC) used for closing-line and odds
+    matching.
 
     Unlike normalize_schedule, doubleheaders are NOT deduped - dropping game
     2 here would silently lose an entire game's pick/resolution, not just
@@ -197,6 +199,7 @@ def normalize_schedule_games(raw: dict, fallback_date=None) -> pd.DataFrame:
                     "status": (game.get("status") or {}).get("detailedState"),
                     "home_score": home.get("score"),
                     "away_score": away.get("score"),
+                    "game_datetime": game.get("gameDate"),
                 }
             )
 
@@ -205,7 +208,7 @@ def normalize_schedule_games(raw: dict, fallback_date=None) -> pd.DataFrame:
         columns=[
             "game_pk", "date", "home_team", "away_team",
             "home_probable_pitcher_key_mlbam", "away_probable_pitcher_key_mlbam",
-            "status", "home_score", "away_score",
+            "status", "home_score", "away_score", "game_datetime",
         ],
     )
 
