@@ -620,6 +620,82 @@ def filter_valid_prediction_time_snapshots(
     return ok.loc[keep] if keep else ok.iloc[0:0]
 
 
+def market_snapshot_inventory(snapshots: pd.DataFrame | None = None) -> dict:
+    """Count snapshot inventory for residual-training readiness logs.
+
+    Distinct valid prediction-time games use
+    ``filter_valid_prediction_time_snapshots`` (SOURCE_OK, morning/lineup_lock/
+    opening, pre-start, matched game_pk). Closing count uses
+    ``select_closing_snapshot`` per game_pk.
+    """
+    frame = normalize_snapshot_frame(
+        snapshots if snapshots is not None else load_odds_snapshots()
+    )
+    empty = {
+        "n_total": 0,
+        "n_source_ok": 0,
+        "n_source_post_start": 0,
+        "n_morning": 0,
+        "n_lineup_lock": 0,
+        "n_intraday": 0,
+        "n_valid_prediction_time_rows": 0,
+        "n_valid_prediction_games": 0,
+        "n_valid_prediction_dates": 0,
+        "n_games_with_closing": 0,
+        "valid_prediction_dates": [],
+    }
+    if frame.empty:
+        return empty
+
+    pred = filter_valid_prediction_time_snapshots(frame)
+    pred_games = (
+        set(int(pk) for pk in pred["game_pk"].dropna().astype(int).tolist())
+        if not pred.empty
+        else set()
+    )
+    pred_dates = []
+    if not pred.empty and "date" in pred.columns:
+        pred_dates = sorted({
+            str(pd.Timestamp(d).normalize().date())
+            for d in pd.to_datetime(pred["date"], errors="coerce").dropna()
+        })
+
+    closing_ok = 0
+    for gpk in frame["game_pk"].dropna().unique():
+        if select_closing_snapshot(frame, int(gpk)) is not None:
+            closing_ok += 1
+
+    return {
+        "n_total": int(len(frame)),
+        "n_source_ok": int((frame["source_status"] == SOURCE_OK).sum()),
+        "n_source_post_start": int((frame["source_status"] == SOURCE_POST_START).sum()),
+        "n_morning": int((frame["snapshot_role"] == SNAPSHOT_ROLE_MORNING).sum()),
+        "n_lineup_lock": int((frame["snapshot_role"] == SNAPSHOT_ROLE_LINEUP_LOCK).sum()),
+        "n_intraday": int((frame["snapshot_role"] == SNAPSHOT_ROLE_INTRADAY).sum()),
+        "n_valid_prediction_time_rows": int(len(pred)),
+        "n_valid_prediction_games": int(len(pred_games)),
+        "n_valid_prediction_dates": int(len(pred_dates)),
+        "n_games_with_closing": int(closing_ok),
+        "valid_prediction_dates": pred_dates,
+    }
+
+
+def print_market_snapshot_inventory(inventory: dict | None = None) -> dict:
+    inv = inventory if inventory is not None else market_snapshot_inventory()
+    print("MARKET SNAPSHOT INVENTORY:")
+    print(f"  total_rows={inv['n_total']}")
+    print(f"  source_status_ok={inv['n_source_ok']}")
+    print(f"  source_status_post_start={inv['n_source_post_start']}")
+    print(f"  morning_rows={inv['n_morning']}")
+    print(f"  lineup_lock_rows={inv['n_lineup_lock']}")
+    print(f"  intraday_rows={inv['n_intraday']}")
+    print(f"  valid_prediction_time_rows={inv['n_valid_prediction_time_rows']}")
+    print(f"  distinct_valid_prediction_games={inv['n_valid_prediction_games']}")
+    print(f"  distinct_valid_prediction_dates={inv['n_valid_prediction_dates']}")
+    print(f"  distinct_games_with_closing={inv['n_games_with_closing']}")
+    return inv
+
+
 def select_opening_snapshot(snapshots: pd.DataFrame, game_pk) -> pd.Series | None:
     """Earliest observed ok snapshot for ``game_pk``."""
     frame = normalize_snapshot_frame(snapshots)

@@ -1198,6 +1198,108 @@ def build_betting_promotion_gate(
     }
 
 
+def estimate_outer_folds_possible(
+    valid_prediction_dates: Sequence,
+    *,
+    freeze_dates: int | None = None,
+) -> int:
+    """How many nested outer folds the current valid-date history could support.
+
+    Uses residual nested-fold config (including betting freeze). Does not
+    inspect freeze-tail outcomes.
+    """
+    if not valid_prediction_dates:
+        return 0
+    dates = pd.to_datetime(list(valid_prediction_dates), errors="coerce").dropna()
+    if dates.empty:
+        return 0
+    nested, _freeze = model_validation.build_nested_folds(
+        dates,
+        outer_min_train_dates=config.GAME_RESIDUAL_OUTER_MIN_TRAIN_DATES,
+        outer_test_block_dates=config.GAME_RESIDUAL_OUTER_TEST_BLOCK_DATES,
+        inner_min_train_dates=config.GAME_RESIDUAL_INNER_MIN_TRAIN_DATES,
+        inner_test_block_dates=config.GAME_RESIDUAL_INNER_TEST_BLOCK_DATES,
+        freeze_dates=(
+            config.GAME_RESIDUAL_BETTING_FREEZE_DATES
+            if freeze_dates is None
+            else freeze_dates
+        ),
+    )
+    return int(len(nested))
+
+
+def _gate_status_label(report: dict | None, gate_key: str) -> str:
+    if not report or not isinstance(report, dict):
+        return "not_enough_data"
+    if report.get("status") == "insufficient_history":
+        return "not_enough_data"
+    gate = report.get(gate_key)
+    if gate is None and gate_key == "betting_promotion_gate":
+        gate = report.get("betting_promotion_gate")
+    if not isinstance(gate, dict):
+        # Companion betting report nests the gate one level deeper.
+        nested = report.get("betting_promotion_gate")
+        if isinstance(nested, dict) and "passed" in nested:
+            gate = nested
+        elif isinstance(nested, dict) and isinstance(nested.get("checks"), dict):
+            gate = nested
+        else:
+            return "not_enough_data"
+    if "passed" not in gate:
+        return "not_enough_data"
+    if gate.get("passed") is True:
+        return "pass"
+    checks = gate.get("checks") if isinstance(gate.get("checks"), dict) else {}
+    if not checks:
+        return "not_enough_data"
+    return "fail"
+
+
+def residual_training_status(
+    *,
+    snapshots: pd.DataFrame | None = None,
+    nested_report_path: str | None = None,
+    betting_report_path: str | None = None,
+    model_path: str | None = None,
+) -> dict:
+    """Summarize residual-training readiness for Actions logs."""
+    inv = market_odds.market_snapshot_inventory(snapshots)
+    nested_path = nested_report_path or config.GAME_RESIDUAL_PROMOTION_GATE_REPORT_PATH
+    betting_path = betting_report_path or config.BETTING_PROMOTION_GATE_REPORT_PATH
+    nested = _load_json_report(nested_path)
+    betting = _load_json_report(betting_path) or nested
+
+    n_dates = int(inv["n_valid_prediction_dates"])
+    outer_possible = estimate_outer_folds_possible(inv.get("valid_prediction_dates") or [])
+    art_path = model_path or config.GAME_RESIDUAL_MODEL_PATH
+    artifact_yes = bool(art_path and os.path.exists(art_path) and load_residual_model(art_path) is not None)
+
+    status = {
+        "valid_prediction_games": int(inv["n_valid_prediction_games"]),
+        "valid_dates": n_dates,
+        "outer_folds_possible": outer_possible,
+        "residual_artifact": "yes" if artifact_yes else "no",
+        "probability_gate": _gate_status_label(nested, "promotion_gate"),
+        "betting_gate": _gate_status_label(betting, "betting_promotion_gate"),
+        "inventory": inv,
+        "game_prediction_mode": config.GAME_PREDICTION_MODE,
+        "betting_mode": config.BETTING_MODE,
+    }
+    return status
+
+
+def print_residual_training_status(status: dict | None = None) -> dict:
+    st = status if status is not None else residual_training_status()
+    print("RESIDUAL TRAINING STATUS:")
+    print(f"  valid_prediction_games={st['valid_prediction_games']}")
+    print(f"  valid_dates={st['valid_dates']}")
+    print(f"  outer_folds_possible={st['outer_folds_possible']}")
+    print(f"  residual_artifact={st['residual_artifact']}")
+    print(f"  probability_gate={st['probability_gate']}")
+    print(f"  betting_gate={st['betting_gate']}")
+    return st
+
+
 # ---------------------------------------------------------------------------
 # Artifact I/O / inference
 # ---------------------------------------------------------------------------

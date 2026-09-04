@@ -1,0 +1,113 @@
+name: Game Residual Training
+
+# Weekly nested validation for the market-residual game-win challenger.
+# Independent of ml_training_update.yml. Does NOT flip GAME_PREDICTION_MODE
+# or BETTING_MODE. Production artifact is written only when the existing
+# probability promotion gate passes inside train_game_residual_model.py.
+
+on:
+  schedule:
+    # Monday 14:00 UTC (~7am AZ) — after weekend games have typically
+    # resolved and Sunday slate data is available.
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+jobs:
+  residual-train:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run full pytest suite
+        run: |
+          pytest
+
+      - name: Create output folders
+        run: |
+          mkdir -p data/models
+          mkdir -p reports/model_validation
+          mkdir -p data/predictions
+
+      - name: Pre-training betting readiness (informational)
+        run: |
+          set +e
+          echo "===== PRE-TRAINING check_betting_readiness (informational) ====="
+          python scripts/check_betting_readiness.py --skip-pytest
+          status=$?
+          echo "pre_training_readiness_exit=${status} (nonzero expected until gates pass)"
+          # Never abort training on readiness failure.
+          exit 0
+
+      - name: Market snapshot inventory + residual status (pre)
+        run: |
+          python scripts/report_residual_training_status.py
+
+      - name: Train / validate market-residual model
+        run: |
+          python scripts/train_game_residual_model.py
+
+      - name: Residual training status (post)
+        run: |
+          python scripts/report_residual_training_status.py --status-only
+
+      - name: Post-training betting readiness (informational)
+        run: |
+          set +e
+          echo "===== POST-TRAINING check_betting_readiness (informational) ====="
+          python scripts/check_betting_readiness.py --skip-pytest
+          status=$?
+          echo "post_training_readiness_exit=${status} (informational while modes are shadow/disabled)"
+          exit 0
+
+      - name: Confirm modes unchanged
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from mlb_metrics import config
+          assert config.GAME_PREDICTION_MODE == "shadow", config.GAME_PREDICTION_MODE
+          assert config.BETTING_MODE == "disabled", config.BETTING_MODE
+          print(f"GAME_PREDICTION_MODE={config.GAME_PREDICTION_MODE!r}")
+          print(f"BETTING_MODE={config.BETTING_MODE!r}")
+          PY
+
+      - name: Commit reports and residual artifact (if gate saved it)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          mkdir -p reports/model_validation
+          git add reports/model_validation/
+
+          # Commit the production residual artifact ONLY if the training
+          # script actually created it after a passed probability gate.
+          if [ -f data/models/game_residual_win_probability_model.joblib ]; then
+            git add data/models/game_residual_win_probability_model.joblib
+          fi
+
+          git commit -m "Game residual training update" || echo "No changes"
+
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push attempt $attempt failed - pulling/rebasing and retrying..."
+            git pull --rebase origin "$branch"
+            sleep 5
+          done
+          echo "::error::Failed to push after 5 attempts"
+          exit 1
