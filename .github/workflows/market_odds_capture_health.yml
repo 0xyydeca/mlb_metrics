@@ -1,0 +1,40 @@
+name: Market Odds Capture Health
+
+# Watchdog only — does not train models. Fails loudly when we are inside the
+# MLB capture window and the latest odds snapshot is stale, so a silent
+# cron gap is visible in Actions (and email notifications if enabled).
+
+on:
+  schedule:
+    # Hourly during the same useful window as Market Odds Capture.
+    - cron: "5 15-23 * * *"
+    - cron: "5 0-2 * * *"
+  workflow_dispatch:
+
+jobs:
+  capture-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-odds-capture.txt
+
+      - name: Install capture-only dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-odds-capture.txt
+
+      - name: Check odds capture freshness
+        run: |
+          python scripts/check_odds_capture_health.py --max-age-minutes 90

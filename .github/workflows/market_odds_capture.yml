@@ -1,25 +1,32 @@
 name: Market Odds Capture
 
-# Capture ESPN/DraftKings moneylines every 30 minutes during the useful MLB
-# window, independent of lineup-lock content changes. Lineup-lock exits early
-# when lineups are unchanged; this job still persists odds snapshots so
-# closing / near-first-pitch prices are available for validation.
+# Capture ESPN/DraftKings moneylines every ~30 minutes during the useful MLB
+# window, independent of lineup-lock content changes.
 #
-# Snapshots use role ``intraday`` (never relabeled as morning). Post-start
-# captures are classified as ``post_start``. Ambiguous doubleheaders are
-# rejected by the safe matcher.
+# Reliability notes (this repo is a fork):
+# - GitHub schedule triggers on forks can lag hours after a new workflow is
+#   added; workflow_dispatch still works immediately.
+# - High-frequency crons are often delayed under Actions load — keep each
+#   run fast (slim deps) and never cancel an in-flight capture.
+# - Pull+rebase before writing so concurrent Daily/Lineup commits don't
+#   drop snapshot appends.
 
 on:
   schedule:
-    # Every 30 minutes from 15:00–02:00 UTC (~8am–7pm AZ / covers most
-    # first-pitch windows). Offset from lineup-lock (:07/:37) to spread load.
+    # Every 30 minutes from 15:00–02:00 UTC (~8am–7pm AZ).
+    # Offset from lineup-lock (:07/:37) to spread load.
     - cron: "17,47 15-23 * * *"
     - cron: "17,47 0-2 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: market-odds-capture
+  cancel-in-progress: false
+
 jobs:
   market-odds-capture:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     permissions:
       contents: write
@@ -27,24 +34,45 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-odds-capture.txt
 
-      - name: Install dependencies
+      - name: Install capture-only dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install -r requirements-odds-capture.txt
 
       - name: Create output folders
         run: |
           mkdir -p data/predictions
 
+      - name: Sync latest main before capture
+        run: |
+          git fetch origin main
+          git pull --rebase origin main || {
+            echo "WARNING: rebase onto main failed; continuing with checked-out tree"
+            git rebase --abort 2>/dev/null || true
+          }
+
       - name: Capture market odds snapshots
         run: |
+          echo "event=${{ github.event_name }} ref=${{ github.ref }}"
           python scripts/capture_market_odds.py
+
+      - name: Print snapshot inventory
+        if: always()
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from mlb_metrics import market_odds
+          market_odds.print_market_snapshot_inventory()
+          PY
 
       - name: Commit snapshot / event-map files only
         run: |
@@ -58,7 +86,7 @@ jobs:
 
           branch=$(git rev-parse --abbrev-ref HEAD)
           for attempt in 1 2 3 4 5; do
-            if git push; then
+            if git push origin HEAD:"$branch"; then
               exit 0
             fi
             echo "Push attempt $attempt failed - pulling/rebasing and retrying..."

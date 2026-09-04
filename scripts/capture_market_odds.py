@@ -81,6 +81,12 @@ def main() -> int:
     )
     print(f"Snapshots path: {args.snapshots_path}")
     print(f"Event map path: {args.event_map_path}")
+    # Inventory from the on-disk log (includes prior captures).
+    market_odds.print_market_snapshot_inventory(
+        market_odds.market_snapshot_inventory(
+            market_odds.load_odds_snapshots(args.snapshots_path)
+        )
+    )
     return 0
 
 
