@@ -1,5 +1,6 @@
 action,expected_utility,streak,days_remaining,utility_name,n_picks,pick_keys,pick_names,details,date,current_streak,selection_mode,shadow,fallback_used,fallback_reason
 sit,4.0,4,53,expected_final_streak,0,[],[],"{'sit_eu': 4.0, 'compared_sit_eu': 4.0, 'n_candidates': 0}",2026-09-03,4,shadow,True,False,
+sit,4.0,4,53,expected_final_streak,0,[],[],"{'sit_eu': 4.0, 'compared_sit_eu': 4.0, 'n_candidates': 0}",2026-09-04,4,shadow,True,False,
 sit,0.0,0,57,expected_final_streak,0,[],[],"{'sit_eu': 0.0, 'compared_sit_eu': 0.0, 'n_candidates': 0}",2026-06-19,0,shadow,True,False,
 sit,0.0,0,57,expected_final_streak,0,[],[],"{'sit_eu': 0.0, 'compared_sit_eu': 0.0, 'n_candidates': 0}",2026-06-20,0,shadow,True,False,
-sit,4.0,4,53,expected_final_streak,0,[],[],"{'sit_eu': 4.0, 'compared_sit_eu': 4.0, 'n_candidates': 0}",2026-09-04,4,shadow,True,False,
+sit,4.0,4,53,expected_final_streak,0,[],[],"{'sit_eu': 4.0, 'compared_sit_eu': 4.0, 'n_candidates': 0}",2026-09-05,4,shadow,True,False,
