@@ -9,6 +9,12 @@ Residual training always writes:
 - `game_residual_nested.json` — nested validation + probability promotion gate
 - `game_residual_betting_gate.json` — betting promotion companion report
 
+Polymarket paper evaluation writes:
+
+- `polymarket_paper_protocol.json` — registered hypothesis/criteria (before outcomes)
+- `polymarket_frozen_policy.json` — prospective paper policy + checkpoints
+- `polymarket_paper_evaluation.json` — evidence verdict (may be insufficient_data)
+
 These files are force-committed by the Game Residual Training workflow and
 uploaded as the `residual-validation-reports` artifact, including
 `insufficient_data` and `validated_failed` outcomes. A green workflow is not

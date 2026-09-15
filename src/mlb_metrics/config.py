@@ -1219,6 +1219,35 @@ POLYMARKET_US_FEE_SCHEDULES = (
     },
 )
 
+# Polymarket paper evaluation (Phase 3–4). Betting stays disabled until gates pass.
+POLYMARKET_PAPER_PROTOCOL_ID = "polymarket_us_game_winner_v1"
+POLYMARKET_PAPER_PROTOCOL_PATH = (
+    "reports/model_validation/polymarket_paper_protocol.json"
+)
+POLYMARKET_PAPER_EVALUATION_REPORT_PATH = (
+    "reports/model_validation/polymarket_paper_evaluation.json"
+)
+POLYMARKET_FROZEN_POLICY_PATH = (
+    "reports/model_validation/polymarket_frozen_policy.json"
+)
+POLYMARKET_PAPER_LEDGER_DIR = "data/polymarket/ledger"
+POLYMARKET_PAPER_DECISIONS_PATH = "data/polymarket/ledger/decisions.csv"
+POLYMARKET_PAPER_POSITIONS_PATH = "data/polymarket/ledger/positions.csv"
+# Protocol registered 2026-09-15 before opening new evaluation outcomes.
+POLYMARKET_PAPER_PROTOCOL_REGISTERED_UTC = "2026-09-15T21:30:00Z"
+POLYMARKET_EXPLORATORY_DATES = ("2026-09-14", "2026-09-15")
+POLYMARKET_INTENDED_LOGLOSS_IMPROVEMENT = 0.01
+POLYMARKET_PRECISION_TARGET_POWER = 0.8
+POLYMARKET_PAPER_MAX_CONTRACTS = 10.0
+POLYMARKET_PAPER_ONE_SHARE = 1.0
+POLYMARKET_MANUAL_DELAY_SECONDS_GRID = (0, 30, 60, 120)
+POLYMARKET_ADVERSE_TICKS_GRID = (0, 1, 2, 5)
+POLYMARKET_CONSERVATIVE_DELAY_SECONDS = 60
+POLYMARKET_CONSERVATIVE_ADVERSE_TICKS = 2
+POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS = (7, 14, 28, 70)
+# Same structural floors as residual betting (implementation floors, not power).
+POLYMARKET_MIN_ELIGIBLE_DATES = GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS
+
 # Kelly-criterion bet sizing (kelly.py, scripts/recommend_bets.py) - a
 # follow-up to the market benchmark above: turns "model probability
 # disagrees with the market" into an actual recommended stake. Single

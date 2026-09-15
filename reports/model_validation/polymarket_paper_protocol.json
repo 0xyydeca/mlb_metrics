@@ -1,0 +1,141 @@
+{
+  "candidates": [
+    "market_mid_baseline",
+    "calibrated_heuristic_baseball",
+    "regularized_market_residual_logistic"
+  ],
+  "cost_assumptions": {
+    "adverse_ticks_grid": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "canceled_not_auto_zero": true,
+    "conservative_adverse_ticks": 2,
+    "conservative_delay_seconds": 60,
+    "default_size_contracts": 1.0,
+    "display_price_is_not_a_fill": true,
+    "fee_formula": "theta * C * p * (1-p)",
+    "fee_schedules": [
+      {
+        "effective_from_utc": "2026-07-01T04:00:00Z",
+        "fee_version": "us_taker_theta_0.06_2026-07-01",
+        "maker_rebate_theta": 0.0125,
+        "notes": "Exchange-wide from 12 AM ET 2026-07-01",
+        "taker_theta": 0.06
+      },
+      {
+        "effective_from_utc": "2026-09-17T03:59:00Z",
+        "fee_version": "us_taker_theta_0.0695_2026-09-17",
+        "maker_rebate_theta": 0.0125,
+        "notes": "Announced effective 11:59 PM ET 2026-09-16",
+        "taker_theta": 0.0695
+      }
+    ],
+    "fill_model": "walk_recorded_asks_only",
+    "manual_delay_seconds_grid": [
+      0,
+      30,
+      60,
+      120
+    ],
+    "max_size_contracts": 10.0,
+    "settlement": "official_result_binary_unless_venue_px"
+  },
+  "decision_times": {
+    "cutoff": "strictly_before_scheduled_start",
+    "no_post_start_features": true,
+    "policy": "prediction_time_recorded_quote"
+  },
+  "eligibility_rules": {
+    "doubleheaders_are_separate_game_pk": true,
+    "exclude_crossed_books_from_mid_baseline": true,
+    "exclude_market_only_fallback_from_independent_model": true,
+    "exclude_postponed_canceled_suspended": true,
+    "polymarket_prior_requires_revalidation": true,
+    "quote_max_age_seconds": 30,
+    "require_both_probable_pitchers_for_baseball_features": true,
+    "require_mapped_game_pk": true,
+    "require_non_stale_eligible_book": true,
+    "sportsbook_history_is_not_polymarket_evidence": true
+  },
+  "exploratory_dates": [
+    "2026-09-14",
+    "2026-09-15"
+  ],
+  "fold_structure": {
+    "freeze_dates": 10,
+    "inner_min_train_dates": 15,
+    "inner_test_block_dates": 5,
+    "min_dates_structural_floor": 70,
+    "min_outer_folds": 3,
+    "outer_min_train_dates": 30,
+    "outer_test_block_dates": 10,
+    "require_complete_test_blocks": true
+  },
+  "hypothesis": "Baseball information available before the decision cutoff improves same-time Polymarket book mid probabilities on log loss and Brier, and a predeclared entry policy has positive net paper ROI after fees under conservative delay/adverse-tick stress.",
+  "intended_logloss_improvement": 0.01,
+  "market_type": "pregame_full_game_winner",
+  "notes": [
+    "Registered before opening new evaluation outcomes for this protocol.",
+    "Exploratory dates inspected during data-foundation work are not untouched validation.",
+    "Polymarket quote history is short; insufficient evidence is an expected valid result.",
+    "Owner places bets manually; this module never places orders."
+  ],
+  "pass_fail_criteria": {
+    "betting_mode_if_fail": "disabled",
+    "probability_gate": {
+      "also_report_brier": true,
+      "paired_day_block_ci_excludes_zero_on_log_loss": true,
+      "primary": "log_loss_point_better_than_market_mid",
+      "require_complete_outer_folds": 3
+    },
+    "strategy_gate": {
+      "conservative_stress_roi_lower_bound_above_zero": true,
+      "floors_are_not_power_proof": true,
+      "min_bet_dates_floor": 15,
+      "min_settled_bets_floor": 30,
+      "positive_roi_on_untouched_outer": true
+    }
+  },
+  "primary_probability_metric": "log_loss",
+  "protocol_hash": "7f9618a855e44e5b",
+  "protocol_id": "polymarket_us_game_winner_v1",
+  "protocol_version": "1",
+  "registered_at_utc": "2026-09-15T21:30:00Z",
+  "sample_size_plan": {
+    "alpha": 0.05,
+    "approx_independent_days": 197,
+    "assumed_day_sd": 0.05,
+    "effect_logloss": 0.01,
+    "note": "Planning estimate only. Actual inference uses paired date-block bootstrap; shared-date games are not independent bets.",
+    "power": 0.8,
+    "structural_floor_dates": 70
+  },
+  "secondary_probability_metrics": [
+    "brier",
+    "auc"
+  ],
+  "tuning_budget": {
+    "edge_threshold_grid": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05
+    ],
+    "final_freeze_untouched": true,
+    "logistic_C_grid": [
+      0.001,
+      0.005,
+      0.01,
+      0.05,
+      0.1
+    ],
+    "nonlinear_challenger_deferred": true,
+    "select_on_inner_folds_only": true
+  },
+  "venue_id": "polymarket_us",
+  "venue_label": "polymarket_us_provisional_research"
+}

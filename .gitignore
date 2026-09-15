@@ -227,6 +227,11 @@ reports/model_validation/**
 !reports/model_validation/game_residual_betting_gate.json
 !reports/model_validation/streak_policy_nested.json
 !reports/model_validation/streak_policy_backtest.json
+!reports/model_validation/polymarket_paper_protocol.json
+!reports/model_validation/polymarket_paper_evaluation.json
+!reports/model_validation/polymarket_frozen_policy.json
+data/polymarket/ledger/**
+!data/polymarket/ledger/.gitkeep
 
 # Polymarket quote books and local capture artifacts (not committed).
 data/polymarket/quotes/**
