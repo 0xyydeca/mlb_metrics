@@ -1,0 +1,236 @@
+{
+  "events": [
+    {
+      "id": "109412",
+      "slug": "mlb-sd-col-2026-09-14",
+      "title": "San Diego Padres vs. Colorado Rockies",
+      "startTime": "2026-09-15T00:40:00Z",
+      "gameId": 10079541,
+      "active": true,
+      "closed": false,
+      "live": true,
+      "teams": [
+        {
+          "id": 3022,
+          "name": "San Diego Padres",
+          "abbreviation": "sd",
+          "league": "mlb",
+          "record": "",
+          "logo": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-light-09ca60853e.png",
+          "alias": "San Diego Padres",
+          "safeName": "Padres",
+          "homeIcon": "",
+          "awayIcon": "",
+          "colorPrimary": "#F5AF05",
+          "providerId": 33,
+          "longIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-light-09ca60853e.png",
+          "shortIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-light-09ca60853e.png",
+          "displayAbbreviation": "SD",
+          "conference": "",
+          "providerIds": [
+            {
+              "provider": "PROVIDER_SPORTRADAR",
+              "providerId": "d52d5339-cbdd-43f3-9dfa-a42fd588b9a3"
+            },
+            {
+              "provider": "PROVIDER_SPORTSDATAIO",
+              "providerId": "33"
+            }
+          ],
+          "longIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-dark-316d4eb6a6.png",
+          "shortIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-dark-316d4eb6a6.png",
+          "color": {
+            "light": "#F5AF05",
+            "dark": "#ECB11C"
+          },
+          "imageDisplayType": "IMAGE_DISPLAY_TYPE_LOGO"
+        },
+        {
+          "id": 3008,
+          "name": "Colorado Rockies",
+          "abbreviation": "col",
+          "league": "mlb",
+          "record": "",
+          "logo": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-light-d3a1e77962.png",
+          "alias": "Colorado Rockies",
+          "safeName": "Rockies",
+          "homeIcon": "",
+          "awayIcon": "",
+          "colorPrimary": "#333366",
+          "providerId": 23,
+          "longIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-light-d3a1e77962.png",
+          "shortIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-light-d3a1e77962.png",
+          "displayAbbreviation": "COL",
+          "conference": "",
+          "providerIds": [
+            {
+              "provider": "PROVIDER_SPORTRADAR",
+              "providerId": "29dd9a87-5bcc-4774-80c3-7f50d985068b"
+            },
+            {
+              "provider": "PROVIDER_SPORTSDATAIO",
+              "providerId": "23"
+            }
+          ],
+          "longIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-dark-49d2962755.png",
+          "shortIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-dark-49d2962755.png",
+          "color": {
+            "light": "#333366",
+            "dark": "#7760B1"
+          },
+          "imageDisplayType": "IMAGE_DISPLAY_TYPE_LOGO"
+        }
+      ],
+      "markets": [
+        {
+          "id": "786027",
+          "question": "Who will win in the upcoming baseball event San Diego Padres vs Colorado Rockies scheduled for September 15, 2026 at 12:40 AM UTC?",
+          "slug": "aec-mlb-sd-col-2026-09-14",
+          "endDate": "2026-09-29T00:40:00Z",
+          "category": "sports",
+          "startDate": "2026-09-11T04:01:10Z",
+          "description": "This market will settle to the winner of the San Diego Padres vs Colorado Rockies MLB game scheduled for 2026-09-14 at 8:40PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and not rescheduled to a date within two weeks of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+          "active": true,
+          "marketType": "moneyline",
+          "closed": false,
+          "createdAt": "2026-09-11T04:01:10Z",
+          "updatedAt": "2026-09-15T02:41:18Z",
+          "archived": false,
+          "orderPriceMinTickSize": 0.005,
+          "gameStartTime": "2026-09-15T00:40:00Z",
+          "manualActivation": false,
+          "sportsMarketType": "baseball_team_full_game_winner",
+          "marketSides": [
+            {
+              "id": "1571542",
+              "marketSideType": "MARKET_SIDE_TYPE_INSTRUMENT",
+              "identifier": "aec-mlb-sd-col-2026-09-14",
+              "createdAt": "2026-09-11T04:01:10Z",
+              "updatedAt": "2026-09-11T04:01:10Z",
+              "description": "San Diego Padres",
+              "price": "0.7550",
+              "marketId": 786027,
+              "long": true,
+              "teamId": 3022,
+              "team": {
+                "id": 3022,
+                "name": "San Diego Padres",
+                "abbreviation": "sd",
+                "league": "mlb",
+                "record": "",
+                "logo": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-light-09ca60853e.png",
+                "alias": "San Diego Padres",
+                "safeName": "Padres",
+                "homeIcon": "",
+                "awayIcon": "",
+                "colorPrimary": "#F5AF05",
+                "providerId": 33,
+                "ordering": "away",
+                "longIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-light-09ca60853e.png",
+                "shortIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-light-09ca60853e.png",
+                "displayAbbreviation": "SD",
+                "conference": "",
+                "providerIds": [
+                  {
+                    "provider": "PROVIDER_SPORTRADAR",
+                    "providerId": "d52d5339-cbdd-43f3-9dfa-a42fd588b9a3"
+                  },
+                  {
+                    "provider": "PROVIDER_SPORTSDATAIO",
+                    "providerId": "33"
+                  }
+                ],
+                "longIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-dark-316d4eb6a6.png",
+                "shortIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/san-diego-dark-316d4eb6a6.png",
+                "color": {
+                  "light": "#F5AF05",
+                  "dark": "#ECB11C"
+                },
+                "imageDisplayType": "IMAGE_DISPLAY_TYPE_LOGO"
+              },
+              "quote": {
+                "value": "0.7700",
+                "currency": "USD"
+              },
+              "tradable": true
+            },
+            {
+              "id": "1571543",
+              "marketSideType": "MARKET_SIDE_TYPE_INSTRUMENT",
+              "identifier": "aec-mlb-sd-col-2026-09-14",
+              "createdAt": "2026-09-11T04:01:10Z",
+              "updatedAt": "2026-09-11T04:01:10Z",
+              "description": "Colorado Rockies",
+              "price": "0.7700",
+              "marketId": 786027,
+              "long": false,
+              "teamId": 3008,
+              "team": {
+                "id": 3008,
+                "name": "Colorado Rockies",
+                "abbreviation": "col",
+                "league": "mlb",
+                "record": "",
+                "logo": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-light-d3a1e77962.png",
+                "alias": "Colorado Rockies",
+                "safeName": "Rockies",
+                "homeIcon": "",
+                "awayIcon": "",
+                "colorPrimary": "#333366",
+                "providerId": 23,
+                "ordering": "home",
+                "longIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-light-d3a1e77962.png",
+                "shortIcon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-light-d3a1e77962.png",
+                "displayAbbreviation": "COL",
+                "conference": "",
+                "providerIds": [
+                  {
+                    "provider": "PROVIDER_SPORTRADAR",
+                    "providerId": "29dd9a87-5bcc-4774-80c3-7f50d985068b"
+                  },
+                  {
+                    "provider": "PROVIDER_SPORTSDATAIO",
+                    "providerId": "23"
+                  }
+                ],
+                "longIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-dark-49d2962755.png",
+                "shortIconDark": "https://polymarket-upload.s3.us-east-2.amazonaws.com/colorado-dark-49d2962755.png",
+                "color": {
+                  "light": "#333366",
+                  "dark": "#7760B1"
+                },
+                "imageDisplayType": "IMAGE_DISPLAY_TYPE_LOGO"
+              },
+              "quote": {
+                "value": "0.245",
+                "currency": "USD"
+              },
+              "tradable": true
+            }
+          ],
+          "outcomes": "[\"San Diego Padres\",\"Colorado Rockies\"]",
+          "outcomePrices": "[\"0.7550\",\"0.7700\"]",
+          "ep3Status": "OPEN",
+          "status": "MARKET_STATUS_OPEN",
+          "sportsMarketTypeV2": "SPORTS_MARKET_TYPE_MONEYLINE",
+          "hidden": false,
+          "tags": [],
+          "title": "San Diego Padres vs Colorado Rockies",
+          "feeCoefficient": 0.06,
+          "bestBidQuote": {
+            "value": "0.7550",
+            "currency": "USD"
+          },
+          "bestAskQuote": {
+            "value": "0.7700",
+            "currency": "USD"
+          },
+          "titleShort": "SD vs COL",
+          "ep3SyncedAt": "2026-09-14T11:37:43Z",
+          "minimumTradeQty": 0.01,
+          "comboEnabled": true
+        }
+      ]
+    }
+  ]
+}

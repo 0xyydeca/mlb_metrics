@@ -27,6 +27,9 @@ PRODUCTION_PREDICTION_PATH_ATTRS = (
     "GAME_RESIDUAL_PROMOTION_GATE_REPORT_PATH",
     "BETTING_PROMOTION_GATE_REPORT_PATH",
     "STREAK_POLICY_PROMOTION_GATE_REPORT_PATH",
+    "POLYMARKET_CONTRACT_REGISTRY_PATH",
+    "POLYMARKET_QUOTE_STORE_DIR",
+    "POLYMARKET_COVERAGE_REPORT_PATH",
 )
 
 
@@ -40,8 +43,11 @@ def _isolate_production_prediction_paths(tmp_path, monkeypatch):
     """
     pred_dir = tmp_path / "isolated_predictions"
     report_dir = tmp_path / "isolated_reports" / "model_validation"
+    poly_dir = tmp_path / "isolated_polymarket"
     pred_dir.mkdir(parents=True, exist_ok=True)
     report_dir.mkdir(parents=True, exist_ok=True)
+    (poly_dir / "registry").mkdir(parents=True, exist_ok=True)
+    (poly_dir / "quotes").mkdir(parents=True, exist_ok=True)
     mapping = {
         "MARKET_ODDS_SNAPSHOTS_PATH": pred_dir / "market_odds_snapshots.csv",
         "SCHEDULE_SNAPSHOTS_PATH": pred_dir / "schedule_snapshots.csv",
@@ -60,6 +66,9 @@ def _isolate_production_prediction_paths(tmp_path, monkeypatch):
         "GAME_RESIDUAL_PROMOTION_GATE_REPORT_PATH": report_dir / "game_residual_nested.json",
         "BETTING_PROMOTION_GATE_REPORT_PATH": report_dir / "game_residual_betting_gate.json",
         "STREAK_POLICY_PROMOTION_GATE_REPORT_PATH": report_dir / "streak_policy_nested.json",
+        "POLYMARKET_CONTRACT_REGISTRY_PATH": poly_dir / "registry" / "contracts.csv",
+        "POLYMARKET_QUOTE_STORE_DIR": poly_dir / "quotes",
+        "POLYMARKET_COVERAGE_REPORT_PATH": poly_dir / "coverage_latest.json",
     }
     for attr, path in mapping.items():
         monkeypatch.setattr(config, attr, str(path))

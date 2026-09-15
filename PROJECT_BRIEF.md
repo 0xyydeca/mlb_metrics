@@ -3,92 +3,74 @@
 ## Purpose and owner decisions
 
 - The owner uses this project for personal MLB bets on Polymarket and wants accurate picks that help win money. Profitability is a goal, not an established result.
+- The owner places bets manually; the system must not place orders.
 - The owner delegates market selection to the agent based on evidence about wins, odds, costs, and risk.
 - The owner requests a thorough implementation plan and autonomous progress without repeated approval questions for already authorized work.
 - Personal bankroll, acceptable losses, and account/trade-execution authorization have not been supplied. Research and engineering can proceed with public data and paper results.
 
 ## Current plan
 
-- Start with pregame full-game winner contracts because the repository already has game-win models, labels, schedule matching, and a market-residual framework. This is the selected engineering priority; superior profitability has not been demonstrated.
-- Phase 0 (evidence foundation) is implemented on branch `codex/phase-0-evidence-foundation`. Next: Phase 1 — Polymarket venue adapter, contract registry, and quote capture.
-- Prioritize MLB betting work. Preserve existing DFS, NFL, Beat the Streak, and age-curve features without treating them as current expansion priorities.
-- Full work sequence, file-level backlog, acceptance criteria, evidence gates, and effort estimates: [MLB Polymarket development plan](MLB_POLYMARKET_PLAN.md).
+- Start with pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
+- Phase 0 completed on `codex/phase-0-evidence-foundation` (`0e357fc`).
+- Phase 1 (read-only Polymarket US adapter + registry + quote store) implemented on `codex/phase-1-polymarket-adapter`.
+- Next: improve mapping coverage / scheduled capture reliability, then Phase 2 as-of baseball inputs (lineups) overlapping continued quote collection.
+- Full plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md).
 
 ## Evidence snapshot
 
-- Planning audit: September 14, 2026, America/Phoenix, commit `6eb45e3d234416d54ddec5cf13ab6aa013c1be2a`.
-- Phase 0 implementation: September 14–15, 2026, branch `codex/phase-0-evidence-foundation` (based on that commit).
+- Planning audit: September 14, 2026, commit `6eb45e3`.
+- Phase 0: September 14–15, 2026, `0e357fc` on `codex/phase-0-evidence-foundation`.
+- Phase 1: September 14–15, 2026, branch `codex/phase-1-polymarket-adapter`.
 - Repository: https://github.com/0xyydeca/mlb_metrics
-- Public fork of JMerchen/mlb_metrics.
 
 ## Current technical facts
 
-- Python processing: `src/mlb_metrics/`; entrypoints: `scripts/`; static HTML/CSS/JavaScript dashboard: `docs/`; dashboard data: `docs/data/`.
-- Raw baseball data, prediction logs, and model artifacts live under `data/`.
-- Current market ingestion uses ESPN sportsbook moneylines, with DraftKings preferred. Native Polymarket integration is not yet implemented.
-- CI uses Python 3.12 and Node 22. Core Python dependencies are pinned in `requirements.txt` / `requirements-dev.txt` / `requirements-odds-capture.txt` to the locally verified versions.
-- Default date convention is America/Phoenix.
-- Current settings: `HITTER_SELECTION_MODE="shadow"`, `STREAK_POLICY_MODE="shadow"`, `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`, `LINEUP_API_SCHEMA_CONFIRMED=False`.
+- Selected research venue: **Polymarket US** (`POLYMARKET_VENUE_SELECTED=polymarket_us`, public gateway `https://gateway.polymarket.us`).
+- International venue adapter exists only as an explicit unsupported stub.
+- Capture entrypoints: `scripts/capture_polymarket.py`, `scripts/audit_polymarket_data.py`.
+- Registry: `data/polymarket/registry/contracts.csv` (local; gitignored).
+- Quotes: date-partitioned Parquet under `data/polymarket/quotes/` (gitignored).
+- ESPN/DraftKings sportsbook odds remain the existing residual-model prior path; Polymarket quotes are a separate venue dataset.
+- Modes: `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`.
 
-## Phase 0 completed (verified)
+## Phase 1 completed (verified)
 
-1. **Validation reports preserved**
-   - `.gitignore` whitelists `game_residual_nested.json`, `game_residual_betting_gate.json`, and streak-policy report names.
-   - `game_residual_training.yml` force-adds those JSONs, uploads `residual-validation-reports` artifacts (`if: always()`), and still commits when present.
-   - Trainer writes insufficient-data reports when the pick log or market-aligned frame is empty.
-   - Checked: `git check-ignore` reports the residual JSON paths as trackable; unrelated `foo.json` remains ignored.
+1. **Venue interface** — `src/mlb_metrics/venues/base.py` with capabilities, fee schedule, market/book types; `order_placement` always false for US.
+2. **Polymarket US adapter** — league MLB event discovery, full-game moneyline parse, order-book fetch, versioned taker fee schedules (0.06 now; 0.0695 from 2026-09-17T03:59Z).
+3. **Orientation safety** — long/short outcomes retain team abbreviations; tests assert long is not assumed home (fixture: SD long / COL home).
+4. **Contract registry** — `market_contracts.py` maps by home/away + start-time tolerance; statuses `mapped` / `unmatched` / `ambiguous` / `incomplete_teams`; preserves `first_observed_at_utc`.
+5. **Quote store** — append-only Parquet + CSV index; idempotent on `raw_response_hash`; freshness helper uses `POLYMARKET_QUOTE_MAX_AGE_SECONDS=30`.
+6. **Executable buy helper** — long uses best ask; short uses `1 - best_bid` (documented); display prices are not treated as fills.
 
-2. **Training horizon + complete folds**
-   - Default residual history horizon: `GAME_RESIDUAL_TRAINING_HISTORY_DATES = 120`.
-   - Structural minimum: `GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS = 70`.
-   - Residual nested validation requires complete outer/inner test blocks (`require_complete_test_blocks=True`).
-   - Boundary tests: 60→2 folds, 61→2 folds (no partial trailing block), 70→3 folds with production freeze/block constants.
-   - Holdout (`GAME_RESIDUAL_BETTING_FREEZE_DATES = 10`) unchanged.
+### Live capture check (this session)
 
-3. **Honest market-only fallback labels**
-   - Missing/failed residual artifacts export `probability_source="market_only_fallback"` with `fallback_used` / `fallback_reason`.
-   - Independent residual label `market_residual` is reserved for loaded-artifact predictions.
-
-4. **Closing vs prediction-time separation**
-   - `_resolve_closing_market_probability` no longer fills missing closing with prediction-time prices.
-   - `paired_market_scoring_differences` defaults to strict closing; `market_price_source="prediction_time"` is explicit for non-closing research.
-   - Export `market_*` accuracy metrics use logged prediction-time prices; `beat_closing_*` requires true closing snapshots.
-   - Closing window capped by `MARKET_ODDS_CLOSING_MAX_AGE_MINUTES = 180`.
-
-5. **Distinct run/status visibility**
-   - Report statuses: `insufficient_data`, `validated_failed`, `validated_passed`.
-   - Reports include `artifact_saved` / `artifact_loaded`; trainer prints a `RUN OUTCOME` line.
-   - `residual_training_status` / status script expose validation status and artifact flags.
-
-6. **Reproducibility + write isolation**
-   - Pinned requirements to the verified local environment (pandas/numpy/scikit-learn/joblib/etc.).
-   - Autouse conftest redirects streak/lineup/audit/shadow/report paths away from production `data/predictions` and `reports/model_validation`.
-   - Added residual artifact save/load/predict compatibility test.
+- `python scripts/capture_polymarket.py --limit 15`
+- Discovered 15 moneylines; schedule rows available: 156.
+- Registry: **3 mapped / 12 unmatched / 0 ambiguous** on that sample (many events outside current schedule-snapshot coverage or timing).
+- Wrote books into `data/polymarket/quotes/` and coverage JSON under `reports/polymarket/` (both gitignored except keep/README).
+- Modes remained shadow/disabled.
 
 ## Checks run
 
-- Focused Phase 0 suites: **87 passed**.
-- Full `pytest`: **1007 passed**; 8 git-init tests failed only under the sandbox (no `git init`); re-run with full permissions: **20/20 passed** in the git/backtest modules.
-- Node CI checks: `docs/dfs_solver.test.js`, `docs/nfl_dfs_solver.test.js`, `docs/nfl_draft_assistant.test.js` — **33/33 passed**.
-- Modes remain `GAME_PREDICTION_MODE=shadow`, `BETTING_MODE=disabled`.
-- Unverified here: end-to-end GitHub Actions residual-training run committing/uploading reports on `main` (workflow YAML and local force-add behavior verified; remote dispatch not executed).
+- `pytest tests/test_polymarket_phase1.py`: **9 passed**
+- Related safety/residual workflow tests: **30 passed** together with Phase 1 tests
+- Live read-only capture against Polymarket US gateway: succeeded
+- Unverified: multi-day 95% mapping coverage target; GitHub Actions cron for Polymarket capture; international venue
 
-## Remaining blockers (unchanged by Phase 0)
+## Remaining blockers
 
-- Only ~11 valid sportsbook prediction dates / ~147 morning-aligned games; zero complete residual outer folds possible today.
-- No residual model artifact; shadow rows are market fallbacks until a gate-passing train saves one.
-- No Polymarket venue adapter, contract registry, fee model, or executable quote store.
-- Confirmed lineup API still gated (`LINEUP_API_SCHEMA_CONFIRMED=False`).
-- Odds-capture freshness can still lag under Actions scheduling; health workflow may fail when checkout data is stale.
-- Owner venue/account, bankroll, and live-trading authorization remain unknown; betting stays disabled.
+- Mapping coverage depends on fresh MLB schedule snapshots aligned to Polymarket start times; unmatched rate is still high on a first sample.
+- Residual model still lacks enough sportsbook history / artifact; Polymarket history collection has just started.
+- No paper ledger / decision UI yet (later phases).
+- Owner bankroll and live-trading authorization still unknown; betting stays disabled.
 
 ## Next implementation task
 
-**Phase 1 item 5–6 from the plan:** selected-venue Polymarket adapter + contract registry, then durable quote recorder/health, using public read-only APIs only. Do not enable live betting.
+Raise Polymarket↔`game_pk` mapping coverage (schedule freshness + doubleheader/postpone cases), optionally add a scheduled read-only capture workflow, then Phase 2 lineup/as-of baseball inputs while quotes accumulate.
 
 ## Sources
 
-- Owner statements establish purpose, delegated market prioritization, and autonomous Phase 0 implementation.
+- [Polymarket US sports data](https://docs.polymarket.us/data-guide/sports-data)
+- [US market book](https://docs.polymarket.us/api-reference/markets/get-market-book)
+- [US fees](https://docs.polymarket.us/fees)
 - [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md)
-- [US API](https://docs.polymarket.us/api-reference/introduction), [US price history](https://docs.polymarket.us/api-reference/price-history/get-price-history), [US order books](https://docs.polymarket.us/api-reference/markets/get-market-book), [US fees](https://docs.polymarket.us/fees), [US sports settlement](https://docs.polymarket.us/faqs/sports-faqs).
-- [International market data](https://docs.polymarket.com/market-data/overview), [international fees](https://docs.polymarket.com/trading/fees).

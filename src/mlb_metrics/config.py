@@ -1162,6 +1162,39 @@ MARKET_ODDS_MATCH_TIME_TOLERANCE_MINUTES = 45
 MARKET_ODDS_BOOTSTRAP_SAMPLES = 1000
 MARKET_ODDS_BOOTSTRAP_SEED = 0
 
+# Polymarket read-only venue integration (Phase 1). No order placement.
+# Selected research venue is Polymarket US public gateway; international
+# remains an explicit unsupported capability until separately tested.
+POLYMARKET_VENUE_SELECTED = "polymarket_us"
+POLYMARKET_US_API_BASE_URL = "https://gateway.polymarket.us"
+POLYMARKET_US_LEAGUE_SLUG = "mlb"
+POLYMARKET_CONTRACT_REGISTRY_PATH = "data/polymarket/registry/contracts.csv"
+POLYMARKET_QUOTE_STORE_DIR = "data/polymarket/quotes"
+POLYMARKET_COVERAGE_REPORT_PATH = "reports/polymarket/coverage_latest.json"
+POLYMARKET_SCHEMA_VERSION = "polymarket_v1"
+# Match MLB schedule rows to Polymarket events by teams + start time.
+POLYMARKET_MATCH_TIME_TOLERANCE_MINUTES = 45
+# Actionable quote freshness target for later decision UI (seconds).
+POLYMARKET_QUOTE_MAX_AGE_SECONDS = 30
+# Fee schedule versions (UTC). Docs: taker Fee = theta * C * p * (1-p).
+# Upcoming US change at 2026-09-16 23:59 ET ≈ 2026-09-17 03:59 UTC.
+POLYMARKET_US_FEE_SCHEDULES = (
+    {
+        "fee_version": "us_taker_theta_0.06_2026-07-01",
+        "effective_from_utc": "2026-07-01T04:00:00Z",
+        "taker_theta": 0.06,
+        "maker_rebate_theta": 0.0125,
+        "notes": "Exchange-wide from 12 AM ET 2026-07-01",
+    },
+    {
+        "fee_version": "us_taker_theta_0.0695_2026-09-17",
+        "effective_from_utc": "2026-09-17T03:59:00Z",
+        "taker_theta": 0.0695,
+        "maker_rebate_theta": 0.0125,
+        "notes": "Announced effective 11:59 PM ET 2026-09-16",
+    },
+)
+
 # Kelly-criterion bet sizing (kelly.py, scripts/recommend_bets.py) - a
 # follow-up to the market benchmark above: turns "model probability
 # disagrees with the market" into an actual recommended stake. Single
