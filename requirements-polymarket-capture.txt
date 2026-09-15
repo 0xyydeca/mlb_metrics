@@ -1,0 +1,6 @@
+# Minimal deps for scripts/capture_polymarket.py (read-only).
+pandas==3.0.5
+numpy==2.5.2
+pyarrow==25.0.1
+requests==2.34.2
+MLB-StatsAPI==1.9.0

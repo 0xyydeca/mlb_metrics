@@ -1,0 +1,119 @@
+name: Polymarket Capture
+
+# Read-only Polymarket US MLB moneyline + order-book capture.
+# Does NOT place orders. Does NOT flip GAME_PREDICTION_MODE / BETTING_MODE.
+#
+# Quotes stay local/artifact-only (gitignored Parquet). Coverage JSON and the
+# compact contract registry are committed when present.
+
+on:
+  schedule:
+    # Every 30 minutes in the MLB window, offset from ESPN odds (:17/:47)
+    # and lineup-lock (:07/:37).
+    - cron: "27,57 15-23 * * *"
+    - cron: "27,57 0-2 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: polymarket-capture
+  cancel-in-progress: false
+
+jobs:
+  polymarket-capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-polymarket-capture.txt
+
+      - name: Install capture-only dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-polymarket-capture.txt
+
+      - name: Create output folders
+        run: |
+          mkdir -p data/polymarket/registry
+          mkdir -p data/polymarket/quotes
+          mkdir -p reports/polymarket
+
+      - name: Sync latest main before capture
+        run: |
+          git fetch origin main
+          git pull --rebase origin main || {
+            echo "WARNING: rebase onto main failed; continuing with checked-out tree"
+            git rebase --abort 2>/dev/null || true
+          }
+
+      - name: Capture Polymarket moneylines + books
+        run: |
+          echo "event=${{ github.event_name }} ref=${{ github.ref }}"
+          PYTHONPATH=src python scripts/capture_polymarket.py
+
+      - name: Audit coverage
+        if: always()
+        run: |
+          PYTHONPATH=src python scripts/audit_polymarket_data.py
+
+      - name: Confirm modes unchanged
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from mlb_metrics import config
+          assert config.GAME_PREDICTION_MODE == "shadow", config.GAME_PREDICTION_MODE
+          assert config.BETTING_MODE == "disabled", config.BETTING_MODE
+          print(f"GAME_PREDICTION_MODE={config.GAME_PREDICTION_MODE!r}")
+          print(f"BETTING_MODE={config.BETTING_MODE!r}")
+          PY
+
+      - name: Upload quote artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: polymarket-quotes
+          path: |
+            data/polymarket/quotes/
+            data/polymarket/registry/contracts.csv
+            reports/polymarket/coverage_latest.json
+          if-no-files-found: warn
+
+      - name: Commit registry + coverage report
+        if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add -f \
+            data/polymarket/registry/contracts.csv \
+            reports/polymarket/coverage_latest.json \
+            || true
+
+          if git diff --cached --quiet; then
+            echo "No registry/coverage changes to commit."
+          else
+            git commit -m "Polymarket capture update"
+          fi
+
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push attempt $attempt failed - pulling/rebasing and retrying..."
+            git pull --rebase origin "$branch"
+            sleep 5
+          done
+          echo "::error::Failed to push after 5 attempts"
+          exit 1

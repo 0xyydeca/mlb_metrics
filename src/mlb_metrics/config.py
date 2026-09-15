@@ -1174,6 +1174,10 @@ POLYMARKET_COVERAGE_REPORT_PATH = "reports/polymarket/coverage_latest.json"
 POLYMARKET_SCHEMA_VERSION = "polymarket_v1"
 # Match MLB schedule rows to Polymarket events by teams + start time.
 POLYMARKET_MATCH_TIME_TOLERANCE_MINUTES = 45
+# Live StatsAPI schedule window used for Polymarket↔game_pk mapping.
+# Includes today (America/Phoenix) plus this many following calendar days.
+# Polymarket often lists 2–3 days ahead of the current local slate.
+POLYMARKET_SCHEDULE_LOOKAHEAD_DAYS = 3
 # Actionable quote freshness target for later decision UI (seconds).
 POLYMARKET_QUOTE_MAX_AGE_SECONDS = 30
 # Fee schedule versions (UTC). Docs: taker Fee = theta * C * p * (1-p).

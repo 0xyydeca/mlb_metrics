@@ -17,24 +17,13 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-import pandas as pd
-
-from mlb_metrics import config, market_contracts, quote_store, schedule_snapshots
+from mlb_metrics import config, market_contracts, quote_store
 from mlb_metrics.venues import get_venue_adapter
 from mlb_metrics.venues.polymarket_us import executable_buy_price_for_team
 
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
-def _load_schedule(path: str | None) -> pd.DataFrame:
-    snaps = schedule_snapshots.load_schedule_snapshots(path)
-    if snaps is None or snaps.empty:
-        return pd.DataFrame(columns=["game_pk", "home_team", "away_team", "game_datetime"])
-    cols = [c for c in ["game_pk", "home_team", "away_team", "game_datetime", "date"] if c in snaps.columns]
-    out = snaps[cols].drop_duplicates(subset=["game_pk"], keep="last")
-    return out
 
 
 def main() -> int:
@@ -46,6 +35,17 @@ def main() -> int:
     parser.add_argument("--schedule-snapshots", default=config.SCHEDULE_SNAPSHOTS_PATH)
     parser.add_argument("--coverage-report", default=config.POLYMARKET_COVERAGE_REPORT_PATH)
     parser.add_argument("--venue", default=config.POLYMARKET_VENUE_SELECTED)
+    parser.add_argument(
+        "--lookahead-days",
+        type=int,
+        default=config.POLYMARKET_SCHEDULE_LOOKAHEAD_DAYS,
+        help="Live StatsAPI schedule days beyond today_local() for mapping.",
+    )
+    parser.add_argument(
+        "--snapshots-only",
+        action="store_true",
+        help="Disable live StatsAPI schedule fetch (tests / offline).",
+    )
     args = parser.parse_args()
 
     assert config.GAME_PREDICTION_MODE == "shadow", config.GAME_PREDICTION_MODE
@@ -61,8 +61,15 @@ def main() -> int:
     markets = adapter.list_mlb_moneyline_markets(limit=args.limit)
     print(f"Discovered {len(markets)} moneyline markets")
 
-    schedule = _load_schedule(args.schedule_snapshots)
-    print(f"Schedule games available for mapping: {len(schedule)}")
+    schedule = market_contracts.load_mapping_schedule(
+        schedule_snapshots_path=args.schedule_snapshots,
+        lookahead_days=args.lookahead_days,
+        prefer_live=not args.snapshots_only,
+    )
+    print(
+        f"Schedule games available for mapping: {len(schedule)} "
+        f"(live_preferred={not args.snapshots_only}, lookahead_days={args.lookahead_days})"
+    )
     existing = market_contracts.load_registry(args.registry_path)
     registry = market_contracts.upsert_registry(
         existing, markets, schedule, observed_at_utc=observed_at,
@@ -78,7 +85,6 @@ def main() -> int:
     quotes = []
     buy_samples = []
     if not args.skip_books:
-        by_id = {m.market_id: m for m in markets}
         for market in markets:
             if market.closed:
                 continue
@@ -110,6 +116,8 @@ def main() -> int:
         "captured_at_utc": observed_at,
         "venue_id": adapter.venue_id,
         "n_markets": len(markets),
+        "n_schedule_games": int(len(schedule)),
+        "schedule_source": "snapshots_only" if args.snapshots_only else "live_plus_snapshots",
         "coverage": coverage,
         "quote_health": health,
         "n_books_captured": len(quotes),
@@ -122,6 +130,7 @@ def main() -> int:
             "Read-only capture; no orders placed.",
             "Display prices are not fill quotes; books carry size.",
             "Provider gameId is not MLB game_pk.",
+            "Mapping uses live StatsAPI schedule when available.",
         ],
     }
     os.makedirs(os.path.dirname(args.coverage_report) or ".", exist_ok=True)

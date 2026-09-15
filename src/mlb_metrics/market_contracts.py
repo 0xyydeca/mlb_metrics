@@ -64,6 +64,84 @@ def empty_registry_frame() -> pd.DataFrame:
     return pd.DataFrame(columns=REGISTRY_COLUMNS)
 
 
+def load_schedule_snapshots_for_mapping(path: str | None = None) -> pd.DataFrame:
+    """Compact game rows from persisted schedule snapshots (may be stale)."""
+    from mlb_metrics import schedule_snapshots
+
+    snaps = schedule_snapshots.load_schedule_snapshots(path)
+    if snaps is None or snaps.empty:
+        return pd.DataFrame(columns=["game_pk", "home_team", "away_team", "game_datetime", "date"])
+    cols = [c for c in ["game_pk", "home_team", "away_team", "game_datetime", "date"] if c in snaps.columns]
+    return snaps[cols].drop_duplicates(subset=["game_pk"], keep="last")
+
+
+def fetch_live_schedule_for_mapping(
+    *,
+    start_date=None,
+    lookahead_days: int | None = None,
+) -> pd.DataFrame:
+    """Fetch MLB StatsAPI games for today_local()..+lookahead (both DH games)."""
+    import datetime as dt
+
+    from mlb_metrics import schedule
+
+    start = start_date or schedule.today_local()
+    if not isinstance(start, dt.date):
+        start = pd.Timestamp(start).date()
+    days = int(
+        config.POLYMARKET_SCHEDULE_LOOKAHEAD_DAYS
+        if lookahead_days is None
+        else lookahead_days
+    )
+    frames = []
+    for offset in range(0, max(0, days) + 1):
+        day = start + dt.timedelta(days=offset)
+        try:
+            part = schedule.fetch_todays_games(day)
+        except Exception as exc:  # noqa: BLE001 - mapping continues with partial window
+            print(f"WARNING: StatsAPI schedule fetch failed for {day}: {type(exc).__name__}: {exc}")
+            continue
+        if part is None or part.empty:
+            continue
+        frames.append(part[["game_pk", "home_team", "away_team", "game_datetime", "date"]].copy())
+    if not frames:
+        return pd.DataFrame(columns=["game_pk", "home_team", "away_team", "game_datetime", "date"])
+    out = pd.concat(frames, ignore_index=True)
+    return out.drop_duplicates(subset=["game_pk"], keep="last")
+
+
+def load_mapping_schedule(
+    *,
+    schedule_snapshots_path: str | None = None,
+    start_date=None,
+    lookahead_days: int | None = None,
+    prefer_live: bool = True,
+) -> pd.DataFrame:
+    """Schedule used to map Polymarket moneylines to ``game_pk``.
+
+    Live StatsAPI rows are preferred. Snapshot rows fill gaps for games not
+    yet/no longer in the live window. Same matchup on a different day remains
+    distinct via ``game_datetime`` + time tolerance.
+    """
+    live = (
+        fetch_live_schedule_for_mapping(start_date=start_date, lookahead_days=lookahead_days)
+        if prefer_live
+        else pd.DataFrame(columns=["game_pk", "home_team", "away_team", "game_datetime", "date"])
+    )
+    snaps = load_schedule_snapshots_for_mapping(schedule_snapshots_path)
+    if live.empty and snaps.empty:
+        return pd.DataFrame(columns=["game_pk", "home_team", "away_team", "game_datetime", "date"])
+    if live.empty:
+        return snaps
+    if snaps.empty:
+        return live
+    # Prefer live rows for overlapping game_pk values.
+    snap_only = snaps[~snaps["game_pk"].isin(set(live["game_pk"].dropna()))]
+    return pd.concat([live, snap_only], ignore_index=True).drop_duplicates(
+        subset=["game_pk"], keep="first"
+    )
+
+
 def load_registry(path: str | None = None) -> pd.DataFrame:
     path = path or config.POLYMARKET_CONTRACT_REGISTRY_PATH
     if not path or not os.path.exists(path):
@@ -177,6 +255,7 @@ def match_market_to_schedule(
     scoped["_delta_min"] = (scoped["_start"] - start).abs().dt.total_seconds() / 60.0
     within = scoped[scoped["_delta_min"] <= float(tol)].copy()
     if within.empty:
+        nearest = scoped.sort_values("_delta_min").head(3)
         return {
             "mapping_status": MAPPING_UNMATCHED,
             "game_pk": None,
@@ -187,6 +266,14 @@ def match_market_to_schedule(
                     "away": away,
                     "scheduled_start_utc": market.scheduled_start_utc,
                     "tolerance_minutes": tol,
+                    "nearest_candidates": [
+                        {
+                            "game_pk": int(row["game_pk"]) if pd.notna(row["game_pk"]) else None,
+                            "game_datetime": str(row["game_datetime"]),
+                            "delta_min": float(row["_delta_min"]),
+                        }
+                        for _, row in nearest.iterrows()
+                    ],
                 }
             ),
         }

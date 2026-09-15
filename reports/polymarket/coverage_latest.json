@@ -1,0 +1,35 @@
+{
+  "captured_at_utc": "2026-09-15T03:02:06Z",
+  "venue_id": "polymarket_us",
+  "n_markets": 42,
+  "n_schedule_games": 195,
+  "schedule_source": "live_plus_snapshots",
+  "coverage": {
+    "n_contracts": 42,
+    "n_mapped": 42,
+    "n_unmatched": 0,
+    "n_ambiguous": 0,
+    "n_incomplete": 0,
+    "mapped_rate": 1.0
+  },
+  "quote_health": {
+    "n_index_rows": 51,
+    "latest_receive_time_utc": "2026-09-15T02:56:08Z",
+    "age_seconds": 358.0,
+    "stale": true,
+    "max_age_seconds": 30.0,
+    "reason": "stale"
+  },
+  "n_books_captured": 0,
+  "sample_home_buys": [],
+  "modes": {
+    "GAME_PREDICTION_MODE": "shadow",
+    "BETTING_MODE": "disabled"
+  },
+  "notes": [
+    "Read-only capture; no orders placed.",
+    "Display prices are not fill quotes; books carry size.",
+    "Provider gameId is not MLB game_pk.",
+    "Mapping uses live StatsAPI schedule when available."
+  ]
+}

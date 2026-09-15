@@ -231,9 +231,12 @@ reports/model_validation/**
 # Polymarket quote books and local capture artifacts (not committed).
 data/polymarket/quotes/**
 !data/polymarket/quotes/.gitkeep
-data/polymarket/registry/*.csv
+data/polymarket/registry/**
 !data/polymarket/registry/.gitkeep
+!data/polymarket/registry/contracts.csv
+!data/polymarket/README.md
 reports/polymarket/**
 !reports/polymarket/.gitkeep
 !reports/polymarket/README.md
+!reports/polymarket/coverage_latest.json
 

@@ -201,9 +201,7 @@ def test_adapter_list_markets_uses_injected_http():
             return False
 
     def opener(req, timeout=30):
-        url = req.full_url if hasattr(req, "full_url") else req
-        url = str(getattr(req, "full_url", req))
-        if "/v2/leagues/" in str(req.get_full_url()):
+        if "/v2/leagues/" in req.get_full_url():
             return _Resp(payload)
         raise AssertionError(req.get_full_url())
 
@@ -211,3 +209,100 @@ def test_adapter_list_markets_uses_injected_http():
     markets = adapter.list_mlb_moneyline_markets(limit=5)
     assert len(markets) == 1
     assert markets[0].market_slug.startswith("aec-mlb-")
+
+
+def test_load_mapping_schedule_prefers_live_over_snapshots(monkeypatch):
+    live = pd.DataFrame([
+        {
+            "game_pk": 200,
+            "home_team": "CIN",
+            "away_team": "LAD",
+            "game_datetime": "2026-09-15T22:40:00Z",
+            "date": pd.Timestamp("2026-09-15"),
+        }
+    ])
+    snaps = pd.DataFrame([
+        {
+            "game_pk": 100,
+            "home_team": "CIN",
+            "away_team": "LAD",
+            "game_datetime": "2026-09-14T22:40:00Z",
+            "date": pd.Timestamp("2026-09-14"),
+        },
+        {
+            "game_pk": 200,
+            "home_team": "CIN",
+            "away_team": "LAD",
+            "game_datetime": "2026-09-15T20:00:00Z",
+            "date": pd.Timestamp("2026-09-15"),
+        },
+    ])
+    monkeypatch.setattr(
+        market_contracts,
+        "fetch_live_schedule_for_mapping",
+        lambda **kwargs: live,
+    )
+    monkeypatch.setattr(
+        market_contracts,
+        "load_schedule_snapshots_for_mapping",
+        lambda path=None: snaps,
+    )
+    out = market_contracts.load_mapping_schedule(prefer_live=True)
+    assert set(out["game_pk"]) == {100, 200}
+    row200 = out[out["game_pk"] == 200].iloc[0]
+    assert row200["game_datetime"] == "2026-09-15T22:40:00Z"
+
+
+def test_live_schedule_maps_next_day_moneyline(monkeypatch):
+    payload = _load("mlb_event_moneyline.json")
+    event = payload["events"][0]
+    market = pm_us.parse_moneyline_market(event, event["markets"][0])
+    market.home_team = "CIN"
+    market.away_team = "LAD"
+    market.scheduled_start_utc = "2026-09-15T22:40:00Z"
+    live = pd.DataFrame([
+        {
+            "game_pk": 824466,
+            "home_team": "CIN",
+            "away_team": "LAD",
+            "game_datetime": "2026-09-15T22:40:00Z",
+            "date": pd.Timestamp("2026-09-15"),
+        }
+    ])
+    monkeypatch.setattr(
+        market_contracts,
+        "fetch_live_schedule_for_mapping",
+        lambda **kwargs: live,
+    )
+    monkeypatch.setattr(
+        market_contracts,
+        "load_schedule_snapshots_for_mapping",
+        lambda path=None: pd.DataFrame(
+            [{
+                "game_pk": 824465,
+                "home_team": "CIN",
+                "away_team": "LAD",
+                "game_datetime": "2026-09-14T22:40:00Z",
+                "date": pd.Timestamp("2026-09-14"),
+            }]
+        ),
+    )
+    schedule = market_contracts.load_mapping_schedule(prefer_live=True)
+    matched = market_contracts.match_market_to_schedule(market, schedule)
+    assert matched["mapping_status"] == market_contracts.MAPPING_MAPPED
+    assert matched["game_pk"] == 824466
+
+
+def test_polymarket_capture_workflow_yaml():
+    text = (
+        Path(__file__).resolve().parents[1]
+        / ".github"
+        / "workflows"
+        / "polymarket_capture.yml"
+    ).read_text(encoding="utf-8")
+    assert "capture_polymarket.py" in text
+    assert "Does NOT place orders" in text
+    assert "GAME_PREDICTION_MODE" in text
+    assert "BETTING_MODE" in text
+    assert "upload-artifact@v4" in text
+    assert "27,57" in text
