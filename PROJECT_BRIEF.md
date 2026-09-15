@@ -8,13 +8,14 @@
 - The owner requests a thorough implementation plan and autonomous progress without repeated approval questions for already authorized work.
 - Personal bankroll, acceptable losses, and account/trade-execution authorization have not been supplied. Research and engineering can proceed with public data and paper results.
 - **Open question (venue):** which Polymarket venue the owner actually uses (US vs international) is still unconfirmed. Research remains **provisional Polymarket US** and is labeled as such in capture/health output.
+- **Owner workflow:** commit and push only to fork `0xyydeca/mlb_metrics` **`main`**. Do not create feature branches for routine work. Do not open pull requests against `JMerchen/mlb_metrics`.
 
 ## Current plan
 
 - Scope: pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
-- Phase 0 + Phase 1 base are on fork `main`. Data-foundation hardening (capture reliability, coverage waterfall, lineup/starter snapshots) is on `codex/data-foundation-trustworthy-manual`.
-- Target repo only: `0xyydeca/mlb_metrics` (do not open PRs against `JMerchen/mlb_metrics`).
-- Next after this branch merges: paper ledger / decision display (Phase 3), while quotes accumulate.
+- Data-foundation hardening is on fork **`main`** (`d9e5241` + follow-up).
+- Target repo only: `0xyydeca/mlb_metrics`.
+- Next: paper ledger / decision display (Phase 3), while quotes accumulate.
 - Full plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md).
 
 ## Evidence snapshot (verified 2026-09-15)
