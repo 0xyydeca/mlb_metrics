@@ -1,41 +1,41 @@
 {
-  "captured_at_utc": "2026-09-15T17:33:14Z",
-  "finished_at_utc": "2026-09-15T17:33:20Z",
+  "captured_at_utc": "2026-09-15T19:07:30Z",
+  "finished_at_utc": "2026-09-15T19:07:36Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
-  "n_markets": 30,
+  "n_markets": 54,
   "n_schedule_games": 210,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
-    "n_contracts": 42,
-    "n_mapped": 42,
+    "n_contracts": 57,
+    "n_mapped": 57,
     "n_unmatched": 0,
     "n_ambiguous": 0,
     "n_incomplete": 0,
     "mapped_rate": 1.0
   },
   "quote_health": {
-    "n_index_rows": 129,
-    "latest_receive_time_utc": "2026-09-15T17:33:19Z",
-    "age_seconds": 1.0,
+    "n_index_rows": 54,
+    "latest_receive_time_utc": "2026-09-15T19:07:36Z",
+    "age_seconds": 0.0,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
   },
   "per_contract_quote_health": {
-    "n_markets_checked": 42,
-    "n_fresh_eligible": 30,
-    "n_stale": 12,
+    "n_markets_checked": 57,
+    "n_fresh_eligible": 54,
+    "n_stale": 3,
     "n_ineligible": 0,
-    "n_missing": 0,
+    "n_missing": 3,
     "max_age_seconds": 30.0
   },
-  "n_books_captured": 30,
-  "n_books_written": 23,
+  "n_books_captured": 54,
+  "n_books_written": 54,
   "n_book_http_failures": 0,
   "book_failure_samples": [],
   "book_liquidity_counts": {
-    "eligible_book": 30
+    "eligible_book": 54
   },
   "sample_home_buys": [
     {
@@ -116,11 +116,11 @@
   ],
   "coverage_waterfall": {
     "n_schedule_games": 210,
-    "n_mapped_contracts": 42,
-    "n_usable_prices": 30,
-    "n_usable_baseball_snapshots": 15,
+    "n_mapped_contracts": 57,
+    "n_usable_prices": 54,
+    "n_usable_baseball_snapshots": 0,
     "removed_price_reasons": {
-      "stale_quote": 12
+      "missing_quote": 3
     },
     "removed_baseball_reasons": {},
     "notes": [
@@ -152,7 +152,7 @@
     "quote": {
       "market_id": "800758",
       "market_slug": "aec-mlb-cws-cle-2026-09-15",
-      "receive_time_utc": "2026-09-15T17:33:16Z",
+      "receive_time_utc": "2026-09-15T19:07:32Z",
       "age_seconds": 4.0,
       "stale": false,
       "eligible": true,
@@ -173,30 +173,11 @@
       "est_taker_fee_per_contract": 0.014615999999999999,
       "total_acquisition_cost_per_contract": 0.594616
     },
-    "baseball": {
-      "game_pk": "824384",
-      "date": "2026-09-15 00:00:00",
-      "game_datetime": "2026-09-15T22:40:00Z",
-      "home_team": "CLE",
-      "away_team": "CWS",
-      "status": "Scheduled",
-      "home_probable_pitcher_key_mlbam": "656492",
-      "away_probable_pitcher_key_mlbam": "669684",
-      "home_starter_status": "probable",
-      "away_starter_status": "probable",
-      "home_lineup_status": "unconfirmed",
-      "away_lineup_status": "unconfirmed",
-      "home_confirmed_starter_count": "0",
-      "away_confirmed_starter_count": "0",
-      "lineup_batting_order_source": null,
-      "usable_for_game_winner": "True",
-      "pass_reason": null,
-      "fetched_at_utc": "2026-09-15T17:33:20Z",
-      "source": "schedule_plus_lineups",
-      "as_of_limitation": null
-    },
-    "actionable": true,
-    "pass_reasons": [],
+    "baseball": null,
+    "actionable": false,
+    "pass_reasons": [
+      "missing_baseball_snapshot"
+    ],
     "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"CLE\\\", \\\"away\\\": \\\"CWS\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
   },
   "modes": {
