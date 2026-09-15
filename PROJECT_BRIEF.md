@@ -11,17 +11,16 @@
 ## Current plan
 
 - Start with pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
-- Phase 0 completed on `codex/phase-0-evidence-foundation` (`0e357fc`).
-- Phase 1 base adapter landed on `codex/phase-1-polymarket-adapter` (`565201a`).
-- Follow-up on the same branch: live StatsAPI mapping schedule + scheduled Polymarket capture workflow.
+- Phase 0 + Phase 1 (incl. mapping/capture follow-up) are on **fork** `main` at `282a3aa` (`0xyydeca/mlb_metrics` only).
+- Upstream PRs to `JMerchen/mlb_metrics` (#115, #116) were closed intentionally; do not reopen against upstream.
 - Next: Phase 2 as-of baseball inputs (lineups) while quotes accumulate; then paper ledger / decision display.
 - Full plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md).
 
 ## Evidence snapshot
 
 - Planning audit: September 14, 2026, commit `6eb45e3`.
-- Phase 0: `0e357fc`. Phase 1 adapter: `565201a`.
-- Mapping/capture hardening: in progress on `codex/phase-1-polymarket-adapter` (uncommitted until owner commits).
+- Phase 0: `0e357fc`. Phase 1 adapter: `565201a`. Mapping/capture follow-up: `282a3aa`.
+- Fork `main` includes all of the above (`282a3aa`). Upstream `JMerchen` `main` was not changed.
 - Repository: https://github.com/0xyydeca/mlb_metrics
 
 ## Current technical facts
