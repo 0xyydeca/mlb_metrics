@@ -1,8 +1,12 @@
 # Polymarket capture reports
 
-Coverage and health JSON written by `scripts/capture_polymarket.py` /
-`scripts/audit_polymarket_data.py`. Quote books live under
-`data/polymarket/quotes/` and are gitignored.
+Coverage and health JSON from `scripts/capture_polymarket.py`,
+`scripts/audit_polymarket_data.py`, and `scripts/health_polymarket.py`.
 
-Read-only research only — no order placement. `GAME_PREDICTION_MODE` and
-`BETTING_MODE` remain shadow/disabled.
+Quote books live under `data/polymarket/quotes/` (gitignored). Registry and
+coverage JSON may be committed for ops visibility.
+
+Reports distinguish **mapped contracts** from **fresh eligible books**.
+Venue research is provisional Polymarket US until the owner confirms venue.
+
+Read-only — no order placement. Modes stay shadow / betting disabled.

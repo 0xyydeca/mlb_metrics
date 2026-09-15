@@ -1,8 +1,10 @@
 {
-  "captured_at_utc": "2026-09-15T03:02:06Z",
+  "captured_at_utc": "2026-09-15T17:33:14Z",
+  "finished_at_utc": "2026-09-15T17:33:20Z",
   "venue_id": "polymarket_us",
-  "n_markets": 42,
-  "n_schedule_games": 195,
+  "venue_label": "polymarket_us_provisional_research",
+  "n_markets": 30,
+  "n_schedule_games": 210,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
     "n_contracts": 42,
@@ -13,15 +15,190 @@
     "mapped_rate": 1.0
   },
   "quote_health": {
-    "n_index_rows": 51,
-    "latest_receive_time_utc": "2026-09-15T02:56:08Z",
-    "age_seconds": 358.0,
-    "stale": true,
+    "n_index_rows": 129,
+    "latest_receive_time_utc": "2026-09-15T17:33:19Z",
+    "age_seconds": 1.0,
+    "stale": false,
     "max_age_seconds": 30.0,
-    "reason": "stale"
+    "reason": "ok"
   },
-  "n_books_captured": 0,
-  "sample_home_buys": [],
+  "per_contract_quote_health": {
+    "n_markets_checked": 42,
+    "n_fresh_eligible": 30,
+    "n_stale": 12,
+    "n_ineligible": 0,
+    "n_missing": 0,
+    "max_age_seconds": 30.0
+  },
+  "n_books_captured": 30,
+  "n_books_written": 23,
+  "n_book_http_failures": 0,
+  "book_failure_samples": [],
+  "book_liquidity_counts": {
+    "eligible_book": 30
+  },
+  "sample_home_buys": [
+    {
+      "team": "CLE",
+      "outcome_id": "1601005",
+      "is_long": false,
+      "executable_buy": 0.5800000000000001,
+      "display_price": 0.425,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.06_2026-07-01",
+      "est_taker_fee_per_contract": 0.014615999999999999,
+      "total_acquisition_cost_per_contract": 0.594616,
+      "market_id": "800758",
+      "side": "home"
+    },
+    {
+      "team": "CIN",
+      "outcome_id": "1600929",
+      "is_long": false,
+      "executable_buy": 0.31999999999999995,
+      "display_price": 0.685,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.06_2026-07-01",
+      "est_taker_fee_per_contract": 0.013055999999999998,
+      "total_acquisition_cost_per_contract": 0.33305599999999996,
+      "market_id": "800720",
+      "side": "home"
+    },
+    {
+      "team": "PIT",
+      "outcome_id": "1601075",
+      "is_long": false,
+      "executable_buy": 0.32999999999999996,
+      "display_price": 0.675,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.06_2026-07-01",
+      "est_taker_fee_per_contract": 0.013266,
+      "total_acquisition_cost_per_contract": 0.34326599999999996,
+      "market_id": "800793",
+      "side": "home"
+    },
+    {
+      "team": "TB",
+      "outcome_id": "1601065",
+      "is_long": false,
+      "executable_buy": 0.675,
+      "display_price": 0.33,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.06_2026-07-01",
+      "est_taker_fee_per_contract": 0.013162499999999999,
+      "total_acquisition_cost_per_contract": 0.6881625,
+      "market_id": "800788",
+      "side": "home"
+    },
+    {
+      "team": "WSH",
+      "outcome_id": "1600943",
+      "is_long": false,
+      "executable_buy": 0.345,
+      "display_price": 0.66,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.06_2026-07-01",
+      "est_taker_fee_per_contract": 0.013558499999999998,
+      "total_acquisition_cost_per_contract": 0.35855849999999995,
+      "market_id": "800727",
+      "side": "home"
+    }
+  ],
+  "coverage_waterfall": {
+    "n_schedule_games": 210,
+    "n_mapped_contracts": 42,
+    "n_usable_prices": 30,
+    "n_usable_baseball_snapshots": 15,
+    "removed_price_reasons": {
+      "stale_quote": 12
+    },
+    "removed_baseball_reasons": {},
+    "notes": [
+      "Mapped count is registry coverage, not live tradable books.",
+      "Usable prices require a non-stale eligible book for that market_id."
+    ]
+  },
+  "actionable": {
+    "actionable": true,
+    "suppress_reasons": []
+  },
+  "sample_contract_trace": {
+    "venue_id": "polymarket_us",
+    "market_id": "800758",
+    "market_slug": "aec-mlb-cws-cle-2026-09-15",
+    "game_pk": "824384",
+    "home_team": "CLE",
+    "away_team": "CWS",
+    "long_team": "CWS",
+    "short_team": "CLE",
+    "outcome_orientation_note": "long_team_recorded_separately_from_home_team",
+    "orientation_assumes_long_is_home": false,
+    "orientation_ok": true,
+    "rules_hash": "e062e19722c610d1",
+    "rules_text": "This market will settle to the winner of the Chicago White Sox vs Cleveland Guardians MLB game scheduled for 2026-09-15 at 6:40PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and not rescheduled to a date within two weeks of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "fee_version": "us_taker_theta_0.06_2026-07-01",
+    "price_unit": "usd_share_cost_0_to_1",
+    "quantity_unit": "contracts",
+    "quote": {
+      "market_id": "800758",
+      "market_slug": "aec-mlb-cws-cle-2026-09-15",
+      "receive_time_utc": "2026-09-15T17:33:16Z",
+      "age_seconds": 4.0,
+      "stale": false,
+      "eligible": true,
+      "best_ask": 0.425,
+      "best_bid": 0.42,
+      "pass_reason": null
+    },
+    "home_executable_buy": {
+      "team": "CLE",
+      "outcome_id": "1601005",
+      "is_long": false,
+      "executable_buy": 0.5800000000000001,
+      "display_price": 0.425,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.06_2026-07-01",
+      "est_taker_fee_per_contract": 0.014615999999999999,
+      "total_acquisition_cost_per_contract": 0.594616
+    },
+    "baseball": {
+      "game_pk": "824384",
+      "date": "2026-09-15 00:00:00",
+      "game_datetime": "2026-09-15T22:40:00Z",
+      "home_team": "CLE",
+      "away_team": "CWS",
+      "status": "Scheduled",
+      "home_probable_pitcher_key_mlbam": "656492",
+      "away_probable_pitcher_key_mlbam": "669684",
+      "home_starter_status": "probable",
+      "away_starter_status": "probable",
+      "home_lineup_status": "unconfirmed",
+      "away_lineup_status": "unconfirmed",
+      "home_confirmed_starter_count": "0",
+      "away_confirmed_starter_count": "0",
+      "lineup_batting_order_source": null,
+      "usable_for_game_winner": "True",
+      "pass_reason": null,
+      "fetched_at_utc": "2026-09-15T17:33:20Z",
+      "source": "schedule_plus_lineups",
+      "as_of_limitation": null
+    },
+    "actionable": true,
+    "pass_reasons": [],
+    "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"CLE\\\", \\\"away\\\": \\\"CWS\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
+  },
   "modes": {
     "GAME_PREDICTION_MODE": "shadow",
     "BETTING_MODE": "disabled"
@@ -30,6 +207,9 @@
     "Read-only capture; no orders placed.",
     "Display prices are not fill quotes; books carry size.",
     "Provider gameId is not MLB game_pk.",
-    "Mapping uses live StatsAPI schedule when available."
+    "Mapping success is distinct from usable price coverage.",
+    "Venue is provisional Polymarket US research until owner confirms venue.",
+    "Price unit: USD share cost in [0,1]; qty unit: contracts.",
+    "Expect ~0.2\u20130.5s per market book plus event list; a 40-market capture typically finishes in well under 60s when the gateway is healthy."
   ]
 }

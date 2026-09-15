@@ -181,6 +181,7 @@ def latest_quote_age_seconds(
             "latest_receive_time_utc": None,
             "age_seconds": None,
             "stale": True,
+            "max_age_seconds": float(config.POLYMARKET_QUOTE_MAX_AGE_SECONDS),
             "reason": "no_quotes",
         }
     latest = pd.Timestamp(idx["receive_time_utc"].max(), tz="UTC")
@@ -193,4 +194,124 @@ def latest_quote_age_seconds(
         "stale": age > max_age,
         "max_age_seconds": max_age,
         "reason": "ok" if age <= max_age else "stale",
+    }
+
+
+def latest_quotes_by_market(store_dir: str | None = None) -> pd.DataFrame:
+    """Latest index row per market_id (by receive_time_utc)."""
+    idx = load_quote_index(store_dir)
+    if idx.empty:
+        return pd.DataFrame(columns=INDEX_COLUMNS)
+    frame = idx.copy()
+    frame["_ts"] = pd.to_datetime(frame["receive_time_utc"], utc=True, errors="coerce")
+    frame = frame.sort_values("_ts")
+    latest = frame.drop_duplicates(subset=["market_id"], keep="last")
+    return latest.drop(columns=["_ts"], errors="ignore")
+
+
+def per_contract_quote_health(
+    store_dir: str | None = None,
+    *,
+    market_ids: list[str] | None = None,
+    now_utc: str | None = None,
+    max_age_seconds: float | None = None,
+) -> dict[str, Any]:
+    """Freshness and eligibility for each contract (not just the global latest row)."""
+    now = pd.Timestamp(now_utc or _utc_now_iso(), tz="UTC")
+    max_age = float(
+        config.POLYMARKET_QUOTE_MAX_AGE_SECONDS if max_age_seconds is None else max_age_seconds
+    )
+    latest = latest_quotes_by_market(store_dir)
+    if market_ids is not None:
+        wanted = {str(x) for x in market_ids}
+        present = set(latest["market_id"].astype(str)) if not latest.empty else set()
+        missing = sorted(wanted - present)
+    else:
+        missing = []
+        wanted = set(latest["market_id"].astype(str)) if not latest.empty else set()
+
+    rows = []
+    n_fresh = n_stale = n_ineligible = 0
+    for _, row in latest.iterrows():
+        mid = str(row["market_id"])
+        if market_ids is not None and mid not in wanted:
+            continue
+        recv = pd.Timestamp(row["receive_time_utc"], tz="UTC")
+        age = float((now - recv).total_seconds())
+        stale = age > max_age
+        eligible = bool(row.get("eligible"))
+        reason = None
+        if stale:
+            reason = "stale_quote"
+            n_stale += 1
+        elif not eligible:
+            reason = str(row.get("eligibility_reason") or "ineligible")
+            n_ineligible += 1
+        else:
+            n_fresh += 1
+        rows.append(
+            {
+                "market_id": mid,
+                "market_slug": row.get("market_slug"),
+                "receive_time_utc": row.get("receive_time_utc"),
+                "age_seconds": age,
+                "stale": stale,
+                "eligible": eligible,
+                "best_ask": row.get("best_ask"),
+                "best_bid": row.get("best_bid"),
+                "pass_reason": reason,
+            }
+        )
+    for mid in missing:
+        rows.append(
+            {
+                "market_id": mid,
+                "market_slug": None,
+                "receive_time_utc": None,
+                "age_seconds": None,
+                "stale": True,
+                "eligible": False,
+                "best_ask": None,
+                "best_bid": None,
+                "pass_reason": "missing_quote",
+            }
+        )
+    return {
+        "n_markets_checked": int(len(wanted) if market_ids is not None else len(rows)),
+        "n_fresh_eligible": int(n_fresh),
+        "n_stale": int(n_stale + len(missing)),
+        "n_ineligible": int(n_ineligible),
+        "n_missing": int(len(missing)),
+        "max_age_seconds": max_age,
+        "contracts": rows,
+    }
+
+
+def actionable_suppressed(
+    *,
+    quote_health: dict[str, Any] | None = None,
+    collector_heartbeat_utc: str | None = None,
+    now_utc: str | None = None,
+    max_heartbeat_age_seconds: float | None = None,
+) -> dict[str, Any]:
+    """Suppress actionable output after sleep/outage/stale collector inputs."""
+    now = pd.Timestamp(now_utc or _utc_now_iso(), tz="UTC")
+    max_hb = float(
+        config.POLYMARKET_QUOTE_MAX_AGE_SECONDS
+        if max_heartbeat_age_seconds is None
+        else max_heartbeat_age_seconds
+    )
+    reasons: list[str] = []
+    if quote_health and quote_health.get("stale"):
+        reasons.append(f"global_quotes_{quote_health.get('reason') or 'stale'}")
+    if collector_heartbeat_utc:
+        hb = pd.Timestamp(collector_heartbeat_utc, tz="UTC")
+        age = float((now - hb).total_seconds())
+        if age > max_hb:
+            reasons.append("collector_heartbeat_stale")
+    elif collector_heartbeat_utc is None and quote_health and quote_health.get("reason") == "no_quotes":
+        reasons.append("no_collector_heartbeat")
+    return {
+        "actionable": len(reasons) == 0,
+        "suppress_reasons": reasons,
     }

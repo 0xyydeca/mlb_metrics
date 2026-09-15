@@ -30,6 +30,7 @@ SNAPSHOT_COLUMNS = [
     "game_pk", "team", "opponent", "key_mlbam", "batting_order",
     "is_confirmed_starter", "lineup_status", "fetched_at_utc",
     "game_datetime", "source", "snapshot_id", "as_of_date",
+    "batting_order_source",
 ]
 
 LINEUP_STATUS_CONFIRMED = "confirmed"
@@ -80,10 +81,11 @@ def normalize_snapshot_frame(df: pd.DataFrame) -> pd.DataFrame:
 def parse_statsapi_schedule_lineups(raw: dict, *, fetched_at_utc: str | None = None) -> pd.DataFrame:
     """Parse a schedule+lineups hydrate response into snapshot rows.
 
-    Field paths follow the common MLB Stats API ``lineups`` hydrate shape
-    and are still **provisional** until
-    ``config.LINEUP_API_SCHEMA_CONFIRMED`` is flipped after Stage A. When
-    confirmation is false, callers should not use this for live traffic.
+    Verified Stage A paths (Final game_pk 824465, 2026-09-14):
+    - ``dates[].games[].gamePk``, ``gameDate``
+    - ``lineups.homePlayers`` / ``lineups.awayPlayers`` with player ``id``
+    - No ``battingOrder`` on this hydrate; announced order is list index
+      (1..n). That order can diverge from post-start boxscore battingOrder.
     """
     fetched_at_utc = fetched_at_utc or utc_now_iso()
     rows = []
@@ -101,7 +103,6 @@ def parse_statsapi_schedule_lineups(raw: dict, *, fetched_at_utc: str | None = N
                 continue
 
             lineups = game.get("lineups") or {}
-            # Common shapes: homePlayers/awayPlayers OR nested under team side.
             home_players = lineups.get("homePlayers") or lineups.get("home") or []
             away_players = lineups.get("awayPlayers") or lineups.get("away") or []
             if isinstance(home_players, dict):
@@ -113,21 +114,29 @@ def parse_statsapi_schedule_lineups(raw: dict, *, fetched_at_utc: str | None = N
             status = LINEUP_STATUS_CONFIRMED if confirmed else LINEUP_STATUS_UNCONFIRMED
 
             def _emit(players, team, opponent):
-                for p in players or []:
+                for idx, p in enumerate(players or [], start=1):
                     person = p.get("id") or (p.get("person") or {}).get("id")
                     if person is None:
                         continue
                     raw_order = p.get("battingOrder")
                     if raw_order is None:
                         raw_order = p.get("batting_order")
-                    # MLB often encodes order as 100,200,...,900
                     order = None
+                    order_source = None
                     if raw_order is not None:
                         try:
                             order_i = int(raw_order)
                             order = order_i // 100 if order_i >= 100 else order_i
+                            order_source = "player_battingOrder_field"
                         except (TypeError, ValueError):
                             order = None
+                    if order is None:
+                        # Schedule hydrate commonly omits battingOrder; list
+                        # position is the announced order only.
+                        order = idx if idx <= STARTER_MAX_SLOT else None
+                        order_source = (
+                            config.LINEUP_BATTING_ORDER_SOURCE if order is not None else None
+                        )
                     is_starter = bool(order is not None and 1 <= int(order) <= STARTER_MAX_SLOT)
                     rows.append({
                         "game_pk": game_pk,
@@ -143,6 +152,7 @@ def parse_statsapi_schedule_lineups(raw: dict, *, fetched_at_utc: str | None = N
                         "game_datetime": game_datetime,
                         "source": SOURCE_STATSAPI,
                         "as_of_date": as_of,
+                        "batting_order_source": order_source,
                     })
 
             _emit(home_players, home_abbrev, away_abbrev)

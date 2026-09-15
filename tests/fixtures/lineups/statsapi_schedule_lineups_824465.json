@@ -1,0 +1,452 @@
+{
+  "dates": [
+    {
+      "date": "2026-09-14",
+      "games": [
+        {
+          "gamePk": 824465,
+          "gameGuid": "20ac7e68-b0ab-40b1-a3fe-20b4d0cf6055",
+          "link": "/api/v1.1/game/824465/feed/live",
+          "gameType": "R",
+          "season": "2026",
+          "gameDate": "2026-09-14T22:40:00Z",
+          "officialDate": "2026-09-14",
+          "status": {
+            "abstractGameState": "Final",
+            "codedGameState": "F",
+            "detailedState": "Final",
+            "statusCode": "F",
+            "startTimeTBD": false,
+            "abstractGameCode": "F"
+          },
+          "teams": {
+            "away": {
+              "team": {
+                "springLeague": {
+                  "id": 114,
+                  "name": "Cactus League",
+                  "link": "/api/v1/league/114",
+                  "abbreviation": "CL"
+                },
+                "allStarStatus": "N",
+                "id": 119,
+                "name": "Los Angeles Dodgers",
+                "link": "/api/v1/teams/119",
+                "season": 2026,
+                "venue": {
+                  "id": 22,
+                  "name": "UNIQLO Field at Dodger Stadium",
+                  "link": "/api/v1/venues/22"
+                },
+                "springVenue": {
+                  "id": 3809,
+                  "link": "/api/v1/venues/3809"
+                },
+                "teamCode": "lan",
+                "fileCode": "la",
+                "abbreviation": "LAD",
+                "teamName": "Dodgers",
+                "locationName": "Los Angeles",
+                "firstYearOfPlay": "1884",
+                "league": {
+                  "id": 104,
+                  "name": "National League",
+                  "link": "/api/v1/league/104"
+                },
+                "division": {
+                  "id": 203,
+                  "name": "National League West",
+                  "link": "/api/v1/divisions/203"
+                },
+                "sport": {
+                  "id": 1,
+                  "link": "/api/v1/sports/1",
+                  "name": "Major League Baseball"
+                },
+                "shortName": "LA Dodgers",
+                "franchiseName": "Los Angeles",
+                "clubName": "Dodgers",
+                "active": true
+              },
+              "leagueRecord": {
+                "wins": 91,
+                "losses": 59,
+                "ties": 0,
+                "pct": ".607"
+              },
+              "score": 4,
+              "isWinner": true,
+              "probablePitcher": {
+                "id": 669373,
+                "fullName": "Tarik Skubal",
+                "link": "/api/v1/people/669373"
+              },
+              "splitSquad": false,
+              "seriesNumber": 49,
+              "springLeague": {
+                "id": 114,
+                "name": "Cactus League",
+                "link": "/api/v1/league/114",
+                "abbreviation": "CL"
+              }
+            },
+            "home": {
+              "team": {
+                "springLeague": {
+                  "id": 114,
+                  "name": "Cactus League",
+                  "link": "/api/v1/league/114",
+                  "abbreviation": "CL"
+                },
+                "allStarStatus": "N",
+                "id": 113,
+                "name": "Cincinnati Reds",
+                "link": "/api/v1/teams/113",
+                "season": 2026,
+                "venue": {
+                  "id": 2602,
+                  "name": "Great American Ball Park",
+                  "link": "/api/v1/venues/2602"
+                },
+                "springVenue": {
+                  "id": 3834,
+                  "link": "/api/v1/venues/3834"
+                },
+                "teamCode": "cin",
+                "fileCode": "cin",
+                "abbreviation": "CIN",
+                "teamName": "Reds",
+                "locationName": "Cincinnati",
+                "firstYearOfPlay": "1882",
+                "league": {
+                  "id": 104,
+                  "name": "National League",
+                  "link": "/api/v1/league/104"
+                },
+                "division": {
+                  "id": 205,
+                  "name": "National League Central",
+                  "link": "/api/v1/divisions/205"
+                },
+                "sport": {
+                  "id": 1,
+                  "link": "/api/v1/sports/1",
+                  "name": "Major League Baseball"
+                },
+                "shortName": "Cincinnati",
+                "franchiseName": "Cincinnati",
+                "clubName": "Reds",
+                "active": true
+              },
+              "leagueRecord": {
+                "wins": 70,
+                "losses": 80,
+                "ties": 0,
+                "pct": ".467"
+              },
+              "score": 1,
+              "isWinner": false,
+              "probablePitcher": {
+                "id": 666157,
+                "fullName": "Nick Lodolo",
+                "link": "/api/v1/people/666157"
+              },
+              "splitSquad": false,
+              "seriesNumber": 49,
+              "springLeague": {
+                "id": 114,
+                "name": "Cactus League",
+                "link": "/api/v1/league/114",
+                "abbreviation": "CL"
+              }
+            }
+          },
+          "venue": {
+            "id": 2602,
+            "name": "Great American Ball Park",
+            "link": "/api/v1/venues/2602"
+          },
+          "content": {
+            "link": "/api/v1/game/824465/content"
+          },
+          "isTie": false,
+          "gameNumber": 1,
+          "publicFacing": true,
+          "doubleHeader": "N",
+          "gamedayType": "P",
+          "tiebreaker": "N",
+          "calendarEventID": "14-824465-2026-09-14",
+          "seasonDisplay": "2026",
+          "dayNight": "night",
+          "scheduledInnings": 9,
+          "reverseHomeAwayStatus": false,
+          "inningBreakLength": 120,
+          "gamesInSeries": 4,
+          "seriesGameNumber": 1,
+          "seriesDescription": "Regular Season",
+          "recordSource": "S",
+          "ifNecessary": "N",
+          "ifNecessaryDescription": "Normal Game",
+          "lineups": {
+            "homePlayers": [
+              {
+                "id": 667472,
+                "fullName": "Dane Myers",
+                "link": "/api/v1/people/667472",
+                "firstName": "Dane",
+                "lastName": "Myers",
+                "primaryPosition": {
+                  "code": "8",
+                  "name": "Outfielder",
+                  "type": "Outfielder",
+                  "abbreviation": "CF"
+                },
+                "useName": "Dane"
+              },
+              {
+                "id": 682829,
+                "fullName": "Elly De La Cruz",
+                "link": "/api/v1/people/682829",
+                "firstName": "Elly",
+                "lastName": "De La Cruz",
+                "primaryPosition": {
+                  "code": "6",
+                  "name": "Shortstop",
+                  "type": "Infielder",
+                  "abbreviation": "SS"
+                },
+                "useName": "Elly"
+              },
+              {
+                "id": 701398,
+                "fullName": "Sal Stewart",
+                "link": "/api/v1/people/701398",
+                "firstName": "Sal",
+                "lastName": "Stewart",
+                "primaryPosition": {
+                  "code": "3",
+                  "name": "First Base",
+                  "type": "Infielder",
+                  "abbreviation": "1B"
+                },
+                "useName": "Sal"
+              },
+              {
+                "id": 663886,
+                "fullName": "Tyler Stephenson",
+                "link": "/api/v1/people/663886",
+                "firstName": "Tyler",
+                "lastName": "Stephenson",
+                "primaryPosition": {
+                  "code": "2",
+                  "name": "Catcher",
+                  "type": "Catcher",
+                  "abbreviation": "C"
+                },
+                "useName": "Tyler"
+              },
+              {
+                "id": 553993,
+                "fullName": "Eugenio Su\u00e1rez",
+                "link": "/api/v1/people/553993",
+                "firstName": "Eugenio",
+                "lastName": "Su\u00e1rez",
+                "primaryPosition": {
+                  "code": "10",
+                  "name": "Designated Hitter",
+                  "type": "Hitter",
+                  "abbreviation": "DH"
+                },
+                "useName": "Eugenio"
+              },
+              {
+                "id": 682877,
+                "fullName": "Juan Brito",
+                "link": "/api/v1/people/682877",
+                "firstName": "Juan",
+                "lastName": "Brito",
+                "primaryPosition": {
+                  "code": "4",
+                  "name": "Second Base",
+                  "type": "Infielder",
+                  "abbreviation": "2B"
+                },
+                "useName": "Juan"
+              },
+              {
+                "id": 668709,
+                "fullName": "JJ Bleday",
+                "link": "/api/v1/people/668709",
+                "firstName": "Jeffrey",
+                "lastName": "Bleday",
+                "primaryPosition": {
+                  "code": "7",
+                  "name": "Outfielder",
+                  "type": "Outfielder",
+                  "abbreviation": "LF"
+                },
+                "useName": "JJ"
+              },
+              {
+                "id": 663647,
+                "fullName": "Ke'Bryan Hayes",
+                "link": "/api/v1/people/663647",
+                "firstName": "Ke'Bryan",
+                "lastName": "Hayes",
+                "primaryPosition": {
+                  "code": "5",
+                  "name": "Third Base",
+                  "type": "Infielder",
+                  "abbreviation": "3B"
+                },
+                "useName": "Ke'Bryan"
+              },
+              {
+                "id": 699302,
+                "fullName": "H\u00e9ctor Rodr\u00edguez",
+                "link": "/api/v1/people/699302",
+                "firstName": "H\u00e9ctor",
+                "lastName": "Rodr\u00edguez",
+                "primaryPosition": {
+                  "code": "9",
+                  "name": "Outfielder",
+                  "type": "Outfielder",
+                  "abbreviation": "RF"
+                },
+                "useName": "H\u00e9ctor"
+              }
+            ],
+            "awayPlayers": [
+              {
+                "id": 669242,
+                "fullName": "Tommy Edman",
+                "link": "/api/v1/people/669242",
+                "firstName": "Thomas",
+                "lastName": "Edman",
+                "primaryPosition": {
+                  "code": "8",
+                  "name": "Outfielder",
+                  "type": "Outfielder",
+                  "abbreviation": "CF"
+                },
+                "useName": "Tommy"
+              },
+              {
+                "id": 605141,
+                "fullName": "Mookie Betts",
+                "link": "/api/v1/people/605141",
+                "firstName": "Markus",
+                "lastName": "Betts",
+                "primaryPosition": {
+                  "code": "6",
+                  "name": "Shortstop",
+                  "type": "Infielder",
+                  "abbreviation": "SS"
+                },
+                "useName": "Mookie"
+              },
+              {
+                "id": 669257,
+                "fullName": "Will Smith",
+                "link": "/api/v1/people/669257",
+                "firstName": "William",
+                "lastName": "Smith",
+                "primaryPosition": {
+                  "code": "2",
+                  "name": "Catcher",
+                  "type": "Catcher",
+                  "abbreviation": "C"
+                },
+                "useName": "Will"
+              },
+              {
+                "id": 663656,
+                "fullName": "Kyle Tucker",
+                "link": "/api/v1/people/663656",
+                "firstName": "Kyle",
+                "lastName": "Tucker",
+                "primaryPosition": {
+                  "code": "9",
+                  "name": "Outfielder",
+                  "type": "Outfielder",
+                  "abbreviation": "RF"
+                },
+                "useName": "Kyle"
+              },
+              {
+                "id": 606192,
+                "fullName": "Teoscar Hern\u00e1ndez",
+                "link": "/api/v1/people/606192",
+                "firstName": "Teoscar",
+                "lastName": "Hern\u00e1ndez",
+                "primaryPosition": {
+                  "code": "7",
+                  "name": "Outfielder",
+                  "type": "Outfielder",
+                  "abbreviation": "LF"
+                },
+                "useName": "Teoscar"
+              },
+              {
+                "id": 500743,
+                "fullName": "Miguel Rojas",
+                "link": "/api/v1/people/500743",
+                "firstName": "Miguel",
+                "lastName": "Rojas",
+                "primaryPosition": {
+                  "code": "4",
+                  "name": "Second Base",
+                  "type": "Infielder",
+                  "abbreviation": "2B"
+                },
+                "useName": "Miguel"
+              },
+              {
+                "id": 571970,
+                "fullName": "Max Muncy",
+                "link": "/api/v1/people/571970",
+                "firstName": "Maxwell",
+                "lastName": "Muncy",
+                "primaryPosition": {
+                  "code": "5",
+                  "name": "Third Base",
+                  "type": "Infielder",
+                  "abbreviation": "3B"
+                },
+                "useName": "Max"
+              },
+              {
+                "id": 571771,
+                "fullName": "Enrique Hern\u00e1ndez",
+                "link": "/api/v1/people/571771",
+                "firstName": "Enrique",
+                "lastName": "Hern\u00e1ndez",
+                "primaryPosition": {
+                  "code": "3",
+                  "name": "First Base",
+                  "type": "Infielder",
+                  "abbreviation": "1B"
+                },
+                "useName": "Enrique"
+              },
+              {
+                "id": 800543,
+                "fullName": "Josue De Paula",
+                "link": "/api/v1/people/800543",
+                "firstName": "Josue",
+                "lastName": "De Paula",
+                "primaryPosition": {
+                  "code": "10",
+                  "name": "Designated Hitter",
+                  "type": "Hitter",
+                  "abbreviation": "DH"
+                },
+                "useName": "Josue"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

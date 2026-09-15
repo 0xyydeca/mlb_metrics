@@ -68,6 +68,17 @@ jobs:
         run: |
           PYTHONPATH=src python scripts/audit_polymarket_data.py
 
+      - name: Health check (mapping vs usable prices)
+        if: always()
+        run: |
+          PYTHONPATH=src python scripts/health_polymarket.py || {
+            code=$?
+            if [ "$code" -eq 2 ]; then
+              echo "::warning::Mapped contracts without fresh eligible books (not a mapping failure)."
+              exit 0
+            fi
+            exit "$code"
+          }
       - name: Confirm modes unchanged
         run: |
           PYTHONPATH=src python - <<'PY'

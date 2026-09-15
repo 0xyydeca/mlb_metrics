@@ -7,53 +7,68 @@
 - The owner delegates market selection to the agent based on evidence about wins, odds, costs, and risk.
 - The owner requests a thorough implementation plan and autonomous progress without repeated approval questions for already authorized work.
 - Personal bankroll, acceptable losses, and account/trade-execution authorization have not been supplied. Research and engineering can proceed with public data and paper results.
+- **Open question (venue):** which Polymarket venue the owner actually uses (US vs international) is still unconfirmed. Research remains **provisional Polymarket US** and is labeled as such in capture/health output.
 
 ## Current plan
 
-- Start with pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
-- Phase 0 + Phase 1 (incl. mapping/capture follow-up) are on **fork** `main` at `282a3aa` (`0xyydeca/mlb_metrics` only).
-- Upstream PRs to `JMerchen/mlb_metrics` (#115, #116) were closed intentionally; do not reopen against upstream.
-- Next: Phase 2 as-of baseball inputs (lineups) while quotes accumulate; then paper ledger / decision display.
+- Scope: pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
+- Phase 0 + Phase 1 base are on fork `main`. Data-foundation hardening (capture reliability, coverage waterfall, lineup/starter snapshots) is on `codex/data-foundation-trustworthy-manual`.
+- Target repo only: `0xyydeca/mlb_metrics` (do not open PRs against `JMerchen/mlb_metrics`).
+- Next after this branch merges: paper ledger / decision display (Phase 3), while quotes accumulate.
 - Full plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md).
 
-## Evidence snapshot
+## Evidence snapshot (verified 2026-09-15)
 
-- Planning audit: September 14, 2026, commit `6eb45e3`.
-- Phase 0: `0e357fc`. Phase 1 adapter: `565201a`. Mapping/capture follow-up: `282a3aa`.
-- Fork `main` includes all of the above (`282a3aa`). Upstream `JMerchen` `main` was not changed.
+- Planning audit baseline: commit `6eb45e3`.
+- Prior Phase 0/1 commits: `0e357fc`, `565201a`, `282a3aa`.
+- Saved coverage report that showed **42 mapped / 0 books / stale quotes** was diagnosed as a **collector run with zero successful book fetches** (failures previously swallowed), not proof of empty market liquidity. Live recheck on 2026-09-15: books parse successfully; sample run captured **25/25 eligible books** with `http_failures=0`.
+- Live API schema check: `GET /v1/markets/{slug}/book` returns `marketData.bids` / `offers` with `{px:{value}, qty}` and `state`; units are USD share cost in `[0,1]` and contract quantities.
+- Mapping ≠ usable prices: registry can be 42/42 mapped while only the contracts with fresh eligible books count as usable (example after `--limit 25`: usable_prices=25; older mapped rows may be stale).
+- Lineup Stage A: schedule `lineups.homePlayers/awayPlayers` expose MLBAM `id` when announced; **no `battingOrder` field**. List index is announced order only and can diverge from post-start boxscore (verified Final `game_pk=824465`). Today’s slate often has lineups unconfirmed until near start; probable pitchers are available earlier.
+- Modes unchanged: `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`.
 - Repository: https://github.com/0xyydeca/mlb_metrics
 
 ## Current technical facts
 
-- Selected research venue: **Polymarket US** (public gateway). International remains unsupported stub.
-- Mapping schedule: live StatsAPI for `today_local()` + `POLYMARKET_SCHEDULE_LOOKAHEAD_DAYS` (3), merged with snapshot rows for gaps.
-- Capture: `scripts/capture_polymarket.py` / `scripts/audit_polymarket_data.py`.
-- Workflow: `.github/workflows/polymarket_capture.yml` cron `:27/:57` in the MLB window; uploads quote artifacts; commits registry + coverage JSON only.
-- Registry/coverage are trackable; quote Parquet remains gitignored.
-- Modes: `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`.
+- Research venue label: `polymarket_us_provisional_research` (public gateway; no paid dependency for capture).
+- Capture: `scripts/capture_polymarket.py` (retries/backoff, book failure taxonomy, liquidity vs HTTP failure, coverage waterfall, optional `--with-baseball`).
+- Health: `scripts/health_polymarket.py` and `scripts/audit_polymarket_data.py` — report mapping and usable price coverage separately.
+- Quotes: date-partitioned Parquet + index; idempotent by `raw_response_hash`; gitignored; workflow artifacts upload quotes.
+- Registry/coverage JSON are trackable.
+- Baseball inputs: `game_baseball_snapshots.py` + lineup parser with `LINEUP_API_SCHEMA_CONFIRMED=True` and explicit `batting_order_source=schedule_lineups_list_index`.
+- Fee schedules versioned in `config.POLYMARKET_US_FEE_SCHEDULES` (θ=0.06; θ=0.0695 from `2026-09-17T03:59:00Z`).
 
-## Mapping/capture follow-up (verified)
+## Commands
 
-- Root cause of low mapping: schedule snapshots lagged Polymarket listings (Sep 15 evening games absent).
-- Fix: `market_contracts.load_mapping_schedule()` prefers live StatsAPI games.
-- Live check after fix: **30 mapped / 12 unmatched** on a 30–50 market pull (unmatched mostly Sep 17–18 beyond prior 2-day window; lookahead raised to 3).
-- Wrong-day same matchups stay unmatched via time tolerance (e.g. Sep 14 CIN/LAD vs Sep 15 listing).
-- Tests: `tests/test_polymarket_phase1.py` **12 passed**.
+```bash
+# Collection (read-only)
+PYTHONPATH=src python scripts/capture_polymarket.py
+PYTHONPATH=src python scripts/capture_polymarket.py --limit 50 --with-baseball
 
-## Remaining blockers
+# Health / audit (mapping vs usable prices)
+PYTHONPATH=src python scripts/health_polymarket.py
+PYTHONPATH=src python scripts/audit_polymarket_data.py
 
-- Residual model still lacks enough sportsbook history / artifact.
-- Polymarket quote history just starting; no paper ledger / decision UI yet.
-- Owner bankroll and live-trading authorization still unknown; betting stays disabled.
-- Actions schedule on the fork may lag until the workflow has run a few times.
+# Lineup schema probe
+PYTHONPATH=src python scripts/debug_statsapi_lineups.py
+```
+
+Runtime note: expect roughly 0.2–0.5s per market book; a ~40-market capture is typically well under 60s when the gateway is healthy. Actionable freshness target remains 30s per contract — cron every 30 minutes cannot keep all contracts fresh between runs; decisions must re-check.
+
+## Checks run
+
+- `pytest tests/test_data_foundation.py tests/test_polymarket_phase1.py tests/test_lineup_snapshots.py tests/test_market_odds_snapshots.py tests/test_game_residual_model.py` → **73 passed**.
+- Live capture + health on 2026-09-15 → books captured; sample contract traced (mapping, book, fee version, home executable buy, probable pitchers; lineups unconfirmed for today’s games).
+
+## Remaining blockers / gaps
+
+- Owner venue confirmation (US vs international) still open.
+- Residual model still lacks enough sportsbook history / artifact for independent promotion.
+- Confirmed batting lineups are often absent until near first pitch; game-winner usability currently keys off **probable pitchers**, with lineup status recorded separately.
+- Paper ledger / decision UI not built yet.
+- Fork Actions Polymarket workflow had **0 runs** observed at diagnosis time; schedule may still need a few successful executions.
+- Do not treat mapped_rate as tradable coverage.
 
 ## Next implementation task
 
-Phase 2: confirmed lineup / as-of baseball inputs for game-winner features, while scheduled Polymarket capture accumulates books.
-
-## Sources
-
-- [Polymarket US sports data](https://docs.polymarket.us/data-guide/sports-data)
-- [US market book](https://docs.polymarket.us/api-reference/markets/get-market-book)
-- [US fees](https://docs.polymarket.us/fees)
-- [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md)
+Phase 3 paper ledger + local decision display that consumes traced quotes/fees/baseball pass reasons, still with betting disabled.

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -26,6 +27,7 @@ from mlb_metrics.venues.base import (
 VENUE_ID = "polymarket_us"
 MONEYLINE_TYPE_V2 = "SPORTS_MARKET_TYPE_MONEYLINE"
 USER_AGENT = "mlb_metrics-polymarket-research/1.0 (+read-only; no trading)"
+# Price unit: USD cost per Yes share in [0, 1]. Size unit: contracts.
 
 
 def _utc_now_iso() -> str:
@@ -338,10 +340,27 @@ class PolymarketUSAdapter:
         base_url: str | None = None,
         timeout_seconds: float = 30.0,
         opener=None,
+        max_retries: int | None = None,
+        retry_backoff_seconds: float | None = None,
+        min_interval_seconds: float | None = None,
     ):
         self.base_url = (base_url or config.POLYMARKET_US_API_BASE_URL).rstrip("/")
         self.timeout_seconds = float(timeout_seconds)
         self._opener = opener
+        self.max_retries = int(
+            config.POLYMARKET_HTTP_MAX_RETRIES if max_retries is None else max_retries
+        )
+        self.retry_backoff_seconds = float(
+            config.POLYMARKET_HTTP_RETRY_BACKOFF_SECONDS
+            if retry_backoff_seconds is None
+            else retry_backoff_seconds
+        )
+        self.min_interval_seconds = float(
+            config.POLYMARKET_HTTP_MIN_INTERVAL_SECONDS
+            if min_interval_seconds is None
+            else min_interval_seconds
+        )
+        self._last_request_monotonic: float | None = None
 
     def capabilities(self) -> VenueCapabilities:
         return VenueCapabilities(
@@ -356,21 +375,44 @@ class PolymarketUSAdapter:
     def fee_schedule_as_of(self, as_of_utc: str | None = None) -> FeeSchedule:
         return select_fee_schedule(as_of_utc=as_of_utc)
 
+    def _throttle(self) -> None:
+        if self.min_interval_seconds <= 0:
+            return
+        now = time.monotonic()
+        if self._last_request_monotonic is not None:
+            elapsed = now - self._last_request_monotonic
+            wait = self.min_interval_seconds - elapsed
+            if wait > 0:
+                time.sleep(wait)
+        self._last_request_monotonic = time.monotonic()
+
     def _http_get_json(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         query = urllib.parse.urlencode(params or {}, doseq=True)
         url = f"{self.base_url}{path}"
         if query:
             url = f"{url}?{query}"
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
-        try:
-            if self._opener is not None:
-                with self._opener(req, timeout=self.timeout_seconds) as resp:
+        last_exc: Exception | None = None
+        for attempt in range(self.max_retries + 1):
+            self._throttle()
+            try:
+                if self._opener is not None:
+                    with self._opener(req, timeout=self.timeout_seconds) as resp:
+                        return json.loads(resp.read().decode("utf-8"))
+                with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:
                     return json.loads(resp.read().decode("utf-8"))
-            with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as exc:
-            body = exc.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"Polymarket US HTTP {exc.code} for {url}: {body[:300]}") from exc
+            except urllib.error.HTTPError as exc:
+                body = exc.read().decode("utf-8", errors="replace")
+                last_exc = RuntimeError(f"Polymarket US HTTP {exc.code} for {url}: {body[:300]}")
+                # Retry rate limits and transient gateway errors only.
+                if exc.code not in (408, 425, 429, 500, 502, 503, 504):
+                    raise last_exc from exc
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+                last_exc = RuntimeError(f"Polymarket US request failed for {url}: {exc}")
+            if attempt < self.max_retries:
+                time.sleep(self.retry_backoff_seconds * (2**attempt))
+        assert last_exc is not None
+        raise last_exc
 
     def list_league_events(
         self,

@@ -301,6 +301,7 @@ def test_polymarket_capture_workflow_yaml():
         / "polymarket_capture.yml"
     ).read_text(encoding="utf-8")
     assert "capture_polymarket.py" in text
+    assert "health_polymarket.py" in text
     assert "Does NOT place orders" in text
     assert "GAME_PREDICTION_MODE" in text
     assert "BETTING_MODE" in text

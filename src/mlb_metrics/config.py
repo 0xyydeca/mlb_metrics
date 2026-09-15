@@ -407,15 +407,23 @@ LINEUP_MIN_START_RATE = 0.6
 HITTER_OPPORTUNITY_LOOKBACK_TEAM_GAMES = 10
 HITTER_OPPORTUNITY_LOOKBACK_CALENDAR_DAYS = 14
 
-# Confirmed-lineup snapshots (mlb_metrics.lineup_snapshots). Stage A
-# (scripts/debug_statsapi_lineups.py) must confirm the live Stats API
-# field paths before flipping LINEUP_API_SCHEMA_CONFIRMED to True.
-LINEUP_API_SCHEMA_CONFIRMED = False
+# Confirmed-lineup snapshots (mlb_metrics.lineup_snapshots).
+# Stage A (2026-09-15): schedule hydrate ``lineups`` exposes
+# ``homePlayers`` / ``awayPlayers`` with MLBAM ``id`` when announced.
+# There is no ``battingOrder`` field on that hydrate; list position is the
+# announced order only and can diverge from post-start boxscore
+# ``battingOrder`` (verified vs Final game_pk 824465). Boxscore order is
+# post-start knowledge and must not silently rewrite historical features.
+LINEUP_API_SCHEMA_CONFIRMED = True
+LINEUP_BATTING_ORDER_SOURCE = "schedule_lineups_list_index"
 LINEUP_CONFIRMED_SCRATCH_RISK = 0.02  # P(scratch | confirmed starter) before first pitch
 LINEUP_SNAPSHOT_AUDIT_PATH = "data/predictions/lineup_snapshots_audit.csv"
 LINEUP_SNAPSHOT_LATEST_PATH = "data/predictions/lineup_snapshots_latest.csv"
 LINEUP_LOCK_WINDOW_HOURS = 6.0  # only recompute unstarted games starting within this window
 LINEUP_LOCK_SHADOW_DECISIONS_PATH = "data/predictions/lineup_lock_runs.csv"
+# Game-level baseball input snapshots for Polymarket decision coverage.
+GAME_BASEBALL_SNAPSHOT_AUDIT_PATH = "data/predictions/game_baseball_snapshots_audit.csv"
+GAME_BASEBALL_SNAPSHOT_LATEST_PATH = "data/predictions/game_baseball_snapshots_latest.csv"
 
 # As-of schedule / probable-starter snapshots (mlb_metrics.schedule_snapshots).
 # Append-only captures of the slate the live pipeline actually saw, so
@@ -1179,8 +1187,20 @@ POLYMARKET_MATCH_TIME_TOLERANCE_MINUTES = 45
 # Polymarket often lists 2–3 days ahead of the current local slate.
 POLYMARKET_SCHEDULE_LOOKAHEAD_DAYS = 3
 # Actionable quote freshness target for later decision UI (seconds).
+# Cron captures every ~30 minutes cannot keep every contract under this
+# threshold between runs; actionable displays must re-check freshness.
 POLYMARKET_QUOTE_MAX_AGE_SECONDS = 30
+# HTTP resilience for read-only capture (public gateway; no paid API).
+POLYMARKET_HTTP_MAX_RETRIES = 3
+POLYMARKET_HTTP_RETRY_BACKOFF_SECONDS = 0.75
+POLYMARKET_HTTP_MIN_INTERVAL_SECONDS = 0.05
+# Rough wall-clock budget notes for operators (not hard limits).
+POLYMARKET_CAPTURE_RUNTIME_NOTE = (
+    "Expect ~0.2–0.5s per market book plus event list; a 40-market "
+    "capture typically finishes in well under 60s when the gateway is healthy."
+)
 # Fee schedule versions (UTC). Docs: taker Fee = theta * C * p * (1-p).
+# Prices/sizes are USD share costs in [0,1] with qty in contracts.
 # Upcoming US change at 2026-09-16 23:59 ET ≈ 2026-09-17 03:59 UTC.
 POLYMARKET_US_FEE_SCHEDULES = (
     {
