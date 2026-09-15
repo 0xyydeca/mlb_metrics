@@ -217,7 +217,13 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Nested model-validation reports (machine-readable JSON; not raw fold dumps)
+# Nested model-validation reports (machine-readable JSON; not raw fold dumps).
+# Whitelist the residual training / gate reports so failed and insufficient-data
+# results remain retrievable from a fresh checkout. Raw fold dumps stay ignored.
 reports/model_validation/**
 !reports/model_validation/README.md
 !reports/model_validation/.gitkeep
+!reports/model_validation/game_residual_nested.json
+!reports/model_validation/game_residual_betting_gate.json
+!reports/model_validation/streak_policy_nested.json
+!reports/model_validation/streak_policy_backtest.json

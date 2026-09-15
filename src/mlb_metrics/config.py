@@ -945,7 +945,15 @@ NESTED_VALIDATION_FREEZE_DATES = 0
 # not change unrelated nested validation defaults. Do not automatically
 # inspect this reserved tail while iterating on residual/betting policy.
 GAME_RESIDUAL_BETTING_FREEZE_DATES = 10
+# Default assemble_game_pick_log horizon for residual training. Must be at
+# least large enough for three complete outer blocks after the freeze once
+# market coverage exists; larger than the structural minimum to leave room
+# for missing as-of schedule dates.
+GAME_RESIDUAL_TRAINING_HISTORY_DATES = 120
 NESTED_VALIDATION_REPORT_DIR = "reports/model_validation"
+# Closing quotes older than this many minutes before scheduled start are
+# still pre-start but too early to count as a closing observation.
+MARKET_ODDS_CLOSING_MAX_AGE_MINUTES = 180
 NESTED_VALIDATION_BOOTSTRAP_SAMPLES = 1000
 NESTED_VALIDATION_RANDOM_SEED = 0
 
@@ -1123,6 +1131,14 @@ GAME_RESIDUAL_OUTER_MIN_TRAIN_DATES = 30
 GAME_RESIDUAL_OUTER_TEST_BLOCK_DATES = 10
 GAME_RESIDUAL_INNER_MIN_TRAIN_DATES = 15
 GAME_RESIDUAL_INNER_TEST_BLOCK_DATES = 5
+# Structural minimum valid prediction dates for three complete outer test
+# blocks after the residual betting freeze:
+# freeze + outer_min_train + BETTING_PROMOTION_MIN_OUTER_FOLDS * outer_test.
+GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS = (
+    GAME_RESIDUAL_BETTING_FREEZE_DATES
+    + GAME_RESIDUAL_OUTER_MIN_TRAIN_DATES
+    + BETTING_PROMOTION_MIN_OUTER_FOLDS * GAME_RESIDUAL_OUTER_TEST_BLOCK_DATES
+)
 
 # Market benchmark (ESPN odds, mlb_metrics.market_odds) - quant-analytics
 # item #6, slice 2. "DraftKings" is the only provider seen in every real

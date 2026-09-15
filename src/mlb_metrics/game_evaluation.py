@@ -37,15 +37,21 @@ def _model_home_probability(frame: pd.DataFrame) -> pd.Series:
     )
 
 
+def _resolve_prediction_time_market_probability(picks: pd.DataFrame) -> pd.Series:
+    """Logged prediction-time market home probability (never labeled as closing)."""
+    if picks is None or picks.empty or "market_home_win_probability" not in picks.columns:
+        return pd.Series(pd.NA, index=getattr(picks, "index", None), dtype="Float64")
+    return pd.to_numeric(picks["market_home_win_probability"], errors="coerce").astype("Float64")
+
+
 def _resolve_closing_market_probability(
     picks: pd.DataFrame,
     odds_snapshots: pd.DataFrame | None = None,
 ) -> pd.Series:
-    """Per-row closing de-vigged home probability.
+    """Per-row closing de-vigged home probability from true closing snapshots.
 
-    Prefers the latest valid pregame snapshot from ``odds_snapshots``.
-    Falls back to the prediction's own ``market_home_win_probability``
-    (legacy morning-only logs) when no closing snapshot exists.
+    Missing closing data remains missing. Prediction-time
+    ``market_home_win_probability`` is never substituted under a closing label.
     """
     out = pd.Series(pd.NA, index=picks.index, dtype="Float64")
     if odds_snapshots is not None and not odds_snapshots.empty and "game_pk" in picks.columns:
@@ -59,10 +65,17 @@ def _resolve_closing_market_probability(
             )
             if closing is not None and pd.notna(closing.get("market_home_win_probability")):
                 out.at[idx] = float(closing["market_home_win_probability"])
-    if "market_home_win_probability" in picks.columns:
-        legacy = pd.to_numeric(picks["market_home_win_probability"], errors="coerce")
-        out = out.fillna(legacy)
     return out
+
+
+def _closing_market_provenance(
+    picks: pd.DataFrame,
+    closing_probs: pd.Series,
+) -> pd.Series:
+    """Label each row's closing comparison source; missing stays missing."""
+    provenance = pd.Series(pd.NA, index=picks.index, dtype="string")
+    provenance = provenance.mask(closing_probs.notna(), "closing_snapshot")
+    return provenance
 
 
 def paired_market_scoring_differences(
@@ -72,8 +85,14 @@ def paired_market_scoring_differences(
     n_bootstrap: int | None = None,
     random_seed: int | None = None,
     alpha: float = 0.05,
+    market_price_source: str = "closing",
 ) -> dict:
-    """Paired model-vs-closing-market scoring on the same resolved games."""
+    """Paired model-vs-market scoring on the same resolved games.
+
+    ``market_price_source="closing"`` (default) uses only true closing
+    snapshots. ``market_price_source="prediction_time"`` uses the logged
+    prediction-time market probability under an explicit non-closing label.
+    """
     n_bootstrap = int(
         config.MARKET_ODDS_BOOTSTRAP_SAMPLES if n_bootstrap is None else n_bootstrap
     )
@@ -96,25 +115,47 @@ def paired_market_scoring_differences(
         "n_date_blocks": 0,
         "beat_closing_line_rate": float("nan"),
         "n_beat_closing_line_compared": 0,
+        "market_price_source": market_price_source,
+        "n_missing_closing": 0,
     }
     if picks is None or picks.empty:
         return empty
 
     frame = picks.copy()
-    frame["closing_market_home_probability"] = _resolve_closing_market_probability(
-        frame, odds_snapshots=odds_snapshots,
-    )
+    if market_price_source == "prediction_time":
+        frame["comparison_market_home_probability"] = (
+            _resolve_prediction_time_market_probability(frame)
+        )
+        frame["market_price_provenance"] = "prediction_time"
+    elif market_price_source == "closing":
+        frame["comparison_market_home_probability"] = _resolve_closing_market_probability(
+            frame, odds_snapshots=odds_snapshots,
+        )
+        frame["market_price_provenance"] = _closing_market_provenance(
+            frame, frame["comparison_market_home_probability"],
+        )
+        empty["n_missing_closing"] = int(frame["comparison_market_home_probability"].isna().sum())
+    else:
+        raise ValueError(
+            f"market_price_source must be 'closing' or 'prediction_time', got {market_price_source!r}"
+        )
+    # Keep legacy column name for callers reading the frame indirectly.
+    frame["closing_market_home_probability"] = frame["comparison_market_home_probability"]
     scoped = frame[
-        frame["closing_market_home_probability"].notna()
+        frame["comparison_market_home_probability"].notna()
         & frame["actual_winner"].notna()
         & frame["predicted_probability"].notna()
     ].copy()
     if scoped.empty:
+        if market_price_source == "closing":
+            empty["n_missing_closing"] = int(
+                frame["comparison_market_home_probability"].isna().sum()
+            )
         return empty
 
     y = (scoped["actual_winner"] == scoped["home_team"]).astype(float)
     model_p = _model_home_probability(scoped).astype(float)
-    market_p = pd.to_numeric(scoped["closing_market_home_probability"], errors="coerce").astype(float)
+    market_p = pd.to_numeric(scoped["comparison_market_home_probability"], errors="coerce").astype(float)
     valid = model_p.notna() & market_p.notna() & y.notna()
     scoped = scoped.loc[valid].copy()
     y, model_p, market_p = y.loc[valid], model_p.loc[valid], market_p.loc[valid]
@@ -188,8 +229,14 @@ def paired_market_scoring_differences(
         "log_loss_diff_ci_high": ll_hi,
         "n_bootstrap": n_bootstrap,
         "n_date_blocks": n_blocks,
-        "beat_closing_line_rate": pct_lower,
-        "n_beat_closing_line_compared": n_tie_excluded,
+        "beat_closing_line_rate": pct_lower if market_price_source == "closing" else float("nan"),
+        "n_beat_closing_line_compared": n_tie_excluded if market_price_source == "closing" else 0,
+        "market_price_source": market_price_source,
+        "n_missing_closing": (
+            int(frame["comparison_market_home_probability"].isna().sum())
+            if market_price_source == "closing"
+            else 0
+        ),
     }
 
 
@@ -432,19 +479,26 @@ def _bet_pnl_metrics(picks: pd.DataFrame):
 
 
 def _market_comparison_metrics(recommended: pd.DataFrame, odds_snapshots: pd.DataFrame | None = None):
-    """Market accuracy/Brier/log-loss using closing probabilities when available."""
+    """Prediction-time market accuracy/Brier/log-loss from logged prices.
+
+    Closing-line skill is reported separately via
+    ``paired_market_scoring_differences(..., market_price_source='closing')``.
+    """
+    del odds_snapshots  # closing snapshots are not mixed into these metrics
     if recommended is None or recommended.empty:
         return float("nan"), float("nan"), float("nan"), 0, float("nan"), float("nan")
 
     with_market = recommended.copy()
-    with_market["closing_market_home_probability"] = _resolve_closing_market_probability(
-        with_market, odds_snapshots=odds_snapshots,
+    with_market["prediction_time_market_home_probability"] = (
+        _resolve_prediction_time_market_probability(with_market)
     )
-    with_market = with_market[with_market["closing_market_home_probability"].notna()].copy()
+    with_market = with_market[with_market["prediction_time_market_home_probability"].notna()].copy()
     if with_market.empty:
         return float("nan"), float("nan"), float("nan"), 0, float("nan"), float("nan")
 
-    market_home_prob = pd.to_numeric(with_market["closing_market_home_probability"], errors="coerce")
+    market_home_prob = pd.to_numeric(
+        with_market["prediction_time_market_home_probability"], errors="coerce"
+    )
     favors_home = market_home_prob >= 0.5
     with_market["market_predicted_winner"] = with_market["home_team"].where(favors_home, with_market["away_team"])
     with_market["predicted_probability"] = market_home_prob.where(favors_home, 1 - market_home_prob)

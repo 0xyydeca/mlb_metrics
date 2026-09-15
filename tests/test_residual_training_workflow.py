@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -90,6 +91,9 @@ def test_residual_training_status_labels_not_enough_data_without_reports(tmp_pat
     assert status["valid_dates"] == 0
     assert status["outer_folds_possible"] == 0
     assert status["residual_artifact"] == "no"
+    assert status["artifact_saved"] is False
+    assert status["artifact_loaded"] is False
+    assert status["validation_status"] == "insufficient_data"
     assert status["probability_gate"] == "not_enough_data"
     assert status["betting_gate"] == "not_enough_data"
     assert status["game_prediction_mode"] == "shadow"
@@ -99,7 +103,8 @@ def test_residual_training_status_labels_not_enough_data_without_reports(tmp_pat
 def test_residual_training_status_reads_gate_pass_fail(tmp_path):
     nested = tmp_path / "nested.json"
     nested.write_text(
-        '{"status":"ok","promotion_gate":{"passed":false,"checks":{"adequate_sample_size":false}},'
+        '{"status":"validated_failed","validation_status":"validated_failed",'
+        '"promotion_gate":{"passed":false,"checks":{"adequate_sample_size":false}},'
         '"betting_promotion_gate":{"passed":false,"checks":{"adequate_bets":false}}}',
         encoding="utf-8",
     )
@@ -111,6 +116,7 @@ def test_residual_training_status_reads_gate_pass_fail(tmp_path):
     )
     assert status["probability_gate"] == "fail"
     assert status["betting_gate"] == "fail"
+    assert status["validation_status"] == "validated_failed"
 
 
 def test_estimate_outer_folds_possible_requires_configured_history(monkeypatch):
@@ -123,6 +129,20 @@ def test_estimate_outer_folds_possible_requires_configured_history(monkeypatch):
     assert grm.estimate_outer_folds_possible(short) == 0
     long = [f"2026-05-{i:02d}" for i in range(1, 16)]
     assert grm.estimate_outer_folds_possible(long) >= 1
+
+
+def test_residual_complete_outer_fold_boundaries_with_production_constants():
+    freeze = config.GAME_RESIDUAL_BETTING_FREEZE_DATES
+    assert config.GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS == 70
+
+    def _dates(n):
+        return [pd.Timestamp("2026-04-01") + pd.Timedelta(days=i) for i in range(n)]
+
+    assert grm.estimate_outer_folds_possible(_dates(60)) == 2
+    # 61 valid dates used to create a 1-date trailing outer block; complete-block
+    # requirement keeps that from counting toward promotion folds.
+    assert grm.estimate_outer_folds_possible(_dates(61)) == 2
+    assert grm.estimate_outer_folds_possible(_dates(70)) == 3
 
 
 def test_game_residual_training_workflow_yaml():
@@ -140,15 +160,27 @@ def test_game_residual_training_workflow_yaml():
     assert "GAME_PREDICTION_MODE" in text
     assert "BETTING_MODE" in text
     assert "reports/model_validation/" in text
+    assert "git add -f" in text
+    assert "upload-artifact@v4" in text
+    assert "residual-validation-reports" in text
     assert "game_residual_win_probability_model.joblib" in text
     assert "git pull --rebase" in text
     # Informational readiness must not abort (exit 0 after capturing status).
     assert "exit 0" in text
 
 
+def test_validation_report_gitignore_whitelist():
+    ignore = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "!reports/model_validation/game_residual_nested.json" in ignore
+    assert "!reports/model_validation/game_residual_betting_gate.json" in ignore
+
+
 def test_modes_remain_shadow_disabled():
     assert config.GAME_PREDICTION_MODE == "shadow"
     assert config.BETTING_MODE == "disabled"
+    assert config.GAME_RESIDUAL_TRAINING_HISTORY_DATES >= (
+        config.GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS
+    )
 
 
 def test_report_residual_training_status_script_runs(tmp_path, monkeypatch, capsys):
@@ -173,3 +205,28 @@ def test_report_residual_training_status_script_runs(tmp_path, monkeypatch, caps
     assert "MARKET SNAPSHOT INVENTORY:" in out
     assert "RESIDUAL TRAINING STATUS:" in out
     assert "residual_artifact=no" in out
+    assert "validation_status=insufficient_data" in out
+
+
+def test_insufficient_data_report_round_trip(tmp_path):
+    report_path = tmp_path / "game_residual_nested.json"
+    payload = {
+        "status": "insufficient_data",
+        "validation_status": "insufficient_data",
+        "artifact_saved": False,
+        "artifact_loaded": False,
+        "n_outer_folds": 0,
+        "methods": {},
+        "promotion_gate": {"passed": False, "checks": {}},
+    }
+    report_path.write_text(json.dumps(payload), encoding="utf-8")
+    loaded = json.loads(report_path.read_text(encoding="utf-8"))
+    assert loaded["validation_status"] == "insufficient_data"
+    status = grm.residual_training_status(
+        snapshots=market_odds.empty_snapshot_frame(),
+        nested_report_path=str(report_path),
+        betting_report_path=str(tmp_path / "missing.json"),
+        model_path=str(tmp_path / "missing.joblib"),
+    )
+    assert status["validation_status"] == "insufficient_data"
+    assert status["probability_gate"] == "not_enough_data"

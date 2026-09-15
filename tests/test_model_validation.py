@@ -94,6 +94,21 @@ def test_nested_folds_inner_confined_to_outer_train_and_freeze_excluded():
             assert set(inner.test_dates).isdisjoint(item.outer.test_dates)
 
 
+def test_require_complete_test_blocks_drops_trailing_partial():
+    dates = [f"2026-01-{d:02d}" for d in range(1, 17)]  # 16 dates
+    # min_train=10, block=5 → complete fold on dates 11-15; date 16 dropped.
+    complete = mv.build_rolling_origin_folds(
+        dates, min_train_dates=10, test_block_dates=5, require_complete_test_blocks=True,
+    )
+    legacy = mv.build_rolling_origin_folds(
+        dates, min_train_dates=10, test_block_dates=5, require_complete_test_blocks=False,
+    )
+    assert len(complete) == 1
+    assert len(complete[0].test_dates) == 5
+    assert len(legacy) == 2
+    assert len(legacy[-1].test_dates) == 1
+
+
 def test_insufficient_history_returns_empty_status():
     df = _synthetic_classifier_frame(n_dates=8, rows_per_date=5)
     candidates = [

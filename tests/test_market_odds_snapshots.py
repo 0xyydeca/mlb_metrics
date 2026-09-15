@@ -237,16 +237,34 @@ def test_paired_brier_and_log_loss_calculations():
     # Game1: y=1, model=0.7 SE=0.09, market=0.6 SE=0.16
     # Game2: y=0, model=0.55 SE=0.3025, market=0.65 SE=0.4225
     paired = game_evaluation.paired_market_scoring_differences(
-        picks, n_bootstrap=200, random_seed=1,
+        picks, n_bootstrap=200, random_seed=1, market_price_source="prediction_time",
     )
     expected_brier_diff = ((0.09 + 0.3025) / 2) - ((0.16 + 0.4225) / 2)
     assert paired["n_compared"] == 2
+    assert paired["market_price_source"] == "prediction_time"
     assert paired["brier_diff"] == pytest.approx(expected_brier_diff)
     assert paired["mean_prob_diff"] == pytest.approx(((0.7 - 0.6) + (0.55 - 0.65)) / 2)
     # Both games model SE lower → secondary rate 1.0
     assert paired["pct_model_error_lower"] == pytest.approx(1.0)
     assert paired["brier_diff"] < 0  # model better on magnitude, not just count
     assert paired["log_loss_diff"] < 0
+
+
+def test_missing_closing_stays_missing_without_prediction_time_substitution():
+    picks = pd.DataFrame([{
+        "date": "2026-09-03", "game_pk": 100, "home_team": "NYY", "away_team": "BOS",
+        "predicted_winner": "NYY", "predicted_probability": 0.70,
+        "actual_winner": "NYY", "market_home_win_probability": 0.90,
+        "above_threshold": True, "game_datetime": "2026-09-03T23:10:00Z",
+    }])
+    closing = game_evaluation._resolve_closing_market_probability(picks, odds_snapshots=None)
+    assert closing.isna().all()
+    paired = game_evaluation.paired_market_scoring_differences(
+        picks, odds_snapshots=None, n_bootstrap=20, random_seed=0,
+    )
+    assert paired["n_compared"] == 0
+    assert paired["n_missing_closing"] == 1
+    assert paired["market_price_source"] == "closing"
 
 
 def test_paired_scoring_uses_closing_not_morning_logged_price():
@@ -285,8 +303,12 @@ def test_block_bootstrap_by_date_is_deterministic_with_seed():
         }
         for i in range(1, 6)
     ])
-    a = game_evaluation.paired_market_scoring_differences(picks, n_bootstrap=100, random_seed=7)
-    b = game_evaluation.paired_market_scoring_differences(picks, n_bootstrap=100, random_seed=7)
+    a = game_evaluation.paired_market_scoring_differences(
+        picks, n_bootstrap=100, random_seed=7, market_price_source="prediction_time",
+    )
+    b = game_evaluation.paired_market_scoring_differences(
+        picks, n_bootstrap=100, random_seed=7, market_price_source="prediction_time",
+    )
     assert a["brier_diff_ci_low"] == b["brier_diff_ci_low"]
     assert a["brier_diff_ci_high"] == b["brier_diff_ci_high"]
     assert a["n_date_blocks"] == 5
@@ -338,7 +360,10 @@ def test_build_game_picks_export_includes_paired_primary_metrics():
     assert "model_minus_market_brier" in summary.columns
     assert "model_minus_market_log_loss" in summary.columns
     assert "mean_model_minus_market_probability" in summary.columns
-    assert summary.loc[0, "n_paired_market_compared"] == 2
+    # Closing comparisons require true closing snapshots; logged morning
+    # prices alone must not populate closing paired metrics.
+    assert summary.loc[0, "n_paired_market_compared"] == 0
+    assert pd.isna(summary.loc[0, "beat_closing_line_rate"])
     # Secondary metric still present
     assert "beat_closing_line_rate" in summary.columns
 

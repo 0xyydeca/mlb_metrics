@@ -1,7 +1,7 @@
 # Minimal deps for scripts/capture_market_odds.py only.
 # Keep this small so the 30-minute scheduled job installs quickly under
 # GitHub Actions load (full requirements-dev is unnecessary here).
-pandas
-numpy
-requests
-MLB-StatsAPI
+pandas==3.0.5
+numpy==2.5.2
+requests==2.34.2
+MLB-StatsAPI==1.9.0

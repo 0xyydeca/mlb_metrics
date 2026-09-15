@@ -111,6 +111,8 @@ def build_rolling_origin_folds(
     dates: Sequence,
     min_train_dates: int,
     test_block_dates: int,
+    *,
+    require_complete_test_blocks: bool = False,
 ) -> list[DateFold]:
     """Outer- or inner-style rolling-origin folds over `dates`.
 
@@ -118,6 +120,9 @@ def build_rolling_origin_folds(
     tests on the next `test_block_dates` dates. Returns [] when history is
     insufficient for even one fold (fewer than min_train_dates + 1 dates,
     or empty test blocks).
+
+    When ``require_complete_test_blocks`` is True, a trailing partial test
+    block is dropped rather than counted as an evaluation fold.
     """
     unique_dates = unique_sorted_dates(dates)
     min_train_dates = int(min_train_dates)
@@ -133,6 +138,8 @@ def build_rolling_origin_folds(
     while cursor < len(unique_dates):
         train = tuple(unique_dates[:cursor])
         test = tuple(unique_dates[cursor:cursor + test_block_dates])
+        if require_complete_test_blocks and len(test) < test_block_dates:
+            break
         if train and test:
             fold = DateFold(fold_id=fold_id, train_dates=train, test_dates=test)
             fold.assert_no_overlap()
@@ -156,6 +163,7 @@ def build_nested_folds(
     inner_min_train_dates: int,
     inner_test_block_dates: int,
     freeze_dates: int = 0,
+    require_complete_test_blocks: bool = False,
 ) -> tuple[list[NestedFold], list]:
     """Build outer folds on active dates; inner folds on each outer train.
 
@@ -164,12 +172,18 @@ def build_nested_folds(
     """
     active, freeze_tail = freeze_tail_dates(dates, freeze_dates)
     outer_folds = build_rolling_origin_folds(
-        active, outer_min_train_dates, outer_test_block_dates,
+        active,
+        outer_min_train_dates,
+        outer_test_block_dates,
+        require_complete_test_blocks=require_complete_test_blocks,
     )
     nested: list[NestedFold] = []
     for outer in outer_folds:
         inner = build_rolling_origin_folds(
-            outer.train_dates, inner_min_train_dates, inner_test_block_dates,
+            outer.train_dates,
+            inner_min_train_dates,
+            inner_test_block_dates,
+            require_complete_test_blocks=require_complete_test_blocks,
         )
         # An outer fold with no usable inner folds cannot select a config
         # honestly - skip it rather than silently falling back to a single

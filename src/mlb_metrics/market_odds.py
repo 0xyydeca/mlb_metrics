@@ -713,11 +713,13 @@ def select_opening_snapshot(snapshots: pd.DataFrame, game_pk) -> pd.Series | Non
 
 
 def select_closing_snapshot(snapshots: pd.DataFrame, game_pk, game_datetime=None) -> pd.Series | None:
-    """Latest valid snapshot strictly before game start.
+    """Latest valid snapshot strictly before game start within the closing window.
 
-    Never uses a post-start capture. ``game_datetime`` may be supplied
-    explicitly; otherwise the max non-null ``game_datetime`` on the
-    game's snapshot rows is used.
+    Never uses a post-start capture. Quotes older than
+    ``MARKET_ODDS_CLOSING_MAX_AGE_MINUTES`` before scheduled start are
+    excluded so a morning price is not treated as closing. ``game_datetime``
+    may be supplied explicitly; otherwise the max non-null ``game_datetime``
+    on the game's snapshot rows is used.
     """
     frame = normalize_snapshot_frame(snapshots)
     scoped = frame[frame["game_pk"] == game_pk].copy()
@@ -731,11 +733,14 @@ def select_closing_snapshot(snapshots: pd.DataFrame, game_pk, game_datetime=None
         start = starts.max()
 
     scoped["_ts"] = scoped["captured_at_utc"].map(_to_utc_ts)
+    max_age = pd.Timedelta(minutes=int(config.MARKET_ODDS_CLOSING_MAX_AGE_MINUTES))
+    earliest = start - max_age
     valid = scoped[
         (scoped["source_status"] == SOURCE_OK)
         & scoped["market_home_win_probability"].notna()
         & scoped["_ts"].notna()
         & (scoped["_ts"] < start)
+        & (scoped["_ts"] >= earliest)
     ]
     if valid.empty:
         return None

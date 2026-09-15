@@ -13,7 +13,7 @@ Does NOT enable live betting or change GAME_PREDICTION_MODE / BETTING_MODE.
 
 Usage:
     python scripts/train_game_residual_model.py
-    python scripts/train_game_residual_model.py --season 2026 --days 60
+    python scripts/train_game_residual_model.py --season 2026 --days 120
     python scripts/train_game_residual_model.py --force-save-for-debug /tmp/debug_residual.joblib
 """
 
@@ -55,6 +55,29 @@ def _assert_debug_path_not_production(path: str) -> str:
             "Refusing --force-save-for-debug overwriting the production artifact path."
         )
     return abs_path
+
+
+def _write_json(path: str, payload: dict) -> None:
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, default=str)
+
+
+def _insufficient_report(*, reason: str, extras: dict | None = None) -> dict:
+    report = {
+        "status": "insufficient_data",
+        "validation_status": "insufficient_data",
+        "artifact_saved": False,
+        "artifact_loaded": False,
+        "n_outer_folds": 0,
+        "methods": {},
+        "promotion_gate": {"passed": False, "checks": {}},
+        "betting_promotion_gate": {"passed": False, "checks": {}},
+        "insufficient_reason": reason,
+    }
+    if extras:
+        report.update(extras)
+    return report
 
 
 def maybe_save_residual_artifact(
@@ -142,7 +165,17 @@ def maybe_save_residual_artifact(
 def main():
     parser = argparse.ArgumentParser(description="Train market-residual game-win model")
     parser.add_argument("--season", type=int, default=None)
-    parser.add_argument("--days", type=int, default=60)
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=config.GAME_RESIDUAL_TRAINING_HISTORY_DATES,
+        help=(
+            "Game-date horizon for assemble_game_pick_log "
+            f"(default {config.GAME_RESIDUAL_TRAINING_HISTORY_DATES}; "
+            f"structural fold minimum is "
+            f"{config.GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS})."
+        ),
+    )
     parser.add_argument("--raw-dir", type=str, default="data/raw")
     parser.add_argument(
         "--odds-snapshots",
@@ -187,7 +220,19 @@ def main():
     if args.prediction_snapshot_role == "closing":
         raise SystemExit("closing cannot be used as a prediction-time market prior")
 
+    report_dir = config.NESTED_VALIDATION_REPORT_DIR
+    os.makedirs(report_dir, exist_ok=True)
+    report_path = args.report_path or os.path.join(
+        report_dir, config.GAME_RESIDUAL_VALIDATION_REPORT_NAME,
+    )
+    betting_path = config.BETTING_PROMOTION_GATE_REPORT_PATH
+
     print("Assembling game pick log...")
+    print(
+        f"Training history horizon: days={args.days} "
+        f"(min for complete outer folds="
+        f"{config.GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS})"
+    )
     log = game_picks_backtest.assemble_game_pick_log(
         raw_dir=args.raw_dir,
         season=args.season,
@@ -195,17 +240,41 @@ def main():
         schedule_backtest_mode=args.schedule_backtest_mode,
     )
     if log.empty:
-        print("No training rows; aborting.")
+        report = _insufficient_report(reason="empty_game_pick_log")
+        _write_json(report_path, report)
+        _write_json(betting_path, {
+            "betting_promotion_gate": report.get("betting_promotion_gate"),
+            "methods": {},
+            "source_report": report_path,
+            "artifact_id": None,
+            "validation_status": "insufficient_data",
+            "artifact_saved": False,
+        })
+        print(f"No training rows; wrote insufficient_data report: {report_path}")
+        print(
+            "RUN OUTCOME: validation_status=insufficient_data "
+            "artifact_saved=False artifact_loaded=False"
+        )
         return
 
     snapshots = _load_snapshots(args.odds_snapshots)
     valid_pred = market_odds.filter_valid_prediction_time_snapshots(
         snapshots, required_role=args.prediction_snapshot_role,
     )
+    valid_dates = sorted({
+        str(pd.Timestamp(d).date())
+        for d in valid_pred.get("date", pd.Series(dtype="datetime64[ns]")).dropna().unique()
+    }) if not valid_pred.empty else []
+    outer_possible = game_residual_model.estimate_outer_folds_possible(valid_dates)
     print(
         f"Loaded {len(snapshots)} odds snapshots; "
         f"{len(valid_pred)} valid prediction-time ({args.prediction_snapshot_role}) rows "
         f"after rejecting unmatched/post-start/historical backfills."
+    )
+    print(
+        f"Preflight: valid_prediction_dates={len(valid_dates)} "
+        f"outer_folds_possible={outer_possible} "
+        f"(need >= {config.BETTING_PROMOTION_MIN_OUTER_FOLDS} complete blocks)"
     )
     frame = game_residual_model.prepare_training_frame(
         log,
@@ -215,40 +284,37 @@ def main():
     )
     print(f"Market-aligned training rows: {len(frame)}")
     if frame.empty:
+        report = _insufficient_report(
+            reason="no_prediction_time_market_rows",
+            extras={
+                "preflight_valid_prediction_dates": len(valid_dates),
+                "preflight_outer_folds_possible": outer_possible,
+            },
+        )
+        _write_json(report_path, report)
+        _write_json(betting_path, {
+            "betting_promotion_gate": report.get("betting_promotion_gate"),
+            "methods": {},
+            "source_report": report_path,
+            "artifact_id": None,
+            "validation_status": "insufficient_data",
+            "artifact_saved": False,
+        })
         print(
             "No rows with prediction-time market probabilities. "
-            "Persist valid morning/lineup_lock snapshots before training. "
-            "Writing empty/insufficient report is skipped; no artifact saved."
+            f"Wrote insufficient_data report: {report_path}"
+        )
+        print(
+            "RUN OUTCOME: validation_status=insufficient_data "
+            "artifact_saved=False artifact_loaded=False"
         )
         return
 
     print("Running nested residual validation...")
     report = game_residual_model.run_game_residual_nested_validation(frame)
-
-    report_dir = config.NESTED_VALIDATION_REPORT_DIR
-    os.makedirs(report_dir, exist_ok=True)
-    report_path = args.report_path or os.path.join(
-        report_dir, config.GAME_RESIDUAL_VALIDATION_REPORT_NAME,
-    )
-    with open(report_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, default=str)
-    print(f"Wrote nested validation report: {report_path}")
-
-    betting_path = config.BETTING_PROMOTION_GATE_REPORT_PATH
-    os.makedirs(os.path.dirname(betting_path) or ".", exist_ok=True)
-    with open(betting_path, "w", encoding="utf-8") as f:
-        json.dump({
-            "betting_promotion_gate": report.get("betting_promotion_gate"),
-            "methods": {
-                "residual_logistic": (report.get("methods") or {}).get("residual_logistic"),
-            },
-            "source_report": report_path,
-            "artifact_id": None,
-        }, f, indent=2, default=str)
-
-    gate = report.get("promotion_gate") or {}
-    print(f"Probability promotion gate passed: {gate.get('passed')}")
-    print(f"Betting promotion gate passed: {(report.get('betting_promotion_gate') or {}).get('passed')}")
+    report.setdefault("preflight_valid_prediction_dates", len(valid_dates))
+    report.setdefault("preflight_outer_folds_possible", outer_possible)
+    report.setdefault("training_history_days", args.days)
 
     saved = maybe_save_residual_artifact(
         report,
@@ -257,20 +323,43 @@ def main():
         skip_save=args.skip_save,
         force_save_for_debug=args.force_save_for_debug,
     )
-    if saved and gate.get("passed") is True and saved == config.GAME_RESIDUAL_MODEL_PATH:
-        # Stamp artifact_id onto the betting-gate companion report when
-        # a production artifact was actually written.
+    production_saved = bool(
+        saved and (report.get("promotion_gate") or {}).get("passed") is True
+        and saved == config.GAME_RESIDUAL_MODEL_PATH
+    )
+    report["artifact_saved"] = production_saved
+    artifact_id = None
+    if production_saved:
         art = game_residual_model.load_residual_model(saved)
+        report["artifact_loaded"] = art is not None
         artifact_id = (art.metadata or {}).get("artifact_id") if art else None
-        with open(betting_path, "w", encoding="utf-8") as f:
-            json.dump({
-                "betting_promotion_gate": report.get("betting_promotion_gate"),
-                "methods": {
-                    "residual_logistic": (report.get("methods") or {}).get("residual_logistic"),
-                },
-                "source_report": report_path,
-                "artifact_id": artifact_id,
-            }, f, indent=2, default=str)
+    else:
+        report["artifact_loaded"] = False
+
+    _write_json(report_path, report)
+    print(f"Wrote nested validation report: {report_path}")
+
+    _write_json(betting_path, {
+        "betting_promotion_gate": report.get("betting_promotion_gate"),
+        "methods": {
+            "residual_logistic": (report.get("methods") or {}).get("residual_logistic"),
+        },
+        "source_report": report_path,
+        "artifact_id": artifact_id,
+        "validation_status": report.get("validation_status"),
+        "artifact_saved": production_saved,
+        "artifact_loaded": report.get("artifact_loaded"),
+    })
+
+    gate = report.get("promotion_gate") or {}
+    print(f"Probability promotion gate passed: {gate.get('passed')}")
+    print(f"Betting promotion gate passed: {(report.get('betting_promotion_gate') or {}).get('passed')}")
+    print(
+        "RUN OUTCOME: "
+        f"validation_status={report.get('validation_status')} "
+        f"artifact_saved={report.get('artifact_saved')} "
+        f"artifact_loaded={report.get('artifact_loaded')}"
+    )
 
 
 if __name__ == "__main__":

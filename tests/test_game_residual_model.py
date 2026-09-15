@@ -200,7 +200,9 @@ def test_nested_validation_compares_all_methods_on_same_games(tmp_path, monkeypa
 
     frame = _synthetic_residual_frame(n_dates=40, games_per_date=6)
     report = grm.run_game_residual_nested_validation(frame, freeze_dates=0)
-    assert report["status"] == "ok"
+    assert report["status"] in {"validated_passed", "validated_failed"}
+    assert report["validation_status"] == report["status"]
+    assert report["artifact_saved"] is False
     assert report["n_outer_folds"] >= 1
     methods = report["methods"]
     for name in (
@@ -248,7 +250,8 @@ def test_nested_validation_excludes_games_without_prediction_time_market(monkeyp
     drop_idx = frame.sample(frac=0.2, random_state=0).index
     frame.loc[drop_idx, "market_home_win_probability"] = np.nan
     report = grm.run_game_residual_nested_validation(frame, freeze_dates=0)
-    assert report["status"] == "ok"
+    assert report["status"] in {"validated_passed", "validated_failed"}
+    assert report["validation_status"] == report["status"]
     n = report["methods"][grm.METHOD_MARKET]["n_games"]
     assert n == report["methods"][grm.METHOD_RESIDUAL_LOGISTIC]["n_games"]
     assert n < len(frame)
@@ -377,6 +380,8 @@ def test_shadow_exports_write_and_dedupe(tmp_path):
         "residual_home_win_probability": 0.56,
         "residual_logit": 0.04,
         "probability_source": "market_residual",
+        "fallback_used": False,
+        "fallback_reason": None,
         "model_version": "v1",
         "artifact_id": "abc",
         "game_prediction_mode": "shadow",
@@ -389,6 +394,60 @@ def test_shadow_exports_write_and_dedupe(tmp_path):
     out = pd.read_csv(path)
     assert len(out) == 1
     assert out.iloc[0]["residual_home_win_probability"] == pytest.approx(0.58)
+
+
+def test_build_shadow_prediction_frame_labels_market_only_fallback():
+    win = pd.DataFrame([{
+        "date": "2026-05-01",
+        "game_pk": 1,
+        "home_team": "NYY",
+        "away_team": "BOS",
+        "home_win_probability": 0.57,
+    }])
+    market = pd.Series([0.55])
+    residual = market.copy()
+    out = grm.build_shadow_prediction_frame(
+        win,
+        residual,
+        market,
+        model_status={
+            "loaded": False,
+            "fallback_used": True,
+            "fallback_reason": "missing_artifact",
+            "artifact_id": None,
+            "model_version": None,
+        },
+        game_prediction_mode="shadow",
+    )
+    assert out.iloc[0]["probability_source"] == grm.PROBABILITY_SOURCE_MARKET_ONLY_FALLBACK
+    assert bool(out.iloc[0]["fallback_used"]) is True
+    assert out.iloc[0]["fallback_reason"] == "missing_artifact"
+
+
+def test_residual_artifact_load_predict_compatibility(tmp_path):
+    frame = _synthetic_residual_frame(n_dates=8, games_per_date=4)
+    feats = [c for c in grm.RESIDUAL_FEATURE_COLUMNS if c in frame.columns]
+    model = grm.MarketResidualLogistic(C=0.05, feature_columns=feats)
+    model.fit(frame, frame["Home_Won"], frame["market_home_win_probability"])
+    path = tmp_path / "residual_compat.joblib"
+    artifact = grm.ResidualModelArtifact(
+        family="logistic",
+        model=model,
+        feature_columns=feats,
+        metadata={"model_version": "compat-test", "hyperparameters": {"C": 0.05}},
+    )
+    grm.save_residual_model(artifact, path=str(path))
+    loaded = grm.load_residual_model(path=str(path))
+    assert loaded is not None
+    pred, status = grm.predict_residual_home_win_probability(
+        frame[feats],
+        frame["market_home_win_probability"],
+        artifact=loaded,
+    )
+    assert status["loaded"] is True
+    assert status["fallback_used"] is False
+    assert len(pred) == len(frame)
+    assert pred.between(0.0, 1.0).all()
 
 
 def test_save_and_load_residual_artifact(tmp_path):

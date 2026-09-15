@@ -84,9 +84,12 @@ RESIDUAL_FEATURE_COLUMNS = BASE_FEATURE_COLUMNS + DERIVED_FEATURE_COLUMNS
 SHADOW_PREDICTION_COLUMNS = [
     "date", "game_pk", "home_team", "away_team",
     MARKET_AT_PRED_COL, HEURISTIC_COL, RESIDUAL_PROB_COL,
-    "residual_logit", "probability_source", "model_version",
-    "artifact_id", "game_prediction_mode", "prediction_snapshot_type",
+    "residual_logit", "probability_source", "fallback_used", "fallback_reason",
+    "model_version", "artifact_id", "game_prediction_mode", "prediction_snapshot_type",
 ]
+
+PROBABILITY_SOURCE_MARKET_RESIDUAL = "market_residual"
+PROBABILITY_SOURCE_MARKET_ONLY_FALLBACK = "market_only_fallback"
 
 
 # ---------------------------------------------------------------------------
@@ -846,13 +849,27 @@ def run_game_residual_nested_validation(
 
     required = {"date", "game_pk", HOME_WON_LABEL, MARKET_AT_PRED_COL, HEURISTIC_COL}
     if df is None or df.empty or not required.issubset(df.columns):
-        return {"status": "insufficient_history", "n_outer_folds": 0, "methods": {}}
+        return {
+            "status": "insufficient_data",
+            "validation_status": "insufficient_data",
+            "artifact_saved": False,
+            "artifact_loaded": False,
+            "n_outer_folds": 0,
+            "methods": {},
+        }
 
     # Evaluate only games with a prediction-time market snapshot.
     work = df.dropna(subset=[MARKET_AT_PRED_COL, HOME_WON_LABEL]).copy()
     work["date"] = pd.to_datetime(work["date"]).dt.normalize()
     if work.empty:
-        return {"status": "insufficient_history", "n_outer_folds": 0, "methods": {}}
+        return {
+            "status": "insufficient_data",
+            "validation_status": "insufficient_data",
+            "artifact_saved": False,
+            "artifact_loaded": False,
+            "n_outer_folds": 0,
+            "methods": {},
+        }
 
     nested, freeze_tail = model_validation.build_nested_folds(
         work["date"],
@@ -866,13 +883,23 @@ def run_game_residual_nested_validation(
             if freeze_dates is None
             else freeze_dates
         ),
+        require_complete_test_blocks=True,
     )
     if not nested:
         return {
-            "status": "insufficient_history",
+            "status": "insufficient_data",
+            "validation_status": "insufficient_data",
+            "artifact_saved": False,
+            "artifact_loaded": False,
             "n_outer_folds": 0,
             "methods": {},
             "freeze_tail_dates": [str(d) for d in freeze_tail],
+            "eligible_dates": int(work["date"].nunique()),
+            "date_range": {
+                "start": str(work["date"].min()),
+                "end": str(work["date"].max()),
+            },
+            "require_complete_test_blocks": True,
         }
 
     method_rows: dict[str, list[pd.DataFrame]] = {m: [] for m in (
@@ -1057,12 +1084,32 @@ def run_game_residual_nested_validation(
         all_bets.get(METHOD_RESIDUAL_LOGISTIC),
         outer_reports,
     )
+    validation_status = (
+        "validated_passed" if promotion_gate.get("passed") is True else "validated_failed"
+    )
 
     return {
-        "status": "ok",
+        "status": validation_status,
+        "validation_status": validation_status,
+        "artifact_saved": False,
+        "artifact_loaded": False,
         "n_outer_folds": len(outer_reports),
         "n_games_evaluated": int(residual.get("n_games", 0) or 0),
+        "eligible_dates": int(work["date"].nunique()),
+        "date_range": {
+            "start": str(work["date"].min()),
+            "end": str(work["date"].max()),
+        },
         "freeze_tail_dates": [str(d) for d in freeze_tail],
+        "outer_fold_membership": [
+            {
+                "fold_id": item.outer.fold_id,
+                "train_dates": [str(d) for d in item.outer.train_dates],
+                "test_dates": [str(d) for d in item.outer.test_dates],
+            }
+            for item in nested
+        ],
+        "require_complete_test_blocks": True,
         "feature_columns": list(feature_columns),
         "selected_configs": selected_configs,
         "outer_folds": outer_reports,
@@ -1079,6 +1126,7 @@ def run_game_residual_nested_validation(
             "Kelly sizing is hypothetical and does not gate probability accuracy.",
             "Do not treat config.KELLY_MIN_EDGE as proof of residual skill.",
             "GAME_RESIDUAL_BETTING_FREEZE_DATES is reserved and not auto-inspected.",
+            "Incomplete outer/inner test blocks are excluded from promotion folds.",
         ],
     }
 
@@ -1224,6 +1272,7 @@ def estimate_outer_folds_possible(
             if freeze_dates is None
             else freeze_dates
         ),
+        require_complete_test_blocks=True,
     )
     return int(len(nested))
 
@@ -1231,7 +1280,9 @@ def estimate_outer_folds_possible(
 def _gate_status_label(report: dict | None, gate_key: str) -> str:
     if not report or not isinstance(report, dict):
         return "not_enough_data"
-    if report.get("status") == "insufficient_history":
+    if report.get("status") in {"insufficient_history", "insufficient_data"}:
+        return "not_enough_data"
+    if report.get("validation_status") == "insufficient_data":
         return "not_enough_data"
     gate = report.get(gate_key)
     if gate is None and gate_key == "betting_promotion_gate":
@@ -1273,12 +1324,38 @@ def residual_training_status(
     outer_possible = estimate_outer_folds_possible(inv.get("valid_prediction_dates") or [])
     art_path = model_path or config.GAME_RESIDUAL_MODEL_PATH
     artifact_yes = bool(art_path and os.path.exists(art_path) and load_residual_model(art_path) is not None)
+    validation_status = "insufficient_data"
+    if nested and isinstance(nested, dict):
+        validation_status = (
+            nested.get("validation_status")
+            or (
+                "insufficient_data"
+                if nested.get("status") in {"insufficient_history", "insufficient_data"}
+                else nested.get("status")
+            )
+            or "insufficient_data"
+        )
+        if validation_status == "ok":
+            # Legacy reports used status="ok"; map via promotion gate.
+            gate = nested.get("promotion_gate") if isinstance(nested.get("promotion_gate"), dict) else {}
+            if gate.get("passed") is True:
+                validation_status = "validated_passed"
+            elif isinstance(gate.get("checks"), dict):
+                validation_status = "validated_failed"
+            else:
+                validation_status = "insufficient_data"
 
     status = {
         "valid_prediction_games": int(inv["n_valid_prediction_games"]),
         "valid_dates": n_dates,
         "outer_folds_possible": outer_possible,
+        "min_dates_for_complete_outer_folds": int(
+            config.GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS
+        ),
         "residual_artifact": "yes" if artifact_yes else "no",
+        "artifact_saved": artifact_yes,
+        "artifact_loaded": artifact_yes,
+        "validation_status": validation_status,
         "probability_gate": _gate_status_label(nested, "promotion_gate"),
         "betting_gate": _gate_status_label(betting, "betting_promotion_gate"),
         "inventory": inv,
@@ -1294,7 +1371,14 @@ def print_residual_training_status(status: dict | None = None) -> dict:
     print(f"  valid_prediction_games={st['valid_prediction_games']}")
     print(f"  valid_dates={st['valid_dates']}")
     print(f"  outer_folds_possible={st['outer_folds_possible']}")
+    print(
+        f"  min_dates_for_complete_outer_folds="
+        f"{st.get('min_dates_for_complete_outer_folds')}"
+    )
+    print(f"  validation_status={st.get('validation_status')}")
     print(f"  residual_artifact={st['residual_artifact']}")
+    print(f"  artifact_saved={st.get('artifact_saved')}")
+    print(f"  artifact_loaded={st.get('artifact_loaded')}")
     print(f"  probability_gate={st['probability_gate']}")
     print(f"  betting_gate={st['betting_gate']}")
     return st
@@ -1724,7 +1808,14 @@ def build_shadow_prediction_frame(
     out["residual_logit"] = logit(out[RESIDUAL_PROB_COL]) - logit(
         out.get(MARKET_AT_PRED_COL, pd.Series(np.nan, index=out.index))
     )
-    out["probability_source"] = "market_residual"
+    fallback_used = bool(model_status.get("fallback_used"))
+    out["fallback_used"] = fallback_used
+    out["fallback_reason"] = model_status.get("fallback_reason")
+    out["probability_source"] = (
+        PROBABILITY_SOURCE_MARKET_ONLY_FALLBACK
+        if fallback_used
+        else PROBABILITY_SOURCE_MARKET_RESIDUAL
+    )
     out["model_version"] = model_status.get("model_version") or config.GAME_RESIDUAL_MODEL_VERSION
     out["artifact_id"] = model_status.get("artifact_id")
     out["game_prediction_mode"] = game_prediction_mode

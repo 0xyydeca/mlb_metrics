@@ -58,14 +58,27 @@ jobs:
           python scripts/report_residual_training_status.py
 
       - name: Train / validate market-residual model
+        id: train
         run: |
           python scripts/train_game_residual_model.py
 
       - name: Residual training status (post)
+        if: always()
         run: |
           python scripts/report_residual_training_status.py --status-only
 
+      - name: Upload validation reports (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: residual-validation-reports
+          path: |
+            reports/model_validation/game_residual_nested.json
+            reports/model_validation/game_residual_betting_gate.json
+          if-no-files-found: warn
+
       - name: Post-training betting readiness (informational)
+        if: always()
         run: |
           set +e
           echo "===== POST-TRAINING check_betting_readiness (informational) ====="
@@ -85,11 +98,18 @@ jobs:
           PY
 
       - name: Commit reports and residual artifact (if gate saved it)
+        if: always()
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
           mkdir -p reports/model_validation
+          # Force-add whitelisted validation JSONs so insufficient/failed
+          # reports survive even if ignore rules change.
+          git add -f \
+            reports/model_validation/game_residual_nested.json \
+            reports/model_validation/game_residual_betting_gate.json \
+            || true
           git add reports/model_validation/
 
           # Commit the production residual artifact ONLY if the training
@@ -98,7 +118,11 @@ jobs:
             git add data/models/game_residual_win_probability_model.joblib
           fi
 
-          git commit -m "Game residual training update" || echo "No changes"
+          if git diff --cached --quiet; then
+            echo "No staged report/artifact changes to commit."
+          else
+            git commit -m "Game residual training update"
+          fi
 
           branch=$(git rev-parse --abbrev-ref HEAD)
           for attempt in 1 2 3 4 5; do

@@ -361,8 +361,44 @@ def test_build_game_picks_export_market_accuracy_brier_log_loss():
     assert summary.loc[0, "market_accuracy_ci_high"] == pytest.approx(expected_high)
 
 
-def test_build_game_picks_export_beat_closing_line_rate_excludes_ties():
+def test_build_game_picks_export_beat_closing_line_rate_requires_closing_snapshots():
     picks, summary = game_evaluation.build_game_picks_export(_market_comparison_rows())
+
+    # Logged prediction-time prices must not count as closing comparisons.
+    assert summary.loc[0, "n_beat_closing_line_compared"] == 0
+    assert pd.isna(summary.loc[0, "beat_closing_line_rate"])
+
+
+def test_build_game_picks_export_beat_closing_line_rate_excludes_ties():
+    from mlb_metrics import market_odds
+
+    rows = _market_comparison_rows().copy()
+    snaps = []
+    for _, row in rows.iterrows():
+        day = pd.Timestamp(row["date"]).date()
+        snaps.append({
+            "provider_event_id": f"e{row['game_pk']}",
+            "sportsbook": "DraftKings",
+            "captured_at_utc": f"{day}T22:00:00Z",
+            "game_datetime": f"{day}T23:10:00Z",
+            "date": row["date"],
+            "home_team": row["home_team"],
+            "away_team": row["away_team"],
+            "home_moneyline": -150,
+            "away_moneyline": 130,
+            "market_home_win_probability": float(row["market_home_win_probability"]),
+            "source_status": market_odds.SOURCE_OK,
+            "game_pk": int(row["game_pk"]),
+            "match_method": "unique_matchup",
+            "snapshot_id": f"close_{row['game_pk']}",
+            "snapshot_role": "intraday",
+        })
+    rows["game_datetime"] = [
+        f"{pd.Timestamp(d).date()}T23:10:00Z" for d in rows["date"]
+    ]
+    picks, summary = game_evaluation.build_game_picks_export(
+        rows, odds_snapshots=pd.DataFrame(snaps),
+    )
 
     # pk 3's exact tie is excluded from the comparison base entirely -
     # only pk 1 (model win) and pk 2 (market win) count.
