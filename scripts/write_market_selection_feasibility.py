@@ -79,6 +79,13 @@ def main() -> int:
                     "n_markets_last_capture": nfl_coverage.get("n_markets"),
                     "n_mapped_last_capture": nfl_coverage.get("n_mapped"),
                     "n_books_last_capture": nfl_coverage.get("n_books_captured"),
+                    "n_book_http_failures": nfl_coverage.get("n_book_http_failures"),
+                    "captured_at_utc": nfl_coverage.get("captured_at_utc"),
+                    "limitations": (
+                        "Single public-API snapshot series; depth beyond top of book not "
+                        "summarized here; unmatched markets remain excluded from evaluation; "
+                        "venue still provisional US."
+                    ),
                     "note": "Null until capture_polymarket_nfl.py has been run.",
                 },
                 "unknowns_that_could_reverse": [
@@ -149,12 +156,20 @@ def main() -> int:
         },
         "evidence_collection_requirements_if_nfl": {
             "register_nfl_paper_protocol_before_nested_outcomes": True,
+            "nfl_paper_protocol_path": config.POLYMARKET_NFL_PAPER_PROTOCOL_PATH,
             "structural_floor_dates": config.POLYMARKET_MIN_ELIGIBLE_DATES,
             "note": (
                 "One NFL season of game-days is unlikely to meet the 70-date floor; "
                 "multi-season collection or an explicit NFL date-block redesign would be required. "
                 "That does not block starting capture and mapping tests."
             ),
+        },
+        "registered_validation_plan": {
+            "path": config.POLYMARKET_NFL_PAPER_PROTOCOL_PATH,
+            "register_command": (
+                "PYTHONPATH=src python scripts/register_nfl_paper_protocol.py"
+            ),
+            "nested_outcomes_opened": False,
         },
         "future_observations_claimed": False,
         "edge_claimed": False,

@@ -1292,6 +1292,11 @@ POLYMARKET_NFL_CONTRACT_REGISTRY_PATH = "data/polymarket/nfl/registry/contracts.
 POLYMARKET_NFL_QUOTE_STORE_DIR = "data/polymarket/nfl/quotes"
 POLYMARKET_NFL_COVERAGE_REPORT_PATH = "reports/polymarket/nfl_coverage_latest.json"
 POLYMARKET_NFL_LEAGUE_SLUG = "nfl"
+POLYMARKET_NFL_PAPER_PROTOCOL_PATH = (
+    "reports/model_validation/nfl_polymarket_paper_protocol.json"
+)
+POLYMARKET_NFL_PAPER_PROTOCOL_ID = "polymarket_us_nfl_game_winner_v1"
+POLYMARKET_NFL_PAPER_PROTOCOL_REGISTERED_UTC = "2026-09-16T18:50:00Z"
 
 # Market selection research registration (before examining comparative outcomes).
 MARKET_SELECTION_PROTOCOL_PATH = (

@@ -159,6 +159,60 @@ def test_nfl_mapping_unique_matchup():
     assert matched["sport_game_key"] == "nfl:2026_02_DAL_PHI"
 
 
+def test_nfl_mapping_rejects_date_only_midnight_kickoff():
+    """Schedule rows at midnight UTC must not false-match afternoon kickoffs."""
+    from mlb_metrics import nfl_market_contracts
+    from mlb_metrics.venues.base import VenueMarket, VenueOutcome
+
+    schedule = pd.DataFrame(
+        [
+            {
+                "sport_id": "nfl",
+                "sport_game_key": "nfl:2026_02_DAL_PHI",
+                "native_game_id": "2026_02_DAL_PHI",
+                "home_team": "PHI",
+                "away_team": "DAL",
+                "game_datetime": "2026-09-20T00:00:00Z",
+                "date": "2026-09-20",
+            }
+        ]
+    )
+    market = VenueMarket(
+        venue_id="polymarket_us",
+        event_id="1",
+        event_slug="nfl-dal-phi-2026-09-20",
+        market_id="9001",
+        market_slug="aec-nfl-dal-phi",
+        market_type="moneyline",
+        title="DAL @ PHI",
+        question="Winner?",
+        scheduled_start_utc="2026-09-20T17:00:00Z",
+        trading_status="OPEN",
+        active=True,
+        closed=False,
+        line=None,
+        tick_size=0.01,
+        min_trade_qty=1.0,
+        fee_coefficient=None,
+        home_team="PHI",
+        away_team="DAL",
+        provider_game_id="x",
+        outcomes=[
+            VenueOutcome("1", "DAL", "DAL", True, None, None, True),
+            VenueOutcome("2", "PHI", "PHI", False, None, None, True),
+        ],
+        rules_text="demo",
+        rules_hash="abc",
+    )
+    matched = nfl_market_contracts.match_market_to_nfl_schedule(market, schedule)
+    assert matched["mapping_status"] != nfl_market_contracts.MAPPING_MAPPED
+
+
+def test_nfl_validation_plan_paths_configured():
+    assert config.POLYMARKET_NFL_PAPER_PROTOCOL_ID == "polymarket_us_nfl_game_winner_v1"
+    assert "nfl" in config.POLYMARKET_NFL_PAPER_PROTOCOL_PATH
+
+
 def test_modes_remain_disabled():
     assert config.GAME_PREDICTION_MODE == "shadow"
     assert config.BETTING_MODE == "disabled"
