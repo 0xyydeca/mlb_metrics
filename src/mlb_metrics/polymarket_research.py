@@ -21,7 +21,7 @@ import pandas as pd
 from mlb_metrics import config, game_residual_model as grm, model_validation, paper_ledger
 
 
-PROTOCOL_VERSION = "1"
+PROTOCOL_VERSION = config.POLYMARKET_PAPER_PROTOCOL_VERSION
 
 
 def utc_now_iso() -> str:
@@ -56,6 +56,22 @@ class PaperResearchProtocol:
     )
     primary_probability_metric: str = "log_loss"
     secondary_probability_metrics: tuple[str, ...] = ("brier", "auc")
+    primary_return_metric: str = "settled_net_roi_after_fees"
+    secondary_return_metrics: tuple[str, ...] = (
+        "max_drawdown",
+        "fill_rate",
+        "skipped_opportunity_counts",
+        "conservative_delay_adverse_roi",
+    )
+    uncertainty_methods: dict[str, Any] = field(
+        default_factory=lambda: {
+            "probability": "paired_date_block_bootstrap_on_log_loss_diff",
+            "calibration": "equal_width_probability_bins",
+            "returns": "settled_only_roi_with_open_exposure_reported_separately",
+            "dependence": "games_sharing_a_date_are_one_block_not_independent_bets",
+            "no_invented_confidence_score": True,
+        }
+    )
     intended_logloss_improvement: float = config.POLYMARKET_INTENDED_LOGLOSS_IMPROVEMENT
     cost_assumptions: dict[str, Any] = field(
         default_factory=lambda: {
@@ -85,13 +101,51 @@ class PaperResearchProtocol:
             "doubleheaders_are_separate_game_pk": True,
             "polymarket_prior_requires_revalidation": True,
             "sportsbook_history_is_not_polymarket_evidence": True,
+            "log_every_eligible_candidate_and_pass_before_outcomes": True,
         }
     )
     decision_times: dict[str, Any] = field(
         default_factory=lambda: {
-            "policy": "prediction_time_recorded_quote",
+            "policy": "nearest_pregame_recorded_quote_at_or_before_entry_window",
+            "entry_minutes_before_scheduled_start": config.POLYMARKET_ENTRY_MINUTES_BEFORE_START,
             "cutoff": "strictly_before_scheduled_start",
             "no_post_start_features": True,
+            "timestamp_decisions_before_outcomes": True,
+        }
+    )
+    chronological_periods: dict[str, Any] = field(
+        default_factory=lambda: {
+            "timezone": "America/Phoenix",
+            "exploratory_dates_local": list(config.POLYMARKET_EXPLORATORY_DATES),
+            "prospective_collection_start_local": config.POLYMARKET_PROSPECTIVE_COLLECTION_START_LOCAL,
+            "regular_season_end_local": config.POLYMARKET_2026_REGULAR_SEASON_END_LOCAL,
+            "postseason_start_local": config.POLYMARKET_2026_POSTSEASON_START_LOCAL,
+            "world_series_end_local": config.POLYMARKET_2026_WORLD_SERIES_END_LOCAL,
+            "training_tuning": (
+                "All non-exploratory eligible dates strictly before the frozen "
+                "untouched evaluation tail; inner folds only for threshold/C selection."
+            ),
+            "untouched_evaluation": (
+                f"Final {config.GAME_RESIDUAL_BETTING_FREEZE_DATES} eligible dates "
+                "held out after nested outer folds; not inspected during tuning."
+            ),
+            "freeze_assignment": "Assigned only once structural floor eligible dates exist.",
+        }
+    )
+    cohorts: dict[str, Any] = field(
+        default_factory=lambda: {
+            "regular_season": {
+                "id": "mlb_2026_regular_season",
+                "end_local": config.POLYMARKET_2026_REGULAR_SEASON_END_LOCAL,
+                "primary_promotion_cohort": True,
+            },
+            "postseason": {
+                "id": "mlb_2026_postseason",
+                "start_local": config.POLYMARKET_2026_POSTSEASON_START_LOCAL,
+                "end_local": config.POLYMARKET_2026_WORLD_SERIES_END_LOCAL,
+                "primary_promotion_cohort": False,
+                "do_not_transfer_regular_season_results": True,
+            },
         }
     )
     fold_structure: dict[str, Any] = field(
@@ -106,6 +160,18 @@ class PaperResearchProtocol:
             "min_dates_structural_floor": config.GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS,
         }
     )
+    evaluation_checkpoints: dict[str, Any] = field(
+        default_factory=lambda: {
+            "game_days": list(config.POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS),
+            "rule": (
+                "At each checkpoint write a reproducible report from saved inputs. "
+                "Do not promote or enable betting on interim checkpoints. "
+                "Do not inspect the registered freeze tail during tuning."
+            ),
+            "checkpoint_7_14_are_progress_only": True,
+            "promotion_requires_structural_floor_and_gates": True,
+        }
+    )
     exploratory_dates: tuple[str, ...] = config.POLYMARKET_EXPLORATORY_DATES
     tuning_budget: dict[str, Any] = field(
         default_factory=lambda: {
@@ -114,6 +180,8 @@ class PaperResearchProtocol:
             "nonlinear_challenger_deferred": True,
             "select_on_inner_folds_only": True,
             "final_freeze_untouched": True,
+            "operational_fixes_do_not_require_new_evaluation_version": True,
+            "policy_or_metric_changes_require_new_evaluation_version": True,
         }
     )
     pass_fail_criteria: dict[str, Any] = field(
@@ -131,19 +199,33 @@ class PaperResearchProtocol:
                 "min_bet_dates_floor": config.BETTING_PROMOTION_MIN_BET_DATES,
                 "floors_are_not_power_proof": True,
             },
+            "insufficient_data_when_below_structural_floor": True,
             "betting_mode_if_fail": "disabled",
+            "betting_mode_if_insufficient_data": "disabled",
+        }
+    )
+    collection_host: dict[str, Any] = field(
+        default_factory=lambda: {
+            "host": config.POLYMARKET_COLLECTION_HOST,
+            "runtime_note": config.POLYMARKET_COLLECTION_RUNTIME_NOTE,
+            "workflow": ".github/workflows/polymarket_capture.yml",
+            "paid_services_purchased": False,
+            "missing_host": None,
         }
     )
     notes: tuple[str, ...] = (
-        "Registered before opening new evaluation outcomes for this protocol.",
+        "Registered before opening new prospective evaluation outcomes for this protocol version.",
         "Exploratory dates inspected during data-foundation work are not untouched validation.",
-        "Polymarket quote history is short; insufficient evidence is an expected valid result.",
+        "Regular-season and postseason cohorts are evaluated separately; results do not transfer.",
+        "The remaining 2026 regular season is expected to be below the structural date floor; "
+        "insufficient_data remains a valid conclusion and collection continues past this season.",
         "Owner places bets manually; this module never places orders.",
+        "Never claim future observations have already occurred.",
     )
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d["protocol_hash"] = _sha(d)
+        d["protocol_hash"] = _sha({k: v for k, v in d.items() if k != "protocol_hash"})
         return d
 
 
@@ -187,19 +269,133 @@ def register_protocol(path: str | None = None) -> dict[str, Any]:
     protocol["sample_size_plan"] = sample_size_for_paired_mean(
         effect=config.POLYMARKET_INTENDED_LOGLOSS_IMPROVEMENT
     )
+    protocol["remaining_season_capacity"] = remaining_season_capacity()
+    # Recompute hash including sample/capacity annexes.
+    annex = {
+        k: protocol[k]
+        for k in protocol
+        if k not in ("protocol_hash",)
+    }
+    protocol["protocol_hash"] = _sha(annex)
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     if os.path.exists(path):
         with open(path, encoding="utf-8") as f:
             existing = json.load(f)
         if existing.get("protocol_hash") == protocol.get("protocol_hash"):
             return existing
-        # Preserve first registration timestamp if content changed only by notes.
         protocol["supersedes_protocol_hash"] = existing.get("protocol_hash")
         protocol["previous_registered_at_utc"] = existing.get("registered_at_utc")
+        protocol["previous_protocol_id"] = existing.get("protocol_id")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(protocol, f, indent=2, sort_keys=True, default=str)
         f.write("\n")
     return protocol
+
+
+def remaining_season_capacity(
+    *,
+    as_of_local: str | None = None,
+    collection_start_local: str | None = None,
+) -> dict[str, Any]:
+    """Estimate remaining regular-season game dates vs structural/power floors.
+
+    Does not claim future observations have occurred. Calendar span is an
+    upper bound on independent dates if every day has eligible games.
+    """
+    from datetime import date as date_cls
+
+    as_of = date_cls.fromisoformat(as_of_local or config.POLYMARKET_PROSPECTIVE_COLLECTION_START_LOCAL)
+    start = date_cls.fromisoformat(
+        collection_start_local or config.POLYMARKET_PROSPECTIVE_COLLECTION_START_LOCAL
+    )
+    rs_end = date_cls.fromisoformat(config.POLYMARKET_2026_REGULAR_SEASON_END_LOCAL)
+    ps_start = date_cls.fromisoformat(config.POLYMARKET_2026_POSTSEASON_START_LOCAL)
+    ws_end = date_cls.fromisoformat(config.POLYMARKET_2026_WORLD_SERIES_END_LOCAL)
+    first = max(as_of, start)
+    remaining_rs = max(0, (rs_end - first).days + 1) if first <= rs_end else 0
+    remaining_ps = max(0, (ws_end - max(first, ps_start)).days + 1) if first <= ws_end else 0
+    floor = int(config.POLYMARKET_MIN_ELIGIBLE_DATES)
+    power_days = sample_size_for_paired_mean(
+        effect=config.POLYMARKET_INTENDED_LOGLOSS_IMPROVEMENT
+    )["approx_independent_days"]
+    return {
+        "as_of_local": str(as_of),
+        "collection_start_local": str(start),
+        "regular_season_end_local": str(rs_end),
+        "postseason_window_local": [str(ps_start), str(ws_end)],
+        "max_remaining_regular_season_calendar_dates": remaining_rs,
+        "max_remaining_postseason_calendar_dates": remaining_ps,
+        "structural_floor_dates": floor,
+        "approx_independent_days_for_target_edge": power_days,
+        "remaining_regular_season_meets_structural_floor": remaining_rs >= floor,
+        "remaining_regular_season_meets_power_plan": remaining_rs >= power_days,
+        "conclusion": (
+            "insufficient_for_structural_floor_this_regular_season"
+            if remaining_rs < floor
+            else "structural_floor_calendar_span_possible"
+        ),
+        "note": (
+            "Calendar dates are an upper bound, not observed eligible days. "
+            "Postseason is a separate cohort and does not fill the regular-season floor."
+        ),
+    }
+
+
+def count_prospective_labeled_dates(
+    decisions_path: str | None = None,
+    *,
+    exploratory_dates: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Count distinct decision days in the paper ledger excluding exploratory dates.
+
+    Labeled nested evaluation still requires joined official winners; this only
+    measures collection progress of pre-outcome decision logs.
+    """
+    path = decisions_path or config.POLYMARKET_PAPER_DECISIONS_PATH
+    exploratory = set(exploratory_dates or config.POLYMARKET_EXPLORATORY_DATES)
+    if not os.path.exists(path):
+        return {
+            "n_decision_rows": 0,
+            "n_distinct_decision_days": 0,
+            "n_prospective_days": 0,
+            "prospective_days": [],
+            "n_buy": 0,
+            "n_pass": 0,
+            "reason": "decisions_missing",
+        }
+    frame = pd.read_csv(path)
+    if frame.empty or "decision_time_utc" not in frame.columns:
+        return {
+            "n_decision_rows": int(len(frame)),
+            "n_distinct_decision_days": 0,
+            "n_prospective_days": 0,
+            "prospective_days": [],
+            "n_buy": 0,
+            "n_pass": 0,
+        }
+    days = pd.to_datetime(frame["decision_time_utc"], utc=True, errors="coerce").dt.strftime("%Y-%m-%d")
+    frame = frame.copy()
+    frame["_day"] = days
+    frame = frame[frame["_day"].notna()]
+    all_days = sorted(set(frame["_day"].tolist()))
+    prospective = [d for d in all_days if d not in exploratory]
+    return {
+        "n_decision_rows": int(len(frame)),
+        "n_distinct_decision_days": len(all_days),
+        "n_prospective_days": len(prospective),
+        "prospective_days": prospective,
+        "n_buy": int((frame["action"] == "buy").sum()) if "action" in frame.columns else 0,
+        "n_pass": int((frame["action"] == "pass").sum()) if "action" in frame.columns else 0,
+    }
+
+
+def write_collection_status(status: dict[str, Any], path: str | None = None) -> str:
+    path = path or config.POLYMARKET_COLLECTION_STATUS_PATH
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(status, f, indent=2, sort_keys=True, default=str)
+        f.write("\n")
+    return path
 
 
 def load_protocol(path: str | None = None) -> dict[str, Any]:
@@ -212,47 +408,60 @@ def frozen_policy_document(protocol: dict[str, Any] | None = None) -> dict[str, 
     protocol = protocol or register_protocol()
     doc = {
         "policy_version": f"{protocol['protocol_id']}_frozen_v1",
-        "registered_at_utc": utc_now_iso(),
+        "evaluation_version": protocol.get("protocol_version"),
+        "registered_at_utc": protocol.get("registered_at_utc"),
         "protocol_hash": protocol.get("protocol_hash"),
         "venue_id": protocol.get("venue_id"),
         "action": "paper_only",
         "betting_mode": "disabled",
         "entry": {
             "require_fresh_eligible_book": True,
+            "entry_minutes_before_scheduled_start": config.POLYMARKET_ENTRY_MINUTES_BEFORE_START,
             "size_contracts": config.POLYMARKET_PAPER_ONE_SHARE,
             "edge_vs_executable_ask_min": min(config.GAME_RESIDUAL_EDGE_THRESHOLD_GRID),
             "model": "regularized_market_residual_logistic_when_validated_else_pass",
             "exclude_market_only_fallback": True,
+            "log_candidates_and_passes_before_outcomes": True,
         },
         "execution_stress_for_reporting": {
             "delay_seconds": config.POLYMARKET_CONSERVATIVE_DELAY_SECONDS,
             "adverse_ticks": config.POLYMARKET_CONSERVATIVE_ADVERSE_TICKS,
+            "delay_grid": list(config.POLYMARKET_MANUAL_DELAY_SECONDS_GRID),
+            "adverse_ticks_grid": list(config.POLYMARKET_ADVERSE_TICKS_GRID),
         },
+        "cohorts": protocol.get("cohorts"),
         "prospective_checkpoints_game_days": list(
             config.POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS
         ),
         "evaluation_rule": (
-            "Log decisions before outcomes. Do not stop at the first profitable "
-            "streak. Extend observation when inconclusive."
+            "Log decisions before outcomes. Compare against same-time market mid "
+            "on identical opportunities. Do not stop at the first profitable "
+            "streak. Extend observation when inconclusive. Keep operational "
+            "collector fixes separate from evaluation-version changes."
         ),
         "notes": [
-            "Frozen for prospective paper observation once Polymarket history exists.",
+            "Frozen for prospective paper observation.",
             "Does not enable live betting.",
+            "Remaining 2026 regular season alone is below the structural date floor.",
         ],
     }
     doc["policy_hash"] = _sha(doc)
     return doc
 
 
-def write_frozen_policy(path: str | None = None) -> dict[str, Any]:
+def write_frozen_policy(path: str | None = None, protocol: dict[str, Any] | None = None) -> dict[str, Any]:
     path = path or config.POLYMARKET_FROZEN_POLICY_PATH
-    doc = frozen_policy_document()
+    doc = frozen_policy_document(protocol=protocol)
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            existing = json.load(f)
+        if existing.get("policy_hash") == doc.get("policy_hash"):
+            return existing
     with open(path, "w", encoding="utf-8") as f:
         json.dump(doc, f, indent=2, sort_keys=True, default=str)
         f.write("\n")
     return doc
-
 
 def calibration_table(
     y: pd.Series,

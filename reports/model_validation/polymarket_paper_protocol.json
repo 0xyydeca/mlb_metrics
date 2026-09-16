@@ -4,6 +4,41 @@
     "calibrated_heuristic_baseball",
     "regularized_market_residual_logistic"
   ],
+  "chronological_periods": {
+    "exploratory_dates_local": [
+      "2026-09-14",
+      "2026-09-15"
+    ],
+    "freeze_assignment": "Assigned only once structural floor eligible dates exist.",
+    "postseason_start_local": "2026-09-29",
+    "prospective_collection_start_local": "2026-09-16",
+    "regular_season_end_local": "2026-09-27",
+    "timezone": "America/Phoenix",
+    "training_tuning": "All non-exploratory eligible dates strictly before the frozen untouched evaluation tail; inner folds only for threshold/C selection.",
+    "untouched_evaluation": "Final 10 eligible dates held out after nested outer folds; not inspected during tuning.",
+    "world_series_end_local": "2026-10-31"
+  },
+  "cohorts": {
+    "postseason": {
+      "do_not_transfer_regular_season_results": true,
+      "end_local": "2026-10-31",
+      "id": "mlb_2026_postseason",
+      "primary_promotion_cohort": false,
+      "start_local": "2026-09-29"
+    },
+    "regular_season": {
+      "end_local": "2026-09-27",
+      "id": "mlb_2026_regular_season",
+      "primary_promotion_cohort": true
+    }
+  },
+  "collection_host": {
+    "host": "github_actions_ubuntu_latest",
+    "missing_host": null,
+    "paid_services_purchased": false,
+    "runtime_note": "Authorized host is GitHub Actions (ubuntu-latest) via polymarket_capture.yml plus optional local runs. No additional paid services are required or purchased. Quote Parquet stays artifact/gitignored; registry, coverage, protocol, and evaluation JSON are committed when present.",
+    "workflow": ".github/workflows/polymarket_capture.yml"
+  },
   "cost_assumptions": {
     "adverse_ticks_grid": [
       0,
@@ -45,20 +80,34 @@
   },
   "decision_times": {
     "cutoff": "strictly_before_scheduled_start",
+    "entry_minutes_before_scheduled_start": 30,
     "no_post_start_features": true,
-    "policy": "prediction_time_recorded_quote"
+    "policy": "nearest_pregame_recorded_quote_at_or_before_entry_window",
+    "timestamp_decisions_before_outcomes": true
   },
   "eligibility_rules": {
     "doubleheaders_are_separate_game_pk": true,
     "exclude_crossed_books_from_mid_baseline": true,
     "exclude_market_only_fallback_from_independent_model": true,
     "exclude_postponed_canceled_suspended": true,
+    "log_every_eligible_candidate_and_pass_before_outcomes": true,
     "polymarket_prior_requires_revalidation": true,
     "quote_max_age_seconds": 30,
     "require_both_probable_pitchers_for_baseball_features": true,
     "require_mapped_game_pk": true,
     "require_non_stale_eligible_book": true,
     "sportsbook_history_is_not_polymarket_evidence": true
+  },
+  "evaluation_checkpoints": {
+    "checkpoint_7_14_are_progress_only": true,
+    "game_days": [
+      7,
+      14,
+      28,
+      70
+    ],
+    "promotion_requires_structural_floor_and_gates": true,
+    "rule": "At each checkpoint write a reproducible report from saved inputs. Do not promote or enable betting on interim checkpoints. Do not inspect the registered freeze tail during tuning."
   },
   "exploratory_dates": [
     "2026-09-14",
@@ -78,13 +127,17 @@
   "intended_logloss_improvement": 0.01,
   "market_type": "pregame_full_game_winner",
   "notes": [
-    "Registered before opening new evaluation outcomes for this protocol.",
+    "Registered before opening new prospective evaluation outcomes for this protocol version.",
     "Exploratory dates inspected during data-foundation work are not untouched validation.",
-    "Polymarket quote history is short; insufficient evidence is an expected valid result.",
-    "Owner places bets manually; this module never places orders."
+    "Regular-season and postseason cohorts are evaluated separately; results do not transfer.",
+    "The remaining 2026 regular season is expected to be below the structural date floor; insufficient_data remains a valid conclusion and collection continues past this season.",
+    "Owner places bets manually; this module never places orders.",
+    "Never claim future observations have already occurred."
   ],
   "pass_fail_criteria": {
     "betting_mode_if_fail": "disabled",
+    "betting_mode_if_insufficient_data": "disabled",
+    "insufficient_data_when_below_structural_floor": true,
     "probability_gate": {
       "also_report_brier": true,
       "paired_day_block_ci_excludes_zero_on_log_loss": true,
@@ -99,11 +152,31 @@
       "positive_roi_on_untouched_outer": true
     }
   },
+  "previous_protocol_id": "polymarket_us_game_winner_v1",
+  "previous_registered_at_utc": "2026-09-15T21:30:00Z",
   "primary_probability_metric": "log_loss",
-  "protocol_hash": "7f9618a855e44e5b",
-  "protocol_id": "polymarket_us_game_winner_v1",
-  "protocol_version": "1",
-  "registered_at_utc": "2026-09-15T21:30:00Z",
+  "primary_return_metric": "settled_net_roi_after_fees",
+  "protocol_hash": "46c2471bb9fb8a7a",
+  "protocol_id": "polymarket_us_game_winner_v2",
+  "protocol_version": "2",
+  "registered_at_utc": "2026-09-16T03:20:00Z",
+  "remaining_season_capacity": {
+    "approx_independent_days_for_target_edge": 197,
+    "as_of_local": "2026-09-16",
+    "collection_start_local": "2026-09-16",
+    "conclusion": "insufficient_for_structural_floor_this_regular_season",
+    "max_remaining_postseason_calendar_dates": 33,
+    "max_remaining_regular_season_calendar_dates": 12,
+    "note": "Calendar dates are an upper bound, not observed eligible days. Postseason is a separate cohort and does not fill the regular-season floor.",
+    "postseason_window_local": [
+      "2026-09-29",
+      "2026-10-31"
+    ],
+    "regular_season_end_local": "2026-09-27",
+    "remaining_regular_season_meets_power_plan": false,
+    "remaining_regular_season_meets_structural_floor": false,
+    "structural_floor_dates": 70
+  },
   "sample_size_plan": {
     "alpha": 0.05,
     "approx_independent_days": 197,
@@ -117,6 +190,13 @@
     "brier",
     "auc"
   ],
+  "secondary_return_metrics": [
+    "max_drawdown",
+    "fill_rate",
+    "skipped_opportunity_counts",
+    "conservative_delay_adverse_roi"
+  ],
+  "supersedes_protocol_hash": "7f9618a855e44e5b",
   "tuning_budget": {
     "edge_threshold_grid": [
       0.01,
@@ -134,7 +214,16 @@
       0.1
     ],
     "nonlinear_challenger_deferred": true,
+    "operational_fixes_do_not_require_new_evaluation_version": true,
+    "policy_or_metric_changes_require_new_evaluation_version": true,
     "select_on_inner_folds_only": true
+  },
+  "uncertainty_methods": {
+    "calibration": "equal_width_probability_bins",
+    "dependence": "games_sharing_a_date_are_one_block_not_independent_bets",
+    "no_invented_confidence_score": true,
+    "probability": "paired_date_block_bootstrap_on_log_loss_diff",
+    "returns": "settled_only_roi_with_open_exposure_reported_separately"
   },
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research"

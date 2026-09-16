@@ -158,7 +158,7 @@ def main() -> int:
     assert config.BETTING_MODE == "disabled", config.BETTING_MODE
 
     protocol = polymarket_research.register_protocol()
-    frozen = polymarket_research.write_frozen_policy()
+    frozen = polymarket_research.write_frozen_policy(protocol=protocol)
     Path(config.POLYMARKET_PAPER_LEDGER_DIR).mkdir(parents=True, exist_ok=True)
     keep = Path(config.POLYMARKET_PAPER_LEDGER_DIR) / ".gitkeep"
     if not keep.exists():
@@ -203,6 +203,11 @@ def main() -> int:
             exploratory_sportsbook["cohort"] = "sportsbook_prior_shadow_diagnostic"
             exploratory_sportsbook["excluded_from_polymarket_gates"] = True
 
+    # Prospective ledger progress (pre-outcome logs). Nested labeled eval still
+    # requires settled winners joined to as-of Polymarket quotes — not claimed here.
+    ledger_progress = polymarket_research.count_prospective_labeled_dates()
+    capacity = protocol.get("remaining_season_capacity") or polymarket_research.remaining_season_capacity()
+
     probability_report = {
         "status": "insufficient_data",
         "reason": "no_polymarket_labeled_history",
@@ -213,6 +218,7 @@ def main() -> int:
             "Sportsbook residual shadow history is exploratory diagnostic only "
             "and cannot satisfy Polymarket gates."
         ),
+        "same_time_market_baseline_required": True,
     }
 
     n_quote_index_rows = 0
@@ -228,6 +234,8 @@ def main() -> int:
         reg = pd.read_csv(config.POLYMARKET_CONTRACT_REGISTRY_PATH)
         n_mapped = int((reg.get("mapping_status") == "mapped").sum()) if not reg.empty else 0
 
+    # Nested eval eligible dates remain 0 until settled Polymarket labels exist.
+    # Ledger decision days are collection progress only — not labeled eval dates.
     polymarket_eligible_dates = 0
     n_outer = polymarket_research.count_possible_outer_folds(polymarket_eligible_dates, protocol)
 
@@ -246,6 +254,7 @@ def main() -> int:
     report = {
         "generated_at_utc": polymarket_research.utc_now_iso(),
         "protocol_id": protocol.get("protocol_id"),
+        "protocol_version": protocol.get("protocol_version"),
         "protocol_hash": protocol.get("protocol_hash"),
         "policy_hash": frozen.get("policy_hash"),
         "modes": {
@@ -256,14 +265,19 @@ def main() -> int:
         "validation_status": gates["validation_status"],
         "gates": gates,
         "sample_size_plan": protocol.get("sample_size_plan"),
+        "remaining_season_capacity": capacity,
+        "cohorts": protocol.get("cohorts"),
         "data_coverage": {
             "n_mapped_contracts": n_mapped,
             "n_quote_index_rows": n_quote_index_rows,
             "n_polymarket_labeled_eligible_dates": polymarket_eligible_dates,
+            "ledger_collection_progress": ledger_progress,
             "exploratory_dates": list(protocol.get("exploratory_dates") or []),
+            "prospective_collection_start_local": config.POLYMARKET_PROSPECTIVE_COLLECTION_START_LOCAL,
             "note": (
                 "Mapped contracts and quote rows are necessary but not sufficient. "
-                "Nested evaluation requires labeled settled games with as-of quotes."
+                "Nested evaluation requires labeled settled games with as-of quotes. "
+                "Ledger decision-day counts are pre-outcome collection progress only."
             ),
         },
         "probability_quality_polymarket": probability_report,
@@ -273,6 +287,8 @@ def main() -> int:
             "frozen_policy_path": config.POLYMARKET_FROZEN_POLICY_PATH,
             "checkpoints_game_days": list(config.POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS),
             "future_results_manufactured": False,
+            "future_observations_claimed": False,
+            "collection_host": protocol.get("collection_host"),
             "additional_observations_required": {
                 "min_eligible_dates_structural": protocol["fold_structure"][
                     "min_dates_structural_floor"
@@ -280,9 +296,16 @@ def main() -> int:
                 "approx_independent_days_for_target_edge": (
                     protocol.get("sample_size_plan") or {}
                 ).get("approx_independent_days"),
+                "remaining_regular_season_calendar_dates": capacity.get(
+                    "max_remaining_regular_season_calendar_dates"
+                ),
+                "remaining_season_meets_structural_floor": capacity.get(
+                    "remaining_regular_season_meets_structural_floor"
+                ),
                 "need": (
                     "Accumulate Polymarket books + official results for >= structural "
-                    "floor complete outer blocks after freeze; re-run this script; "
+                    "floor complete outer blocks after freeze; continue past the 2026 "
+                    "regular season; re-run evaluation only at registered checkpoints; "
                     "do not inspect the registered freeze tail during tuning."
                 ),
             },
@@ -291,15 +314,35 @@ def main() -> int:
             "Venue remains provisional Polymarket US until owner confirms.",
             "Sportsbook residual history cannot substitute for Polymarket priors.",
             "Fixture ledger proves accounting math, not edge.",
+            "Remaining 2026 regular season cannot meet the structural date floor alone.",
+            "30-minute capture cadence cannot guarantee a post-delay book within 60s.",
             "Betting stays disabled.",
         ],
     }
     path = polymarket_research.write_evaluation_report(report, path=args.report_path)
+    polymarket_research.write_collection_status(
+        {
+            "generated_at_utc": report["generated_at_utc"],
+            "protocol_hash": report["protocol_hash"],
+            "policy_hash": report["policy_hash"],
+            "verdict": report["verdict"],
+            "validation_status": report["validation_status"],
+            "n_polymarket_labeled_eligible_dates": polymarket_eligible_dates,
+            "ledger_collection_progress": ledger_progress,
+            "remaining_season_capacity": capacity,
+            "future_observations_claimed": False,
+        }
+    )
     print(f"Wrote protocol: {config.POLYMARKET_PAPER_PROTOCOL_PATH}")
     print(f"Wrote frozen policy: {config.POLYMARKET_FROZEN_POLICY_PATH}")
     print(f"Wrote evaluation report: {path}")
     print(f"VERDICT: {report['verdict']}")
     print(f"validation_status={report['validation_status']}")
+    print(
+        "remaining_regular_season_dates="
+        f"{capacity.get('max_remaining_regular_season_calendar_dates')} "
+        f"meets_floor={capacity.get('remaining_regular_season_meets_structural_floor')}"
+    )
     for reason in gates.get("gate_fail_reasons") or []:
         print(f"  gate: {reason}")
     return 0

@@ -1,0 +1,36 @@
+{
+  "future_observations_claimed": false,
+  "generated_at_utc": "2026-09-16T03:38:03Z",
+  "ledger_collection_progress": {
+    "n_buy": 0,
+    "n_decision_rows": 228,
+    "n_distinct_decision_days": 1,
+    "n_pass": 228,
+    "n_prospective_days": 1,
+    "prospective_days": [
+      "2026-09-16"
+    ]
+  },
+  "n_polymarket_labeled_eligible_dates": 0,
+  "policy_hash": "c5361ddb1a247394",
+  "protocol_hash": "46c2471bb9fb8a7a",
+  "remaining_season_capacity": {
+    "approx_independent_days_for_target_edge": 197,
+    "as_of_local": "2026-09-16",
+    "collection_start_local": "2026-09-16",
+    "conclusion": "insufficient_for_structural_floor_this_regular_season",
+    "max_remaining_postseason_calendar_dates": 33,
+    "max_remaining_regular_season_calendar_dates": 12,
+    "note": "Calendar dates are an upper bound, not observed eligible days. Postseason is a separate cohort and does not fill the regular-season floor.",
+    "postseason_window_local": [
+      "2026-09-29",
+      "2026-10-31"
+    ],
+    "regular_season_end_local": "2026-09-27",
+    "remaining_regular_season_meets_power_plan": false,
+    "remaining_regular_season_meets_structural_floor": false,
+    "structural_floor_dates": 70
+  },
+  "validation_status": "insufficient_data",
+  "verdict": "insufficient_evidence"
+}

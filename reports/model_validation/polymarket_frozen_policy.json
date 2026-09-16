@@ -1,31 +1,61 @@
 {
   "action": "paper_only",
   "betting_mode": "disabled",
+  "cohorts": {
+    "postseason": {
+      "do_not_transfer_regular_season_results": true,
+      "end_local": "2026-10-31",
+      "id": "mlb_2026_postseason",
+      "primary_promotion_cohort": false,
+      "start_local": "2026-09-29"
+    },
+    "regular_season": {
+      "end_local": "2026-09-27",
+      "id": "mlb_2026_regular_season",
+      "primary_promotion_cohort": true
+    }
+  },
   "entry": {
     "edge_vs_executable_ask_min": 0.01,
+    "entry_minutes_before_scheduled_start": 30,
     "exclude_market_only_fallback": true,
+    "log_candidates_and_passes_before_outcomes": true,
     "model": "regularized_market_residual_logistic_when_validated_else_pass",
     "require_fresh_eligible_book": true,
     "size_contracts": 1.0
   },
-  "evaluation_rule": "Log decisions before outcomes. Do not stop at the first profitable streak. Extend observation when inconclusive.",
+  "evaluation_rule": "Log decisions before outcomes. Compare against same-time market mid on identical opportunities. Do not stop at the first profitable streak. Extend observation when inconclusive. Keep operational collector fixes separate from evaluation-version changes.",
+  "evaluation_version": "2",
   "execution_stress_for_reporting": {
     "adverse_ticks": 2,
+    "adverse_ticks_grid": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "delay_grid": [
+      0,
+      30,
+      60,
+      120
+    ],
     "delay_seconds": 60
   },
   "notes": [
-    "Frozen for prospective paper observation once Polymarket history exists.",
-    "Does not enable live betting."
+    "Frozen for prospective paper observation.",
+    "Does not enable live betting.",
+    "Remaining 2026 regular season alone is below the structural date floor."
   ],
-  "policy_hash": "6155a8a06da828f5",
-  "policy_version": "polymarket_us_game_winner_v1_frozen_v1",
+  "policy_hash": "c5361ddb1a247394",
+  "policy_version": "polymarket_us_game_winner_v2_frozen_v1",
   "prospective_checkpoints_game_days": [
     7,
     14,
     28,
     70
   ],
-  "protocol_hash": "7f9618a855e44e5b",
-  "registered_at_utc": "2026-09-15T21:44:08Z",
+  "protocol_hash": "46c2471bb9fb8a7a",
+  "registered_at_utc": "2026-09-16T03:20:00Z",
   "venue_id": "polymarket_us"
 }

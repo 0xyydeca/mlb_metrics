@@ -13,81 +13,77 @@
 ## Current plan
 
 - Scope: pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
-- **MLB data/accounting foundation is engineering-ready** on fork **`main`** (mapping, books, fees, baseball snapshots, paper ledger cycle, settlement join, contract trace). Labeled evaluation history is still insufficient for an edge claim.
+- **Prospective paper-evaluation protocol v2 is registered** and collection is initiated on GitHub Actions + local capture. Labeled nested-eval history remains insufficient for an edge claim.
 - Target repo only: `0xyydeca/mlb_metrics`.
-- Next: keep quote + baseball capture running; accumulate labeled Polymarket dates to structural/power floors; re-run evaluation only at registered checkpoints.
+- Next: keep capture + paper-ledger logging running through the rest of 2026 and into 2027; report only at registered checkpoints; do not inspect the freeze tail during tuning.
 - Full plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md).
 - Daily ops: [docs/POLYMARKET_DAILY_OPS.md](docs/POLYMARKET_DAILY_OPS.md).
 
-## Evidence snapshot (verified 2026-09-15 / refreshed 2026-09-16)
+## Evidence snapshot (verified 2026-09-16)
 
 - Modes unchanged: `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`.
-- Protocol / evaluation: verdict **insufficient_evidence** (`validation_status=insufficient_data`); Polymarket labeled eligible dates for nested eval still **0**.
-- Live capture (2026-09-16): 40 books written, 0 HTTP failures; registry 57/57 mapped; baseball snapshots 15 usable persisted.
-- Contract trace (real observed): `market_id=800763`, `game_pk=822849`, rules hash + quote + fee version `us_taker_theta_0.06_2026-07-01`. Conservative 60s delay **fails closed** when no newer book exists after delay (`missing_quote_after_manual_delay`). Two-book delay fills verified in tests. Report: `reports/polymarket/contract_trace_latest.json`.
-- Paper cycle: 114 decisions logged (all **pass** while evidence gates fail); no production buys; fixtures remain under `fixture_*.csv` only.
-- Missing for labeled eval: evidence gate pass (0 Polymarket nested-eval dates). Baseball snapshots are now persisted.
+- **Protocol:** `polymarket_us_game_winner_v2` (version 2), registered `2026-09-16T03:20:00Z`, hash in `reports/model_validation/polymarket_paper_protocol.json`.
+- **Frozen policy:** paper-only / betting disabled; hash in `polymarket_frozen_policy.json`.
+- **Exploratory dates (not untouched validation):** `2026-09-14`, `2026-09-15`.
+- **Prospective collection start (America/Phoenix):** `2026-09-16`.
+- **Checkpoints (game days):** 7, 14, 28, 70 — 7/14 are progress-only; promotion requires structural floor + gates.
+- **Remaining 2026 regular season:** through **2026-09-27** → at most **12** calendar dates from collection start. Structural floor **70**; power plan ~**197** independent days for 0.01 log-loss edge. **This regular season cannot meet the floor.** Postseason (from 2026-09-29) is a **separate cohort** and does not fill the regular-season requirement.
+- Evaluation verdict: **insufficient_evidence** / `insufficient_data` (0 Polymarket labeled nested-eval dates). Future observations are **not** claimed.
+- Paper ledger continues logging candidates/passes before outcomes (114 passes / 0 buys on last cycle).
 - Repository: https://github.com/0xyydeca/mlb_metrics
 
 ## Current technical facts
 
-- Venue adapters: `venues/polymarket_us.py` (live), `polymarket_international.py` (explicit unsupported). Settlement API client: `fetch_market_settlement`.
-- Registry / quotes: `market_contracts.py`, `quote_store.py` (as-of quote selection, ask/bid depth parsers, restart-safe dedupe).
-- Baseball as-of: `game_baseball_snapshots.py` (persist default with `--with-baseball`).
-- Paper ledger: `paper_ledger.py` + **`paper_pipeline.py`** (candidates/passes, delayed fills, settle from MLB Final results).
-- Scripts: `capture_polymarket.py`, `health_polymarket.py`, `audit_polymarket_data.py`, `run_polymarket_paper_ledger.py`, `run_polymarket_paper_evaluation.py`, decision dashboard export/serve.
-- Liquidity vs collector: empty/missing ask → persisted ineligible book; HTTP exceptions → `book_failures` / exit 2 when zero books.
+- Protocol registration (no outcome inspection): `scripts/register_polymarket_protocol.py`.
+- Evaluation report (reproducible, fail-closed): `scripts/run_polymarket_paper_evaluation.py`.
+- Collection host: GitHub Actions `polymarket_capture.yml` (ubuntu-latest) — capture `--with-baseball`, paper ledger cycle, artifacts. No paid services purchased; none missing for this path.
+- External / operational blockers: venue unconfirmed; 30-minute cron cannot guarantee a 60s post-delay book; remaining season date count below floor.
+- Foundation modules unchanged in role: registry, quote store, baseball snapshots, paper ledger/pipeline, decision board.
 
 ## Commands
 
 ```bash
+# Register protocol only (before inspecting outcomes)
+PYTHONPATH=src python scripts/register_polymarket_protocol.py
+
 # Collection (read-only)
 PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
-PYTHONPATH=src python scripts/capture_polymarket.py --limit 50 --with-baseball --no-persist-baseball
+PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py
+PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py --settle-date YYYY-MM-DD
 
-# Health / audit (mapping ≠ usable prices)
+# Health / audit
 PYTHONPATH=src python scripts/health_polymarket.py
 PYTHONPATH=src python scripts/audit_polymarket_data.py
 
-# Paper ledger + end-to-end contract trace
-PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py --trace-only
-PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py
-PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py --settle-date 2026-09-15
-
-# Evaluation protocol (does not enable betting)
+# Checkpoint evaluation report (does not enable betting)
 PYTHONPATH=src python scripts/run_polymarket_paper_evaluation.py
 
-# Decision dashboard
-PYTHONPATH=src python scripts/export_polymarket_decision_board.py --with-live-baseball
-PYTHONPATH=src python scripts/serve_decision_dashboard.py
-
 # Focused tests
-PYTHONPATH=src python -m pytest tests/test_paper_pipeline.py tests/test_paper_ledger.py tests/test_data_foundation.py tests/test_decision_board.py tests/test_polymarket_phase1.py -q
+PYTHONPATH=src python -m pytest tests/test_polymarket_protocol_v2.py tests/test_paper_pipeline.py tests/test_paper_ledger.py tests/test_data_foundation.py -q
 ```
 
 ## Checks run
 
-- `pytest` (paper pipeline + ledger + foundation + decision board + phase1) → **52 passed**.
-- Live capture → 40 books written, baseball 15 usable persisted.
-- Contract trace → **ok** for observed mapped contract (source → quote → fees); conservative delayed fill unfilled without a post-delay book; still missing `evidence_gate_pass`.
-- Paper cycle → 114 passes, 0 buys (`BETTING_MODE=disabled`).
-- Health → actionable suppressed when quotes age past 30s; mapping ≠ fresh prices.
+- `scripts/register_polymarket_protocol.py` → protocol v2 + frozen policy + collection status written; remaining season **12 < 70**.
+- `scripts/run_polymarket_paper_evaluation.py` → **insufficient_evidence** / `insufficient_data`.
+- `pytest` protocol/paper/foundation/decision/phase1 → **56 passed**.
+- Paper ledger cycle → decisions logged; buys suppressed while gates fail.
+- Capture workflow updated to persist baseball + run paper ledger + upload ledger artifacts (Actions host).
 
 ## Readiness verdict (separate)
 
 | Question | Verdict |
 |---|---|
-| **Engineering readiness** (foundation software for mapping, books, fees, as-of baseball, paper accounting, settlement join, trace)? | **Yes** — ready to operate and accumulate history. Automated orders remain absent. |
-| **Evidence of an edge / real-money readiness?** | **No** — `insufficient_evidence`; 0 Polymarket labeled nested-eval dates; personal limits unset; venue unconfirmed. |
+| **Engineering / collection readiness?** | **Yes** — protocol registered, frozen policy saved, Actions collection path initiated, reports reproducible from saved inputs. |
+| **Evidence of an edge / real-money readiness?** | **No** — `insufficient_evidence`; remaining 2026 regular season cannot supply the structural date floor; betting stays disabled. |
 
 ## Remaining blockers / gaps
 
 - Confirm owner venue (US vs international).
 - Supply bankroll + max affordable loss before stake guidance.
-- Need Polymarket as-of books joined to official results across enough dates (floor 70; ~197 days for registered 0.01 log-loss power plan).
-- Near-start 1-minute capture vs 30-minute cron remains an operational gap for the 30s actionable quote bar (recheck API covers manual action).
-- Historical display-price backfill still unused for fill backtests (depth-only fills).
+- Need ≥70 Polymarket labeled eligible dates (then freeze + outer folds); continue collection past 2026-09-27.
+- Near-start denser quotes for conservative delay stress remain an operational gap on the 30-minute cron.
 
 ## Next implementation task
 
-Continue capture; settle paper positions when Final results exist; re-run evaluation only at registered checkpoints without inspecting the freeze tail.
+Keep authorized capture + paper-ledger logging running; settle when Finals exist; write checkpoint reports at 7/14 days without inspecting a freeze tail that has not been assigned yet.

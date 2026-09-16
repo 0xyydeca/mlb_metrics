@@ -58,10 +58,19 @@ jobs:
             git rebase --abort 2>/dev/null || true
           }
 
-      - name: Capture Polymarket moneylines + books
+      - name: Capture Polymarket moneylines + books + baseball
         run: |
           echo "event=${{ github.event_name }} ref=${{ github.ref }}"
-          PYTHONPATH=src python scripts/capture_polymarket.py
+          PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
+
+      - name: Paper ledger cycle (log candidates/passes before outcomes)
+        if: always()
+        run: |
+          PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py || {
+            code=$?
+            echo "::warning::Paper ledger cycle exited with $code (collection continues)."
+            exit 0
+          }
 
       - name: Audit coverage
         if: always()
@@ -79,6 +88,7 @@ jobs:
             fi
             exit "$code"
           }
+
       - name: Confirm modes unchanged
         run: |
           PYTHONPATH=src python - <<'PY'
@@ -89,7 +99,7 @@ jobs:
           print(f"BETTING_MODE={config.BETTING_MODE!r}")
           PY
 
-      - name: Upload quote artifacts
+      - name: Upload quote + ledger artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -97,10 +107,15 @@ jobs:
           path: |
             data/polymarket/quotes/
             data/polymarket/registry/contracts.csv
+            data/polymarket/ledger/decisions.csv
+            data/polymarket/ledger/positions.csv
+            data/predictions/game_baseball_snapshots_latest.csv
             reports/polymarket/coverage_latest.json
+            reports/polymarket/contract_trace_latest.json
+            reports/polymarket/collection_status_latest.json
           if-no-files-found: warn
 
-      - name: Commit registry + coverage report
+      - name: Commit registry + coverage + protocol status
         if: always()
         run: |
           git config user.name "github-actions"
@@ -109,6 +124,8 @@ jobs:
           git add -f \
             data/polymarket/registry/contracts.csv \
             reports/polymarket/coverage_latest.json \
+            reports/polymarket/collection_status_latest.json \
+            reports/polymarket/contract_trace_latest.json \
             || true
 
           if git diff --cached --quiet; then

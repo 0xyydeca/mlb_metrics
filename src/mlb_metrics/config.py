@@ -1220,7 +1220,8 @@ POLYMARKET_US_FEE_SCHEDULES = (
 )
 
 # Polymarket paper evaluation (Phase 3–4). Betting stays disabled until gates pass.
-POLYMARKET_PAPER_PROTOCOL_ID = "polymarket_us_game_winner_v1"
+POLYMARKET_PAPER_PROTOCOL_ID = "polymarket_us_game_winner_v2"
+POLYMARKET_PAPER_PROTOCOL_VERSION = "2"
 POLYMARKET_PAPER_PROTOCOL_PATH = (
     "reports/model_validation/polymarket_paper_protocol.json"
 )
@@ -1233,9 +1234,19 @@ POLYMARKET_FROZEN_POLICY_PATH = (
 POLYMARKET_PAPER_LEDGER_DIR = "data/polymarket/ledger"
 POLYMARKET_PAPER_DECISIONS_PATH = "data/polymarket/ledger/decisions.csv"
 POLYMARKET_PAPER_POSITIONS_PATH = "data/polymarket/ledger/positions.csv"
-# Protocol registered 2026-09-15 before opening new evaluation outcomes.
-POLYMARKET_PAPER_PROTOCOL_REGISTERED_UTC = "2026-09-15T21:30:00Z"
+POLYMARKET_COLLECTION_STATUS_PATH = "reports/polymarket/collection_status_latest.json"
+# Protocol v2 registered before opening new prospective evaluation outcomes.
+POLYMARKET_PAPER_PROTOCOL_REGISTERED_UTC = "2026-09-16T03:20:00Z"
+# Foundation / tooling inspection dates — not untouched validation.
 POLYMARKET_EXPLORATORY_DATES = ("2026-09-14", "2026-09-15")
+# First local date included in prospective collection (America/Phoenix).
+POLYMARKET_PROSPECTIVE_COLLECTION_START_LOCAL = "2026-09-16"
+# Official 2026 MLB calendar (MLB.com schedule releases).
+POLYMARKET_2026_REGULAR_SEASON_END_LOCAL = "2026-09-27"
+POLYMARKET_2026_POSTSEASON_START_LOCAL = "2026-09-29"
+POLYMARKET_2026_WORLD_SERIES_END_LOCAL = "2026-10-31"
+# Intended primary decision: ~30 minutes before scheduled start when a book exists.
+POLYMARKET_ENTRY_MINUTES_BEFORE_START = 30
 POLYMARKET_INTENDED_LOGLOSS_IMPROVEMENT = 0.01
 POLYMARKET_PRECISION_TARGET_POWER = 0.8
 POLYMARKET_PAPER_MAX_CONTRACTS = 10.0
@@ -1244,10 +1255,19 @@ POLYMARKET_MANUAL_DELAY_SECONDS_GRID = (0, 30, 60, 120)
 POLYMARKET_ADVERSE_TICKS_GRID = (0, 1, 2, 5)
 POLYMARKET_CONSERVATIVE_DELAY_SECONDS = 60
 POLYMARKET_CONSERVATIVE_ADVERSE_TICKS = 2
+# Progress checkpoints (game days with labeled eligible history). 7/14 may occur
+# within the remaining 2026 regular season; 28/70 require continuing collection.
 POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS = (7, 14, 28, 70)
 # Same structural floors as residual betting (implementation floors, not power).
 POLYMARKET_MIN_ELIGIBLE_DATES = GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS
-
+# Collection host: GitHub Actions workflow polymarket_capture.yml (no paid add-ons).
+POLYMARKET_COLLECTION_HOST = "github_actions_ubuntu_latest"
+POLYMARKET_COLLECTION_RUNTIME_NOTE = (
+    "Authorized host is GitHub Actions (ubuntu-latest) via polymarket_capture.yml "
+    "plus optional local runs. No additional paid services are required or purchased. "
+    "Quote Parquet stays artifact/gitignored; registry, coverage, protocol, and "
+    "evaluation JSON are committed when present."
+)
 # Manual decision dashboard (docs/polymarket.html). Stake guidance stays off
 # until personal bankroll / max-loss limits are configured by the owner.
 POLYMARKET_DECISION_BOARD_PATH = "docs/data/polymarket_decision_board.csv"

@@ -1,42 +1,41 @@
-# Polymarket decision / foundation — daily ops
+# Polymarket prospective collection — daily ops
 
-Manual only. No automated orders. Venue research label: **provisional Polymarket US** until you confirm US vs international.
+Manual only. No automated orders. Venue label: **provisional Polymarket US** until confirmed.
+
+**Protocol:** `polymarket_us_game_winner_v2` (registered before new prospective outcomes).  
+**Collection start (America/Phoenix):** 2026-09-16. Exploratory (not untouched): 2026-09-14, 2026-09-15.  
+**Honest capacity:** remaining 2026 regular season (through 2026-09-27) has ≤12 calendar dates vs structural floor 70 — **insufficient alone**; keep collecting into 2027. Postseason is a separate cohort.
+
+## Host / runtime
+
+- Authorized: GitHub Actions `polymarket_capture.yml` on `ubuntu-latest` (no paid add-ons).
+- Optional local runs with the same scripts.
+- Missing host: none for this collection path. Do not buy services.
 
 ## Startup
 
 ```bash
-# 1) Capture books + baseball (persists snapshots by default)
-PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
+# One-time / when protocol constants change (does not inspect outcomes)
+PYTHONPATH=src python scripts/register_polymarket_protocol.py
 
-# 2) Health / audit (mapping ≠ usable prices)
+# Daily collection
+PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
+PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py
 PYTHONPATH=src python scripts/health_polymarket.py
 PYTHONPATH=src python scripts/audit_polymarket_data.py
 
-# 3) Trace one observed contract → quote → fees → paper fill math
-PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py --trace-only
-
-# 4) Log candidates/passes (buys suppressed while evidence gates fail)
-PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py
-
-# 5) Settle any open paper positions after Finals
+# After Finals (settlement join)
 PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py --skip-cycle --settle-date YYYY-MM-DD
 
-# 6) Dashboard (optional)
-PYTHONPATH=src python scripts/export_polymarket_decision_board.py --with-live-baseball
-PYTHONPATH=src python scripts/serve_decision_dashboard.py
-# → http://127.0.0.1:8765/polymarket.html
+# Checkpoint report only (7 / 14 / 28 / 70 game days) — never enables betting
+PYTHONPATH=src python scripts/run_polymarket_paper_evaluation.py
 ```
 
-## Checklist
+## Rules
 
-1. If `evidence_verdict` ≠ `edge_supported`, correct action is **no bet**.
-2. Trace file: `reports/polymarket/contract_trace_latest.json` — must show venue, `game_pk`, orientation, rules hash, quote times, fee version, paper cost.
-3. Empty ask / ineligible book = liquidity; HTTP failures in capture report = collector problem.
-4. Stale quotes (>30s) and missing baseball suppress actionable output.
-5. Never increase stakes to recover losses. Configure personal limits before stake guidance.
-
-## Tests
-
-```bash
-PYTHONPATH=src python -m pytest tests/test_paper_pipeline.py tests/test_paper_ledger.py tests/test_data_foundation.py tests/test_decision_board.py tests/test_polymarket_phase1.py -q
-```
+1. Log every eligible candidate and pass **before** outcomes.
+2. Do not inspect or assign a freeze tail until the structural floor exists.
+3. Operational collector fixes ≠ evaluation-version / policy changes.
+4. Compare models only on identical opportunities vs same-time market mid.
+5. Never claim future observations have already occurred.
+6. If evidence remains thin, preserve **insufficient_data** — that is a valid result.

@@ -245,4 +245,5 @@ reports/polymarket/**
 !reports/polymarket/README.md
 !reports/polymarket/coverage_latest.json
 !reports/polymarket/contract_trace_latest.json
+!reports/polymarket/collection_status_latest.json
 
