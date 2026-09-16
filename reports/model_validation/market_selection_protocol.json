@@ -1,0 +1,59 @@
+{
+  "candidates_under_consideration": [
+    {
+      "id": "nfl_pregame_moneyline",
+      "market_type": "pregame_full_game_winner",
+      "sport": "nfl",
+      "venue": "polymarket_us_provisional"
+    },
+    {
+      "id": "nba_pregame_moneyline",
+      "market_type": "pregame_full_game_winner",
+      "sport": "nba",
+      "venue": "polymarket_us_provisional"
+    },
+    {
+      "id": "nhl_pregame_moneyline",
+      "market_type": "pregame_full_game_winner",
+      "sport": "nhl",
+      "venue": "polymarket_us_provisional"
+    }
+  ],
+  "feasibility_dimensions": [
+    "contract_availability_and_settlement_complexity",
+    "historical_prediction_time_data_and_labels",
+    "executable_prices_spread_depth_fees_collection_cost",
+    "opportunity_frequency_and_validation_time",
+    "reusable_code_vs_sport_specific_work"
+  ],
+  "mlb_continues": true,
+  "notes": [
+    "Registered before writing the feasibility comparison outcomes.",
+    "A no-expansion recommendation is allowed.",
+    "Owner venue (US vs international) remains unconfirmed."
+  ],
+  "objective": "Select at most one next sport/market for research investment using reusable Polymarket infrastructure. Selection is feasibility-driven, not profitability-driven.",
+  "protocol_hash": "850e9d64196d3ebc",
+  "protocol_id": "market_selection_next_sport_v1",
+  "protocol_version": "1",
+  "registered_at_utc": "2026-09-16T05:00:00Z",
+  "rules": {
+    "at_most_one_selection": true,
+    "market_selection_is_tuning": true,
+    "missing_liquidity_is_not_zero_cost": true,
+    "model_development_gated_on_subsequent_validation": true,
+    "no_assumed_account_access": true,
+    "no_data_purchases": true,
+    "no_invented_scoring_weights": true,
+    "no_selection_on_lucky_exploratory_backtest": true,
+    "real_money_gated": true,
+    "register_before_examining_comparative_outcomes": true,
+    "reserve_untouched_evidence_for_selected_market": true
+  },
+  "status_labels_allowed": [
+    "feasible",
+    "blocked",
+    "uncertain"
+  ],
+  "untouched_holdout_rule": "After selection, register a sport-specific paper protocol before opening nested evaluation outcomes for that sport. Do not reuse MLB freeze tails or exploratory MLB dates as NFL/NBA evidence."
+}

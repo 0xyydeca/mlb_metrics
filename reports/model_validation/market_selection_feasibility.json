@@ -1,0 +1,92 @@
+{
+  "candidates": {
+    "nba_pregame_moneyline": {
+      "contract_availability": "League slug nba documented on Polymarket US sports API.",
+      "estimated_engineering_days": "5\u201310 before useful capture+labels; longer before models",
+      "historical_labels": "No first-party NBA prediction/schedule stack in this repo yet.",
+      "opportunity_frequency": "Near-daily Oct\u2013Apr \u2014 better calendar span toward a 70-date floor than NFL.",
+      "prices_fees_collection": "Same venue book/fee stack; liquidity unknown until sampled.",
+      "reusable_code": "Medium \u2014 venue/quotes/paper only; no NBA features/models.",
+      "settlement_complexity": "Binary winners; overtime included typically \u2014 verify per contract.",
+      "sport_specific_work_remaining": "Schedule adapter, team abbreviations, prediction targets, labels, protocol.",
+      "status": "uncertain",
+      "unknowns_that_could_reverse": [
+        "2026\u201327 tip-off timing vs collection start",
+        "Missing public schedule/label pipeline quality"
+      ]
+    },
+    "nfl_pregame_moneyline": {
+      "contract_availability": "Polymarket US documents league slug nfl via GET /v2/leagues/nfl/events; moneyline type SPORTS_MARKET_TYPE_MONEYLINE.",
+      "estimated_engineering_days": "2\u20134 for capture/mapping; 5\u201310 before nested eval readiness",
+      "historical_labels": "In-repo nflreadpy schedules/results via nfl_data.fetch_schedules; existing nfl_game_predictions pipeline with game_id.",
+      "observed_sample": {
+        "n_books_last_capture": 20,
+        "n_mapped_last_capture": 15,
+        "n_markets_last_capture": 20,
+        "note": "Null until capture_polymarket_nfl.py has been run."
+      },
+      "opportunity_frequency": "Roughly Thu/Sun/Mon game days (~2\u20133 independent dates/week). One NFL season alone is unlikely to reach the 70-date structural floor.",
+      "prices_fees_collection": "Same US fee schedule machinery as MLB; books via /v1/markets/{slug}/book. Liquidity not assumed; empty books remain liquidity failures.",
+      "reusable_code": "High \u2014 venue adapter, quote_store, paper_ledger, NFL predictions.",
+      "settlement_complexity": "Binary game winner similar to MLB; independent games; cancel/postpone rules still require contract text (not assumed).",
+      "sport_specific_work_remaining": "Mapping QA, paper protocol for NFL, prediction\u2194Polymarket prior join, settlement exceptions, denser near-kickoff capture.",
+      "status": "feasible",
+      "unknowns_that_could_reverse": [
+        "Persistently thin or absent NFL moneyline books on provisional US venue",
+        "Owner actually uses international venue with different contracts",
+        "Settlement rules for postponed/neutral-site games diverge materially"
+      ]
+    },
+    "nhl_pregame_moneyline": {
+      "contract_availability": "League slug nhl documented on Polymarket US sports API.",
+      "estimated_engineering_days": "5\u201312 before useful labeled capture",
+      "historical_labels": "No NHL stack in this repo.",
+      "opportunity_frequency": "Near-daily in season; similar calendar advantage to NBA.",
+      "prices_fees_collection": "Same venue stack; liquidity unknown.",
+      "reusable_code": "Medium \u2014 venue/quotes/paper only.",
+      "settlement_complexity": "Regulation vs include-OT/SO can differ by contract \u2014 higher rule risk than NFL/NBA.",
+      "sport_specific_work_remaining": "Full sport adapter + settlement-rule handling.",
+      "status": "uncertain",
+      "unknowns_that_could_reverse": [
+        "OT/SO settlement ambiguity",
+        "Book coverage gaps"
+      ]
+    }
+  },
+  "edge_claimed": false,
+  "evidence_collection_requirements_if_nfl": {
+    "note": "One NFL season of game-days is unlikely to meet the 70-date floor; multi-season collection or an explicit NFL date-block redesign would be required. That does not block starting capture and mapping tests.",
+    "register_nfl_paper_protocol_before_nested_outcomes": true,
+    "structural_floor_dates": 70
+  },
+  "future_observations_claimed": false,
+  "generated_at_utc": "2026-09-16T05:01:54Z",
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "protocol_hash": "850e9d64196d3ebc",
+  "protocol_id": "market_selection_next_sport_v1",
+  "selection": {
+    "decision": "proceed_minimal_capture_only",
+    "gates": {
+      "mlb_collection": "continues_unchanged",
+      "model_development": "blocked_until_nfl_paper_protocol_and_validation",
+      "real_money": "blocked"
+    },
+    "no_expansion_would_be_correct_if": "NFL books are systematically missing/ineligible on the provisional US venue, or the owner confirms a different venue that does not list NFL moneylines.",
+    "not_selected_alternatives": [
+      "nba_pregame_moneyline",
+      "nhl_pregame_moneyline"
+    ],
+    "rationale": "NFL is the only candidate with both documented Polymarket US league events and an existing in-repo schedule/prediction identity (game_id). Selection is for research infrastructure reuse and immediate public-data capture \u2014 not because any backtest showed profit. NBA/NHL remain uncertain pending sport adapters; they may later beat NFL on date density.",
+    "selected_id": "nfl_pregame_moneyline"
+  },
+  "sources": [
+    "https://docs.polymarket.us/api-reference/sports/overview",
+    "https://docs.polymarket.us/data-guide/sports-data",
+    "https://docs.polymarket.us/fees",
+    "https://docs.polymarket.us/faqs/sports-faqs",
+    "In-repo: nfl_data.py, nfl_game_predictions.py, sports/* adapters, venues/polymarket_us.py"
+  ]
+}

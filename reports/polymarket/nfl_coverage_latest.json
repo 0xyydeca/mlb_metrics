@@ -1,0 +1,25 @@
+{
+  "captured_at_utc": "2026-09-16T05:01:46Z",
+  "finished_at_utc": "2026-09-16T05:01:51Z",
+  "sport_id": "nfl",
+  "venue_id": "polymarket_us",
+  "venue_label": "polymarket_us_provisional_research",
+  "n_markets": 20,
+  "n_schedule_rows": 16,
+  "n_mapped": 15,
+  "n_books_captured": 20,
+  "n_book_http_failures": 0,
+  "book_failure_samples": [],
+  "registry_path": "data/polymarket/nfl/registry/contracts.csv",
+  "quote_dir": "data/polymarket/nfl/quotes",
+  "mlb_paths_untouched": true,
+  "modes": {
+    "GAME_PREDICTION_MODE": "shadow",
+    "BETTING_MODE": "disabled"
+  },
+  "notes": [
+    "Read-only NFL capture; no orders.",
+    "sport_game_key uses nfl:{game_id}; MLB game_pk registry is not modified.",
+    "Model development and real-money use remain gated."
+  ]
+}

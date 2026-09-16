@@ -25,11 +25,14 @@ class PolymarketInternationalAdapter:
             order_placement=False,
         )
 
-    def list_mlb_moneyline_markets(self, *, limit: int = 200):
+    def list_moneyline_markets(self, *, league: str | None = None, limit: int = 200):
         raise UnsupportedVenueError(
             "polymarket_international is not implemented until the owner's "
             "venue is confirmed and international contract/fee semantics are tested"
         )
+
+    def list_mlb_moneyline_markets(self, *, limit: int = 200):
+        return self.list_moneyline_markets(league="mlb", limit=limit)
 
     def fetch_market_book(self, market_slug: str, **kwargs):
         raise UnsupportedVenueError(

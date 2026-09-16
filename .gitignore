@@ -230,6 +230,8 @@ reports/model_validation/**
 !reports/model_validation/polymarket_paper_protocol.json
 !reports/model_validation/polymarket_paper_evaluation.json
 !reports/model_validation/polymarket_frozen_policy.json
+!reports/model_validation/market_selection_protocol.json
+!reports/model_validation/market_selection_feasibility.json
 data/polymarket/ledger/**
 !data/polymarket/ledger/.gitkeep
 
@@ -246,4 +248,5 @@ reports/polymarket/**
 !reports/polymarket/coverage_latest.json
 !reports/polymarket/contract_trace_latest.json
 !reports/polymarket/collection_status_latest.json
+!reports/polymarket/nfl_coverage_latest.json
 

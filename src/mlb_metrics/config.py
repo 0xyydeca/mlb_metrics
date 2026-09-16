@@ -1287,6 +1287,21 @@ POLYMARKET_DECISION_STATE_PASS_STALE = "Pass—stale quote"
 POLYMARKET_DECISION_STATE_PASS_MISSING = "Pass—missing inputs"
 POLYMARKET_DECISION_STATE_GAME_STARTED = "Game started"
 
+# Cross-sport reuse: NFL Polymarket paths are namespaced and never overwrite MLB.
+POLYMARKET_NFL_CONTRACT_REGISTRY_PATH = "data/polymarket/nfl/registry/contracts.csv"
+POLYMARKET_NFL_QUOTE_STORE_DIR = "data/polymarket/nfl/quotes"
+POLYMARKET_NFL_COVERAGE_REPORT_PATH = "reports/polymarket/nfl_coverage_latest.json"
+POLYMARKET_NFL_LEAGUE_SLUG = "nfl"
+
+# Market selection research registration (before examining comparative outcomes).
+MARKET_SELECTION_PROTOCOL_PATH = (
+    "reports/model_validation/market_selection_protocol.json"
+)
+MARKET_SELECTION_FEASIBILITY_PATH = (
+    "reports/model_validation/market_selection_feasibility.json"
+)
+MARKET_SELECTION_PROTOCOL_REGISTERED_UTC = "2026-09-16T05:00:00Z"
+
 # Kelly-criterion bet sizing (kelly.py, scripts/recommend_bets.py) - a
 # follow-up to the market benchmark above: turns "model probability
 # disagrees with the market" into an actual recommended stake. Single

@@ -434,20 +434,27 @@ class PolymarketUSAdapter:
         events = payload.get("events") if isinstance(payload, dict) else None
         return list(events or [])
 
-    def list_mlb_moneyline_markets(self, *, limit: int = 200) -> list[VenueMarket]:
+    def list_moneyline_markets(
+        self, *, league: str | None = None, limit: int = 200
+    ) -> list[VenueMarket]:
+        """List pregame moneylines for a league slug (mlb, nfl, nba, …)."""
+        slug = league or config.POLYMARKET_US_LEAGUE_SLUG
         markets: list[VenueMarket] = []
-        for event in self.list_league_events(limit=limit):
+        for event in self.list_league_events(league=slug, limit=limit):
             for market in event.get("markets") or []:
                 type_v2 = market.get("sportsMarketTypeV2")
                 market_type = str(market.get("marketType") or "").lower()
                 if type_v2 != MONEYLINE_TYPE_V2 and market_type != "moneyline":
                     continue
                 sports_type = str(market.get("sportsMarketType") or "")
-                if "first_five" in sports_type:
+                # MLB first-five innings; skip analogous partial-game tags for other sports.
+                if "first_five" in sports_type or "1h" in sports_type.lower():
                     continue
                 markets.append(parse_moneyline_market(event, market))
         return markets
 
+    def list_mlb_moneyline_markets(self, *, limit: int = 200) -> list[VenueMarket]:
+        return self.list_moneyline_markets(league="mlb", limit=limit)
     def fetch_market_book(
         self,
         market_slug: str,

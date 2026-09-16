@@ -7,83 +7,85 @@
 - The owner delegates market selection to the agent based on evidence about wins, odds, costs, and risk.
 - The owner requests a thorough implementation plan and autonomous progress without repeated approval questions for already authorized work.
 - **Personal bankroll, max affordable loss, and exposure caps have not been supplied.** Stake guidance stays off until entered in the dashboard Risk tab.
-- **Open question (venue):** which Polymarket venue the owner actually uses (US vs international) is still unconfirmed. Research remains **provisional Polymarket US** (`polymarket_us_provisional_research`).
+- **Open question (venue):** which Polymarket venue the owner actually uses (US vs international) is still unconfirmed. Research remains **provisional Polymarket US**.
 - **Owner workflow:** commit and push only to fork `0xyydeca/mlb_metrics` **`main`**. Do not create feature branches for routine work. Do not open pull requests against `JMerchen/mlb_metrics`.
 
 ## Current plan
 
-- Scope: pregame full-game winner contracts. Engineering priority only; profitability not demonstrated.
-- **Prospective paper-evaluation protocol v2 is registered** and collection is initiated on GitHub Actions + local capture. Labeled nested-eval history remains insufficient for an edge claim.
-- Target repo only: `0xyydeca/mlb_metrics`.
-- Next: keep capture + paper-ledger logging running through the rest of 2026 and into 2027; report only at registered checkpoints; do not inspect the freeze tail during tuning.
-- Full plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md).
-- Daily ops: [docs/POLYMARKET_DAILY_OPS.md](docs/POLYMARKET_DAILY_OPS.md).
+- MLB prospective paper protocol v2 remains active; collection continues (regular season alone cannot meet the 70-date floor).
+- **Cross-sport reusable adapters delivered** (venues + sport schedule contracts). MLB paths/CSV semantics preserved.
+- **Next research market selected (feasibility only): NFL pregame moneylines** — minimal public capture/mapping only. No NFL model training and no real-money use until a separate NFL paper protocol + validation.
+- Target repo: `0xyydeca/mlb_metrics`. Full MLB plan: [MLB_POLYMARKET_PLAN.md](MLB_POLYMARKET_PLAN.md). Migration: [docs/SPORT_ADAPTER_MIGRATION.md](docs/SPORT_ADAPTER_MIGRATION.md).
 
 ## Evidence snapshot (verified 2026-09-16)
 
-- Modes unchanged: `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`.
-- **Protocol:** `polymarket_us_game_winner_v2` (version 2), registered `2026-09-16T03:20:00Z`, hash in `reports/model_validation/polymarket_paper_protocol.json`.
-- **Frozen policy:** paper-only / betting disabled; hash in `polymarket_frozen_policy.json`.
-- **Exploratory dates (not untouched validation):** `2026-09-14`, `2026-09-15`.
-- **Prospective collection start (America/Phoenix):** `2026-09-16`.
-- **Checkpoints (game days):** 7, 14, 28, 70 — 7/14 are progress-only; promotion requires structural floor + gates.
-- **Remaining 2026 regular season:** through **2026-09-27** → at most **12** calendar dates from collection start. Structural floor **70**; power plan ~**197** independent days for 0.01 log-loss edge. **This regular season cannot meet the floor.** Postseason (from 2026-09-29) is a **separate cohort** and does not fill the regular-season requirement.
-- Evaluation verdict: **insufficient_evidence** / `insufficient_data` (0 Polymarket labeled nested-eval dates). Future observations are **not** claimed.
-- Paper ledger continues logging candidates/passes before outcomes (114 passes / 0 buys on last cycle).
-- Repository: https://github.com/0xyydeca/mlb_metrics
+### MLB
+- Modes: `GAME_PREDICTION_MODE="shadow"`, `BETTING_MODE="disabled"`.
+- Protocol `polymarket_us_game_winner_v2`; verdict **insufficient_evidence** (0 labeled nested-eval dates). Remaining regular season ≤12 calendar dates vs floor 70.
+- Future observations not claimed. No edge claimed.
 
-## Current technical facts
+### Market selection (registered before comparative outcomes)
+- Protocol: `reports/model_validation/market_selection_protocol.json`.
+- Feasibility: `reports/model_validation/market_selection_feasibility.json`.
+- Statuses: NFL **feasible**; NBA **uncertain**; NHL **uncertain**.
+- **Selected:** `nfl_pregame_moneyline` → `proceed_minimal_capture_only`.
+- Live NFL sample (public US API): 20 markets discovered; **15 mapped** to `nfl:{game_id}`; 12–20 books written depending on run; HTTP failures 0 on last capture. Mapping required Eastern kickoff composition from nflreadpy `gameday`+`gametime`.
+- Selection is **not** based on a profitable backtest. One NFL season is unlikely to hit the 70-date floor; multi-season collection still required for promotion-scale evidence.
 
-- Protocol registration (no outcome inspection): `scripts/register_polymarket_protocol.py`.
-- Evaluation report (reproducible, fail-closed): `scripts/run_polymarket_paper_evaluation.py`.
-- Collection host: GitHub Actions `polymarket_capture.yml` (ubuntu-latest) — capture `--with-baseball`, paper ledger cycle, artifacts. No paid services purchased; none missing for this path.
-- External / operational blockers: venue unconfirmed; 30-minute cron cannot guarantee a 60s post-delay book; remaining season date count below floor.
-- Foundation modules unchanged in role: registry, quote store, baseball snapshots, paper ledger/pipeline, decision board.
+## Completed vs future
+
+| Completed now | Future (not done) |
+|---|---|
+| Sport adapter contracts (`sports/*`) | NBA/NHL adapters |
+| `list_moneyline_markets(league=…)` + MLB wrapper | International venue |
+| NFL registry/quotes namespaced under `data/polymarket/nfl/` | NFL paper protocol / nested eval |
+| NFL capture script + mapping tests | NFL residual/heuristic models |
+| Market-selection protocol + feasibility report | Real-money / stake guidance |
+| MLB compatibility replay tests | Multi-sport dashboard |
 
 ## Commands
 
 ```bash
-# Register protocol only (before inspecting outcomes)
-PYTHONPATH=src python scripts/register_polymarket_protocol.py
-
-# Collection (read-only)
+# MLB (unchanged)
 PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
 PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py
-PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py --settle-date YYYY-MM-DD
-
-# Health / audit
-PYTHONPATH=src python scripts/health_polymarket.py
-PYTHONPATH=src python scripts/audit_polymarket_data.py
-
-# Checkpoint evaluation report (does not enable betting)
 PYTHONPATH=src python scripts/run_polymarket_paper_evaluation.py
 
-# Focused tests
-PYTHONPATH=src python -m pytest tests/test_polymarket_protocol_v2.py tests/test_paper_pipeline.py tests/test_paper_ledger.py tests/test_data_foundation.py -q
+# Market selection (register before feasibility outcomes)
+PYTHONPATH=src python scripts/register_market_selection_protocol.py
+PYTHONPATH=src python scripts/write_market_selection_feasibility.py
+
+# NFL minimal capture (does not touch MLB registry/quotes)
+PYTHONPATH=src python scripts/capture_polymarket_nfl.py --limit 50
+
+# Compatibility / focused tests
+PYTHONPATH=src python -m pytest tests/test_sport_adapters.py tests/test_paper_ledger.py tests/test_data_foundation.py tests/test_polymarket_phase1.py -q
 ```
 
 ## Checks run
 
-- `scripts/register_polymarket_protocol.py` → protocol v2 + frozen policy + collection status written; remaining season **12 < 70**.
-- `scripts/run_polymarket_paper_evaluation.py` → **insufficient_evidence** / `insufficient_data`.
-- `pytest` protocol/paper/foundation/decision/phase1 → **56 passed**.
-- Paper ledger cycle → decisions logged; buys suppressed while gates fail.
-- Capture workflow updated to persist baseball + run paper ledger + upload ledger artifacts (Actions host).
+- `pytest` sport adapters + MLB polymarket/paper suites → **64 passed** (full focused set).
+- MLB fixture fill/mapping replay equivalent after refactor.
+- NFL capture → mapped contracts present; books stored under `data/polymarket/nfl/quotes` only.
+- No unintended MLB production path writes from NFL capture.
 
 ## Readiness verdict (separate)
 
 | Question | Verdict |
 |---|---|
-| **Engineering / collection readiness?** | **Yes** — protocol registered, frozen policy saved, Actions collection path initiated, reports reproducible from saved inputs. |
-| **Evidence of an edge / real-money readiness?** | **No** — `insufficient_evidence`; remaining 2026 regular season cannot supply the structural date floor; betting stays disabled. |
+| MLB engineering / collection? | **Yes** (paper/protocol active). |
+| MLB edge / real money? | **No**. |
+| Cross-sport reuse scaffolding? | **Yes** (small adapters; not a framework rewrite). |
+| NFL research capture? | **Started** (public data only). |
+| NFL model / real money? | **No** — gated on future validation. |
 
 ## Remaining blockers / gaps
 
-- Confirm owner venue (US vs international).
-- Supply bankroll + max affordable loss before stake guidance.
-- Need ≥70 Polymarket labeled eligible dates (then freeze + outer folds); continue collection past 2026-09-27.
-- Near-start denser quotes for conservative delay stress remain an operational gap on the 30-minute cron.
+- Owner venue confirmation; personal risk limits.
+- MLB + NFL both need multi-period labeled history for structural floors.
+- NFL unmatched markets outside schedule lookahead still expected; deepen mapping QA.
+- Near-start quote cadence vs 30s freshness bar.
 
 ## Next implementation task
 
-Keep authorized capture + paper-ledger logging running; settle when Finals exist; write checkpoint reports at 7/14 days without inspecting a freeze tail that has not been assigned yet.
+Keep MLB collection running; optionally schedule NFL capture; register an NFL-specific paper protocol before any nested NFL evaluation outcomes.
