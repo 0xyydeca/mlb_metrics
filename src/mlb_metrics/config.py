@@ -1248,6 +1248,25 @@ POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS = (7, 14, 28, 70)
 # Same structural floors as residual betting (implementation floors, not power).
 POLYMARKET_MIN_ELIGIBLE_DATES = GAME_RESIDUAL_MIN_DATES_FOR_COMPLETE_OUTER_FOLDS
 
+# Manual decision dashboard (docs/polymarket.html). Stake guidance stays off
+# until personal bankroll / max-loss limits are configured by the owner.
+POLYMARKET_DECISION_BOARD_PATH = "docs/data/polymarket_decision_board.csv"
+POLYMARKET_DECISION_BOARD_META_PATH = "docs/data/polymarket_decision_meta.json"
+POLYMARKET_US_EVENT_URL_TEMPLATE = "https://polymarket.us/event/{event_slug}"
+# Normalized paper exposure defaults (NOT the owner's personal bankroll).
+POLYMARKET_PAPER_UNIT_LABEL = "normalized_paper_unit"
+POLYMARKET_PAPER_DEFAULT_PER_BET_UNITS = 1.0
+POLYMARKET_PAPER_DEFAULT_DAILY_UNIT_CAP = 5.0
+POLYMARKET_PAPER_DEFAULT_SAME_GAME_UNIT_CAP = 1.0
+POLYMARKET_PAPER_DEFAULT_SAME_TEAM_UNIT_CAP = 2.0
+# Decision states shown on the dashboard (exact strings).
+POLYMARKET_DECISION_STATE_PAPER_CANDIDATE = "Paper candidate"
+POLYMARKET_DECISION_STATE_PASS_INSUFFICIENT = "Pass—insufficient evidence"
+POLYMARKET_DECISION_STATE_PASS_PRICE = "Pass—price too high"
+POLYMARKET_DECISION_STATE_PASS_STALE = "Pass—stale quote"
+POLYMARKET_DECISION_STATE_PASS_MISSING = "Pass—missing inputs"
+POLYMARKET_DECISION_STATE_GAME_STARTED = "Game started"
+
 # Kelly-criterion bet sizing (kelly.py, scripts/recommend_bets.py) - a
 # follow-up to the market benchmark above: turns "model probability
 # disagrees with the market" into an actual recommended stake. Single

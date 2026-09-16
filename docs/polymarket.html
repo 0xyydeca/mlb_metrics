@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Polymarket Decisions — MLB Metrics</title>
+<link
+rel="icon"
+type="image/svg+xml"
+href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTQiIGZpbGw9IiNmMmE5M2MiLz48cGF0aCBkPSJNMTAgNCBDMTQgMTAsIDE0IDIyLCAxMCAyOCIgc3Ryb2tlPSIjMGIwZDEwIiBzdHJva2Utd2lkdGg9IjEuOCIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMiA0IEMxOCAxMCwgMTggMjIsIDIyIDI4IiBzdHJva2U9IiMwYjBkMTAiIHN0cm9rZS13aWR0aD0iMS44IiBmaWxsPSJub25lIi8+PC9zdmc+">
+<link rel="stylesheet" href="./style.css">
+<style>
+.decisionBanner{padding:14px 16px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--bg-raised);margin:12px 0 20px}
+.decisionBanner.warn{border-color:#8a5a2b;background:#1c1610}
+.decisionBanner.ok{border-color:#2a6b4a}
+.decisionGrid{display:grid;gap:12px}
+.decisionCard{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);padding:14px 16px}
+.decisionCard h3{margin:0 0 8px;font-size:1.05rem}
+.decisionMeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px 14px;font-size:.92rem}
+.decisionMeta span{color:var(--text-dim);display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.decisionState{display:inline-block;padding:3px 8px;border-radius:var(--radius-sm);font-weight:600;font-size:.85rem;margin-bottom:8px}
+.state-paper{background:#1e3d2f;color:var(--success)}
+.state-pass{background:#2a2430;color:var(--text-dim)}
+.state-started{background:#3a2020;color:var(--danger)}
+.riskForm,.manualForm{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.riskForm label,.manualForm label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--text-dim)}
+.riskForm input,.manualForm input,select.boardFilter{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:var(--radius-sm)}
+.muted{color:var(--text-dim);font-size:.9rem}
+.opsBox{white-space:pre-wrap;font-family:var(--font-mono);font-size:.82rem;background:var(--bg);border:1px solid var(--border);padding:12px;border-radius:var(--radius-sm)}
+.btnRow{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button.secondary{background:transparent;border:1px solid var(--border-strong);color:var(--text)}
+.tabPanel{display:none}
+.tabPanel.active{display:block}
+.demoTag{color:var(--accent);font-size:.8rem;font-weight:600}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="siteHeader">
+<div class="brandRow">
+<svg class="brandMark" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<circle cx="16" cy="16" r="14" fill="#f2a93c"/>
+<path d="M10 4 C14 10, 14 22, 10 28" stroke="#0b0d10" stroke-width="1.8" fill="none"/>
+<path d="M22 4 C18 10, 18 22, 22 28" stroke="#0b0d10" stroke-width="1.8" fill="none"/>
+</svg>
+<h1>MLB <span class="brandAccent">Metrics</span></h1>
+</div>
+<div class="tabGroup pageTabs">
+<a class="tabButton" href="./index.html">Predictive Metrics</a>
+<a class="tabButton active" href="./polymarket.html">Polymarket Decisions</a>
+<a class="tabButton" href="./age-curves.html">Age Curves</a>
+<a class="tabButton" href="./dfs.html">DFS Rankings</a>
+<a class="tabButton" href="./nfl.html">NFL</a>
+<a class="tabButton" href="./methodology.html">Methodology</a>
+</div>
+</div>
+
+<h2>Manual Polymarket decisions</h2>
+<p class="muted">
+Pregame full-game winners only. No automated orders. A high win probability alone never triggers a recommendation.
+Personal account details stay in this browser (localStorage) and are not uploaded.
+</p>
+
+<div id="readinessBanner" class="decisionBanner warn">Loading readiness…</div>
+
+<div class="tabGroup" id="pmTabs">
+<button class="tabButton active" data-pm-tab="board" onclick="selectPmTab('board')">Decision board</button>
+<button class="tabButton" data-pm-tab="evidence" onclick="selectPmTab('evidence')">Evidence &amp; paper</button>
+<button class="tabButton" data-pm-tab="manual" onclick="selectPmTab('manual')">Manual positions</button>
+<button class="tabButton" data-pm-tab="risk" onclick="selectPmTab('risk')">Risk limits</button>
+<button class="tabButton" data-pm-tab="ops" onclick="selectPmTab('ops')">Daily ops</button>
+</div>
+
+<section id="tab-board" class="tabPanel active">
+<div class="btnRow">
+<label>Filter
+<select class="boardFilter" id="stateFilter" onchange="renderBoard()">
+<option value="all">All states</option>
+<option value="Paper candidate">Paper candidate</option>
+<option value="Pass—insufficient evidence">Pass—insufficient evidence</option>
+<option value="Pass—price too high">Pass—price too high</option>
+<option value="Pass—stale quote">Pass—stale quote</option>
+<option value="Pass—missing inputs">Pass—missing inputs</option>
+<option value="Game started">Game started</option>
+</select>
+</label>
+<button onclick="reloadBoard()">Reload board</button>
+</div>
+<div id="boardList" class="decisionGrid">Loading…</div>
+</section>
+
+<section id="tab-evidence" class="tabPanel">
+<div id="evidencePanel" class="decisionCard">Loading…</div>
+<div class="decisionCard" style="margin-top:12px">
+<h3>Separated result streams</h3>
+<ul class="muted">
+<li><strong>Paper / fixture ledger</strong> — simulated fills under recorded books (not real money).</li>
+<li><strong>Historical model / sportsbook baselines</strong> — diagnostic only until Polymarket gates pass.</li>
+<li><strong>Manual real positions</strong> — what you enter below; compared to paper assumptions.</li>
+</ul>
+<div id="paperSummary"></div>
+</div>
+</section>
+
+<section id="tab-manual" class="tabPanel">
+<div class="decisionCard">
+<h3>Record a real manual fill</h3>
+<p class="muted">Stores only in this browser. Use after you personally place (or skip) a trade.</p>
+<div class="manualForm" id="manualForm">
+<label>Decision / market id<input id="m_market_id" placeholder="market_id"></label>
+<label>Game pk<input id="m_game_pk" placeholder="game_pk"></label>
+<label>Side team<input id="m_side" placeholder="NYY"></label>
+<label>Purchase price<input id="m_price" type="number" step="0.001" min="0" max="1"></label>
+<label>Quantity<input id="m_qty" type="number" step="0.01" min="0"></label>
+<label>Fees paid<input id="m_fees" type="number" step="0.0001" min="0"></label>
+<label>Status
+<select id="m_status">
+<option value="open">open</option>
+<option value="settled">settled</option>
+<option value="canceled">canceled</option>
+<option value="unfilled">unfilled</option>
+</select>
+</label>
+<label>Settlement px (optional)<input id="m_settle" type="number" step="0.01" min="0" max="1"></label>
+<label>Notes<input id="m_notes" placeholder="optional"></label>
+</div>
+<div class="btnRow">
+<button onclick="saveManualPosition()">Save position</button>
+<button class="secondary" onclick="clearManualPositions()">Clear all manual positions</button>
+</div>
+<div id="manualList"></div>
+</div>
+</section>
+
+<section id="tab-risk" class="tabPanel">
+<div class="decisionCard">
+<h3>Personal risk limits</h3>
+<p class="muted">
+Required before stake guidance can turn on. Until you set bankroll and max affordable loss,
+the board uses clearly labeled <em>normalized paper units</em> only and never auto-increases stakes after losses.
+</p>
+<div class="riskForm">
+<label>Bankroll (USD)<input id="r_bankroll" type="number" min="0" step="1" placeholder="required"></label>
+<label>Max affordable loss (USD)<input id="r_max_loss" type="number" min="0" step="1" placeholder="required"></label>
+<label>Per-bet unit cap<input id="r_per_bet" type="number" min="0" step="0.1" value="1"></label>
+<label>Daily unit cap<input id="r_daily" type="number" min="0" step="0.1" value="5"></label>
+<label>Same-game unit cap<input id="r_game" type="number" min="0" step="0.1" value="1"></label>
+<label>Same-team unit cap<input id="r_team" type="number" min="0" step="0.1" value="2"></label>
+</div>
+<div class="btnRow">
+<button onclick="saveRiskLimits()">Save limits</button>
+<button class="secondary" onclick="clearRiskLimits()">Clear limits</button>
+</div>
+<div id="riskStatus" class="muted"></div>
+</div>
+</section>
+
+<section id="tab-ops" class="tabPanel">
+<div class="decisionCard">
+<h3>Daily operating guide</h3>
+<div class="opsBox" id="opsGuide"></div>
+</div>
+</section>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="./polymarket.js"></script>
+</body>
+</html>

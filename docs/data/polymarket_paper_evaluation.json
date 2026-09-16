@@ -1,0 +1,153 @@
+{
+  "data_coverage": {
+    "exploratory_dates": [
+      "2026-09-14",
+      "2026-09-15"
+    ],
+    "n_mapped_contracts": 57,
+    "n_polymarket_labeled_eligible_dates": 0,
+    "n_quote_index_rows": 129,
+    "note": "Mapped contracts and quote rows are necessary but not sufficient. Nested evaluation requires labeled settled games with as-of quotes."
+  },
+  "gates": {
+    "betting_mode_required": "disabled",
+    "gate_fail_reasons": [
+      "insufficient_dates:0<structural_floor:70",
+      "insufficient_outer_folds:0<3",
+      "probability_status:insufficient_data",
+      "missing_residual_or_market_scores",
+      "strategy_roi_not_positive_under_base_and_conservative"
+    ],
+    "n_eligible_dates": 0,
+    "n_outer_folds_available": 0,
+    "strategy_ok": false,
+    "validation_status": "insufficient_data",
+    "verdict": "insufficient_evidence"
+  },
+  "generated_at_utc": "2026-09-15T21:44:08Z",
+  "limitations": [
+    "Venue remains provisional Polymarket US until owner confirms.",
+    "Sportsbook residual history cannot substitute for Polymarket priors.",
+    "Fixture ledger proves accounting math, not edge.",
+    "Betting stays disabled."
+  ],
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "paper_ledger_fixture": {
+    "concentration": {
+      "best_date_share": 1.0,
+      "n_settled_dates": 1
+    },
+    "conservative_roi": {
+      "n_canceled": 0,
+      "n_open": 0,
+      "n_settled": 1,
+      "n_unfilled": 0,
+      "open_exposure": 0.0,
+      "roi": NaN,
+      "settled_acquisition": 0.0,
+      "settled_net": 1.746686
+    },
+    "drawdown": {
+      "ending_equity": 1.746686,
+      "max_drawdown": 0.0,
+      "max_loss_streak": 0
+    },
+    "fill_rate": 1.0,
+    "hand_calculated": {
+      "example_a": {
+        "acquisition_cost": 1.253314,
+        "fees": 0.043314,
+        "filled_qty": 3.0,
+        "net_if_win": 1.746686,
+        "notional": 1.21,
+        "proceeds_if_win": 3.0,
+        "reconciled": true
+      },
+      "example_b_canceled": {
+        "net_pnl": null,
+        "open_exposure": 0.5,
+        "proceeds": null,
+        "settlement_payout_per_contract": null,
+        "settlement_rule": "canceled_requires_contract_rules",
+        "status": "canceled"
+      },
+      "example_c_no_asks": {
+        "acquisition_cost": 0.0,
+        "acquisition_notional": 0.0,
+        "adverse_ticks": 0,
+        "avg_fill_price": NaN,
+        "delay_seconds": 0,
+        "fees_paid": 0.0,
+        "filled_qty": 0.0,
+        "fills": [],
+        "status": "unfilled",
+        "unfilled_qty": 1.0
+      },
+      "example_d_adverse_ticks": {
+        "adverse_ticks": 2,
+        "avg_fill_price": 0.52
+      }
+    },
+    "n_buy": 1,
+    "n_decisions": 1,
+    "n_pass": 0,
+    "net_by_date": {
+      "2026-09-15": 1.746686
+    },
+    "roi": {
+      "n_canceled": 0,
+      "n_open": 0,
+      "n_settled": 1,
+      "n_unfilled": 0,
+      "open_exposure": 0.0,
+      "roi": 1.3936539446619123,
+      "settled_acquisition": 1.253314,
+      "settled_net": 1.746686
+    }
+  },
+  "policy_hash": "6155a8a06da828f5",
+  "probability_quality_polymarket": {
+    "market_prior_note": "Polymarket mid baseline not yet available for nested evaluation. Sportsbook residual shadow history is exploratory diagnostic only and cannot satisfy Polymarket gates.",
+    "n_dates": 0,
+    "n_games": 0,
+    "reason": "no_polymarket_labeled_history",
+    "status": "insufficient_data"
+  },
+  "probability_quality_sportsbook_diagnostic_only": {
+    "excluded_from_polymarket_gates": true,
+    "n_rows": 162,
+    "reason": "shadow_predictions_missing_labels",
+    "status": "insufficient_data"
+  },
+  "prospective": {
+    "additional_observations_required": {
+      "approx_independent_days_for_target_edge": 197,
+      "min_eligible_dates_structural": 70,
+      "need": "Accumulate Polymarket books + official results for >= structural floor complete outer blocks after freeze; re-run this script; do not inspect the registered freeze tail during tuning."
+    },
+    "checkpoints_game_days": [
+      7,
+      14,
+      28,
+      70
+    ],
+    "frozen_policy_path": "reports/model_validation/polymarket_frozen_policy.json",
+    "future_results_manufactured": false
+  },
+  "protocol_hash": "7f9618a855e44e5b",
+  "protocol_id": "polymarket_us_game_winner_v1",
+  "sample_size_plan": {
+    "alpha": 0.05,
+    "approx_independent_days": 197,
+    "assumed_day_sd": 0.05,
+    "effect_logloss": 0.01,
+    "note": "Planning estimate only. Actual inference uses paired date-block bootstrap; shared-date games are not independent bets.",
+    "power": 0.8,
+    "structural_floor_dates": 70
+  },
+  "validation_status": "insufficient_data",
+  "verdict": "insufficient_evidence"
+}

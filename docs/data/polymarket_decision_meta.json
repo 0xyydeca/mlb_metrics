@@ -1,0 +1,30 @@
+{
+  "betting_mode": "disabled",
+  "evidence_pass": false,
+  "evidence_verdict": "insufficient_evidence",
+  "game_prediction_mode": "shadow",
+  "gate_fail_reasons": [
+    "insufficient_dates:0<structural_floor:70",
+    "insufficient_outer_folds:0<3",
+    "probability_status:insufficient_data",
+    "missing_residual_or_market_scores",
+    "strategy_roi_not_positive_under_base_and_conservative"
+  ],
+  "generated_at_utc": "2026-09-16T02:48:13Z",
+  "n_actionable": 0,
+  "n_board_rows": 114,
+  "n_paper_candidate": 0,
+  "notes": [
+    "High win probability alone never triggers a recommendation.",
+    "Stake guidance stays off until personal bankroll/max-loss limits are configured.",
+    "Recheck public quotes before any manual purchase.",
+    "Software can display Pass states usefully when the correct answer is no bet."
+  ],
+  "orders_automated": false,
+  "paper_unit_label": "normalized_paper_unit",
+  "personal_limits_required_for_stake_guidance": true,
+  "policy_hash": "6155a8a06da828f5",
+  "policy_version": "polymarket_us_game_winner_v1_frozen_v1",
+  "validation_status": "insufficient_data",
+  "venue_label": "polymarket_us_provisional_research"
+}
