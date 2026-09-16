@@ -55,8 +55,9 @@ def main() -> int:
     )
     parser.add_argument(
         "--persist-baseball",
-        action="store_true",
-        help="Write baseball snapshots to configured prediction CSV paths (opt-in).",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="When --with-baseball, write snapshots to prediction CSV paths (default: true).",
     )
     args = parser.parse_args()
 
@@ -166,6 +167,7 @@ def main() -> int:
     baseball = None
     if args.with_baseball:
         baseball = game_baseball_snapshots.fetch_game_baseball_snapshots(schedule.today_local())
+        # Persist by default so prediction cutoffs have an audit trail; --no-persist-baseball skips.
         if args.persist_baseball:
             game_baseball_snapshots.persist_game_snapshots(baseball)
             print("Persisted baseball snapshots to configured prediction paths.")

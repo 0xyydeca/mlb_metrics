@@ -244,4 +244,5 @@ reports/polymarket/**
 !reports/polymarket/.gitkeep
 !reports/polymarket/README.md
 !reports/polymarket/coverage_latest.json
+!reports/polymarket/contract_trace_latest.json
 

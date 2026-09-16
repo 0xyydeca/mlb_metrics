@@ -1,0 +1,52 @@
+{
+  "actionable_suppressed": true,
+  "away_team": "BOS",
+  "baseball": {
+    "away_lineup_status": "confirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-09-16T03:05:11Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
+  "best_ask": 0.075,
+  "best_ask_size": 80937.91,
+  "best_bid": 0.07,
+  "contract_url": "https://polymarket.us/event/mlb-bos-tex-2026-09-15",
+  "event_slug": "mlb-bos-tex-2026-09-15",
+  "evidence_verdict": "insufficient_evidence",
+  "fee_version": "us_taker_theta_0.06_2026-07-01",
+  "game_pk": 822849,
+  "home_team": "TEX",
+  "long_team": "BOS",
+  "market_id": "800763",
+  "market_slug": "aec-mlb-bos-tex-2026-09-15",
+  "missing_for_labeled_eval": [
+    "evidence_gate_pass"
+  ],
+  "ok": true,
+  "paper_purchase": {
+    "acquisition_cost": 0.0,
+    "adverse_ticks": 2,
+    "avg_fill_price": NaN,
+    "delay_seconds": 60,
+    "fees_paid": 0.0,
+    "filled_qty": 0.0,
+    "fills": [],
+    "pass_reason": "missing_quote_after_manual_delay",
+    "status": "unfilled",
+    "unfilled_qty": 1.0
+  },
+  "quote_receive_time_utc": "2026-09-16T03:05:06Z",
+  "quote_request_time_utc": "2026-09-16T03:05:06Z",
+  "rules_hash": "541ec3c1246bbff3",
+  "rules_text_excerpt": "This market will settle to the winner of the Boston Red Sox vs Texas Rangers MLB game scheduled for 2026-09-15 at 8:05PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and not rescheduled to a date",
+  "scheduled_start_utc": "2026-09-16T00:05:00Z",
+  "short_team": "TEX",
+  "suppress_note": "BETTING_MODE=disabled; evidence gates have not passed",
+  "taker_theta": 0.06,
+  "validation_status": "insufficient_data",
+  "venue_id": "polymarket_us",
+  "venue_label": "polymarket_us_provisional_research"
+}

@@ -473,3 +473,24 @@ class PolymarketUSAdapter:
             tick_size=tick_size,
             min_trade_qty=min_trade_qty,
         )
+
+    def fetch_market_settlement(self, market_slug: str) -> dict[str, Any]:
+        """Official settlement price when available (docs: GET .../settlement).
+
+        Returns ``{"slug", "settlement", "request_time_utc", "receive_time_utc"}``.
+        404 / unsettled markets raise RuntimeError — callers must keep positions open.
+        """
+        request_time = _utc_now_iso()
+        payload = self._http_get_json(
+            f"/v1/markets/{urllib.parse.quote(market_slug)}/settlement"
+        )
+        receive_time = _utc_now_iso()
+        if not isinstance(payload, dict) or "settlement" not in payload:
+            raise RuntimeError(f"Unexpected settlement payload for {market_slug}: {payload!r}")
+        return {
+            "slug": payload.get("slug") or market_slug,
+            "settlement": float(payload["settlement"]),
+            "request_time_utc": request_time,
+            "receive_time_utc": receive_time,
+            "source": "polymarket_us_settlement_api",
+        }

@@ -315,3 +315,117 @@ def actionable_suppressed(
         "actionable": len(reasons) == 0,
         "suppress_reasons": reasons,
     }
+
+
+def load_partition_quotes(
+    *,
+    partition_date: str,
+    store_dir: str | None = None,
+) -> pd.DataFrame:
+    path = os.path.join(quote_store_dir(store_dir), f"dt={partition_date}", "quotes.parquet")
+    if not os.path.exists(path):
+        return empty_quote_frame()
+    return pd.read_parquet(path)
+
+
+def load_quotes_for_market(
+    market_id: str,
+    *,
+    store_dir: str | None = None,
+) -> pd.DataFrame:
+    """All stored book snapshots for one market_id (chronological)."""
+    idx = load_quote_index(store_dir)
+    if idx.empty:
+        return empty_quote_frame()
+    mid = str(market_id)
+    parts = sorted(
+        {
+            str(p)
+            for p in idx.loc[idx["market_id"].astype(str) == mid, "partition_date"].dropna().unique()
+        }
+    )
+    frames: list[pd.DataFrame] = []
+    for part in parts:
+        frame = load_partition_quotes(partition_date=part, store_dir=store_dir)
+        if frame.empty:
+            continue
+        frames.append(frame[frame["market_id"].astype(str) == mid])
+    if not frames:
+        return empty_quote_frame()
+    out = pd.concat(frames, ignore_index=True)
+    out["_ts"] = pd.to_datetime(out["receive_time_utc"], utc=True, errors="coerce")
+    out = out.sort_values("_ts").drop(columns=["_ts"], errors="ignore")
+    return out.reset_index(drop=True)
+
+
+def quote_as_of(
+    market_id: str,
+    *,
+    as_of_utc: str,
+    store_dir: str | None = None,
+    quotes: pd.DataFrame | None = None,
+) -> pd.Series | None:
+    """Latest quote with ``receive_time_utc <= as_of_utc`` (no future leakage)."""
+    frame = quotes if quotes is not None else load_quotes_for_market(market_id, store_dir=store_dir)
+    if frame is None or frame.empty:
+        return None
+    cutoff = pd.Timestamp(as_of_utc, tz="UTC")
+    ts = pd.to_datetime(frame["receive_time_utc"], utc=True, errors="coerce")
+    eligible = frame.loc[ts.notna() & (ts <= cutoff)]
+    if eligible.empty:
+        return None
+    return eligible.iloc[-1]
+
+
+def asks_from_quote_row(row: pd.Series | dict[str, Any] | None) -> list[dict[str, float]]:
+    """Parse recorded ask levels; empty list means no fillable liquidity."""
+    if row is None:
+        return []
+    raw = row.get("asks_json") if hasattr(row, "get") else None
+    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+        # Index-only rows may lack depth; fall back to best ask with unknown size.
+        best = row.get("best_ask") if hasattr(row, "get") else None
+        size = row.get("best_ask_size") if hasattr(row, "get") else None
+        if best is not None and pd.notna(best) and size is not None and pd.notna(size):
+            return [{"price": float(best), "size": float(size)}]
+        return []
+    if isinstance(raw, str):
+        try:
+            levels = json.loads(raw)
+        except json.JSONDecodeError:
+            return []
+    else:
+        levels = raw
+    out: list[dict[str, float]] = []
+    for level in levels or []:
+        try:
+            out.append({"price": float(level["price"]), "size": float(level["size"])})
+        except (KeyError, TypeError, ValueError):
+            continue
+    return out
+
+
+def bids_from_quote_row(row: pd.Series | dict[str, Any] | None) -> list[dict[str, float]]:
+    if row is None:
+        return []
+    raw = row.get("bids_json") if hasattr(row, "get") else None
+    if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+        best = row.get("best_bid") if hasattr(row, "get") else None
+        size = row.get("best_bid_size") if hasattr(row, "get") else None
+        if best is not None and pd.notna(best) and size is not None and pd.notna(size):
+            return [{"price": float(best), "size": float(size)}]
+        return []
+    if isinstance(raw, str):
+        try:
+            levels = json.loads(raw)
+        except json.JSONDecodeError:
+            return []
+    else:
+        levels = raw
+    out: list[dict[str, float]] = []
+    for level in levels or []:
+        try:
+            out.append({"price": float(level["price"]), "size": float(level["size"])})
+        except (KeyError, TypeError, ValueError):
+            continue
+    return out

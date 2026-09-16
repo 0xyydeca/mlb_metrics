@@ -62,6 +62,9 @@ POSITION_COLUMNS = [
     "proceeds",
     "net_pnl",
     "open_exposure",
+    "acquisition_cost",
+    "filled_qty",
+    "winning_team",
     "revision_of",
 ]
 
@@ -182,7 +185,13 @@ def simulate_paper_purchase(
     tick_size: float = 0.01,
     display_price: float | None = None,
 ) -> dict[str, Any]:
-    """Hypothetical taker buy. Display prices never fill."""
+    """Hypothetical taker buy. Display prices never fill.
+
+    ``delay_seconds`` is recorded for provenance. Callers that model manual
+    entry delay must select the book observed at ``decision_time + delay``
+    (see ``quote_store.quote_as_of`` / ``purchase_after_manual_delay``) before
+    calling this function — delay alone does not invent a later book.
+    """
     del display_price  # explicit: last/display is not a fill source
     fills, unfilled = walk_asks_for_buy(
         asks,
@@ -205,6 +214,54 @@ def simulate_paper_purchase(
         "unfilled_qty": float(unfilled),
         **cost,
     }
+
+
+def purchase_after_manual_delay(
+    *,
+    asks_at_decision: list[dict[str, Any]] | None,
+    asks_after_delay: list[dict[str, Any]] | None,
+    requested_qty: float,
+    fee: FeeSchedule,
+    delay_seconds: int,
+    adverse_ticks: int = 0,
+    tick_size: float = 0.01,
+) -> dict[str, Any]:
+    """Fill against the delayed book when present; else fail closed (unfilled).
+
+    If ``delay_seconds > 0`` and no later book exists, do not silently reuse
+    the decision-time book — that would understate manual-entry risk.
+    """
+    if int(delay_seconds) <= 0:
+        return simulate_paper_purchase(
+            asks=asks_at_decision,
+            requested_qty=requested_qty,
+            fee=fee,
+            delay_seconds=0,
+            adverse_ticks=adverse_ticks,
+            tick_size=tick_size,
+        )
+    if not asks_after_delay:
+        return {
+            "status": "unfilled",
+            "delay_seconds": int(delay_seconds),
+            "adverse_ticks": int(adverse_ticks),
+            "fills": [],
+            "unfilled_qty": float(requested_qty),
+            "filled_qty": 0.0,
+            "avg_fill_price": float("nan"),
+            "acquisition_notional": 0.0,
+            "fees_paid": 0.0,
+            "acquisition_cost": 0.0,
+            "pass_reason": "missing_quote_after_manual_delay",
+        }
+    return simulate_paper_purchase(
+        asks=asks_after_delay,
+        requested_qty=requested_qty,
+        fee=fee,
+        delay_seconds=delay_seconds,
+        adverse_ticks=adverse_ticks,
+        tick_size=tick_size,
+    )
 
 
 def settle_position(
@@ -273,7 +330,7 @@ def settle_position(
     }
 
 
-def settled_roi(positions: pd.DataFrame) -> dict[str, Any]:
+def settled_roi(positions: pd.DataFrame, decisions: pd.DataFrame | None = None) -> dict[str, Any]:
     """ROI = settled net / settled acquisition. Open exposure excluded."""
     if positions is None or positions.empty:
         return {
@@ -286,11 +343,22 @@ def settled_roi(positions: pd.DataFrame) -> dict[str, Any]:
             "n_canceled": 0,
             "n_unfilled": 0,
         }
-    settled = positions[positions["status"] == "settled"]
-    open_rows = positions[positions["status"] == "open"]
-    canceled = positions[positions["status"] == "canceled"]
-    unfilled = positions[positions["status"] == "unfilled"]
-    acq = float(pd.to_numeric(settled.get("acquisition_cost"), errors="coerce").fillna(0).sum()) if not settled.empty and "acquisition_cost" in settled.columns else 0.0
+    frame = positions.copy()
+    if "acquisition_cost" not in frame.columns or frame["acquisition_cost"].isna().all():
+        if decisions is not None and not decisions.empty and "decision_id" in frame.columns:
+            acq = decisions[["decision_id", "acquisition_cost"]].drop_duplicates("decision_id")
+            frame = frame.merge(acq, on="decision_id", how="left", suffixes=("", "_dec"))
+            if "acquisition_cost_dec" in frame.columns:
+                frame["acquisition_cost"] = frame["acquisition_cost"].fillna(frame["acquisition_cost_dec"])
+    settled = frame[frame["status"] == "settled"]
+    open_rows = frame[frame["status"] == "open"]
+    canceled = frame[frame["status"] == "canceled"]
+    unfilled = frame[frame["status"] == "unfilled"]
+    acq = (
+        float(pd.to_numeric(settled.get("acquisition_cost"), errors="coerce").fillna(0).sum())
+        if not settled.empty and "acquisition_cost" in settled.columns
+        else 0.0
+    )
     if settled.empty:
         net = 0.0
     else:
@@ -308,6 +376,32 @@ def settled_roi(positions: pd.DataFrame) -> dict[str, Any]:
         "n_open": int(len(open_rows)),
         "n_canceled": int(len(canceled)),
         "n_unfilled": int(len(unfilled)),
+    }
+
+
+def build_position_row(
+    *,
+    decision_id_value: str,
+    settlement: dict[str, Any],
+    acquisition_cost: float,
+    filled_qty: float,
+    winning_team: str | None = None,
+    settled_at_utc: str | None = None,
+    revision_of: str | None = None,
+) -> dict[str, Any]:
+    return {
+        "decision_id": decision_id_value,
+        "status": settlement.get("status"),
+        "settlement_payout_per_contract": settlement.get("settlement_payout_per_contract"),
+        "settlement_rule": settlement.get("settlement_rule"),
+        "settled_at_utc": settled_at_utc,
+        "proceeds": settlement.get("proceeds"),
+        "net_pnl": settlement.get("net_pnl"),
+        "open_exposure": settlement.get("open_exposure"),
+        "acquisition_cost": float(acquisition_cost),
+        "filled_qty": float(filled_qty),
+        "winning_team": winning_team,
+        "revision_of": revision_of,
     }
 
 
