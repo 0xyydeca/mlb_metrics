@@ -1,10 +1,18 @@
 {
   "actionable_suppressed": true,
   "away_team": "KC",
-  "baseball": null,
-  "best_ask": 0.375,
-  "best_ask_size": 63523.04,
-  "best_bid": 0.37,
+  "baseball": {
+    "away_lineup_status": "unconfirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-09-18T18:34:38Z",
+    "home_lineup_status": "unconfirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
+  "best_ask": 0.365,
+  "best_ask_size": 83131.36,
+  "best_bid": 0.36,
   "contract_url": "https://polymarket.us/event/mlb-kc-pit-2026-09-18",
   "event_slug": "mlb-kc-pit-2026-09-18",
   "evidence_verdict": "insufficient_evidence",
@@ -15,7 +23,6 @@
   "market_id": "887272",
   "market_slug": "aec-mlb-kc-pit-2026-09-18",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-09-18T04:56:40Z",
-  "quote_request_time_utc": "2026-09-18T04:56:40Z",
+  "quote_receive_time_utc": "2026-09-18T18:34:35Z",
+  "quote_request_time_utc": "2026-09-18T18:34:35Z",
   "rules_hash": "98e09df5cb7f548c",
   "rules_text_excerpt": "This market will settle to the winner of the Kansas City Royals vs Pittsburgh Pirates MLB game scheduled for 2026-09-18 at 6:40PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and not rescheduled ",
   "scheduled_start_utc": "2026-09-18T22:40:00Z",
