@@ -80,6 +80,8 @@ Personal account details stay in this browser (localStorage) and are not uploade
 <option value="Pass—price too high">Pass—price too high</option>
 <option value="Pass—stale quote">Pass—stale quote</option>
 <option value="Pass—missing inputs">Pass—missing inputs</option>
+<option value="Pass—excess exposure">Pass—excess exposure</option>
+<option value="Pass—pilot paused">Pass—pilot paused</option>
 <option value="Game started">Game started</option>
 </select>
 </label>
@@ -104,7 +106,10 @@ Personal account details stay in this browser (localStorage) and are not uploade
 <section id="tab-manual" class="tabPanel">
 <div class="decisionCard">
 <h3>Record a real manual fill</h3>
-<p class="muted">Stores only in this browser. Use after you personally place (or skip) a trade.</p>
+<p class="muted">
+File-backed ledger path: <code>data/polymarket/pilot/real_fills.csv</code> (via export/API) plus this browser mirror.
+Real results stay separate from paper. Pauses block new open fills but do not erase existing exposure.
+</p>
 <div class="manualForm" id="manualForm">
 <label>Decision / market id<input id="m_market_id" placeholder="market_id"></label>
 <label>Game pk<input id="m_game_pk" placeholder="game_pk"></label>
@@ -124,8 +129,8 @@ Personal account details stay in this browser (localStorage) and are not uploade
 <label>Notes<input id="m_notes" placeholder="optional"></label>
 </div>
 <div class="btnRow">
-<button onclick="saveManualPosition()">Save position</button>
-<button class="secondary" onclick="clearManualPositions()">Clear all manual positions</button>
+<button onclick="saveManualPosition()">Save position (browser)</button>
+<button class="secondary" onclick="clearManualPositions()">Clear browser mirror</button>
 </div>
 <div id="manualList"></div>
 </div>
@@ -133,18 +138,19 @@ Personal account details stay in this browser (localStorage) and are not uploade
 
 <section id="tab-risk" class="tabPanel">
 <div class="decisionCard">
-<h3>Personal risk limits</h3>
+<h3>Personal risk limits (required for any stake guidance)</h3>
 <p class="muted">
-Required before stake guidance can turn on. Until you set bankroll and max affordable loss,
-the board uses clearly labeled <em>normalized paper units</em> only and never auto-increases stakes after losses.
+Owner delegated defaults to the agent: <strong>normalized paper units</strong> only (not a USD bankroll, not from an income target).
+Prefill values are paper ops caps. Override with explicit USD later if/when a real-money pilot is considered.
+Until evidence passes, the board stays no-bet regardless of these caps.
 </p>
 <div class="riskForm">
-<label>Bankroll (USD)<input id="r_bankroll" type="number" min="0" step="1" placeholder="required"></label>
-<label>Max affordable loss (USD)<input id="r_max_loss" type="number" min="0" step="1" placeholder="required"></label>
-<label>Per-bet unit cap<input id="r_per_bet" type="number" min="0" step="0.1" value="1"></label>
-<label>Daily unit cap<input id="r_daily" type="number" min="0" step="0.1" value="5"></label>
-<label>Same-game unit cap<input id="r_game" type="number" min="0" step="0.1" value="1"></label>
-<label>Same-team unit cap<input id="r_team" type="number" min="0" step="0.1" value="2"></label>
+<label>1. Dedicated bankroll (USD)<input id="r_bankroll" type="number" min="0" step="1" placeholder="required"></label>
+<label>2. Maximum affordable loss (USD)<input id="r_max_loss" type="number" min="0" step="1" placeholder="required"></label>
+<label>3. Per-bet exposure limit<input id="r_per_bet" type="number" min="0" step="0.1" value="1"></label>
+<label>4. Daily exposure limit<input id="r_daily" type="number" min="0" step="0.1" value="5"></label>
+<label>5a. Correlated: same-game cap<input id="r_game" type="number" min="0" step="0.1" value="1"></label>
+<label>5b. Correlated: same-team cap<input id="r_team" type="number" min="0" step="0.1" value="2"></label>
 </div>
 <div class="btnRow">
 <button onclick="saveRiskLimits()">Save limits</button>

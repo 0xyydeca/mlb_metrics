@@ -1,0 +1,14 @@
+{
+  "existing_exposure_preserved": true,
+  "new_bets_allowed": false,
+  "note": "Pauses do not erase existing exposure.",
+  "paused": true,
+  "paused_at_utc": "2026-09-16T20:18:22Z",
+  "previous_paused": true,
+  "reason_labels": [
+    "Registered evidence verdict no longer supports pilot"
+  ],
+  "reasons": [
+    "evidence_deterioration"
+  ]
+}

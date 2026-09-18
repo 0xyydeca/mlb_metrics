@@ -1,0 +1,22 @@
+{
+  "comparison_note": "Do not merge streams. Real fills are owner-recorded; paper fills are simulated.",
+  "edge_claimed": false,
+  "generated_at_utc": "2026-09-16T20:18:22Z",
+  "paper_ledger": {
+    "n_settled": 1,
+    "note": "Paper results are not real-money P&L.",
+    "open_exposure": 0.0,
+    "roi": 1.3936539446619123,
+    "settled_net": 1.746686,
+    "source": "paper_ledger_or_evaluation_fixture"
+  },
+  "real_manual": {
+    "n_fills": 0,
+    "n_open": 0,
+    "n_settled": 0,
+    "open_exposure": 0.0,
+    "settled_net": 0.0,
+    "stream": "real_manual"
+  },
+  "streams_separate": true
+}

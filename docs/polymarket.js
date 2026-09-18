@@ -1,4 +1,4 @@
-/* Polymarket manual decision dashboard — extends MLB Metrics docs app.
+/* Polymarket manual decision dashboard — gated pilot workflow.
  * No automated orders. Personal limits/positions stay in localStorage.
  */
 const LS_RISK = "mlb_metrics_pm_risk_v1"
@@ -8,6 +8,7 @@ const LS_BOARD_SEEN = "mlb_metrics_pm_board_generated_at"
 let boardRows = []
 let boardMeta = {}
 let evaluation = null
+let pilotReadiness = null
 
 async function loadCSV(path){
   const response = await fetch(`${path}?t=${Date.now()}`, {cache: "no-store"})
@@ -52,12 +53,20 @@ function fmtAge(sec){
 function stateClass(state){
   if(state === "Paper candidate") return "state-paper"
   if(state === "Game started") return "state-started"
+  if(state === "Pass—pilot paused") return "state-started"
   return "state-pass"
 }
 
 function riskConfigured(){
   const r = loadRisk()
-  return r && Number(r.bankroll) > 0 && Number(r.max_loss) > 0
+  if(!r) return false
+  return Number(r.bankroll) > 0
+    && Number(r.max_loss) > 0
+    && Number(r.per_bet) > 0
+    && Number(r.daily) > 0
+    && Number(r.same_game) > 0
+    && Number(r.same_team) > 0
+    && Number(r.max_loss) <= Number(r.bankroll)
 }
 
 function loadRisk(){
@@ -68,15 +77,21 @@ function saveRiskLimits(){
   const payload = {
     bankroll: Number(document.getElementById("r_bankroll").value),
     max_loss: Number(document.getElementById("r_max_loss").value),
+    max_affordable_loss: Number(document.getElementById("r_max_loss").value),
     per_bet: Number(document.getElementById("r_per_bet").value),
+    per_bet_exposure_limit: Number(document.getElementById("r_per_bet").value),
     daily: Number(document.getElementById("r_daily").value),
+    daily_exposure_limit: Number(document.getElementById("r_daily").value),
     same_game: Number(document.getElementById("r_game").value),
+    same_game_exposure_limit: Number(document.getElementById("r_game").value),
     same_team: Number(document.getElementById("r_team").value),
+    same_team_exposure_limit: Number(document.getElementById("r_team").value),
     saved_at: new Date().toISOString(),
+    income_target_not_used: true,
   }
-  if(!(payload.bankroll > 0) || !(payload.max_loss > 0)){
+  if(!(payload.bankroll > 0) || !(payload.max_loss > 0) || !(payload.per_bet > 0) || !(payload.daily > 0) || !(payload.same_game > 0) || !(payload.same_team > 0)){
     document.getElementById("riskStatus").textContent =
-      "Bankroll and max affordable loss are required before stake guidance can enable."
+      "All five limit families are required: bankroll, max affordable loss, per-bet, daily, and correlated (same-game + same-team)."
     renderReadiness()
     return
   }
@@ -86,8 +101,11 @@ function saveRiskLimits(){
     return
   }
   localStorage.setItem(LS_RISK, JSON.stringify(payload))
+  const verdict = (pilotReadiness?.evidence_for_limited_real_money_pilot?.verdict)
+    || boardMeta.evidence_verdict
+    || "unknown"
   document.getElementById("riskStatus").textContent =
-    `Saved. Stake guidance still requires a passing evidence gate (currently: ${boardMeta.evidence_verdict || "unknown"}). Stakes never auto-increase after losses.`
+    `Saved. Stake guidance still requires a passing evidence gate (currently: ${verdict}). Stakes never auto-increase after losses.`
   renderReadiness()
   renderBoard()
 }
@@ -118,13 +136,17 @@ function saveManualPosition(){
     recorded_at: new Date().toISOString(),
     decision_day: new Date().toISOString().slice(0,10),
     units: Number(document.getElementById("m_qty").value) || 0,
+    stream: "real_manual_browser",
   }
   if(!row.market_id || !row.side_team){
     alert("market_id and side team are required")
     return
   }
+  if(pilotReadiness?.pause?.paused && row.status === "open"){
+    alert(`Pilot paused — new open fills blocked (${(pilotReadiness.pause.reasons||[]).join(", ")}). Existing exposure is preserved.`)
+    return
+  }
   const existing = loadManual()
-  // Duplicate guard: same market+side+open status
   const dup = existing.find(p =>
     p.market_id === row.market_id &&
     p.side_team === row.side_team &&
@@ -174,7 +196,7 @@ function renderManual(){
   const rows = loadManual()
   const el = document.getElementById("manualList")
   if(!rows.length){
-    el.innerHTML = `<p class="muted">No manual positions recorded.</p>`
+    el.innerHTML = `<p class="muted">No manual positions recorded in this browser.</p>`
     return
   }
   const settled = rows.filter(r => r.status === "settled")
@@ -188,7 +210,7 @@ function renderManual(){
     settledNet += proceeds - cost
   })
   const openExposure = open.reduce((s,r)=> s + Number(r.price)*Number(r.qty) + Number(r.fees||0), 0)
-  let html = `<p><strong>Settled net:</strong> ${settledNet.toFixed(4)} &nbsp;|&nbsp; <strong>Open exposure:</strong> ${openExposure.toFixed(4)} (separate)</p>`
+  let html = `<p><strong>Settled net (real/browser):</strong> ${settledNet.toFixed(4)} &nbsp;|&nbsp; <strong>Open exposure:</strong> ${openExposure.toFixed(4)} (separate from paper)</p>`
   html += `<table><tr><th>When</th><th>Market</th><th>Side</th><th>Px</th><th>Qty</th><th>Fees</th><th>Status</th><th>Settle</th><th></th></tr>`
   rows.slice().reverse().forEach(r=>{
     html += `<tr>
@@ -210,28 +232,47 @@ function deleteManual(id){
   renderPaperSummary()
 }
 
+function boardAgeSeconds(){
+  const gen = boardMeta.generated_at_utc
+  if(!gen) return null
+  const t = Date.parse(gen)
+  if(Number.isNaN(t)) return null
+  return (Date.now() - t) / 1000
+}
+
 function renderReadiness(){
   const el = document.getElementById("readinessBanner")
-  const verdict = boardMeta.evidence_verdict || evaluation?.verdict || "unknown"
-  const status = boardMeta.validation_status || evaluation?.validation_status || "unknown"
-  const reasons = boardMeta.gate_fail_reasons || evaluation?.gates?.gate_fail_reasons || []
+  const dual = pilotReadiness?.dual_conclusions || {}
+  const evidence = pilotReadiness?.evidence_for_limited_real_money_pilot || {}
+  const pause = pilotReadiness?.pause || {}
+  const verdict = evidence.verdict || boardMeta.evidence_verdict || evaluation?.verdict || "unknown"
+  const status = evidence.validation_status || boardMeta.validation_status || evaluation?.validation_status || "unknown"
+  const reasons = evidence.no_bet_reasons || boardMeta.gate_fail_reasons || evaluation?.gates?.gate_fail_reasons || []
+  const remaining = evidence.remaining_before_pilot || []
   const limitsOk = riskConfigured()
-  const softwareOk = true
-  const moneyOk = verdict === "edge_supported" && status === "validated_passed" && limitsOk && boardMeta.betting_mode !== "disabled"
+  const softwareOk = dual.software_operates_correctly !== false
+  const moneyOk = !!dual.evidence_supports_limited_real_money_pilot && limitsOk && boardMeta.betting_mode !== "disabled" && !pause.paused
+  const age = boardAgeSeconds()
+  const staleBoard = age != null && age > 300
   el.className = "decisionBanner " + (moneyOk ? "ok" : "warn")
   el.innerHTML = `
-    <div><strong>Software readiness:</strong> works for inspection and Pass / no-bet decisions
+    <div><strong>Software readiness:</strong> ${softwareOk ? "YES — inspection / Pass / no-bet workflow operates" : "NO — incomplete artifacts"}
     (board rows=${boardMeta.n_board_rows ?? "—"}, modes shadow / betting disabled).</div>
-    <div><strong>Real-money readiness:</strong> ${moneyOk ? "NOT ENABLED — gates would still need live authorization" : "NO — do not use real money from this board"}.</div>
-    <div><strong>Evidence verdict:</strong> ${verdict} &nbsp;|&nbsp; <strong>validation_status:</strong> ${status}</div>
-    <div><strong>Personal limits configured:</strong> ${limitsOk ? "yes" : "no (stake guidance suppressed)"}</div>
-    <div class="muted">${(reasons || []).slice(0,6).map(r => `• ${r}`).join("<br>") || "• no gate reasons listed"}</div>
+    <div><strong>Evidence for limited real-money pilot:</strong> ${moneyOk ? "YES" : "NO — do not use real money"}.</div>
+    <div><strong>Evidence verdict:</strong> ${verdict} &nbsp;|&nbsp; <strong>validation_status:</strong> ${status}
+    &nbsp;|&nbsp; <strong>pilot_authorized:</strong> ${pilotReadiness?.pilot_authorized ? "yes" : "no"}</div>
+    <div><strong>Pause:</strong> ${pause.paused ? `ACTIVE (${(pause.reasons||[]).join(", ")}) — existing exposure preserved` : "clear"}</div>
+    <div><strong>Personal limits configured:</strong> ${limitsOk ? "yes" : "no (normalized paper units only)"}</div>
+    <div><strong>Board age:</strong> ${age == null ? "—" : fmtAge(age)}${staleBoard ? " — STALE EXPORT, reload/re-export before acting" : ""}</div>
+    <div class="muted" style="margin-top:8px">${(reasons || []).slice(0,8).map(r => `• ${r}`).join("<br>") || "• no gate reasons listed"}</div>
+    ${remaining.length ? `<div class="muted" style="margin-top:8px"><strong>Remaining before pilot:</strong><br>${remaining.map(r=>`• ${r}`).join("<br>")}</div>` : ""}
   `
 }
 
 function renderPaperSummary(){
   const el = document.getElementById("paperSummary")
   const fixture = evaluation?.paper_ledger_fixture
+  const recon = pilotReadiness?.reconcile
   const manual = loadManual()
   let html = `<h4>Paper / fixture</h4>`
   if(fixture?.hand_calculated?.example_a){
@@ -240,8 +281,13 @@ function renderPaperSummary(){
   } else {
     html += `<p class="muted">No paper fixture summary loaded.</p>`
   }
+  if(recon){
+    html += `<h4>Reconcile (streams separate)</h4>`
+    html += `<p class="muted">Real settled_net=${recon.real_manual?.settled_net ?? "—"} open=${recon.real_manual?.open_exposure ?? "—"} | Paper settled_net=${recon.paper_ledger?.settled_net ?? "—"}</p>`
+    html += `<p class="muted">${recon.comparison_note || ""}</p>`
+  }
   html += `<h4>Manual real positions (this browser)</h4>`
-  html += `<p class="muted">${manual.length} recorded. Settled net is shown on the Manual tab, separate from open exposure.</p>`
+  html += `<p class="muted">${manual.length} recorded. Settled net is shown on the Manual tab, separate from open exposure and paper.</p>`
   el.innerHTML = html
 }
 
@@ -255,6 +301,8 @@ function renderEvidence(){
       <div><span>Validation</span>${evaluation?.validation_status || boardMeta.validation_status || "—"}</div>
       <div><span>Policy</span>${boardMeta.policy_version || "—"}</div>
       <div><span>Policy hash</span>${boardMeta.policy_hash || "—"}</div>
+      <div><span>Protocol</span>${evaluation?.protocol_id || pilotReadiness?.protocol_id || "—"}</div>
+      <div><span>Market</span>${pilotReadiness?.market_id || "mlb_pregame_moneyline"}</div>
       <div><span>Mapped contracts</span>${cov.n_mapped_contracts ?? "—"}</div>
       <div><span>Quote index rows</span>${cov.n_quote_index_rows ?? "—"}</div>
       <div><span>Labeled Polymarket dates</span>${cov.n_polymarket_labeled_eligible_dates ?? "—"}</div>
@@ -266,10 +314,12 @@ function renderEvidence(){
 }
 
 function clientInvalidate(row){
-  // Stale tab / expiry checks in the browser without inventing new scores.
   const reasons = []
-  if(boardMeta.evidence_verdict !== "edge_supported"){
+  if((pilotReadiness?.evidence_for_limited_real_money_pilot?.verdict || boardMeta.evidence_verdict) !== "edge_supported"){
     reasons.push("evidence_gate")
+  }
+  if(pilotReadiness?.pause?.paused){
+    reasons.push("pilot_paused")
   }
   if(String(row.quote_stale).toLowerCase() === "true"){
     reasons.push("stale_quote")
@@ -277,6 +327,10 @@ function clientInvalidate(row){
   const age = Number(row.quote_age_seconds)
   if(!Number.isNaN(age) && age > 30){
     reasons.push("quote_age_gt_30s")
+  }
+  const boardAge = boardAgeSeconds()
+  if(boardAge != null && boardAge > 300){
+    reasons.push("stale_board_export")
   }
   if(row.scheduled_start_utc){
     const start = Date.parse(row.scheduled_start_utc)
@@ -291,6 +345,9 @@ function clientInvalidate(row){
   }
   if(!riskConfigured()){
     reasons.push("personal_limits_missing")
+  }
+  if(row.probability_source === "market_only_fallback" || row.probability_source === "market_mid_display_only"){
+    reasons.push("market_only_not_independent")
   }
   return reasons
 }
@@ -337,7 +394,6 @@ function renderBoard(){
   if(filter !== "all"){
     rows = rows.filter(r => r.decision_state === filter)
   }
-  // Prefer upcoming / non-started, then by start time
   rows.sort((a,b)=>{
     const as = Date.parse(a.scheduled_start_utc || "") || 0
     const bs = Date.parse(b.scheduled_start_utc || "") || 0
@@ -350,6 +406,7 @@ function renderBoard(){
   el.innerHTML = rows.map(row=>{
     const invalidate = clientInvalidate(row)
     const demo = String(row.demo_fixture).toLowerCase() === "true"
+    const stakeLabel = riskConfigured() ? "limits saved (guidance still gated)" : "normalized paper units"
     return `<article class="decisionCard">
       <div class="decisionState ${stateClass(row.decision_state)}">${row.decision_state}</div>
       ${demo ? `<div class="demoTag">DEMO FIXTURE — not production</div>` : ""}
@@ -358,19 +415,18 @@ function renderBoard(){
         <div><span>Contract</span><a href="${row.contract_url}" target="_blank" rel="noopener">${row.event_slug || row.market_slug || "link"}</a></div>
         <div><span>Start (UTC)</span>${row.scheduled_start_utc || "—"}</div>
         <div><span>Model p(win)</span>${fmtPct(row.model_probability)}</div>
-        <div><span>Market mid</span>${fmtPct(row.market_mid_probability)}</div>
+        <div><span>Uncertainty</span>${(row.uncertainty_note || "").slice(0,120)}${(row.uncertainty_note||"").length>120?"…":""}</div>
         <div><span>Executable buy</span>${fmtNum(row.executable_buy)}</div>
         <div><span>Executable qty</span>${fmtNum(row.executable_qty,2)}</div>
         <div><span>Est. fee / contract</span>${fmtNum(row.est_taker_fee_per_contract,4)}</div>
         <div><span>Total cost / contract</span>${fmtNum(row.total_acquisition_cost_per_contract)}</div>
-        <div><span>Expected net / contract</span>${fmtNum(row.expected_net_value_per_contract)}</div>
         <div><span>Max acceptable price</span>${fmtNum(row.max_acceptable_price)}</div>
+        <div><span>Permitted exposure</span>${row.permitted_exposure_units || "1"} (${stakeLabel})</div>
         <div><span>Quote age</span>${fmtAge(row.quote_age_seconds)}</div>
         <div><span>Starters</span>${row.home_starter_status || "—"} / ${row.away_starter_status || "—"}</div>
         <div><span>Lineups</span>${row.home_lineup_status || "—"} / ${row.away_lineup_status || "—"}</div>
         <div><span>Model version</span>${row.model_version || "—"}</div>
         <div><span>Prob source</span>${row.probability_source || "—"}</div>
-        <div><span>Paper exposure units</span>${row.permitted_exposure_units || "1"} (normalized)</div>
         <div><span>Pass reason</span>${row.pass_reason || "—"}</div>
       </div>
       <p class="muted" style="margin-top:10px">${row.uncertainty_note || ""}</p>
@@ -390,27 +446,35 @@ function renderBoard(){
 }
 
 function renderOps(){
-  document.getElementById("opsGuide").textContent = `Daily operating guide (manual only)
+  document.getElementById("opsGuide").textContent = `Daily operating guide — gated manual pilot (no automated orders)
 
-1. Capture books (optional but recommended):
+1. Capture books:
    PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
 
-2. Export the decision board:
-   PYTHONPATH=src python scripts/export_polymarket_decision_board.py --with-live-baseball
+2. Paper ledger cycle (optional settlement):
+   PYTHONPATH=src python scripts/run_polymarket_paper_ledger.py
 
-3. Start the local dashboard (enables quote recheck API):
+3. Export decision board + readiness:
+   PYTHONPATH=src python scripts/export_polymarket_decision_board.py --with-live-baseball
+   PYTHONPATH=src python scripts/write_pilot_readiness_report.py
+
+4. Dashboard:
    PYTHONPATH=src python scripts/serve_decision_dashboard.py
    Open http://127.0.0.1:8765/polymarket.html
 
-4. Read the readiness banner. If evidence_verdict is insufficient_evidence, the correct action is no bet.
+5. Read the dual readiness banner.
+   - Software YES + evidence NO ⇒ correct action is no bet.
+   - If pilot is paused, do not open new exposure; existing exposure remains.
 
-5. Configure personal bankroll + max affordable loss under Risk limits before any stake guidance can appear.
+6. Risk tab: enter dedicated bankroll, max affordable loss, per-bet, daily, and correlated caps.
+   Until supplied, use normalized paper units only.
 
-6. For any Paper candidate: Recheck public price, confirm max acceptable price, then place manually on Polymarket if you choose. Record the real fill under Manual positions.
+7. Before any manual purchase: Recheck public price, confirm max acceptable price, quote age ≤30s, board export fresh, then place yourself on Polymarket. Record the real fill under Manual positions.
 
-7. Never increase stakes to recover losses. Never treat a stale browser tab as live.
+8. Never increase stakes to recover losses or meet an income deadline.
+   Exposure increases require the registered review protocol checkpoints.
 
-Software works for Pass / no-bet visibility. Prospective evidence does NOT currently support using real money.`
+Software works for Pass / no-bet. Evidence does NOT currently support a real-money pilot.`
 }
 
 async function reloadBoard(){
@@ -428,7 +492,7 @@ async function reloadBoard(){
     boardRows = []
     boardMeta = {error: String(err)}
   }
-    try{
+  try{
     evaluation = await loadJSON("./data/polymarket_paper_evaluation.json")
   }catch{
     try{
@@ -437,7 +501,21 @@ async function reloadBoard(){
       evaluation = null
     }
   }
-  // Prefer copying evaluation into docs/data on export — fallback already in meta
+  try{
+    pilotReadiness = await loadJSON("./data/polymarket_pilot_readiness.json")
+  }catch{
+    try{
+      pilotReadiness = await loadJSON("../reports/model_validation/polymarket_pilot_readiness.json")
+    }catch{
+      pilotReadiness = null
+    }
+  }
+  let paperDefaults = null
+  try{
+    paperDefaults = await loadJSON("./data/polymarket_pilot_risk_limits.json")
+  }catch{
+    paperDefaults = pilotReadiness?.risk_limits || null
+  }
   renderReadiness()
   renderBoard()
   renderEvidence()
@@ -451,11 +529,19 @@ async function reloadBoard(){
     document.getElementById("r_daily").value = risk.daily
     document.getElementById("r_game").value = risk.same_game
     document.getElementById("r_team").value = risk.same_team
-    document.getElementById("riskStatus").textContent = `Loaded limits saved ${risk.saved_at || ""}`
+    document.getElementById("riskStatus").textContent = `Loaded browser limits saved ${risk.saved_at || ""}`
+  } else if(paperDefaults){
+    document.getElementById("r_bankroll").value = paperDefaults.bankroll
+    document.getElementById("r_max_loss").value = paperDefaults.max_affordable_loss
+    document.getElementById("r_per_bet").value = paperDefaults.per_bet_exposure_limit
+    document.getElementById("r_daily").value = paperDefaults.daily_exposure_limit
+    document.getElementById("r_game").value = paperDefaults.same_game_exposure_limit
+    document.getElementById("r_team").value = paperDefaults.same_team_exposure_limit
+    document.getElementById("riskStatus").textContent =
+      `Prefilling agent paper-unit defaults (${paperDefaults.currency}). Not a personal USD bankroll. Save to use in this browser.`
   }
 }
 
-// Stale-tab: re-check ages when tab becomes visible again
 document.addEventListener("visibilitychange", ()=>{
   if(document.visibilityState === "visible"){
     renderBoard()

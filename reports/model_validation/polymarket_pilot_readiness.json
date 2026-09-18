@@ -1,0 +1,145 @@
+{
+  "dual_conclusions": {
+    "evidence_supports_limited_real_money_pilot": false,
+    "software_operates_correctly": true
+  },
+  "edge_claimed": false,
+  "evidence_for_limited_real_money_pilot": {
+    "conclusion": "pilot_not_supported",
+    "identity": {
+      "candidates": [
+        "market_mid_baseline",
+        "calibrated_heuristic_baseball",
+        "regularized_market_residual_logistic"
+      ],
+      "market_id": "mlb_pregame_moneyline",
+      "ok": true,
+      "policy_hash": "c5361ddb1a247394",
+      "protocol_id": "polymarket_us_game_winner_v2",
+      "reasons": []
+    },
+    "no_bet_reasons": [
+      "evidence_verdict:insufficient_evidence",
+      "validation_status:insufficient_data",
+      "gate:insufficient_dates:0<structural_floor:70",
+      "gate:insufficient_outer_folds:0<3",
+      "gate:probability_status:insufficient_data",
+      "gate:missing_residual_or_market_scores",
+      "gate:strategy_roi_not_positive_under_base_and_conservative",
+      "insufficient_labeled_dates:0<70",
+      "BETTING_MODE=disabled",
+      "GAME_PREDICTION_MODE='shadow'_not_live",
+      "risk_limits_are_paper_units_not_usd_bankroll"
+    ],
+    "personal_limits_complete": true,
+    "remaining_before_pilot": [
+      "Accumulate \u226570 Polymarket-labeled eligible dates with nested evaluation passing.",
+      "Frozen policy present and hash-matched to evaluation.",
+      "Evidence verdict edge_supported and validation_status validated_passed.",
+      "Replace paper-unit caps with explicit owner USD bankroll/max-loss if/when a pilot is considered.",
+      "Owner confirms venue; only then consider enabling BETTING_MODE (still manual orders).",
+      "Do not lower thresholds or treat market-only fallback as an independent model."
+    ],
+    "risk_limits_currency": "normalized_paper_unit",
+    "stake_guidance_mode": "normalized_paper_units",
+    "supported": false,
+    "validation_status": "insufficient_data",
+    "verdict": "insufficient_evidence"
+  },
+  "generated_at_utc": "2026-09-16T20:18:22Z",
+  "market_id": "mlb_pregame_moneyline",
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "orders_automated": false,
+  "pause": {
+    "existing_exposure_preserved": true,
+    "new_bets_allowed": false,
+    "paused": true,
+    "paused_at_utc": "2026-09-16T20:18:22Z",
+    "previous_paused": true,
+    "reason_labels": [
+      "Registered evidence verdict no longer supports pilot"
+    ],
+    "reasons": [
+      "evidence_deterioration"
+    ]
+  },
+  "pilot_authorized": false,
+  "protocol_id": "polymarket_us_game_winner_v2",
+  "reconcile": {
+    "comparison_note": "Do not merge streams. Real fills are owner-recorded; paper fills are simulated.",
+    "edge_claimed": false,
+    "generated_at_utc": "2026-09-16T20:18:22Z",
+    "paper_ledger": {
+      "n_settled": 1,
+      "note": "Paper results are not real-money P&L.",
+      "open_exposure": 0.0,
+      "roi": 1.3936539446619123,
+      "settled_net": 1.746686,
+      "source": "paper_ledger_or_evaluation_fixture"
+    },
+    "real_manual": {
+      "n_fills": 0,
+      "n_open": 0,
+      "n_settled": 0,
+      "open_exposure": 0.0,
+      "settled_net": 0.0,
+      "stream": "real_manual"
+    },
+    "streams_separate": true
+  },
+  "risk_limits": {
+    "bankroll": 20.0,
+    "currency": "normalized_paper_unit",
+    "daily_exposure_limit": 3.0,
+    "income_target_not_used": true,
+    "max_affordable_loss": 5.0,
+    "per_bet_exposure_limit": 1.0,
+    "rationale": "Small paper envelope (20u), hard loss stop at 5u, 1u per bet, 3u/day, and single-game/team correlation caps. Conservative for gated paper ops while evidence remains insufficient for a pilot.",
+    "real_money_usd_stakes_enabled": false,
+    "same_game_exposure_limit": 1.0,
+    "same_team_exposure_limit": 1.0,
+    "saved_at_utc": "2026-09-16T20:18:22Z",
+    "source": "agent_decision_owner_delegated_2026-09-16"
+  },
+  "software": {
+    "checks": [
+      {
+        "detail": "GAME_PREDICTION_MODE='shadow' BETTING_MODE='disabled'",
+        "name": "modes_fail_closed",
+        "passed": true
+      },
+      {
+        "detail": "reports/model_validation/polymarket_paper_protocol.json",
+        "name": "protocol_registered",
+        "passed": true
+      },
+      {
+        "detail": "reports/model_validation/polymarket_paper_evaluation.json",
+        "name": "evaluation_report_present",
+        "passed": true
+      },
+      {
+        "detail": "docs/data/polymarket_decision_board.csv",
+        "name": "decision_board_export_present",
+        "passed": true
+      },
+      {
+        "detail": "manual_pilot never places orders",
+        "name": "orders_not_automated",
+        "passed": true
+      }
+    ],
+    "conclusion": "software_operates_for_inspection",
+    "passed": true
+  },
+  "stake_guidance": {
+    "income_target_not_used": true,
+    "mode": "normalized_paper_units",
+    "paper_unit_label": "normalized_paper_unit",
+    "personal_limits_required": true,
+    "real_money_usd_stakes_enabled": false
+  }
+}

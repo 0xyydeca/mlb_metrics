@@ -53,6 +53,18 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(404, {"error": "meta_missing", "path": path})
             with open(path, encoding="utf-8") as f:
                 return self._json(200, json.load(f))
+        if parsed.path == "/api/pilot-readiness":
+            path = os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                config.POLYMARKET_PILOT_READINESS_REPORT_PATH,
+            )
+            if not os.path.exists(path):
+                return self._json(404, {"error": "pilot_readiness_missing", "path": path})
+            with open(path, encoding="utf-8") as f:
+                payload = json.load(f)
+            payload["orders_automated"] = False
+            return self._json(200, payload)
         if parsed.path == "/api/recheck-quote":
             assert config.BETTING_MODE == "disabled"
             qs = parse_qs(parsed.query)

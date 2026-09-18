@@ -1279,6 +1279,29 @@ POLYMARKET_PAPER_DEFAULT_PER_BET_UNITS = 1.0
 POLYMARKET_PAPER_DEFAULT_DAILY_UNIT_CAP = 5.0
 POLYMARKET_PAPER_DEFAULT_SAME_GAME_UNIT_CAP = 1.0
 POLYMARKET_PAPER_DEFAULT_SAME_TEAM_UNIT_CAP = 2.0
+
+# Owner delegated risk-limit selection to the agent (2026-09-16).
+# These are NORMALIZED PAPER UNITS only — not a personal USD bankroll and not
+# inferred from any income target. Real-money USD stakes stay unset until the
+# owner overrides with explicit currency=USD values.
+POLYMARKET_AGENT_PAPER_RISK_LIMITS = {
+    "currency": "normalized_paper_unit",
+    "source": "agent_decision_owner_delegated_2026-09-16",
+    "bankroll": 20.0,
+    "max_affordable_loss": 5.0,
+    "per_bet_exposure_limit": 1.0,
+    "daily_exposure_limit": 3.0,
+    "same_game_exposure_limit": 1.0,
+    "same_team_exposure_limit": 1.0,
+    "income_target_not_used": True,
+    "real_money_usd_stakes_enabled": False,
+    "rationale": (
+        "Small paper envelope (20u), hard loss stop at 5u, 1u per bet, "
+        "3u/day, and single-game/team correlation caps. Conservative for "
+        "gated paper ops while evidence remains insufficient for a pilot."
+    ),
+}
+POLYMARKET_PILOT_RISK_LIMITS_PATH = "data/polymarket/pilot/risk_limits.json"
 # Decision states shown on the dashboard (exact strings).
 POLYMARKET_DECISION_STATE_PAPER_CANDIDATE = "Paper candidate"
 POLYMARKET_DECISION_STATE_PASS_INSUFFICIENT = "Pass—insufficient evidence"
@@ -1286,6 +1309,32 @@ POLYMARKET_DECISION_STATE_PASS_PRICE = "Pass—price too high"
 POLYMARKET_DECISION_STATE_PASS_STALE = "Pass—stale quote"
 POLYMARKET_DECISION_STATE_PASS_MISSING = "Pass—missing inputs"
 POLYMARKET_DECISION_STATE_GAME_STARTED = "Game started"
+POLYMARKET_DECISION_STATE_PASS_EXPOSURE = "Pass—excess exposure"
+POLYMARKET_DECISION_STATE_PASS_PAUSED = "Pass—pilot paused"
+
+# Manual pilot gate (software vs evidence; no real-money enable without both).
+POLYMARKET_PILOT_READINESS_REPORT_PATH = (
+    "reports/model_validation/polymarket_pilot_readiness.json"
+)
+POLYMARKET_PILOT_PAUSE_STATE_PATH = "data/polymarket/pilot/pause_state.json"
+POLYMARKET_PILOT_REAL_FILLS_PATH = "data/polymarket/pilot/real_fills.csv"
+POLYMARKET_PILOT_RECONCILE_REPORT_PATH = (
+    "reports/polymarket/pilot_reconcile_latest.json"
+)
+POLYMARKET_PILOT_EXPOSURE_REVIEW_PROTOCOL_PATH = (
+    "reports/model_validation/polymarket_pilot_exposure_review_protocol.json"
+)
+POLYMARKET_PILOT_EXPOSURE_REVIEW_PROTOCOL_ID = "polymarket_us_pilot_exposure_review_v1"
+POLYMARKET_PILOT_EXPOSURE_REVIEW_REGISTERED_UTC = "2026-09-16T19:45:00Z"
+POLYMARKET_PILOT_MARKET_ID = "mlb_pregame_moneyline"
+POLYMARKET_PILOT_CANDIDATE_IDS = (
+    "market_mid_baseline",
+    "calibrated_heuristic_baseball",
+    "regularized_market_residual_logistic",
+)
+POLYMARKET_PILOT_REQUIRED_PROTOCOL_ID = POLYMARKET_PAPER_PROTOCOL_ID
+POLYMARKET_PILOT_BOARD_MAX_AGE_SECONDS = 300
+POLYMARKET_PILOT_STALE_BROWSER_WARN_SECONDS = 60
 
 # Cross-sport reuse: NFL Polymarket paths are namespaced and never overwrite MLB.
 POLYMARKET_NFL_CONTRACT_REGISTRY_PATH = "data/polymarket/nfl/registry/contracts.csv"

@@ -1,0 +1,14 @@
+{
+  "bankroll": 20.0,
+  "currency": "normalized_paper_unit",
+  "daily_exposure_limit": 3.0,
+  "income_target_not_used": true,
+  "max_affordable_loss": 5.0,
+  "per_bet_exposure_limit": 1.0,
+  "rationale": "Small paper envelope (20u), hard loss stop at 5u, 1u per bet, 3u/day, and single-game/team correlation caps. Conservative for gated paper ops while evidence remains insufficient for a pilot.",
+  "real_money_usd_stakes_enabled": false,
+  "same_game_exposure_limit": 1.0,
+  "same_team_exposure_limit": 1.0,
+  "saved_at_utc": "2026-09-16T20:18:22Z",
+  "source": "agent_decision_owner_delegated_2026-09-16"
+}

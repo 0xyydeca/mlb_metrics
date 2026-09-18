@@ -1,0 +1,23 @@
+{
+  "checkpoints_before_any_increase": [
+    "Re-run write_pilot_readiness_report.py with current evaluation.",
+    "Confirm verdict=edge_supported and validation_status=validated_passed.",
+    "Confirm personal limits still within max affordable loss.",
+    "Document proposed new caps and register a new review hash before applying.",
+    "Keep paper and real ledgers separate in the review packet."
+  ],
+  "edge_claimed": false,
+  "market_id": "mlb_pregame_moneyline",
+  "protocol_hash": "d9163feb8327961f",
+  "protocol_id": "polymarket_us_pilot_exposure_review_v1",
+  "registered_at_utc": "2026-09-16T19:45:00Z",
+  "rules": {
+    "automated_orders_remain_absent": true,
+    "never_increase_to_meet_income_deadline": true,
+    "never_increase_to_recover_losses": true,
+    "pauses_do_not_erase_exposure": true,
+    "require_owner_reconfirmation_of_limits": true,
+    "require_passing_evidence_at_review": true,
+    "require_unchanged_or_improved_drawdown_vs_registered_baseline": true
+  }
+}

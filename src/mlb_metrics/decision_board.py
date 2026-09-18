@@ -180,16 +180,22 @@ def classify_decision_state(
     executable_buy: float | None,
     max_price: float | None,
     model_probability: float | None,
+    pilot_paused: bool = False,
+    excess_exposure: bool = False,
 ) -> tuple[str, str | None, bool]:
     """Return (state, pass_reason, actionable). High p alone never recommends."""
     if game_started:
         return STATE_STARTED, "game_started", False
+    if pilot_paused:
+        return config.POLYMARKET_DECISION_STATE_PASS_PAUSED, "pilot_paused", False
     if not evidence_pass:
         return STATE_INSUFFICIENT, "evidence_gate_failed_or_unavailable", False
     if missing_inputs or model_probability is None or executable_buy is None:
         return STATE_MISSING, "missing_quote_or_model_or_baseball", False
     if quote_stale:
         return STATE_STALE, "stale_quote", False
+    if excess_exposure:
+        return config.POLYMARKET_DECISION_STATE_PASS_EXPOSURE, "excess_exposure", False
     if max_price is None or float(executable_buy) > float(max_price) + 1e-12:
         return STATE_PRICE, "executable_above_max_acceptable_price", False
     return STATE_PAPER, None, True

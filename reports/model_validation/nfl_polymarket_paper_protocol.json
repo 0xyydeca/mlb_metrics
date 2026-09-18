@@ -1,0 +1,80 @@
+{
+  "candidates_when_evaluation_opens": [
+    "market_mid_baseline",
+    "existing_nfl_game_prediction_prior_if_available"
+  ],
+  "checkpoints_before_opening_nested_outcomes": [
+    "Mapped contracts with repeated pregame books across \u2265 min_eligible_dates independent local dates (or explicit redesign of floor documented).",
+    "Paper ledger delay/adverse-tick cost assumptions frozen.",
+    "Untouched evaluation dates assigned and sealed."
+  ],
+  "chronological_periods": {
+    "exploratory_capture_only": true,
+    "freeze_assignment": "Assigned only once structural floor eligible dates exist. Do not open nested evaluation outcomes before freeze assignment.",
+    "prospective_collection_start_local": "2026-09-16",
+    "timezone": "America/New_York",
+    "training_tuning": "All non-exploratory eligible dates strictly before the frozen untouched evaluation tail; inner folds only for threshold selection.",
+    "untouched_evaluation": "Final holdout eligible dates reserved after nested outer folds; not inspected during tuning. Separate from MLB freeze tails."
+  },
+  "cost_assumptions": {
+    "adverse_ticks_grid": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "canceled_not_auto_zero": true,
+    "conservative_adverse_ticks": 2,
+    "conservative_delay_seconds": 60,
+    "display_price_is_not_a_fill": true,
+    "fee_formula": "theta * C * p * (1-p)",
+    "fill_model": "walk_recorded_asks_only",
+    "manual_delay_seconds_grid": [
+      0,
+      30,
+      60,
+      120
+    ],
+    "missing_liquidity_is_not_zero_cost": true
+  },
+  "edge_claimed": false,
+  "evidence_collection_requirements": [
+    "Continue public NFL moneyline capture under data/polymarket/nfl/.",
+    "Persist mapping coverage; investigate unmatched markets without forcing joins.",
+    "Record best bid/ask and eligibility; empty books remain liquidity failures.",
+    "Settle only from official schedule results after kickoff; unknown \u2260 zero.",
+    "Register any comparative candidate experiment before inspecting its outcomes.",
+    "Do not purchase data or assume account access beyond public gateway."
+  ],
+  "future_observations_claimed": false,
+  "gates": {
+    "automated_orders": "blocked",
+    "mlb_evidence_reuse": "forbidden",
+    "model_development": "blocked_until_protocol_checkpoints_met",
+    "nested_evaluation_outcomes": "not_opened",
+    "real_money": "blocked"
+  },
+  "identity": {
+    "mapping_required": true,
+    "native_game_id": "nflreadpy game_id",
+    "sport_game_key": "nfl:{game_id}",
+    "unmatched_markets_excluded_from_evaluation": true
+  },
+  "market_id": "nfl_pregame_moneyline",
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "objective": "Prospective paper evaluation of NFL pregame moneylines on provisional Polymarket US public data. Capture and mapping first; no nested outcome inspection until structural floors and frozen periods are assigned.",
+  "parent_selection_protocol_hash": "850e9d64196d3ebc",
+  "parent_selection_protocol_id": "market_selection_next_sport_v1",
+  "protocol_hash": "a3c837f71bb624ea",
+  "protocol_id": "polymarket_us_nfl_game_winner_v1",
+  "protocol_version": "1",
+  "registered_at_utc": "2026-09-16T18:50:00Z",
+  "structural_floors": {
+    "min_eligible_dates": 70,
+    "note": "One NFL regular season (~2\u20133 independent game-days/week) is unlikely to reach the 70-date floor alone. Multi-season collection or an explicit NFL date-block redesign is required before promotion-scale claims."
+  },
+  "venue": "polymarket_us_provisional"
+}
