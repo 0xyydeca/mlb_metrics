@@ -2416,3 +2416,37 @@ NFL_GAME_PICK_MODEL_VERSION = "v2"
 NFL_GAME_PICK_ML_FINAL_HOLDOUT_WEEKS = 3
 NFL_GAME_PICK_ML_WALK_FORWARD_MIN_TRAIN_WEEKS = 6
 NFL_GAME_PICK_ML_WALK_FORWARD_TEST_BLOCK_WEEKS = 2
+
+# Bounded, research-only MLB 1+ hit contract inventory. These are request
+# budgets, not performance thresholds; this collector cannot recommend bets.
+HIT_PROP_RESEARCH_SCHEMA_VERSION = "2"
+HIT_PROP_RESEARCH_EVENT_LIMIT = 16
+HIT_PROP_RESEARCH_BOOK_LIMIT = 120
+HIT_PROP_RESEARCH_STORE_DIR = "data/polymarket/research/hit_props"
+HIT_PROP_PROVIDER_PLAYER_MAP_PATH = (
+    "data/polymarket/research/hit_props/provider_player_map.json"
+)
+HIT_PROP_PAPER_PROTOCOL_PATH = (
+    "reports/model_validation/hit_prop_paper_protocol.json"
+)
+HIT_PROP_PAPER_PROTOCOL_ID = "polymarket_us_mlb_hitter_hits_1plus_v1"
+HIT_PROP_PAPER_PROTOCOL_REGISTERED_UTC = "2026-09-18T19:15:00Z"
+HIT_PROP_EXAMPLE_TRACE_PATH = (
+    "reports/polymarket/hit_prop_contract_example_latest.json"
+)
+HIT_PROP_COLLECTION_STATUS_PATH = (
+    "reports/polymarket/hit_prop_collection_status_latest.json"
+)
+HIT_PROP_HOST_REPORT_PATH = (
+    "reports/polymarket/hit_prop_host_ops_latest.json"
+)
+# Existing permitted host for public Polymarket research capture (no paid add-ons).
+HIT_PROP_COLLECTION_HOST = "github_actions_ubuntu_latest"
+HIT_PROP_COLLECTION_WORKFLOW = ".github/workflows/polymarket_capture.yml"
+HIT_PROP_COLLECTION_RUNTIME_NOTE = (
+    "Reuse the existing free GitHub Actions ubuntu-latest polymarket_capture host. "
+    "No additional paid runner/service is authorized without an explicit budget. "
+    "Scheduled windows cover ~15:00–02:59 UTC; outside that window the host is asleep "
+    "(no capture). Transient API failures are retained in research reports and do not "
+    "place orders. Prop capture is research-only and must not flip BETTING_MODE."
+)

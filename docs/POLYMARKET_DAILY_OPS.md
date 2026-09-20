@@ -22,6 +22,9 @@ Exposure-increase rules: `reports/model_validation/polymarket_pilot_exposure_rev
 - Authorized: GitHub Actions `polymarket_capture.yml` on `ubuntu-latest` (no paid add-ons).
 - Optional local runs with the same scripts.
 - Missing host: none for this collection path. Do not buy services.
+- Sleep: outside cron windows (`27,57` at 15–23 UTC and 0–2 UTC) the Actions host is asleep.
+- Outage: API failures stay in reports; no invented quotes; modes stay shadow/disabled.
+- Hit-prop research capture reuses the same workflow (fail-soft step); reports under `reports/polymarket/hit_prop_*`.
 
 ## Startup / daily
 

@@ -63,6 +63,18 @@ jobs:
           echo "event=${{ github.event_name }} ref=${{ github.ref }}"
           PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
 
+      - name: Capture MLB 1+ hit prop research inventory
+        if: always()
+        run: |
+          mkdir -p /tmp/mlb-hit-prop-research data/polymarket/research/hit_props reports/polymarket
+          PYTHONPATH=src python scripts/capture_hit_prop_research.py \
+            --output-dir /tmp/mlb-hit-prop-research \
+            --persist-store || {
+            code=$?
+            echo "::warning::Hit-prop research capture exited with $code (research-only; collection continues)."
+            exit 0
+          }
+
       - name: Paper ledger cycle (log candidates/passes before outcomes)
         if: always()
         run: |
@@ -113,7 +125,10 @@ jobs:
             reports/polymarket/coverage_latest.json
             reports/polymarket/contract_trace_latest.json
             reports/polymarket/collection_status_latest.json
-          if-no-files-found: warn
+            reports/polymarket/hit_prop_collection_status_latest.json
+            reports/polymarket/hit_prop_contract_example_latest.json
+            reports/polymarket/hit_prop_host_ops_latest.json
+            data/polymarket/research/hit_props/ if-no-files-found: warn
 
       - name: Commit registry + coverage + protocol status
         if: always()
@@ -126,6 +141,9 @@ jobs:
             reports/polymarket/coverage_latest.json \
             reports/polymarket/collection_status_latest.json \
             reports/polymarket/contract_trace_latest.json \
+            reports/polymarket/hit_prop_collection_status_latest.json \
+            reports/polymarket/hit_prop_contract_example_latest.json \
+            reports/polymarket/hit_prop_host_ops_latest.json \
             || true
 
           if git diff --cached --quiet; then

@@ -1,0 +1,114 @@
+{
+  "actionable": false,
+  "capture_id": "hp_20260920T011830Z",
+  "contract": {
+    "book_receive_time_utc": "2026-09-20T01:18:31Z",
+    "book_request_time_utc": "2026-09-20T01:18:31Z",
+    "book_status": "captured",
+    "event_slug": "mlb-min-laa-2026-09-19",
+    "fee_coefficient": 0.0695,
+    "market_id": "956515",
+    "market_slug": "astatc-mlb-min-laa-2026-09-19-hits-ausmar-gte1",
+    "no_buy_price": 0.43999999999999995,
+    "no_buy_size": 101.78,
+    "player_name": "Austin Martin",
+    "provider_game_id": 10079602,
+    "provider_player_id": 518,
+    "question": "Will Austin Martin record at least 1 hits in MIN vs LAA?",
+    "rules_hash": "6a31fae8e7db9cfe",
+    "rules_text": "This market will settle to Yes if Austin Martin records 1 or more hits in the Minnesota Twins vs Los Angeles Angels MLB game scheduled for 2026-09-19 at 9:38PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "rules_version": "hit_prop_rules_v1",
+    "scheduled_start_utc": "2026-09-20T01:38:00Z",
+    "yes_buy_price": 0.6,
+    "yes_buy_size": 38.5
+  },
+  "edge_claimed": false,
+  "generated_at_utc": "2026-09-20T01:18:35Z",
+  "identity_mapping": {
+    "game": {
+      "away_team": "MIN",
+      "game_pk": 823976,
+      "home_team": "LAA",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-min-laa-2026-09-19\", \"game_pk\": 823976}",
+      "mapping_status": "mapped"
+    },
+    "player": {
+      "key_mlbam": 668885,
+      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"austin martin\", \"key_mlbam\": 668885}",
+      "mapping_status": "mapped"
+    }
+  },
+  "parsed_rules": {
+    "includes_extra_innings": true,
+    "nonbinary_settlement_possible": true,
+    "notes": [
+      "A plate appearance is not necessarily an at-bat; walk-only appearances participate under PA rules.",
+      "Zero hits with a qualifying PA settles No under ordinary binary settlement.",
+      "Non-participation (not starting / no PA) settles to last fair market price when rules say so.",
+      "Unknown outcomes must stay distinct from confirmed zero at-bats.",
+      "Last fair market price is a nonbinary settlement class relative to Yes/No."
+    ],
+    "postponement_window_days": 2,
+    "requires_plate_appearance": true,
+    "requires_starting_lineup": true,
+    "rules_text_present": true,
+    "rules_version": "hit_prop_rules_v1",
+    "settlement_on_non_participation": "last_fair_market_price",
+    "shortened_official_game_settles": true
+  },
+  "remaining_blockers": [
+    "no_registered_prop_evaluation_outcomes_yet",
+    "hitter_positive_ab_rates_not_valid_contract_probabilities",
+    "BETTING_MODE_disabled_orders_absent",
+    "venue_us_vs_international_unconfirmed"
+  ],
+  "research_only": true,
+  "settlement_examples": {
+    "did_not_start": {
+      "binary_yes": null,
+      "reason": "not_in_starting_lineup",
+      "settlement_class": "last_fair_market_price"
+    },
+    "missing_hits": {
+      "binary_yes": null,
+      "reason": "missing_hits",
+      "settlement_class": "unknown_pending",
+      "walk_only_appearance": false
+    },
+    "postponed": {
+      "binary_yes": null,
+      "reason": "game_postponed_or_suspended",
+      "settlement_class": "last_fair_market_price_or_unresolved"
+    },
+    "starter_with_hit": {
+      "binary_yes": true,
+      "note": "Confirmed zero at-bats with PA>0 is walk/HBP/sac participation, not missing data.",
+      "reason": "qualifying_pa_with_known_hits",
+      "settlement_class": "binary_yes",
+      "walk_only_appearance": false
+    },
+    "walk_only_pa_zero_hits": {
+      "binary_yes": false,
+      "note": "Confirmed zero at-bats with PA>0 is walk/HBP/sac participation, not missing data.",
+      "reason": "qualifying_pa_with_known_hits",
+      "settlement_class": "binary_no",
+      "walk_only_appearance": true
+    }
+  },
+  "universe": {
+    "complete_denominator_claimed": true,
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-09-19 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "event_slugs": [
+      "mlb-min-laa-2026-09-19"
+    ],
+    "n_contracts_in_fetched_events": 18,
+    "n_events": 1,
+    "n_events_fetched": 1,
+    "n_events_not_fetched_due_to_budget": 0,
+    "n_excluded_already_started": 8,
+    "n_excluded_wrong_local_day": 34,
+    "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
+  },
+  "venue_id": "polymarket_us",
+  "venue_label": "provisional_polymarket_us_unconfirmed"
+}

@@ -455,6 +455,21 @@ class PolymarketUSAdapter:
 
     def list_mlb_moneyline_markets(self, *, limit: int = 200) -> list[VenueMarket]:
         return self.list_moneyline_markets(league="mlb", limit=limit)
+    def fetch_event_details(self, event_slug: str) -> dict[str, Any]:
+        """Full event inventory; league summaries can omit player props."""
+        request_time = _utc_now_iso()
+        payload = self._http_get_json(
+            f"/v1/events/slug/{urllib.parse.quote(event_slug, safe='')}"
+        )
+        event = payload.get("event") if isinstance(payload, dict) else None
+        if not isinstance(event, dict):
+            raise ValueError("Event response is missing its event object")
+        return {
+            "event": event,
+            "request_time_utc": request_time,
+            "receive_time_utc": _utc_now_iso(),
+        }
+
     def fetch_market_book(
         self,
         market_slug: str,

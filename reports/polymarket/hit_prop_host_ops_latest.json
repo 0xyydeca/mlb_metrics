@@ -1,0 +1,28 @@
+{
+  "actionable": false,
+  "edge_claimed": false,
+  "generated_at_utc": "2026-09-20T01:18:35Z",
+  "host": "github_actions_ubuntu_latest",
+  "missing_host": null,
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "operating_costs": {
+    "additional_paid_services": "none authorized",
+    "note": "Do not purchase paid runners/hosts without an explicit USD budget.",
+    "runner": "ubuntu-latest free-tier minutes"
+  },
+  "outage_behavior": "Provider/API failures are retained in capture JSON errors and collection status reports. Failures do not invent quotes, do not place orders, and do not flip GAME_PREDICTION_MODE / BETTING_MODE. Resume uses capture_checkpoint.json to skip already-captured market slugs.",
+  "paid_budget_authorized_usd": null,
+  "paid_services_purchased": false,
+  "research_only": true,
+  "runtime_note": "Reuse the existing free GitHub Actions ubuntu-latest polymarket_capture host. No additional paid runner/service is authorized without an explicit budget. Scheduled windows cover ~15:00\u201302:59 UTC; outside that window the host is asleep (no capture). Transient API failures are retained in research reports and do not place orders. Prop capture is research-only and must not flip BETTING_MODE.",
+  "schedule_windows_utc": [
+    "cron 27,57 15-23 * * * (MLB afternoon/evening)",
+    "cron 27,57 0-2 * * * (late West-coast finishes)"
+  ],
+  "sleep_behavior": "Outside scheduled cron windows the GitHub Actions host is asleep; no prop capture runs until the next scheduled or workflow_dispatch trigger. Local optional runs fill gaps when the owner explicitly executes the script.",
+  "venue_label": "provisional_polymarket_us_unconfirmed",
+  "workflow": ".github/workflows/polymarket_capture.yml"
+}
