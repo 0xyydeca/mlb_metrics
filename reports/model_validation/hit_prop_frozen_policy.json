@@ -1,0 +1,68 @@
+{
+  "action": "paper_only",
+  "betting_mode": "disabled",
+  "candidates": [
+    "same_time_market_mid_baseline",
+    "contract_rule_adjusted_hitter_hit_model",
+    "regularized_market_residual_prop_logistic"
+  ],
+  "entry": {
+    "cutoff": "strictly_before_scheduled_start",
+    "do_not_use_positive_ab_hit_rate_as_contract_probability": true,
+    "entry_minutes_before_scheduled_start": 30,
+    "exclude_market_only_fallback_from_independent_model": true,
+    "exclude_quarantined": true,
+    "log_candidates_and_passes_before_outcomes": true,
+    "quote_max_age_seconds": 30,
+    "require_fresh_eligible_book": true,
+    "require_mapped_game_pk_and_key_mlbam": true,
+    "size_contracts": 1.0
+  },
+  "evaluation_rule": "Fit preprocessing/calibration/thresholds in chronological training folds only. Compare candidates on identical opportunities vs same-time market mid. Do not open nested evaluation outcomes until structural floors are met. insufficient_data is a valid result.",
+  "evaluation_version": "1",
+  "execution_stress_for_reporting": {
+    "adverse_ticks": 2,
+    "adverse_ticks_grid": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "delay_grid": [
+      0,
+      30,
+      60,
+      120
+    ],
+    "delay_seconds": 60,
+    "fee_formula": "theta * C * p * (1-p)",
+    "fill_model": "walk_recorded_asks_only"
+  },
+  "game_winner_protocol_preserved": true,
+  "market_id": "mlb_hitter_hits_1plus",
+  "notes": [
+    "Frozen for prospective paper observation of 1+ hit props.",
+    "Does not enable live betting or automated orders.",
+    "Artifact versions for baseball models are recorded at decision time when used."
+  ],
+  "policy_hash": "2f08c06d052b3115",
+  "policy_version": "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1",
+  "prospective_checkpoints_game_days": [
+    7,
+    14,
+    28,
+    70
+  ],
+  "protocol_hash": "4141a3d2b3b4e4e4",
+  "protocol_id": "polymarket_us_mlb_hitter_hits_1plus_v1",
+  "registered_at_utc": "2026-09-18T19:15:00Z",
+  "september_25_is_paper_system_review_not_betting_launch": true,
+  "settlement": {
+    "binary_yes_no_when_qualifying_pa": true,
+    "missing_historical_quotes_remain_missing": true,
+    "non_participation_uses_last_fair_market_price": true,
+    "unknown_outcomes_remain_open": true
+  },
+  "venue_id": "polymarket_us",
+  "venue_label": "provisional_polymarket_us_unconfirmed"
+}

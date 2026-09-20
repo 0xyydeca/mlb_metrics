@@ -1,0 +1,105 @@
+{
+  "actionable": false,
+  "edge_claimed": false,
+  "forecasts": {
+    "baseball_contract_proxy": {
+      "contract_yes_probability": 0.527,
+      "note": "contract_yes \u2248 P(qualify) * P(Got_Hit | qualify); PA\u2260AB.",
+      "p_hit_given_qualify": 0.62,
+      "p_qualify": 0.85,
+      "source": "start_rate_x_game_hit_probability_proxy",
+      "status": "ok"
+    },
+    "market_mid_from_executable": 0.5800000000000001,
+    "rejected_positive_ab_source": {
+      "contract_yes_probability": null,
+      "note": "Positive-AB hit rates are not contract payout probabilities.",
+      "p_hit_given_qualify": 0.3,
+      "p_qualify": 1.0,
+      "source": "positive_ab_hit_rate",
+      "status": "rejected_positive_ab_source"
+    }
+  },
+  "generated_at_utc": "2026-09-20T01:23:11Z",
+  "notes": [
+    "Training-only tuning is demonstrated in unit tests with chronological folds.",
+    "This fixture does not open nested evaluation outcomes or claim an edge."
+  ],
+  "paper_trades": {
+    "binary_yes_fill": {
+      "acquisition_cost": 0.61668,
+      "fees_paid": 0.01668,
+      "filled_qty": 1.0,
+      "position": {
+        "net_pnl": 0.38332,
+        "open_exposure": 0.0,
+        "proceeds": 1.0,
+        "settlement_payout_per_contract": 1.0,
+        "settlement_rule": "qualifying_pa_binary_yes",
+        "status": "settled"
+      }
+    },
+    "dnp_lfmp_with_conservative_stress": {
+      "acquisition_cost": 0.6363742,
+      "adverse_ticks": 2,
+      "delay_seconds": 60,
+      "filled_qty": 1.0,
+      "position": {
+        "net_pnl": -0.08637419999999996,
+        "open_exposure": 0.0,
+        "proceeds": 0.55,
+        "settlement_payout_per_contract": 0.55,
+        "settlement_rule": "venue_settlement_px",
+        "status": "settled"
+      }
+    },
+    "skipped_unfilled": {
+      "action": "pass",
+      "position": {
+        "net_pnl": 0.0,
+        "open_exposure": 0.0,
+        "proceeds": 0.0,
+        "settlement_payout_per_contract": null,
+        "settlement_rule": "official_result_binary",
+        "status": "unfilled"
+      }
+    },
+    "walk_only_binary_no": {
+      "acquisition_cost": 0.61668,
+      "filled_qty": 1.0,
+      "position": {
+        "net_pnl": -0.61668,
+        "open_exposure": 0.0,
+        "proceeds": 0.0,
+        "settlement_payout_per_contract": 0.0,
+        "settlement_rule": "qualifying_pa_binary_no",
+        "status": "settled"
+      }
+    }
+  },
+  "policy_version": "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1",
+  "purpose": "reproducible_forecast_to_settlement_demo_not_validation",
+  "research_only": true,
+  "rules_version": "hit_prop_rules_v1",
+  "settlement_classes": {
+    "did_not_start_lfmp": {
+      "binary_yes": null,
+      "reason": "not_in_starting_lineup",
+      "settlement_class": "last_fair_market_price"
+    },
+    "starter_with_hit": {
+      "binary_yes": true,
+      "note": "Confirmed zero at-bats with PA>0 is walk/HBP/sac participation, not missing data.",
+      "reason": "qualifying_pa_with_known_hits",
+      "settlement_class": "binary_yes",
+      "walk_only_appearance": false
+    },
+    "walk_only_pa_zero_hits": {
+      "binary_yes": false,
+      "note": "Confirmed zero at-bats with PA>0 is walk/HBP/sac participation, not missing data.",
+      "reason": "qualifying_pa_with_known_hits",
+      "settlement_class": "binary_no",
+      "walk_only_appearance": true
+    }
+  }
+}

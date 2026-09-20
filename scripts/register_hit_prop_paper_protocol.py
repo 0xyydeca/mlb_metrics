@@ -1,7 +1,4 @@
-"""Register 1+ hitter-hit prop paper study BEFORE examining evaluation outcomes.
-
-Does not train models, place orders, or claim an edge.
-"""
+"""Register hit-prop paper protocol + freeze paper-only policy (before nested outcomes)."""
 
 from __future__ import annotations
 
@@ -12,7 +9,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from mlb_metrics import config
+from mlb_metrics import config, hit_prop_paper
 
 
 def _sha(payload) -> str:
@@ -20,14 +17,8 @@ def _sha(payload) -> str:
     return hashlib.sha256(raw).hexdigest()[:16]
 
 
-def main() -> int:
-    assert config.GAME_PREDICTION_MODE == "shadow"
-    assert config.BETTING_MODE == "disabled"
-
-    # Precision/power planning: correlated players within games and shared dates
-    # inflate variance vs independent Bernoulli trials. Use a conservative
-    # date-block floor aligned with game-winner structural requirements unless
-    # a redesign is registered later.
+def build_protocol() -> dict:
+    sample = hit_prop_paper.sample_size_plan()
     protocol = {
         "protocol_id": config.HIT_PROP_PAPER_PROTOCOL_ID,
         "protocol_version": "1",
@@ -53,6 +44,7 @@ def main() -> int:
             "game_winner_protocol_preserved": True,
             "automated_orders_absent": True,
             "real_money_gated": True,
+            "september_25_is_paper_system_review_not_betting_launch": True,
         },
         "identity": {
             "game_pk_required": True,
@@ -61,6 +53,7 @@ def main() -> int:
             "quarantine_wrong_day": True,
             "quarantine_doubleheaders_without_unique_start_match": True,
             "quarantine_provider_id_conflicts": True,
+            "quarantine_traded_or_wrong_team": True,
         },
         "contract_semantics": {
             "requires_starting_lineup": True,
@@ -70,11 +63,12 @@ def main() -> int:
             "zero_hits_with_pa_settles_no": True,
             "non_participation_settles_last_fair_market_price": True,
             "unknown_outcomes_distinct_from_confirmed_zero_ab": True,
+            "rules_version": "hit_prop_rules_v1",
         },
         "chronological_periods": {
             "timezone": "America/Phoenix",
             "prospective_collection_start_local": "2026-09-18",
-            "exploratory_capture_dates_local": ["2026-09-18"],
+            "exploratory_capture_dates_local": ["2026-09-18", "2026-09-19"],
             "freeze_assignment": (
                 "Assigned only once structural floor eligible independent dates exist. "
                 "Do not open nested evaluation outcomes before freeze assignment."
@@ -92,6 +86,7 @@ def main() -> int:
             "cutoff": "strictly_before_scheduled_start",
             "require_fresh_eligible_book": True,
             "quote_max_age_seconds": config.POLYMARKET_QUOTE_MAX_AGE_SECONDS,
+            "entry_minutes_before_scheduled_start": config.HIT_PROP_ENTRY_MINUTES_BEFORE_START,
         },
         "cost_assumptions": {
             "fill_model": "walk_recorded_asks_only",
@@ -99,6 +94,8 @@ def main() -> int:
             "fee_formula": "theta * C * p * (1-p)",
             "manual_delay_seconds_grid": list(config.POLYMARKET_MANUAL_DELAY_SECONDS_GRID),
             "adverse_ticks_grid": list(config.POLYMARKET_ADVERSE_TICKS_GRID),
+            "conservative_delay_seconds": config.POLYMARKET_CONSERVATIVE_DELAY_SECONDS,
+            "conservative_adverse_ticks": config.POLYMARKET_CONSERVATIVE_ADVERSE_TICKS,
             "missing_liquidity_is_not_zero_cost": True,
         },
         "eligibility": {
@@ -119,17 +116,26 @@ def main() -> int:
             "insufficient_data_is_valid_result": True,
             "do_not_lower_thresholds_to_force_pass": True,
         },
+        "fold_structure": {
+            "min_dates_structural_floor": config.HIT_PROP_MIN_ELIGIBLE_DATES,
+            "min_outer_folds": config.HIT_PROP_MIN_OUTER_FOLDS,
+            "note": "Aligned with game-winner structural floor; separate freeze tails.",
+        },
         "sample_size_plan": {
-            "structural_floor_independent_dates": config.POLYMARKET_MIN_ELIGIBLE_DATES,
+            "structural_floor_independent_dates": config.HIT_PROP_MIN_ELIGIBLE_DATES,
+            "approx_independent_days_for_0.01_logloss_style_target": sample[
+                "approx_independent_days"
+            ],
+            "power": sample["power"],
+            "alpha": sample["alpha"],
+            "effect_logloss": sample["effect_logloss"],
+            "assumed_day_sd": sample["assumed_day_sd"],
+            "uses_final_holdout": False,
+            "source": "development_planning_assumptions",
             "note": (
                 "Players in the same game and games on the same date are correlated. "
-                "Treat independent units as date blocks (and optionally game blocks), "
-                "not raw prop rows. One remaining regular-season stretch is unlikely "
-                "to meet the 70-date floor alone; multi-period collection required."
+                "Treat independent units as date blocks, not raw prop rows."
             ),
-            "approx_independent_days_for_0.01_logloss_style_target": 197,
-            "power": config.POLYMARKET_PRECISION_TARGET_POWER,
-            "alpha": 0.05,
         },
         "evidence_collection_estimate_by_2026_09_25": {
             "calendar_days_available_through_review": 7,
@@ -137,9 +143,8 @@ def main() -> int:
             "meets_structural_floor": False,
             "expected_report_status": "insufficient_data",
             "note": (
-                "By the September 25 review, deliver reproducible paper workflow and "
-                "an honest insufficient-evidence report unless floors are somehow met "
-                "(not expected)."
+                "September 25 is a paper-system review, not a betting launch. "
+                "Deliver reproducible workflow and an honest insufficient-evidence report."
             ),
         },
         "gates": {
@@ -156,6 +161,14 @@ def main() -> int:
         },
     }
     protocol["protocol_hash"] = _sha(protocol)
+    return protocol
+
+
+def main() -> int:
+    assert config.GAME_PREDICTION_MODE == "shadow"
+    assert config.BETTING_MODE == "disabled"
+
+    protocol = build_protocol()
     path = config.HIT_PROP_PAPER_PROTOCOL_PATH
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     if os.path.exists(path):
@@ -163,15 +176,24 @@ def main() -> int:
             existing = json.load(f)
         if existing.get("protocol_hash") == protocol["protocol_hash"]:
             print(f"Protocol unchanged: {path}")
-            print(f"protocol_hash={protocol['protocol_hash']}")
-            return 0
-        protocol["supersedes_protocol_hash"] = existing.get("protocol_hash")
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(protocol, f, indent=2, sort_keys=True)
-        f.write("\n")
-    print(f"Wrote {path}")
+        else:
+            protocol["supersedes_protocol_hash"] = existing.get("protocol_hash")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(protocol, f, indent=2, sort_keys=True)
+                f.write("\n")
+            print(f"Wrote {path}")
+    else:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(protocol, f, indent=2, sort_keys=True)
+            f.write("\n")
+        print(f"Wrote {path}")
+
+    frozen = hit_prop_paper.write_frozen_policy(protocol=protocol)
+    print(f"Frozen policy: {config.HIT_PROP_FROZEN_POLICY_PATH}")
     print(f"protocol_hash={protocol['protocol_hash']}")
+    print(f"policy_hash={frozen.get('policy_hash')}")
     print("Nested evaluation outcomes not opened; edge_claimed=False.")
+    print("September 25 = paper-system review, not betting launch.")
     return 0
 
 

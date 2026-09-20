@@ -1,42 +1,36 @@
 # Project brief: mlb_metrics
 
-## September 20 hit-prop identity and collection (Prompt 1 — complete)
+## September 20–25 hit-prop Prompt 2 (forecasts + paper experiment)
 
-- Selected research market remains **MLB 1+ hitter hits** (separate from game-winner). Profitability unproven. Automated orders absent; `GAME_PREDICTION_MODE=shadow`, `BETTING_MODE=disabled`.
-- Identity + rules layer complete:
-  - Maps contracts to **`game_pk`** (moneyline registry + schedule) and **`key_mlbam`** (normalized name + team-scoped candidates + provider map). Provider IDs are never treated as MLB IDs.
-  - Quarantines ambiguous names, wrong-day starts, doubleheaders, provider-ID conflicts, and **traded/wrong-team** matches.
-  - Persists contract text, `rules_hash`, and **`rules_version=hit_prop_rules_v1`**. Distinguishes start+PA eligibility, walk-only PA vs AB, zero hits, non-participation → LFMP (nonbinary), postponement, missing outcomes.
-- Collection universe (configured budgets `event_limit=16` / `book_limit=120`):
-  - Records complete denominator + exclusions; incomplete fetch stays explicit.
-  - Durable store + checkpoint restart under `data/polymarket/research/hit_props/`.
-  - Failures retained in capture JSON / `hit_prop_collection_status_latest.json`.
-- Host: reuse free GitHub Actions `polymarket_capture.yml` (`ubuntu-latest`). Sleep outside cron 15–02 UTC; no paid add-ons without explicit budget. Fail-soft hit-prop step + host report: `reports/polymarket/hit_prop_host_ops_latest.json`.
-- Live acceptance capture 2026-09-19 (America/Phoenix late window): **1** remaining future event (`mlb-min-laa-2026-09-19`); **8** already started excluded; **18** 1+ hit contracts; **18/18** `game_pk` + `key_mlbam` mapped; **0** quarantined; **18** books; status `captured`; all `actionable=false`.
-- Traceable example: [reports/polymarket/hit_prop_contract_example_latest.json](reports/polymarket/hit_prop_contract_example_latest.json) — Austin Martin 1+ hits, `game_pk=823976`, `key_mlbam=668885`, rules require start+PA else LFMP, book yes@0.60 / no@0.44 with request/receive timestamps.
-- Checks: `tests/test_hit_prop_research.py` → **20 passed** (duplicate names, DH, walk-only, missing outcomes, invalid prices, provider failure, restart, traded/wrong-team, host ops).
-- Venue: provisional Polymarket US (owner confirmation still open); public research continues labeled independently.
-- **Software readiness (prop collection/identity):** Yes (research-only).
-- **Evidence of edge:** No.
+- Separate prop forecast/eval path added; **game-winner protocol unchanged**.
+- Target alignment: contract Yes ≈ `P(start+PA) × P(Got_Hit|qualify)`. Positive-AB rates **rejected** as silent contract payouts. `Game_Hit_Probability` used only as a conditional proxy when paired with an explicit qualify rate.
+- Same-time market mid from executable yes/no only; missing historical quotes stay missing.
+- Candidates registered: market mid baseline, contract-rule-adjusted baseball proxy, regularized market-residual logistic. Walk-forward calibration fits **training dates only**.
+- Protocol + frozen paper policy written before nested outcomes:
+  - `reports/model_validation/hit_prop_paper_protocol.json`
+  - `reports/model_validation/hit_prop_frozen_policy.json` (`action=paper_only`, `BETTING_MODE=disabled`)
+- Evaluation report: **`insufficient_data` / `insufficient_evidence`**. Nested outcomes **not opened**. Collection dates observed: **2**; **68** more independent dates to structural floor (70); planning power target ~197 date-blocks.
+- Paper ledger path: size-limited asks walk, fees, delay/adverse stress, LFMP + binary settlement, skipped/unfilled. Demo: `reports/polymarket/hit_prop_forecast_settlement_example_latest.json`.
+- Checks: `tests/test_hit_prop_paper.py` + `tests/test_hit_prop_research.py` → **27 passed**.
+- **September 25 = paper-system review, not a betting launch.**
+- **Software readiness (prop paper pipeline):** Yes (research-only).
+- **Evidence of edge / validated model:** No.
 
 ### Remaining blockers (prop)
 
-1. Incomplete universe when event/book budgets bind (must stay explicit).
-2. Players absent from hitter-log candidates need verified provider→`key_mlbam` entries.
-3. Nested prop evaluation outcomes **not opened**; labeled history still thin.
+1. Nested labeled history far below 70-date floor (and ~197 planning power target).
+2. Opportunity-model artifact not required for serving; qualify-rate joins still thin.
+3. Venue US vs international unconfirmed; `BETTING_MODE=disabled`.
 4. Do not convert positive-AB hit rates into contract probabilities.
-5. Venue US vs international unconfirmed; no real-money mode change.
 
-## Prompt 2 start (register study before outcomes)
+## September 20 hit-prop identity and collection (Prompt 1 — complete)
 
-- Registered `polymarket_us_mlb_hitter_hits_1plus_v1` at `reports/model_validation/hit_prop_paper_protocol.json` **before** examining nested evaluation outcomes.
-- Candidates, chronological periods, costs, eligibility, metrics, pass/fail, and date-block sample plan recorded. Evidence-collection estimate through 2026-09-25: **insufficient_data expected** (≤7 independent dates ≪ 70-date floor).
-- Forecast model fitting / paper accounting freeze: continue through Sept 21–25 without claiming validation.
+- Maps `game_pk` / `key_mlbam`; quarantines ambiguous/DH/wrong-day/traded; `rules_version=hit_prop_rules_v1`.
+- Durable research store + GHA host ops; live example Austin Martin `game_pk=823976`, `key_mlbam=668885`.
 
 ## September 18 audit notes (prior)
 
-- Evidence and reproduction: [September 18 findings](</Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-09-18/FINDINGS.md>).
-- Game-winner verdict remains **`insufficient_evidence`**. Logged sportsbook P&L interpretive corrections from that audit stand; not Polymarket profit.
+- Game-winner verdict remains **`insufficient_evidence`**.
 
 ## Purpose and owner decisions
 
@@ -49,7 +43,7 @@
 ## Current plan
 
 - Keep game-winner prospective protocol v2 collecting; do not bypass its gates.
-- Advance 1+ hit prop research: identity+collection (**Prompt 1 done Sept 20**), then forecasts + paper study workflow (**Prompt 2**, Sept 21–25).
+- Continue prop paper collection toward structural floors; do not claim validation or open nested outcomes early.
 - Real-money pilot remains unauthorized.
 
 ## Commands
@@ -59,10 +53,16 @@
 PYTHONPATH=src python scripts/capture_hit_prop_research.py \
   --output-dir /tmp/mlb-hit-prop-research --persist-store
 
-# Register prop paper protocol (before evaluation outcomes)
+# Register protocol + freeze paper policy (before nested outcomes)
 PYTHONPATH=src python scripts/register_hit_prop_paper_protocol.py
 
-PYTHONPATH=src python -m pytest tests/test_hit_prop_research.py -q
+# Paper evaluation (expect insufficient_data through Sept 25)
+PYTHONPATH=src python scripts/run_hit_prop_paper_evaluation.py
+
+# Paper ledger demo (no orders)
+PYTHONPATH=src python scripts/run_hit_prop_paper_ledger.py
+
+PYTHONPATH=src python -m pytest tests/test_hit_prop_paper.py tests/test_hit_prop_research.py -q
 ```
 
 ## Readiness verdict (separate)
@@ -70,10 +70,12 @@ PYTHONPATH=src python -m pytest tests/test_hit_prop_research.py -q
 | Question | Verdict |
 |---|---|
 | Prop identity + durable collection software? | **Yes** (research-only). |
-| Prop edge / real-money pilot? | **No**. |
+| Prop forecast + paper ledger pipeline? | **Yes** (research-only). |
+| Prop edge / validated model / real-money? | **No** (`insufficient_data`). |
 | Game-winner edge / real-money pilot? | **No** (`insufficient_evidence`). |
 | Prop nested eval opened? | **No**. |
+| Sept 25 betting launch? | **No** (paper-system review only). |
 
 ## Next implementation task
 
-Prompt 2 (Sept 21–25): build separate prop forecasting + paper-evaluation path matched to contract participation rules; keep missing quotes missing; fit only in training folds; freeze policy; report insufficient evidence if floors unmet. Do not enable real money.
+Continue prospective prop quote/outcome collection under the frozen paper policy. Re-run `run_hit_prop_paper_evaluation.py` at checkpoints (7/14/28/70 dates). Open nested evaluation only after structural floors; keep insufficient_data as a valid result. Do not enable real money.

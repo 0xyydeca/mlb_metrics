@@ -2450,3 +2450,22 @@ HIT_PROP_COLLECTION_RUNTIME_NOTE = (
     "(no capture). Transient API failures are retained in research reports and do not "
     "place orders. Prop capture is research-only and must not flip BETTING_MODE."
 )
+HIT_PROP_FROZEN_POLICY_PATH = (
+    "reports/model_validation/hit_prop_frozen_policy.json"
+)
+HIT_PROP_PAPER_EVALUATION_REPORT_PATH = (
+    "reports/model_validation/hit_prop_paper_evaluation.json"
+)
+HIT_PROP_FORECAST_EXAMPLE_PATH = (
+    "reports/polymarket/hit_prop_forecast_settlement_example_latest.json"
+)
+HIT_PROP_LEDGER_DIR = "data/polymarket/research/hit_props/ledger"
+HIT_PROP_PAPER_POLICY_VERSION = "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1"
+HIT_PROP_MIN_ELIGIBLE_DATES = POLYMARKET_MIN_ELIGIBLE_DATES
+HIT_PROP_MIN_OUTER_FOLDS = BETTING_PROMOTION_MIN_OUTER_FOLDS
+HIT_PROP_PROSPECTIVE_CHECKPOINTS_GAME_DAYS = POLYMARKET_PROSPECTIVE_CHECKPOINTS_GAME_DAYS
+# Planning-only precision target for paired date-block log-loss (not a validation claim).
+HIT_PROP_INTENDED_LOGLOSS_IMPROVEMENT = POLYMARKET_INTENDED_LOGLOSS_IMPROVEMENT
+HIT_PROP_PAPER_ONE_SHARE = POLYMARKET_PAPER_ONE_SHARE
+HIT_PROP_ENTRY_MINUTES_BEFORE_START = POLYMARKET_ENTRY_MINUTES_BEFORE_START
+

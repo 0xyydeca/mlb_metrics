@@ -6,7 +6,8 @@
   ],
   "chronological_periods": {
     "exploratory_capture_dates_local": [
-      "2026-09-18"
+      "2026-09-18",
+      "2026-09-19"
     ],
     "freeze_assignment": "Assigned only once structural floor eligible independent dates exist. Do not open nested evaluation outcomes before freeze assignment.",
     "prospective_collection_start_local": "2026-09-18",
@@ -19,6 +20,7 @@
     "plate_appearance_not_equal_at_bat": true,
     "requires_plate_appearance": true,
     "requires_starting_lineup": true,
+    "rules_version": "hit_prop_rules_v1",
     "unknown_outcomes_distinct_from_confirmed_zero_ab": true,
     "walk_only_pa_is_participation": true,
     "zero_hits_with_pa_settles_no": true
@@ -30,6 +32,8 @@
       2,
       5
     ],
+    "conservative_adverse_ticks": 2,
+    "conservative_delay_seconds": 60,
     "display_price_is_not_a_fill": true,
     "fee_formula": "theta * C * p * (1-p)",
     "fill_model": "walk_recorded_asks_only",
@@ -50,6 +54,7 @@
   },
   "entry_timing": {
     "cutoff": "strictly_before_scheduled_start",
+    "entry_minutes_before_scheduled_start": 30,
     "quote_max_age_seconds": 30,
     "require_fresh_eligible_book": true
   },
@@ -58,7 +63,12 @@
     "expected_independent_dates_upper_bound": 7,
     "expected_report_status": "insufficient_data",
     "meets_structural_floor": false,
-    "note": "By the September 25 review, deliver reproducible paper workflow and an honest insufficient-evidence report unless floors are somehow met (not expected)."
+    "note": "September 25 is a paper-system review, not a betting launch. Deliver reproducible workflow and an honest insufficient-evidence report."
+  },
+  "fold_structure": {
+    "min_dates_structural_floor": 70,
+    "min_outer_folds": 3,
+    "note": "Aligned with game-winner structural floor; separate freeze tails."
   },
   "future_observations_claimed": false,
   "gates": {
@@ -73,6 +83,7 @@
     "quarantine_ambiguous_names": true,
     "quarantine_doubleheaders_without_unique_start_match": true,
     "quarantine_provider_id_conflicts": true,
+    "quarantine_traded_or_wrong_team": true,
     "quarantine_wrong_day": true
   },
   "market_id": "mlb_hitter_hits_1plus",
@@ -93,7 +104,7 @@
     "paper_roi_after_fees_base_and_conservative_stress",
     "drawdown_and_liquidity_sensitivity"
   ],
-  "protocol_hash": "91846bed63da2edc",
+  "protocol_hash": "4141a3d2b3b4e4e4",
   "protocol_id": "polymarket_us_mlb_hitter_hits_1plus_v1",
   "protocol_version": "1",
   "registered_at_utc": "2026-09-18T19:15:00Z",
@@ -105,14 +116,20 @@
     "game_winner_protocol_preserved": true,
     "missing_historical_quotes_remain_missing": true,
     "real_money_gated": true,
-    "register_before_examining_evaluation_outcomes": true
+    "register_before_examining_evaluation_outcomes": true,
+    "september_25_is_paper_system_review_not_betting_launch": true
   },
   "sample_size_plan": {
     "alpha": 0.05,
     "approx_independent_days_for_0.01_logloss_style_target": 197,
-    "note": "Players in the same game and games on the same date are correlated. Treat independent units as date blocks (and optionally game blocks), not raw prop rows. One remaining regular-season stretch is unlikely to meet the 70-date floor alone; multi-period collection required.",
+    "assumed_day_sd": 0.05,
+    "effect_logloss": 0.01,
+    "note": "Players in the same game and games on the same date are correlated. Treat independent units as date blocks, not raw prop rows.",
     "power": 0.8,
-    "structural_floor_independent_dates": 70
+    "source": "development_planning_assumptions",
+    "structural_floor_independent_dates": 70,
+    "uses_final_holdout": false
   },
+  "supersedes_protocol_hash": "91846bed63da2edc",
   "venue": "polymarket_us_provisional"
 }
