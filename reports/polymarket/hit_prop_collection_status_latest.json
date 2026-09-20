@@ -1,10 +1,10 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260920T205720Z",
+  "capture_id": "hp_20260920T230245Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-09-20T20:57:21Z",
+  "generated_at_utc": "2026-09-20T23:02:46Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
@@ -20,7 +20,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/tmp/mlb-hit-prop-research/hit-props-74bfa63b88374039855ea4787ec21141.json",
+  "report_path": "/tmp/mlb-hit-prop-research/hit-props-9e295cc5dc5e4c9cbccc8897f207daf8.json",
   "requested_local_date": "2026-09-20",
   "research_only": true,
   "status": "captured",
@@ -34,7 +34,7 @@
     "n_events": 1,
     "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 9,
+    "n_excluded_already_started": 1,
     "n_excluded_wrong_local_day": 34,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }

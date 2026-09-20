@@ -1,16 +1,16 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260920T205720Z",
+  "capture_id": "hp_20260920T230245Z",
   "contract": {
-    "book_receive_time_utc": "2026-09-20T20:57:20Z",
-    "book_request_time_utc": "2026-09-20T20:57:20Z",
+    "book_receive_time_utc": "2026-09-20T23:02:45Z",
+    "book_request_time_utc": "2026-09-20T23:02:45Z",
     "book_status": "captured",
     "event_slug": "mlb-mil-bal-2026-09-20",
     "fee_coefficient": 0.0695,
     "market_id": "959325",
     "market_slug": "astatc-mlb-mil-bal-2026-09-20-hits-britur-gte1",
-    "no_buy_price": 0.36,
-    "no_buy_size": 2296.81,
+    "no_buy_price": 0.35,
+    "no_buy_size": 323.07,
     "player_name": "Brice Turang",
     "provider_game_id": 10079620,
     "provider_player_id": 373,
@@ -19,11 +19,11 @@
     "rules_text": "This market will settle to Yes if Brice Turang records 1 or more hits in the Milwaukee Brewers vs Baltimore Orioles MLB game scheduled for 2026-09-20 at 7:20PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
     "scheduled_start_utc": "2026-09-20T23:20:00Z",
-    "yes_buy_price": 0.65,
-    "yes_buy_size": 18.0
+    "yes_buy_price": 0.66,
+    "yes_buy_size": 3759.05
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-09-20T20:57:21Z",
+  "generated_at_utc": "2026-09-20T23:02:46Z",
   "identity_mapping": {
     "game": {
       "away_team": "MIL",
@@ -105,7 +105,7 @@
     "n_events": 1,
     "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 9,
+    "n_excluded_already_started": 1,
     "n_excluded_wrong_local_day": 34,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   },
