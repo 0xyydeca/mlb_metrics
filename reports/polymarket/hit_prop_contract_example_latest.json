@@ -1,40 +1,40 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260920T011830Z",
+  "capture_id": "hp_20260920T181438Z",
   "contract": {
-    "book_receive_time_utc": "2026-09-20T01:18:31Z",
-    "book_request_time_utc": "2026-09-20T01:18:31Z",
+    "book_receive_time_utc": "2026-09-20T18:14:40Z",
+    "book_request_time_utc": "2026-09-20T18:14:40Z",
     "book_status": "captured",
-    "event_slug": "mlb-min-laa-2026-09-19",
+    "event_slug": "mlb-wsh-stl-2026-09-20",
     "fee_coefficient": 0.0695,
-    "market_id": "956515",
-    "market_slug": "astatc-mlb-min-laa-2026-09-19-hits-ausmar-gte1",
-    "no_buy_price": 0.43999999999999995,
-    "no_buy_size": 101.78,
-    "player_name": "Austin Martin",
-    "provider_game_id": 10079602,
-    "provider_player_id": 518,
-    "question": "Will Austin Martin record at least 1 hits in MIN vs LAA?",
-    "rules_hash": "6a31fae8e7db9cfe",
-    "rules_text": "This market will settle to Yes if Austin Martin records 1 or more hits in the Minnesota Twins vs Los Angeles Angels MLB game scheduled for 2026-09-19 at 9:38PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "market_id": "960082",
+    "market_slug": "astatc-mlb-wsh-stl-2026-09-20-hits-alebur-gte1",
+    "no_buy_price": 0.32999999999999996,
+    "no_buy_size": 2502.28,
+    "player_name": "Alec Burleson",
+    "provider_game_id": 10079622,
+    "provider_player_id": 522,
+    "question": "Will Alec Burleson record at least 1 hits in WSH vs STL?",
+    "rules_hash": "b93ef470932bb746",
+    "rules_text": "This market will settle to Yes if Alec Burleson records 1 or more hits in the Washington Nationals vs St. Louis Cardinals MLB game scheduled for 2026-09-20 at 2:15PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
-    "scheduled_start_utc": "2026-09-20T01:38:00Z",
-    "yes_buy_price": 0.6,
-    "yes_buy_size": 38.5
+    "scheduled_start_utc": "2026-09-20T18:15:00Z",
+    "yes_buy_price": 0.71,
+    "yes_buy_size": 7500.0
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-09-20T01:18:35Z",
+  "generated_at_utc": "2026-09-20T18:15:02Z",
   "identity_mapping": {
     "game": {
-      "away_team": "MIN",
-      "game_pk": 823976,
-      "home_team": "LAA",
-      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-min-laa-2026-09-19\", \"game_pk\": 823976}",
+      "away_team": "WSH",
+      "game_pk": 823001,
+      "home_team": "STL",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-wsh-stl-2026-09-20\", \"game_pk\": 823001}",
       "mapping_status": "mapped"
     },
     "player": {
-      "key_mlbam": 668885,
-      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"austin martin\", \"key_mlbam\": 668885}",
+      "key_mlbam": 676475,
+      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"alec burleson\", \"key_mlbam\": 676475}",
       "mapping_status": "mapped"
     }
   },
@@ -57,6 +57,7 @@
     "shortened_official_game_settles": true
   },
   "remaining_blockers": [
+    "player_identity_mapping_incomplete_or_quarantined",
     "no_registered_prop_evaluation_outcomes_yet",
     "hitter_positive_ab_rates_not_valid_contract_probabilities",
     "BETTING_MODE_disabled_orders_absent",
@@ -97,15 +98,22 @@
   },
   "universe": {
     "complete_denominator_claimed": true,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-09-19 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-09-20 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-min-laa-2026-09-19"
+      "mlb-mia-sd-2026-09-20",
+      "mlb-mil-bal-2026-09-20",
+      "mlb-min-laa-2026-09-20",
+      "mlb-nyy-az-2026-09-20",
+      "mlb-sea-col-2026-09-20",
+      "mlb-sf-lad-2026-09-20",
+      "mlb-tor-tex-2026-09-20",
+      "mlb-wsh-stl-2026-09-20"
     ],
-    "n_contracts_in_fetched_events": 18,
-    "n_events": 1,
-    "n_events_fetched": 1,
+    "n_contracts_in_fetched_events": 137,
+    "n_events": 8,
+    "n_events_fetched": 8,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 8,
+    "n_excluded_already_started": 7,
     "n_excluded_wrong_local_day": 34,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   },
