@@ -1,18 +1,18 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260920T230245Z",
+  "capture_id": "hp_20260921T011716Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-09-20T23:02:46Z",
+  "generated_at_utc": "2026-09-21T01:17:17Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
-  "n_books_captured": 18,
-  "n_contracts": 18,
-  "n_mapped_game_pk": 18,
-  "n_mapped_key_mlbam": 18,
+  "n_books_captured": 0,
+  "n_contracts": 0,
+  "n_mapped_game_pk": 0,
+  "n_mapped_key_mlbam": 0,
   "n_quarantined": 0,
   "remaining_blockers": [
     "no_registered_prop_evaluation_outcomes_yet",
@@ -20,19 +20,17 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/tmp/mlb-hit-prop-research/hit-props-9e295cc5dc5e4c9cbccc8897f207daf8.json",
+  "report_path": "/tmp/mlb-hit-prop-research/hit-props-43b002b5604b4eaaba6e9597f738dc29.json",
   "requested_local_date": "2026-09-20",
   "research_only": true,
-  "status": "captured",
+  "status": "no_eligible_contracts",
   "universe": {
     "complete_denominator_claimed": true,
     "definition": "All active future MLB Polymarket US events with start local-date 2026-09-20 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
-    "event_slugs": [
-      "mlb-mil-bal-2026-09-20"
-    ],
-    "n_contracts_in_fetched_events": 18,
-    "n_events": 1,
-    "n_events_fetched": 1,
+    "event_slugs": [],
+    "n_contracts_in_fetched_events": 0,
+    "n_events": 0,
+    "n_events_fetched": 0,
     "n_events_not_fetched_due_to_budget": 0,
     "n_excluded_already_started": 1,
     "n_excluded_wrong_local_day": 34,
