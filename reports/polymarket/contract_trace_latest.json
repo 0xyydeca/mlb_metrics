@@ -1,9 +1,17 @@
 {
   "actionable_suppressed": true,
   "away_team": "TOR",
-  "baseball": null,
+  "baseball": {
+    "away_lineup_status": "confirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-09-21T20:02:39Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
   "best_ask": 0.5,
-  "best_ask_size": 139750.55,
+  "best_ask_size": 428299.46,
   "best_bid": 0.495,
   "contract_url": "https://polymarket.us/event/mlb-tor-bal-2026-09-21",
   "event_slug": "mlb-tor-bal-2026-09-21",
@@ -15,7 +23,6 @@
   "market_id": "929957",
   "market_slug": "aec-mlb-tor-bal-2026-09-21",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-09-21T05:11:58Z",
-  "quote_request_time_utc": "2026-09-21T05:11:58Z",
+  "quote_receive_time_utc": "2026-09-21T20:02:35Z",
+  "quote_request_time_utc": "2026-09-21T20:02:35Z",
   "rules_hash": "6d5253e478d5107f",
   "rules_text_excerpt": "This market will settle to the winner of the Toronto Blue Jays vs Baltimore Orioles MLB game scheduled for 2026-09-21 at 6:35PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and not rescheduled to",
   "scheduled_start_utc": "2026-09-21T22:35:00Z",
