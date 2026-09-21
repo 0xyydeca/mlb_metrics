@@ -242,3 +242,6 @@ provider_event_id,game_pk,home_team,away_team,date,match_method
 401817027,824787,BAL,TOR,2026-09-21 00:00:00,unique_matchup
 401817028,824221,DET,WSH,2026-09-21 00:00:00,unique_matchup
 401817029,823169,SF,MIN,2026-09-21 00:00:00,unique_matchup
+401817027,824787,BAL,TOR,2026-09-21 00:00:00,provider_map
+401817028,824221,DET,WSH,2026-09-21 00:00:00,provider_map
+401817029,823169,SF,MIN,2026-09-21 00:00:00,provider_map
