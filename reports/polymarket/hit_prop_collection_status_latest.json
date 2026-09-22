@@ -1,19 +1,19 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260922T190048Z",
+  "capture_id": "hp_20260922T222057Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-09-22T19:01:05Z",
+  "generated_at_utc": "2026-09-22T22:21:10Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
   "n_books_captured": 120,
-  "n_contracts": 157,
-  "n_mapped_game_pk": 157,
-  "n_mapped_key_mlbam": 155,
-  "n_quarantined": 2,
+  "n_contracts": 238,
+  "n_mapped_game_pk": 238,
+  "n_mapped_key_mlbam": 229,
+  "n_quarantined": 9,
   "remaining_blockers": [
     "player_identity_mapping_incomplete_or_quarantined",
     "no_registered_prop_evaluation_outcomes_yet",
@@ -21,7 +21,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/tmp/mlb-hit-prop-research/hit-props-260257916fde440a95f26c2c1a83b5c6.json",
+  "report_path": "/tmp/mlb-hit-prop-research/hit-props-2a07d51608284c6380f5f2646601d25b.json",
   "requested_local_date": "2026-09-22",
   "research_only": true,
   "status": "captured",
@@ -44,12 +44,12 @@
       "mlb-tb-nyy-2026-09-22-dh2",
       "mlb-wsh-det-2026-09-22"
     ],
-    "n_contracts_in_fetched_events": 157,
+    "n_contracts_in_fetched_events": 238,
     "n_events": 14,
     "n_events_fetched": 14,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 1,
-    "n_excluded_wrong_local_day": 44,
+    "n_excluded_already_started": 0,
+    "n_excluded_wrong_local_day": 43,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }
 }
