@@ -1,9 +1,9 @@
 {
-  "captured_at_utc": "2026-09-21T23:24:20Z",
-  "finished_at_utc": "2026-09-21T23:24:25Z",
+  "captured_at_utc": "2026-09-22T01:41:48Z",
+  "finished_at_utc": "2026-09-22T01:41:53Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
-  "n_markets": 46,
+  "n_markets": 45,
   "n_schedule_games": 217,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
@@ -15,8 +15,8 @@
     "mapped_rate": 1.0
   },
   "quote_health": {
-    "n_index_rows": 46,
-    "latest_receive_time_utc": "2026-09-21T23:24:25Z",
+    "n_index_rows": 45,
+    "latest_receive_time_utc": "2026-09-22T01:41:53Z",
     "age_seconds": 0.0,
     "stale": false,
     "max_age_seconds": 30.0,
@@ -24,62 +24,47 @@
   },
   "per_contract_quote_health": {
     "n_markets_checked": 133,
-    "n_fresh_eligible": 46,
-    "n_stale": 87,
+    "n_fresh_eligible": 45,
+    "n_stale": 88,
     "n_ineligible": 0,
-    "n_missing": 87,
+    "n_missing": 88,
     "max_age_seconds": 30.0
   },
-  "n_books_captured": 46,
-  "n_books_written": 46,
+  "n_books_captured": 45,
+  "n_books_written": 45,
   "n_book_http_failures": 0,
   "book_failure_samples": [],
   "book_liquidity_counts": {
-    "eligible_book": 46
+    "eligible_book": 45
   },
   "sample_home_buys": [
     {
       "team": "BAL",
       "outcome_id": "1859399",
       "is_long": false,
-      "executable_buy": 0.5,
-      "display_price": 0.505,
+      "executable_buy": 0.87,
+      "display_price": 0.135,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.017375,
-      "total_acquisition_cost_per_contract": 0.517375,
+      "est_taker_fee_per_contract": 0.007860450000000001,
+      "total_acquisition_cost_per_contract": 0.87786045,
       "market_id": "929957",
-      "side": "home"
-    },
-    {
-      "team": "DET",
-      "outcome_id": "1859381",
-      "is_long": false,
-      "executable_buy": 0.8049999999999999,
-      "display_price": 0.2,
-      "method": "one_minus_book_best_bid_short",
-      "eligible": true,
-      "reason": null,
-      "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.010909762500000003,
-      "total_acquisition_cost_per_contract": 0.8159097624999999,
-      "market_id": "929948",
       "side": "home"
     },
     {
       "team": "SF",
       "outcome_id": "1859355",
       "is_long": false,
-      "executable_buy": 0.475,
-      "display_price": 0.53,
+      "executable_buy": 0.45499999999999996,
+      "display_price": 0.55,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173315625,
-      "total_acquisition_cost_per_contract": 0.4923315625,
+      "est_taker_fee_per_contract": 0.0172342625,
+      "total_acquisition_cost_per_contract": 0.47223426249999995,
       "market_id": "929935",
       "side": "home"
     },
@@ -102,25 +87,40 @@
       "team": "BAL",
       "outcome_id": "1889915",
       "is_long": false,
-      "executable_buy": 0.525,
-      "display_price": 0.48,
+      "executable_buy": 0.53,
+      "display_price": 0.475,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173315625,
-      "total_acquisition_cost_per_contract": 0.5423315625,
+      "est_taker_fee_per_contract": 0.017312450000000004,
+      "total_acquisition_cost_per_contract": 0.5473124500000001,
       "market_id": "945215",
+      "side": "home"
+    },
+    {
+      "team": "PIT",
+      "outcome_id": "1889855",
+      "is_long": false,
+      "executable_buy": 0.585,
+      "display_price": 0.42,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.0695_2026-09-17",
+      "est_taker_fee_per_contract": 0.016872862500000002,
+      "total_acquisition_cost_per_contract": 0.6018728624999999,
+      "market_id": "945185",
       "side": "home"
     }
   ],
   "coverage_waterfall": {
     "n_schedule_games": 217,
     "n_mapped_contracts": 133,
-    "n_usable_prices": 46,
+    "n_usable_prices": 45,
     "n_usable_baseball_snapshots": 3,
     "removed_price_reasons": {
-      "missing_quote": 87
+      "missing_quote": 88
     },
     "removed_baseball_reasons": {},
     "notes": [
@@ -152,26 +152,26 @@
     "quote": {
       "market_id": "929957",
       "market_slug": "aec-mlb-tor-bal-2026-09-21",
-      "receive_time_utc": "2026-09-21T23:24:21Z",
+      "receive_time_utc": "2026-09-22T01:41:49Z",
       "age_seconds": 4.0,
       "stale": false,
       "eligible": true,
-      "best_ask": 0.505,
-      "best_bid": 0.5,
+      "best_ask": 0.135,
+      "best_bid": 0.13,
       "pass_reason": null
     },
     "home_executable_buy": {
       "team": "BAL",
       "outcome_id": "1859399",
       "is_long": false,
-      "executable_buy": 0.5,
-      "display_price": 0.505,
+      "executable_buy": 0.87,
+      "display_price": 0.135,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.017375,
-      "total_acquisition_cost_per_contract": 0.517375
+      "est_taker_fee_per_contract": 0.007860450000000001,
+      "total_acquisition_cost_per_contract": 0.87786045
     },
     "baseball": {
       "game_pk": "824787",
@@ -191,7 +191,7 @@
       "lineup_batting_order_source": "schedule_lineups_list_index",
       "usable_for_game_winner": "True",
       "pass_reason": null,
-      "fetched_at_utc": "2026-09-21T23:24:25Z",
+      "fetched_at_utc": "2026-09-22T01:41:53Z",
       "source": "schedule_plus_lineups",
       "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
     },

@@ -1,16 +1,16 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260921T232425Z",
+  "capture_id": "hp_20260922T014153Z",
   "contract": {
-    "book_receive_time_utc": "2026-09-21T23:24:26Z",
-    "book_request_time_utc": "2026-09-21T23:24:26Z",
+    "book_receive_time_utc": "2026-09-22T01:41:54Z",
+    "book_request_time_utc": "2026-09-22T01:41:54Z",
     "book_status": "captured",
     "event_slug": "mlb-min-sf-2026-09-21",
     "fee_coefficient": 0.0695,
     "market_id": "991325",
     "market_slug": "astatc-mlb-min-sf-2026-09-21-hits-alarod-gte1",
-    "no_buy_price": 0.4,
-    "no_buy_size": 5.0,
+    "no_buy_price": 0.39,
+    "no_buy_size": 500.0,
     "player_name": "Alan Roden",
     "provider_game_id": 10079628,
     "provider_player_id": 3996,
@@ -19,11 +19,11 @@
     "rules_text": "This market will settle to Yes if Alan Roden records 1 or more hits in the Minnesota Twins vs San Francisco Giants MLB game scheduled for 2026-09-21 at 9:45PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
     "scheduled_start_utc": "2026-09-22T01:45:00Z",
-    "yes_buy_price": 0.61,
-    "yes_buy_size": 279.0
+    "yes_buy_price": 0.62,
+    "yes_buy_size": 539.47
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-09-21T23:24:27Z",
+  "generated_at_utc": "2026-09-22T01:41:56Z",
   "identity_mapping": {
     "game": {
       "away_team": "MIN",
@@ -102,11 +102,11 @@
     "event_slugs": [
       "mlb-min-sf-2026-09-21"
     ],
-    "n_contracts_in_fetched_events": 11,
+    "n_contracts_in_fetched_events": 16,
     "n_events": 1,
     "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 2,
+    "n_excluded_already_started": 1,
     "n_excluded_wrong_local_day": 43,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   },
