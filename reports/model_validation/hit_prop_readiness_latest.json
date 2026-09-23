@@ -1,0 +1,271 @@
+{
+  "actionable": false,
+  "additional_observations_needed": {
+    "additional_dates_to_planning_power_target": 196,
+    "additional_dates_to_structural_floor": 69,
+    "n_eligible_dates_observed": 1,
+    "note": "Structural floor is required before nested outer evaluation can complete. Planning power target is a separate development estimate, not a pass claim.",
+    "planning_power_independent_dates": 197,
+    "structural_floor_independent_dates": 70
+  },
+  "betting_mode_required": "disabled",
+  "closing_vs_prediction_time_prices": {
+    "kept_separate": true,
+    "missing_closing_remain_missing": true
+  },
+  "denominators": {
+    "collection": {
+      "book_dates": [
+        "2026-09-18",
+        "2026-09-19"
+      ],
+      "dates": [
+        "2026-09-18",
+        "2026-09-19"
+      ],
+      "n_dates": 2,
+      "n_dates_with_executable_book": 2,
+      "n_mapped_eligible_rows": 115,
+      "n_rows": 116,
+      "nested_evaluation_outcomes_opened": false
+    },
+    "eligible_dates": [
+      "2026-09-19"
+    ],
+    "n_eligible_independent_dates": 1,
+    "n_prospective_decisions": 18
+  },
+  "edge_claimed": false,
+  "future_observations_claimed": false,
+  "game_winner_protocol_preserved": true,
+  "gates": {
+    "betting_mode_required": "disabled",
+    "gate_fail_reasons": [
+      "insufficient_dates:1<structural_floor:70",
+      "insufficient_outer_folds:0<3",
+      "probability_status:insufficient_data",
+      "missing_residual_or_market_scores_on_nested_eval",
+      "strategy_report_unavailable"
+    ],
+    "n_eligible_dates": 1,
+    "n_outer_folds_available": 0,
+    "september_25_betting_launch": false,
+    "strategy_ok": false,
+    "validation_status": "insufficient_data",
+    "verdict": "insufficient_evidence"
+  },
+  "generated_at_utc": "2026-09-20T17:33:02Z",
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "next_permitted_checkpoint": {
+    "days_to_next_checkpoint": 6,
+    "next_operational_or_structural_checkpoint_dates": 7,
+    "next_registered_review_is_betting_launch": false,
+    "next_registered_review_local": "2026-09-25",
+    "re_run_command": "PYTHONPATH=src python scripts/run_hit_prop_readiness_evaluation.py"
+  },
+  "policy_hash": "2f08c06d052b3115",
+  "policy_version": "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1",
+  "pre_score_audit": {
+    "checks": [
+      {
+        "check": "frozen_policy_present",
+        "detail": {
+          "policy_hash": "2f08c06d052b3115",
+          "policy_version": "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1"
+        },
+        "passed": true
+      },
+      {
+        "check": "frozen_policy_paper_only",
+        "detail": {
+          "action": "paper_only",
+          "betting_mode": "disabled"
+        },
+        "passed": true
+      },
+      {
+        "check": "protocol_hash_matches_policy",
+        "detail": {
+          "policy_protocol_hash": "4141a3d2b3b4e4e4",
+          "protocol_hash": "4141a3d2b3b4e4e4"
+        },
+        "passed": true
+      },
+      {
+        "check": "modes_fail_closed",
+        "detail": {
+          "BETTING_MODE": "disabled",
+          "GAME_PREDICTION_MODE": "shadow"
+        },
+        "passed": true
+      },
+      {
+        "check": "dataset_denominator_recorded",
+        "detail": {
+          "book_dates": [
+            "2026-09-18",
+            "2026-09-19"
+          ],
+          "dates": [
+            "2026-09-18",
+            "2026-09-19"
+          ],
+          "n_dates": 2,
+          "n_dates_with_executable_book": 2,
+          "n_mapped_eligible_rows": 115,
+          "n_rows": 116,
+          "nested_evaluation_outcomes_opened": false
+        },
+        "passed": true
+      },
+      {
+        "check": "cutoff_integrity_decisions_before_outcomes",
+        "detail": {
+          "n_dates": 1,
+          "n_decisions": 18,
+          "n_outcome_known_at_decision": 0,
+          "n_policy_version_mismatch": 0
+        },
+        "passed": true
+      },
+      {
+        "check": "identity_and_rules_fields_present",
+        "detail": {
+          "contracts_path_exists": true,
+          "n_contracts": 116,
+          "n_mapped_game_pk": 116,
+          "n_mapped_key_mlbam": 115,
+          "n_missing_rules_hash": 0,
+          "n_quarantined": 1
+        },
+        "passed": true
+      },
+      {
+        "check": "model_and_policy_hashes_recorded",
+        "detail": {
+          "frozen_policy_hash": "2f08c06d052b3115",
+          "hitter_hit_probability_model": "39b55c0e8792752f",
+          "hitter_opportunity_probability_model": null,
+          "protocol_hash": "4141a3d2b3b4e4e4"
+        },
+        "passed": true
+      },
+      {
+        "check": "untouched_evaluation_period_gated",
+        "detail": {
+          "freeze_assigned": false,
+          "n_eligible_independent_dates": 1,
+          "note": "Untouched evaluation tail is assigned only once the structural date floor exists. Scoring that tail before assignment is forbidden.",
+          "structural_floor": 70,
+          "untouched_evaluation_period_status": "not_assigned_insufficient_dates"
+        },
+        "passed": true
+      },
+      {
+        "check": "thresholds_not_lowered",
+        "detail": {
+          "do_not_recycle_eval_set_for_tuning": true,
+          "do_not_select_favorable_subperiods": true,
+          "min_outer_folds": 3,
+          "structural_floor_dates": 70
+        },
+        "passed": true
+      }
+    ],
+    "collection": {
+      "book_dates": [
+        "2026-09-18",
+        "2026-09-19"
+      ],
+      "dates": [
+        "2026-09-18",
+        "2026-09-19"
+      ],
+      "n_dates": 2,
+      "n_dates_with_executable_book": 2,
+      "n_mapped_eligible_rows": 115,
+      "n_rows": 116,
+      "nested_evaluation_outcomes_opened": false
+    },
+    "eligible_dates": [
+      "2026-09-19"
+    ],
+    "failed_checks": [],
+    "model_hashes": {
+      "frozen_policy_hash": "2f08c06d052b3115",
+      "hitter_hit_probability_model": "39b55c0e8792752f",
+      "hitter_opportunity_probability_model": null,
+      "protocol_hash": "4141a3d2b3b4e4e4"
+    },
+    "n_eligible_independent_dates": 1,
+    "scoring_permitted": false,
+    "status": "passed",
+    "untouched_evaluation": {
+      "freeze_assigned": false,
+      "n_eligible_independent_dates": 1,
+      "note": "Untouched evaluation tail is assigned only once the structural date floor exists. Scoring that tail before assignment is forbidden.",
+      "structural_floor": 70,
+      "untouched_evaluation_period_status": "not_assigned_insufficient_dates"
+    }
+  },
+  "probability_report": {
+    "blocked_by": [
+      "structural_floor_or_outer_folds_not_met",
+      "untouched_evaluation_period_not_assigned"
+    ],
+    "candidates": {},
+    "note": "Probability quality vs market mid is not scored until structural floors and untouched freeze assignment permit. This avoids recycling thin history as a tuned result.",
+    "reason": "pre_score_or_structural_gates_blocked_scoring",
+    "status": "insufficient_data"
+  },
+  "protocol_hash": "4141a3d2b3b4e4e4",
+  "protocol_id": "polymarket_us_mlb_hitter_hits_1plus_v1",
+  "report_hash": "b961d1943bc598e5",
+  "report_type": "hit_prop_formal_readiness_evaluation",
+  "research_only": true,
+  "scoring_attempted": false,
+  "scoring_blocked_reasons": [
+    "structural_floor_or_outer_folds_not_met",
+    "untouched_evaluation_period_not_assigned"
+  ],
+  "software_tests_are_not_evidence_of_edge": true,
+  "strategy_report": null,
+  "structural_and_precision": {
+    "inconclusive_ci_is_insufficient_evidence": true,
+    "scoring_allowed": false,
+    "statistical_precision": {
+      "alpha": 0.05,
+      "effect_logloss": 0.01,
+      "n_eligible_dates": 1,
+      "note": "Precision/power planning is separate from the structural fold floor. Meeting the floor does not imply adequate precision.",
+      "planning_power_independent_dates": 197,
+      "power": 0.8,
+      "ready": false
+    },
+    "structural": {
+      "floor_dates": 70,
+      "min_outer_folds": 3,
+      "n_eligible_dates": 1,
+      "n_outer_folds_available": 0,
+      "note": "Structural readiness is required before nested outer evaluation.",
+      "ready": false
+    }
+  },
+  "uncertainty": {
+    "evaluation_set_recycled_for_tuning": false,
+    "favorable_subperiods_selected": false,
+    "inconclusive_confidence_interval_is_insufficient_evidence": true,
+    "paired_date_block_dependence": true,
+    "thresholds_lowered": false
+  },
+  "validation_status": "insufficient_data",
+  "verdict": "insufficient_evidence",
+  "verdict_vocabulary": {
+    "insufficient_evidence": "insufficient_evidence",
+    "supported": "supported",
+    "unsupported": "unsupported"
+  }
+}

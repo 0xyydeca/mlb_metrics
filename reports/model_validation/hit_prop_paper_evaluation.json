@@ -1,64 +1,33 @@
 {
   "actionable": false,
   "additional_observations_needed": {
-    "additional_dates_to_planning_power_target": 195,
-    "additional_dates_to_structural_floor": 68,
-    "n_eligible_dates_observed": 2,
+    "additional_dates_to_planning_power_target": 196,
+    "additional_dates_to_structural_floor": 69,
+    "n_eligible_dates_observed": 1,
     "note": "Structural floor is required before nested outer evaluation can complete. Planning power target is a separate development estimate, not a pass claim.",
     "planning_power_independent_dates": 197,
     "structural_floor_independent_dates": 70
   },
-  "collection_progress": {
-    "book_dates": [
-      "2026-09-18",
-      "2026-09-19"
-    ],
-    "dates": [
-      "2026-09-18",
-      "2026-09-19"
-    ],
-    "n_dates": 2,
-    "n_dates_with_executable_book": 2,
-    "n_mapped_eligible_rows": 115,
-    "n_rows": 116,
-    "nested_evaluation_outcomes_opened": false
-  },
+  "betting_mode_required": "disabled",
   "edge_claimed": false,
-  "feature_availability_audit": {
-    "hitter_pregame_features": "WAVE/Game_Hit_Probability/matchup features from published hit log are pregame-reconstructible when built with as-of cutoff; target-game Started/Appeared/PA/AB/Hits/Got_Hit are leakage and never used as features.",
-    "positive_ab_rates": "Forbidden as silent contract payout probabilities.",
-    "venue_quotes": "Only captured executable yes_buy/no_buy at decision-time receipts are eligible. Missing historical quotes stay missing; no fill from today or closing prices."
-  },
-  "forecast_settlement_example_path": "reports/polymarket/hit_prop_forecast_settlement_example_latest.json",
-  "forecast_settlement_example_summary": {
-    "baseball_contract_proxy": 0.527,
-    "market_mid": 0.5800000000000001,
-    "rejected_positive_ab": "rejected_positive_ab_source"
-  },
   "future_observations_claimed": false,
-  "game_winner_protocol_preserved": true,
   "gates": {
     "betting_mode_required": "disabled",
     "gate_fail_reasons": [
-      "insufficient_dates:2<structural_floor:70",
+      "insufficient_dates:1<structural_floor:70",
       "insufficient_outer_folds:0<3",
       "probability_status:insufficient_data",
       "missing_residual_or_market_scores_on_nested_eval",
       "strategy_report_unavailable"
     ],
-    "n_eligible_dates": 2,
+    "n_eligible_dates": 1,
     "n_outer_folds_available": 0,
     "september_25_betting_launch": false,
     "strategy_ok": false,
     "validation_status": "insufficient_data",
     "verdict": "insufficient_evidence"
   },
-  "generated_at_utc": "2026-09-20T01:23:09Z",
-  "model_candidates": [
-    "same_time_market_mid_baseline",
-    "contract_rule_adjusted_hitter_hit_model",
-    "regularized_market_residual_prop_logistic"
-  ],
+  "generated_at_utc": "2026-09-20T17:33:02Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
@@ -66,29 +35,45 @@
   "nested_evaluation_outcomes": "not_opened",
   "policy_hash": "2f08c06d052b3115",
   "policy_version": "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1",
+  "pre_score_audit_status": "passed",
   "probability_report": {
+    "blocked_by": [
+      "structural_floor_or_outer_folds_not_met",
+      "untouched_evaluation_period_not_assigned"
+    ],
     "candidates": {},
-    "n_eligible_dates": 2,
-    "note": "Collection progress is counted separately from nested evaluation. Missing historical executable quotes remain missing.",
-    "reason": "nested_evaluation_outcomes_not_opened_insufficient_labeled_history",
+    "note": "Probability quality vs market mid is not scored until structural floors and untouched freeze assignment permit. This avoids recycling thin history as a tuned result.",
+    "reason": "pre_score_or_structural_gates_blocked_scoring",
     "status": "insufficient_data"
   },
   "protocol_hash": "4141a3d2b3b4e4e4",
   "protocol_id": "polymarket_us_mlb_hitter_hits_1plus_v1",
+  "readiness_report_hash": "b961d1943bc598e5",
+  "readiness_report_path": "reports/model_validation/hit_prop_readiness_latest.json",
   "research_only": true,
-  "sample_size_plan": {
-    "alpha": 0.05,
-    "approx_independent_days_for_0.01_logloss_style_target": 197,
-    "assumed_day_sd": 0.05,
-    "effect_logloss": 0.01,
-    "note": "Players in the same game and games on the same date are correlated. Treat independent units as date blocks, not raw prop rows.",
-    "power": 0.8,
-    "source": "development_planning_assumptions",
-    "structural_floor_independent_dates": 70,
-    "uses_final_holdout": false
-  },
-  "september_25_is_paper_system_review_not_betting_launch": true,
+  "software_tests_are_not_evidence_of_edge": true,
   "strategy_report": null,
+  "structural_and_precision": {
+    "inconclusive_ci_is_insufficient_evidence": true,
+    "scoring_allowed": false,
+    "statistical_precision": {
+      "alpha": 0.05,
+      "effect_logloss": 0.01,
+      "n_eligible_dates": 1,
+      "note": "Precision/power planning is separate from the structural fold floor. Meeting the floor does not imply adequate precision.",
+      "planning_power_independent_dates": 197,
+      "power": 0.8,
+      "ready": false
+    },
+    "structural": {
+      "floor_dates": 70,
+      "min_outer_folds": 3,
+      "n_eligible_dates": 1,
+      "n_outer_folds_available": 0,
+      "note": "Structural readiness is required before nested outer evaluation.",
+      "ready": false
+    }
+  },
   "validation_status": "insufficient_data",
   "verdict": "insufficient_evidence"
 }

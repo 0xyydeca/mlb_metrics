@@ -1,0 +1,18 @@
+{
+  "actionable": false,
+  "fees_paid_total": 0.0,
+  "generated_at_utc": "2026-09-20T01:27:04Z",
+  "issues": [],
+  "n_decisions": 18,
+  "n_duplicate_decision_ids": 0,
+  "n_open_positions": 0,
+  "n_positions": 0,
+  "n_settled_positions": 0,
+  "n_unfilled_buys": 0,
+  "open_exposure": 0.0,
+  "orphan_positions": 0,
+  "research_only": true,
+  "settled_net_pnl": 0.0,
+  "sim_separated": true,
+  "status": "ok"
+}

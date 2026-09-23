@@ -238,6 +238,7 @@ reports/model_validation/**
 !reports/model_validation/hit_prop_paper_protocol.json
 !reports/model_validation/hit_prop_frozen_policy.json
 !reports/model_validation/hit_prop_paper_evaluation.json
+!reports/model_validation/hit_prop_readiness_latest.json
 !reports/model_validation/polymarket_pilot_readiness.json
 data/polymarket/ledger/**
 !data/polymarket/ledger/.gitkeep
@@ -250,6 +251,8 @@ data/polymarket/research/**
 !data/polymarket/research/hit_props/.gitkeep
 !data/polymarket/research/hit_props/provider_player_map.json
 !data/polymarket/research/hit_props/ledger/.gitkeep
+!data/polymarket/research/hit_props/ledger/sim/.gitkeep
+!data/polymarket/research/hit_props/prospective/.gitkeep
 
 # Polymarket quote books and local capture artifacts (not committed).
 data/polymarket/quotes/**
@@ -270,4 +273,7 @@ reports/polymarket/**
 !reports/polymarket/hit_prop_collection_status_latest.json
 !reports/polymarket/hit_prop_host_ops_latest.json
 !reports/polymarket/hit_prop_forecast_settlement_example_latest.json
+!reports/polymarket/hit_prop_ops_latest.json
+!reports/polymarket/hit_prop_checkpoint_latest.json
+!reports/polymarket/hit_prop_reconcile_latest.json
 

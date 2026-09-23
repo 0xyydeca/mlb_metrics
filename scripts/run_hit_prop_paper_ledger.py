@@ -1,7 +1,6 @@
-"""Append research-only hit-prop paper ledger examples (no orders).
+"""Append simulated hit-prop paper ledger fixtures (NOT prospective history).
 
-Writes size-limited fill + settlement demos under HIT_PROP_LEDGER_DIR.
-Does not open nested evaluation outcomes or enable betting.
+Writes under HIT_PROP_SIM_LEDGER_DIR only. Does not place orders.
 """
 
 from __future__ import annotations
@@ -9,10 +8,11 @@ from __future__ import annotations
 import json
 import os
 import sys
+from pathlib import Path
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from mlb_metrics import config, hit_prop_paper, paper_ledger
+from mlb_metrics import config, hit_prop_ops, hit_prop_paper, paper_ledger
 
 
 def main() -> int:
@@ -22,10 +22,9 @@ def main() -> int:
     example = hit_prop_paper.build_forecast_settlement_example()
     hit_prop_paper.write_forecast_settlement_example()
 
-    paths = hit_prop_paper.ledger_paths()
+    paths = hit_prop_ops.sim_paths()
     os.makedirs(paths["dir"], exist_ok=True)
 
-    # Persist the binary-yes demo as a ledger row for audit reproducibility.
     trade = hit_prop_paper.simulate_prop_paper_trade(
         yes_asks=[{"price": 0.60, "size": 5.0}],
         decision_time_utc="2026-09-19T20:00:00Z",
@@ -44,7 +43,16 @@ def main() -> int:
         settlement=(example.get("settlement_classes") or {}).get("starter_with_hit"),
         requested_qty=1.0,
     )
-    paper_ledger.append_decisions([trade["decision"]], path=paths["decisions"])
+    trade["decision"]["store_kind"] = "sim"
+    trade["decision"]["research_only"] = True
+    # Sim store: write decisions with store_kind tagged.
+    frame = __import__("pandas").DataFrame([trade["decision"]])
+    if os.path.exists(paths["decisions"]):
+        prev = __import__("pandas").read_csv(paths["decisions"])
+        frame = __import__("pandas").concat([prev, frame], ignore_index=True)
+        frame = frame.drop_duplicates(subset=["decision_id"], keep="first")
+    frame.to_csv(paths["decisions"], index=False)
+
     position_row = {
         "decision_id": trade["decision"]["decision_id"],
         "status": trade["position"]["status"],
@@ -63,13 +71,18 @@ def main() -> int:
     }
     paper_ledger.append_positions([position_row], path=paths["positions"])
 
+    # Ensure legacy shared ledger is not treated as prospective.
+    hit_prop_ops.migrate_sim_ledger_away_from_prospective()
+
     print(
         json.dumps(
             {
+                "store_kind": "sim",
                 "ledger_dir": paths["dir"],
                 "decisions": paths["decisions"],
                 "positions": paths["positions"],
                 "example": config.HIT_PROP_FORECAST_EXAMPLE_PATH,
+                "prospective_dir": config.HIT_PROP_PROSPECTIVE_DIR,
                 "actionable": False,
                 "edge_claimed": False,
             },

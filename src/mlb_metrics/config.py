@@ -2460,6 +2460,25 @@ HIT_PROP_FORECAST_EXAMPLE_PATH = (
     "reports/polymarket/hit_prop_forecast_settlement_example_latest.json"
 )
 HIT_PROP_LEDGER_DIR = "data/polymarket/research/hit_props/ledger"
+# Simulated acceptance fixtures only — never mixed into prospective history.
+HIT_PROP_SIM_LEDGER_DIR = "data/polymarket/research/hit_props/ledger/sim"
+# Actual prospective paper observations under the frozen policy.
+HIT_PROP_PROSPECTIVE_DIR = "data/polymarket/research/hit_props/prospective"
+HIT_PROP_OPS_REPORT_PATH = "reports/polymarket/hit_prop_ops_latest.json"
+HIT_PROP_CHECKPOINT_REPORT_PATH = (
+    "reports/polymarket/hit_prop_checkpoint_latest.json"
+)
+HIT_PROP_RECONCILE_REPORT_PATH = (
+    "reports/polymarket/hit_prop_reconcile_latest.json"
+)
+HIT_PROP_READINESS_REPORT_PATH = (
+    "reports/model_validation/hit_prop_readiness_latest.json"
+)
+HIT_PROP_NEXT_REGISTERED_REVIEW_LOCAL = "2026-09-25"
+HIT_PROP_NEXT_REGISTERED_REVIEW_NOTE = (
+    "September 25 paper-system review (not a betting launch). Next structural "
+    "checkpoints remain 7/14/28/70 eligible independent dates under the frozen policy."
+)
 HIT_PROP_PAPER_POLICY_VERSION = "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1"
 HIT_PROP_MIN_ELIGIBLE_DATES = POLYMARKET_MIN_ELIGIBLE_DATES
 HIT_PROP_MIN_OUTER_FOLDS = BETTING_PROMOTION_MIN_OUTER_FOLDS

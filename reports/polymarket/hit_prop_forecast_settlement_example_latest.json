@@ -20,7 +20,7 @@
       "status": "rejected_positive_ab_source"
     }
   },
-  "generated_at_utc": "2026-09-20T01:23:11Z",
+  "generated_at_utc": "2026-09-20T01:27:02Z",
   "notes": [
     "Training-only tuning is demonstrated in unit tests with chronological folds.",
     "This fixture does not open nested evaluation outcomes or claim an edge."

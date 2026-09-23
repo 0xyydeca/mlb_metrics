@@ -1,0 +1,119 @@
+{
+  "actionable": false,
+  "checkpoint": {
+    "checkpoints": [
+      7,
+      14,
+      28,
+      70
+    ],
+    "checkpoints_reached": [],
+    "days_to_next_checkpoint": 6,
+    "do_not_tune_or_increase_exposure_after_favorable_streak": true,
+    "n_eligible_dates_elapsed": 1,
+    "nested_performance_evaluation_allowed": false,
+    "next_checkpoint": 7,
+    "note": "7/14 reports cover coverage and accounting health only. Nested performance evaluation waits for the registered statistical schedule.",
+    "operational_checkpoint_14": false,
+    "operational_checkpoint_7": false
+  },
+  "continuing_collector": {
+    "authorized_host": "github_actions_ubuntu_latest",
+    "capture": "scripts/capture_hit_prop_research.py",
+    "note": "Reuse the existing free GitHub Actions ubuntu-latest polymarket_capture host. No additional paid runner/service is authorized without an explicit budget. Scheduled windows cover ~15:00\u201302:59 UTC; outside that window the host is asleep (no capture). Transient API failures are retained in research reports and do not place orders. Prop capture is research-only and must not flip BETTING_MODE.",
+    "script": "scripts/run_hit_prop_paper_ops.py",
+    "sleep_windows": "outside cron 15:00\u201302:59 UTC"
+  },
+  "edge_claimed": false,
+  "elapsed_eligible_days": 1,
+  "eligible_dates": [
+    "2026-09-19"
+  ],
+  "future_observations_claimed": false,
+  "generated_at_utc": "2026-09-20T01:27:04Z",
+  "history_integrity": {
+    "files": {
+      "checkpoint_state": {
+        "bytes": 843,
+        "exists": true,
+        "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
+        "sha16": "70f7f8acc4aaf8ab"
+      },
+      "cycle_log": {
+        "bytes": 1361,
+        "exists": true,
+        "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
+        "sha16": "86fd43e262fea39b"
+      },
+      "decisions": {
+        "bytes": 14788,
+        "exists": true,
+        "path": "data/polymarket/research/hit_props/prospective/decisions.csv",
+        "sha16": "b5e36b38259b6265"
+      },
+      "exclusions": {
+        "bytes": 5183,
+        "exists": true,
+        "path": "data/polymarket/research/hit_props/prospective/exclusions.csv",
+        "sha16": "b1bcd8e007e743ca"
+      },
+      "positions": {
+        "bytes": 0,
+        "exists": false,
+        "sha16": null
+      }
+    },
+    "generated_at_utc": "2026-09-20T01:27:04Z",
+    "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
+    "retrievable": true
+  },
+  "host": "github_actions_ubuntu_latest",
+  "last_cycle": {
+    "cycle_id": "hp_ops_20260920T012704Z",
+    "n_buy": 0,
+    "n_contracts_in_denominator": 18,
+    "n_pass": 18
+  },
+  "material_policy_change_requires_new_version": true,
+  "modes": {
+    "BETTING_MODE": "disabled",
+    "GAME_PREDICTION_MODE": "shadow"
+  },
+  "nested_evaluation_outcomes": "not_opened",
+  "next_registered_review": {
+    "is_betting_launch": false,
+    "local_date": "2026-09-25",
+    "note": "September 25 paper-system review (not a betting launch). Next structural checkpoints remain 7/14/28/70 eligible independent dates under the frozen policy."
+  },
+  "outstanding_evidence_needs": {
+    "additional_dates_to_planning_power_target": 196,
+    "additional_dates_to_structural_floor": 69,
+    "n_eligible_dates_observed": 1,
+    "note": "Structural floor is required before nested outer evaluation can complete. Planning power target is a separate development estimate, not a pass claim.",
+    "planning_power_independent_dates": 197,
+    "structural_floor_independent_dates": 70
+  },
+  "policy_hash": "2f08c06d052b3115",
+  "policy_version": "polymarket_us_mlb_hitter_hits_1plus_v1_frozen_v1",
+  "postseason_separate": true,
+  "reconcile": {
+    "actionable": false,
+    "fees_paid_total": 0.0,
+    "generated_at_utc": "2026-09-20T01:27:04Z",
+    "issues": [],
+    "n_decisions": 18,
+    "n_duplicate_decision_ids": 0,
+    "n_open_positions": 0,
+    "n_positions": 0,
+    "n_settled_positions": 0,
+    "n_unfilled_buys": 0,
+    "open_exposure": 0.0,
+    "orphan_positions": 0,
+    "research_only": true,
+    "settled_net_pnl": 0.0,
+    "sim_separated": true,
+    "status": "ok"
+  },
+  "research_only": true,
+  "workflow": ".github/workflows/polymarket_capture.yml"
+}

@@ -502,3 +502,6 @@ def test_workflow_includes_hit_prop_fail_soft_step():
     assert "capture_hit_prop_research.py" in text
     assert "Hit-prop research capture" in text
     assert "hit_prop_host_ops_latest.json" in text
+    assert "run_hit_prop_paper_ops.py" in text
+    assert "hit_prop_ops_latest.json" in text
+    assert "run_hit_prop_readiness_evaluation.py" in text

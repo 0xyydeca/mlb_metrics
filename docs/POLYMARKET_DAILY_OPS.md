@@ -25,6 +25,8 @@ Exposure-increase rules: `reports/model_validation/polymarket_pilot_exposure_rev
 - Sleep: outside cron windows (`27,57` at 15–23 UTC and 0–2 UTC) the Actions host is asleep.
 - Outage: API failures stay in reports; no invented quotes; modes stay shadow/disabled.
 - Hit-prop research capture reuses the same workflow (fail-soft step); reports under `reports/polymarket/hit_prop_*`.
+- Hit-prop frozen paper ops: `scripts/run_hit_prop_paper_ops.py` (policy-versioned decisions, exclusions, reconcile, 7/14 checkpoints). Prospective store: `data/polymarket/research/hit_props/prospective/`. Sim fixtures: `.../ledger/sim/`. Next registered review: **2026-09-25** (paper-system review, not a betting launch).
+- Formal readiness: `scripts/run_hit_prop_readiness_evaluation.py` → `reports/model_validation/hit_prop_readiness_latest.json`. Current verdict: **insufficient_evidence** (do not enable real money).
 
 ## Startup / daily
 

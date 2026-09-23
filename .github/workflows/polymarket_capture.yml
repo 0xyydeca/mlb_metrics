@@ -75,6 +75,24 @@ jobs:
             exit 0
           }
 
+      - name: Hit-prop frozen paper ops cycle
+        if: always()
+        run: |
+          PYTHONPATH=src python scripts/run_hit_prop_paper_ops.py || {
+            code=$?
+            echo "::warning::Hit-prop paper ops exited with $code (research-only; collection continues)."
+            exit 0
+          }
+
+      - name: Hit-prop formal readiness evaluation
+        if: always()
+        run: |
+          PYTHONPATH=src python scripts/run_hit_prop_readiness_evaluation.py || {
+            code=$?
+            echo "::warning::Hit-prop readiness evaluation exited with $code (insufficient_data is valid)."
+            exit 0
+          }
+
       - name: Paper ledger cycle (log candidates/passes before outcomes)
         if: always()
         run: |
@@ -128,7 +146,13 @@ jobs:
             reports/polymarket/hit_prop_collection_status_latest.json
             reports/polymarket/hit_prop_contract_example_latest.json
             reports/polymarket/hit_prop_host_ops_latest.json
-            data/polymarket/research/hit_props/ if-no-files-found: warn
+            reports/polymarket/hit_prop_ops_latest.json
+            reports/polymarket/hit_prop_checkpoint_latest.json
+            reports/polymarket/hit_prop_reconcile_latest.json
+            reports/model_validation/hit_prop_readiness_latest.json
+            reports/model_validation/hit_prop_paper_evaluation.json
+            data/polymarket/research/hit_props/
+          if-no-files-found: warn
 
       - name: Commit registry + coverage + protocol status
         if: always()
@@ -144,6 +168,11 @@ jobs:
             reports/polymarket/hit_prop_collection_status_latest.json \
             reports/polymarket/hit_prop_contract_example_latest.json \
             reports/polymarket/hit_prop_host_ops_latest.json \
+            reports/polymarket/hit_prop_ops_latest.json \
+            reports/polymarket/hit_prop_checkpoint_latest.json \
+            reports/polymarket/hit_prop_reconcile_latest.json \
+            reports/model_validation/hit_prop_readiness_latest.json \
+            reports/model_validation/hit_prop_paper_evaluation.json \
             || true
 
           if git diff --cached --quiet; then
