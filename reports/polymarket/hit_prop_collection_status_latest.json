@@ -1,18 +1,18 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260924T223455Z",
+  "capture_id": "hp_20260925T005933Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-09-24T22:35:11Z",
+  "generated_at_utc": "2026-09-25T00:59:42Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
-  "n_books_captured": 101,
-  "n_contracts": 101,
-  "n_mapped_game_pk": 101,
-  "n_mapped_key_mlbam": 99,
+  "n_books_captured": 54,
+  "n_contracts": 54,
+  "n_mapped_game_pk": 54,
+  "n_mapped_key_mlbam": 52,
   "n_quarantined": 2,
   "remaining_blockers": [
     "player_identity_mapping_incomplete_or_quarantined",
@@ -21,7 +21,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/tmp/mlb-hit-prop-research/hit-props-9fefe6d9b4d94c14a87dfe398fe9cc6c.json",
+  "report_path": "/tmp/mlb-hit-prop-research/hit-props-f8ef72c569374cc0afc6d7035b726991.json",
   "requested_local_date": "2026-09-24",
   "research_only": true,
   "status": "captured",
@@ -29,18 +29,15 @@
     "complete_denominator_claimed": true,
     "definition": "All active future MLB Polymarket US events with start local-date 2026-09-24 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-cin-atl-2026-09-24",
-      "mlb-cle-bos-2026-09-24",
       "mlb-hou-ath-2026-09-24",
       "mlb-laa-sea-2026-09-24",
-      "mlb-sd-lad-2026-09-24",
-      "mlb-tb-nyy-2026-09-24"
+      "mlb-sd-lad-2026-09-24"
     ],
-    "n_contracts_in_fetched_events": 101,
-    "n_events": 6,
-    "n_events_fetched": 6,
+    "n_contracts_in_fetched_events": 54,
+    "n_events": 3,
+    "n_events_fetched": 3,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 1,
+    "n_excluded_already_started": 3,
     "n_excluded_wrong_local_day": 45,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }
