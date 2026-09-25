@@ -1,27 +1,28 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260925T192222Z",
+  "capture_id": "hp_20260925T223346Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-09-25T19:22:38Z",
+  "generated_at_utc": "2026-09-25T22:34:00Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
   "n_books_captured": 120,
-  "n_contracts": 179,
-  "n_mapped_game_pk": 149,
-  "n_mapped_key_mlbam": 179,
-  "n_quarantined": 30,
+  "n_contracts": 235,
+  "n_mapped_game_pk": 223,
+  "n_mapped_key_mlbam": 226,
+  "n_quarantined": 21,
   "remaining_blockers": [
+    "player_identity_mapping_incomplete_or_quarantined",
     "game_pk_mapping_incomplete_or_quarantined",
     "no_registered_prop_evaluation_outcomes_yet",
     "hitter_positive_ab_rates_not_valid_contract_probabilities",
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/tmp/mlb-hit-prop-research/hit-props-59809fede08043619d57f12597a2fa7b.json",
+  "report_path": "/tmp/mlb-hit-prop-research/hit-props-31ce6bb6815b4e3badf3d1ac918e29ab.json",
   "requested_local_date": "2026-09-25",
   "research_only": true,
   "status": "captured",
@@ -31,9 +32,7 @@
     "event_slugs": [
       "mlb-atl-mia-2026-09-25",
       "mlb-az-sd-2026-09-25",
-      "mlb-bal-nyy-2026-09-25",
       "mlb-bal-nyy-2026-09-26",
-      "mlb-chc-bos-2026-09-25",
       "mlb-cin-tor-2026-09-25",
       "mlb-cle-kc-2026-09-25",
       "mlb-col-cws-2026-09-25",
@@ -46,12 +45,12 @@
       "mlb-tb-phi-2026-09-25",
       "mlb-tex-min-2026-09-25"
     ],
-    "n_contracts_in_fetched_events": 179,
-    "n_events": 16,
-    "n_events_fetched": 16,
+    "n_contracts_in_fetched_events": 235,
+    "n_events": 14,
+    "n_events_fetched": 14,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 1,
-    "n_excluded_wrong_local_day": 28,
+    "n_excluded_already_started": 2,
+    "n_excluded_wrong_local_day": 27,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }
 }
