@@ -1,10 +1,18 @@
 {
   "actionable_suppressed": true,
   "away_team": "CHC",
-  "baseball": null,
-  "best_ask": 0.525,
-  "best_ask_size": 96.55,
-  "best_bid": 0.515,
+  "baseball": {
+    "away_lineup_status": "confirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-09-25T19:22:21Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
+  "best_ask": 0.205,
+  "best_ask_size": 0.5,
+  "best_bid": 0.145,
   "contract_url": "https://polymarket.us/event/mlb-chc-bos-2026-09-25-dh1",
   "event_slug": "mlb-chc-bos-2026-09-25-dh1",
   "evidence_verdict": "insufficient_evidence",
@@ -15,7 +23,6 @@
   "market_id": "1024323",
   "market_slug": "aec-mlb-chc-bos-2026-09-25-dh1",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-09-25T05:09:42Z",
-  "quote_request_time_utc": "2026-09-25T05:09:41Z",
+  "quote_receive_time_utc": "2026-09-25T19:22:18Z",
+  "quote_request_time_utc": "2026-09-25T19:22:18Z",
   "rules_hash": "a8053431841a563d",
   "rules_text_excerpt": "This market will settle to the winner of the Chicago Cubs vs Boston Red Sox MLB game scheduled for 2026-09-25 at 1:05PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and not rescheduled to a date ",
   "scheduled_start_utc": "2026-09-25T17:05:00Z",
