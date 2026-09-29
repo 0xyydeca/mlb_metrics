@@ -1,10 +1,18 @@
 {
   "actionable_suppressed": true,
   "away_team": "PHI",
-  "baseball": null,
-  "best_ask": 0.37,
-  "best_ask_size": 362353.01,
-  "best_bid": 0.365,
+  "baseball": {
+    "away_lineup_status": "confirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-09-29T20:04:18Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
+  "best_ask": 0.39,
+  "best_ask_size": 40621.5,
+  "best_bid": 0.385,
   "contract_url": "https://polymarket.us/event/mlb-phi-atl-2026-09-29",
   "event_slug": "mlb-phi-atl-2026-09-29",
   "evidence_verdict": "insufficient_evidence",
@@ -15,7 +23,6 @@
   "market_id": "1103324",
   "market_slug": "aec-mlb-phi-atl-2026-09-29",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-09-29T05:56:35Z",
-  "quote_request_time_utc": "2026-09-29T05:56:35Z",
+  "quote_receive_time_utc": "2026-09-29T20:04:18Z",
+  "quote_request_time_utc": "2026-09-29T20:04:18Z",
   "rules_hash": "67f408251caf1bfd",
   "rules_text_excerpt": "This market will settle to the winner of the Philadelphia Phillies vs Atlanta Braves MLB NL Wild Card Game 1 scheduled for 2026-09-29 at 2:00PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and no",
   "scheduled_start_utc": "2026-09-29T18:00:00Z",
