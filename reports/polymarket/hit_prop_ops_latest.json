@@ -8,9 +8,9 @@
       70
     ],
     "checkpoints_reached": [],
-    "days_to_next_checkpoint": 6,
+    "days_to_next_checkpoint": 5,
     "do_not_tune_or_increase_exposure_after_favorable_streak": true,
-    "n_eligible_dates_elapsed": 1,
+    "n_eligible_dates_elapsed": 2,
     "nested_performance_evaluation_allowed": false,
     "next_checkpoint": 7,
     "note": "7/14 reports cover coverage and accounting health only. Nested performance evaluation waits for the registered statistical schedule.",
@@ -25,37 +25,38 @@
     "sleep_windows": "outside cron 15:00\u201302:59 UTC"
   },
   "edge_claimed": false,
-  "elapsed_eligible_days": 1,
+  "elapsed_eligible_days": 2,
   "eligible_dates": [
-    "2026-09-19"
+    "2026-09-19",
+    "2026-09-30"
   ],
   "future_observations_claimed": false,
-  "generated_at_utc": "2026-09-20T01:27:04Z",
+  "generated_at_utc": "2026-09-30T19:57:24Z",
   "history_integrity": {
     "files": {
       "checkpoint_state": {
-        "bytes": 843,
+        "bytes": 2219,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
-        "sha16": "70f7f8acc4aaf8ab"
+        "sha16": "c5da40cf4688da85"
       },
       "cycle_log": {
-        "bytes": 1361,
+        "bytes": 2752,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
-        "sha16": "86fd43e262fea39b"
+        "sha16": "ce3c3019750a41ac"
       },
       "decisions": {
-        "bytes": 14788,
+        "bytes": 43980,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/decisions.csv",
-        "sha16": "b5e36b38259b6265"
+        "sha16": "d3bf60421839d794"
       },
       "exclusions": {
-        "bytes": 5183,
+        "bytes": 15195,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/exclusions.csv",
-        "sha16": "b1bcd8e007e743ca"
+        "sha16": "0aa5a5a44e756cd8"
       },
       "positions": {
         "bytes": 0,
@@ -63,16 +64,16 @@
         "sha16": null
       }
     },
-    "generated_at_utc": "2026-09-20T01:27:04Z",
+    "generated_at_utc": "2026-09-30T19:57:24Z",
     "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
     "retrievable": true
   },
   "host": "github_actions_ubuntu_latest",
   "last_cycle": {
-    "cycle_id": "hp_ops_20260920T012704Z",
+    "cycle_id": "hp_ops_20260930T195724Z",
     "n_buy": 0,
-    "n_contracts_in_denominator": 18,
-    "n_pass": 18
+    "n_contracts_in_denominator": 43,
+    "n_pass": 43
   },
   "material_policy_change_requires_new_version": true,
   "modes": {
@@ -86,9 +87,9 @@
     "note": "September 25 paper-system review (not a betting launch). Next structural checkpoints remain 7/14/28/70 eligible independent dates under the frozen policy."
   },
   "outstanding_evidence_needs": {
-    "additional_dates_to_planning_power_target": 196,
-    "additional_dates_to_structural_floor": 69,
-    "n_eligible_dates_observed": 1,
+    "additional_dates_to_planning_power_target": 195,
+    "additional_dates_to_structural_floor": 68,
+    "n_eligible_dates_observed": 2,
     "note": "Structural floor is required before nested outer evaluation can complete. Planning power target is a separate development estimate, not a pass claim.",
     "planning_power_independent_dates": 197,
     "structural_floor_independent_dates": 70
@@ -99,9 +100,9 @@
   "reconcile": {
     "actionable": false,
     "fees_paid_total": 0.0,
-    "generated_at_utc": "2026-09-20T01:27:04Z",
+    "generated_at_utc": "2026-09-30T19:57:24Z",
     "issues": [],
-    "n_decisions": 18,
+    "n_decisions": 61,
     "n_duplicate_decision_ids": 0,
     "n_open_positions": 0,
     "n_positions": 0,

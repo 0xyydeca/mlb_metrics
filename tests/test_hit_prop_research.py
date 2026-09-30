@@ -496,12 +496,37 @@ def test_host_ops_and_example_reports(tmp_path):
     assert example_path.exists()
 
 
-def test_workflow_includes_hit_prop_fail_soft_step():
-    path = Path(__file__).resolve().parents[1] / ".github" / "workflows" / "polymarket_capture.yml"
-    text = path.read_text(encoding="utf-8")
-    assert "capture_hit_prop_research.py" in text
-    assert "Hit-prop research capture" in text
-    assert "hit_prop_host_ops_latest.json" in text
-    assert "run_hit_prop_paper_ops.py" in text
-    assert "hit_prop_ops_latest.json" in text
-    assert "run_hit_prop_readiness_evaluation.py" in text
+def test_capture_persists_compact_provenance(tmp_path):
+    report = run(Adapter(), persist_store=True, store_dir=str(tmp_path))
+    summary = json.loads((tmp_path / "capture_summaries" / f"{report['capture_id']}.json").read_text())
+    assert summary["capture_id"] == report["capture_id"]
+    assert summary["universe"] == report["universe"]
+    assert summary["requested_local_date"] == report["requested_local_date"]
+    assert "event_snapshots" not in summary
+
+
+def test_workflow_preserves_history_and_does_not_score_unregistered_checkpoints():
+    path = Path(__file__).resolve().parents[1] / ".github/workflows/polymarket_capture.yml"
+    text = path.read_text()
+    assert "capture_summaries" in text
+    assert "data/polymarket/research/hit_props/prospective" in text
+    assert "from mlb_metrics import hit_prop_ops, hit_prop_readiness" in text
+    assert "run_hit_prop_readiness_evaluation.py" not in text
+    assert "Upload quote + ledger artifacts\n        if: always()" in text
+
+
+@pytest.mark.parametrize("step", ["Capture MLB 1+ hit prop research inventory", "Hit-prop frozen paper ops cycle"])
+def test_workflow_reports_prop_process_crash(tmp_path, step):
+    import os
+    import subprocess
+    import textwrap
+    text = (Path(__file__).resolve().parents[1] / ".github/workflows/polymarket_capture.yml").read_text()
+    block = text.split(f"      - name: {step}\n")[1].split("      - name:")[0]
+    command = block.split("        run: ", 1)[1]
+    command = textwrap.dedent(command[2:]) if command.startswith("|\n") else command.strip()
+    executable = tmp_path / "python"
+    executable.write_text("#!/bin/sh\nexit 7\n")
+    executable.chmod(0o755)
+    result = subprocess.run(["bash", "-e", "-c", command], cwd=tmp_path,
+                            env={**os.environ, "PATH": str(tmp_path) + ":" + os.environ["PATH"]})
+    assert result.returncode == 7

@@ -44,6 +44,35 @@ def _load_latest_contracts(date_iso: str | None = None) -> tuple[list[dict], dic
             "full-day universe remains in capture reports."
         ),
     }
+    # Coverage must belong to exactly the slice loaded above, never the newest
+    # unrelated file in the capture directory. Missing evidence stays explicit.
+    universe["capture_metadata_status"] = "unavailable"
+    if contracts and "capture_id" in frame.columns:
+        capture_id = str(frame["capture_id"].iloc[0])
+        universe["capture_id"] = capture_id
+        if capture_id and Path(capture_id).name == capture_id:
+            capture_path = Path(store) / "captures" / f"{capture_id}.json"
+            if not capture_path.exists():
+                capture_path = Path(store) / "capture_summaries" / f"{capture_id}.json"
+            try:
+                payload = json.loads(capture_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                payload = None
+            dates = (
+                set(frame["requested_local_date"].astype(str))
+                if "requested_local_date" in frame else set()
+            )
+            if (
+                isinstance(payload, dict)
+                and payload.get("capture_id") == capture_id
+                and len(dates) == 1
+                and next(iter(dates)) == payload.get("requested_local_date")
+                and isinstance(payload.get("universe"), dict)
+            ):
+                universe = {**payload["universe"], **universe}
+                universe["capture_metadata_status"] = "matched"
+            elif payload is not None:
+                universe["capture_metadata_status"] = "mismatch_or_invalid"
     return contracts, universe
 
 
@@ -72,22 +101,6 @@ def main() -> int:
     cycle = None
     if not args.skip_cycle:
         contracts, universe = _load_latest_contracts(date_iso)
-        # Attach capture universe if a matching capture JSON exists.
-        store = hit_prop_research.research_store_dir()
-        cap_dir = os.path.join(store, "captures")
-        if os.path.isdir(cap_dir) and contracts:
-            caps = sorted(Path(cap_dir).glob("*.json"))
-            if caps:
-                try:
-                    payload = json.loads(caps[-1].read_text(encoding="utf-8"))
-                    if payload.get("universe"):
-                        universe = {
-                            **universe,
-                            **payload["universe"],
-                            "capture_id": payload.get("capture_id"),
-                        }
-                except (OSError, json.JSONDecodeError):
-                    pass
         cycle = hit_prop_ops.run_ops_cycle(
             contracts,
             policy=policy,

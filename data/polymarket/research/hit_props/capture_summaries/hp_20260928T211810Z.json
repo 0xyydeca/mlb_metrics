@@ -1,0 +1,27 @@
+{
+  "capture_id": "hp_20260928T211810Z",
+  "requested_local_date": "2026-09-28",
+  "capture_started_at_utc": "2026-09-28T21:18:10.673893+00:00",
+  "status": "no_eligible_contracts",
+  "universe": {
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-09-28 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "event_slugs": [],
+    "n_events": 0,
+    "n_excluded_already_started": 0,
+    "n_excluded_wrong_local_day": 8,
+    "complete_denominator_claimed": true,
+    "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+    "n_contracts_in_fetched_events": 0,
+    "n_events_fetched": 0,
+    "n_events_not_fetched_due_to_budget": 0
+  },
+  "errors": [],
+  "n_books_captured": 0,
+  "recovery_source": {
+    "artifact_id": 10997788979,
+    "run_id": 36485102285,
+    "archive_sha256": "sha256:381ade2d4bde2921b06b73f09a893ae8422ec39847bea692a8d335c374f76bcb",
+    "member": "data/polymarket/research/hit_props/captures/hp_20260928T211810Z.json",
+    "member_sha256": "c8623302ce1b8a07588f2bf39229d0e3d2eaf3b2f24a2298c9c3180281638667"
+  }
+}

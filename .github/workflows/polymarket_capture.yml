@@ -7,6 +7,11 @@ name: Polymarket Capture
 # compact contract registry are committed when present.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/polymarket_capture.yml
+      - requirements-polymarket-capture.txt
   schedule:
     # Every 30 minutes in the MLB window, offset from ESPN odds (:17/:47)
     # and lineup-lock (:07/:37).
@@ -44,6 +49,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-polymarket-capture.txt
 
+      - name: Verify paper operation imports
+        run: |
+          PYTHONPATH=src python -c "from mlb_metrics import hit_prop_ops, hit_prop_readiness"
+
       - name: Create output folders
         run: |
           mkdir -p data/polymarket/registry
@@ -64,34 +73,16 @@ jobs:
           PYTHONPATH=src python scripts/capture_polymarket.py --with-baseball
 
       - name: Capture MLB 1+ hit prop research inventory
+        id: hit_prop_capture
         if: always()
         run: |
-          mkdir -p /tmp/mlb-hit-prop-research data/polymarket/research/hit_props reports/polymarket
+          mkdir -p reports/polymarket/hit_prop_run_captures data/polymarket/research/hit_props reports/polymarket
           PYTHONPATH=src python scripts/capture_hit_prop_research.py \
-            --output-dir /tmp/mlb-hit-prop-research \
-            --persist-store || {
-            code=$?
-            echo "::warning::Hit-prop research capture exited with $code (research-only; collection continues)."
-            exit 0
-          }
+            --output-dir reports/polymarket/hit_prop_run_captures --persist-store
 
       - name: Hit-prop frozen paper ops cycle
-        if: always()
-        run: |
-          PYTHONPATH=src python scripts/run_hit_prop_paper_ops.py || {
-            code=$?
-            echo "::warning::Hit-prop paper ops exited with $code (research-only; collection continues)."
-            exit 0
-          }
-
-      - name: Hit-prop formal readiness evaluation
-        if: always()
-        run: |
-          PYTHONPATH=src python scripts/run_hit_prop_readiness_evaluation.py || {
-            code=$?
-            echo "::warning::Hit-prop readiness evaluation exited with $code (insufficient_data is valid)."
-            exit 0
-          }
+        if: ${{ always() && steps.hit_prop_capture.outcome == 'success' }}
+        run: PYTHONPATH=src python scripts/run_hit_prop_paper_ops.py
 
       - name: Paper ledger cycle (log candidates/passes before outcomes)
         if: always()
@@ -152,6 +143,8 @@ jobs:
             reports/model_validation/hit_prop_readiness_latest.json
             reports/model_validation/hit_prop_paper_evaluation.json
             data/polymarket/research/hit_props/
+            reports/polymarket/hit_prop_run_captures/
+
           if-no-files-found: warn
 
       - name: Commit registry + coverage + protocol status
@@ -174,6 +167,15 @@ jobs:
             reports/model_validation/hit_prop_readiness_latest.json \
             reports/model_validation/hit_prop_paper_evaluation.json \
             || true
+
+          for path in \
+            data/polymarket/research/hit_props/contracts.csv \
+            data/polymarket/research/hit_props/capture_summaries \
+            data/polymarket/research/hit_props/prospective; do
+            if [ -e "$path" ]; then
+              git add -f -- "$path"
+            fi
+          done
 
           if git diff --cached --quiet; then
             echo "No registry/coverage changes to commit."

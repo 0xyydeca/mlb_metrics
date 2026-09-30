@@ -1163,6 +1163,17 @@ def capture(
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(_json_safe(report), f, indent=2, allow_nan=False)
             f.write("\n")
+        # Keep small provenance records in Git; full response bodies stay in
+        # workflow artifacts. Fresh runners need the exact capture denominator.
+        summary_dir = os.path.join(store, "capture_summaries")
+        os.makedirs(summary_dir, exist_ok=True)
+        summary = {key: report.get(key) for key in (
+            "capture_id", "requested_local_date", "capture_started_at_utc",
+            "status", "universe", "errors", "n_books_captured",
+        )}
+        with open(os.path.join(summary_dir, f"{capture_id}.json"), "w", encoding="utf-8") as f:
+            json.dump(_json_safe(summary), f, indent=2, allow_nan=False)
+            f.write("\n")
         checkpoint.update(
             {
                 "schema_version": config.HIT_PROP_RESEARCH_SCHEMA_VERSION,
