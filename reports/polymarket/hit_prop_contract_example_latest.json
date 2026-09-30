@@ -1,16 +1,16 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260930T195647Z",
+  "capture_id": "hp_20260930T200033Z",
   "contract": {
-    "book_receive_time_utc": "2026-09-30T19:56:48Z",
-    "book_request_time_utc": "2026-09-30T19:56:48Z",
+    "book_receive_time_utc": "2026-09-30T20:00:34Z",
+    "book_request_time_utc": "2026-09-30T20:00:34Z",
     "book_status": "captured",
     "event_slug": "mlb-cws-hou-2026-09-30",
     "fee_coefficient": 0.0695,
     "market_id": "1141110",
     "market_slug": "astatc-mlb-cws-hou-2026-09-30-hits-andben-gte1",
     "no_buy_price": 0.47,
-    "no_buy_size": 2.93,
+    "no_buy_size": 3.93,
     "player_name": "Andrew Benintendi",
     "provider_game_id": 10079759,
     "provider_player_id": 109,
@@ -23,7 +23,7 @@
     "yes_buy_size": 16626.84
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-09-30T19:56:56Z",
+  "generated_at_utc": "2026-09-30T20:00:38Z",
   "identity_mapping": {
     "game": {
       "away_team": "CWS",

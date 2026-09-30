@@ -1,0 +1,24 @@
+{
+  "capture_id": "hp_20260930T200033Z",
+  "requested_local_date": "2026-09-30",
+  "capture_started_at_utc": "2026-09-30T20:00:33.203428+00:00",
+  "status": "captured",
+  "universe": {
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-09-30 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "event_slugs": [
+      "mlb-bos-nyy-2026-09-30",
+      "mlb-chc-sd-2026-09-30",
+      "mlb-cws-hou-2026-09-30"
+    ],
+    "n_events": 3,
+    "n_excluded_already_started": 1,
+    "n_excluded_wrong_local_day": 0,
+    "complete_denominator_claimed": true,
+    "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+    "n_contracts_in_fetched_events": 43,
+    "n_events_fetched": 3,
+    "n_events_not_fetched_due_to_budget": 0
+  },
+  "errors": [],
+  "n_books_captured": 43
+}
