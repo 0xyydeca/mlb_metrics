@@ -1,9 +1,17 @@
 {
   "actionable_suppressed": true,
   "away_team": "PHI",
-  "baseball": null,
+  "baseball": {
+    "away_lineup_status": "unconfirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-10-01T20:24:46Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
   "best_ask": 0.5,
-  "best_ask_size": 1084408.7,
+  "best_ask_size": 1018979.15,
   "best_bid": 0.495,
   "contract_url": "https://polymarket.us/event/mlb-phi-atl-2026-10-01",
   "event_slug": "mlb-phi-atl-2026-10-01",
@@ -15,7 +23,6 @@
   "market_id": "1149883",
   "market_slug": "aec-mlb-phi-atl-2026-10-01",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-01T06:15:37Z",
-  "quote_request_time_utc": "2026-10-01T06:15:37Z",
+  "quote_receive_time_utc": "2026-10-01T20:24:46Z",
+  "quote_request_time_utc": "2026-10-01T20:24:46Z",
   "rules_hash": "ffca8dea3db6fd3e",
   "rules_text_excerpt": "This market will settle to the winner of the Philadelphia Phillies vs Atlanta Braves MLB NL Wild Card Game 3 scheduled for 2026-10-01 at 2:00PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended and no",
   "scheduled_start_utc": "2026-10-02T00:00:00Z",
