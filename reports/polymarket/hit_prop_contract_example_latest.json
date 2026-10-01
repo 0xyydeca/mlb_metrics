@@ -1,40 +1,40 @@
 {
   "actionable": false,
-  "capture_id": "hp_20260930T201013Z",
+  "capture_id": "hp_20261001T000030Z",
   "contract": {
-    "book_receive_time_utc": "2026-09-30T20:10:14Z",
-    "book_request_time_utc": "2026-09-30T20:10:14Z",
+    "book_receive_time_utc": "2026-10-01T00:00:32Z",
+    "book_request_time_utc": "2026-10-01T00:00:31Z",
     "book_status": "captured",
-    "event_slug": "mlb-cws-hou-2026-09-30",
+    "event_slug": "mlb-chc-sd-2026-09-30",
     "fee_coefficient": 0.0695,
-    "market_id": "1141110",
-    "market_slug": "astatc-mlb-cws-hou-2026-09-30-hits-andben-gte1",
-    "no_buy_price": 0.47,
-    "no_buy_size": 3.93,
-    "player_name": "Andrew Benintendi",
-    "provider_game_id": 10079759,
-    "provider_player_id": 109,
-    "question": "Will Andrew Benintendi record at least 1 hits in Game 2: CHI White Sox vs. HOU Astros?",
-    "rules_hash": "f01de428ad1e301f",
-    "rules_text": "This market will settle to Yes if Andrew Benintendi records 1 or more hits in the Chicago White Sox vs Houston Astros MLB AL Wild Card Game 2 scheduled for 2026-09-30 at 5:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "market_id": "1143037",
+    "market_slug": "astatc-mlb-chc-sd-2026-09-30-hits-alebre-gte1",
+    "no_buy_price": 0.39,
+    "no_buy_size": 2109.36,
+    "player_name": "Alex Bregman",
+    "provider_game_id": 10079753,
+    "provider_player_id": 113,
+    "question": "Will Alex Bregman record at least 1 hits in Game 2: CHI Cubs vs. SD Padres?",
+    "rules_hash": "073c57d948c8656a",
+    "rules_text": "This market will settle to Yes if Alex Bregman records 1 or more hits in the Chicago Cubs vs San Diego Padres MLB NL Wild Card Game 2 scheduled for 2026-09-30 at 10:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
-    "scheduled_start_utc": "2026-09-30T21:00:00Z",
-    "yes_buy_price": 0.54,
-    "yes_buy_size": 16626.84
+    "scheduled_start_utc": "2026-10-01T02:00:00Z",
+    "yes_buy_price": 0.62,
+    "yes_buy_size": 2420.5
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-09-30T20:10:18Z",
+  "generated_at_utc": "2026-10-01T00:00:35Z",
   "identity_mapping": {
     "game": {
-      "away_team": "CWS",
-      "game_pk": 849846,
-      "home_team": "HOU",
-      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-cws-hou-2026-09-30\", \"game_pk\": 849846}",
+      "away_team": "CHC",
+      "game_pk": 849842,
+      "home_team": "SD",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-chc-sd-2026-09-30\", \"game_pk\": 849842}",
       "mapping_status": "mapped"
     },
     "player": {
-      "key_mlbam": 643217,
-      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"andrew benintendi\", \"key_mlbam\": 643217}",
+      "key_mlbam": 608324,
+      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"alex bregman\", \"key_mlbam\": 608324}",
       "mapping_status": "mapped"
     }
   },
@@ -57,6 +57,7 @@
     "shortened_official_game_settles": true
   },
   "remaining_blockers": [
+    "player_identity_mapping_incomplete_or_quarantined",
     "no_registered_prop_evaluation_outcomes_yet",
     "hitter_positive_ab_rates_not_valid_contract_probabilities",
     "BETTING_MODE_disabled_orders_absent",
@@ -99,16 +100,14 @@
     "complete_denominator_claimed": true,
     "definition": "All active future MLB Polymarket US events with start local-date 2026-09-30 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-bos-nyy-2026-09-30",
-      "mlb-chc-sd-2026-09-30",
-      "mlb-cws-hou-2026-09-30"
+      "mlb-chc-sd-2026-09-30"
     ],
-    "n_contracts_in_fetched_events": 43,
-    "n_events": 3,
-    "n_events_fetched": 3,
+    "n_contracts_in_fetched_events": 18,
+    "n_events": 1,
+    "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 1,
-    "n_excluded_wrong_local_day": 0,
+    "n_excluded_already_started": 2,
+    "n_excluded_wrong_local_day": 1,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   },
   "venue_id": "polymarket_us",
