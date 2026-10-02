@@ -59,6 +59,8 @@ HIT_PROP_REGISTRY_COLUMNS = [
     "game_pk",
     "game_mapping_status",
     "game_mapping_evidence",
+    "game_type",
+    "game_type_source",
     "provider_player_id",
     "key_mlbam",
     "player_name",
@@ -990,6 +992,13 @@ def capture(
             moneyline_registry=moneyline_registry,
             requested_local_date=date,
         )
+        matched_games = schedule_games.loc[
+            pd.to_numeric(schedule_games.get("game_pk", pd.Series(dtype=float)), errors="coerce") == game_map.get("game_pk")
+        ]
+        game_type = None
+        if len(matched_games) == 1 and "game_type" in matched_games:
+            value = matched_games.iloc[0]["game_type"]
+            game_type = str(value) if pd.notna(value) else None
         for market in one_hit_markets(event):
             metadata = market.get("metadata") or {}
             rules = market.get("description") or ""
@@ -1037,6 +1046,8 @@ def capture(
                 "game_pk": game_map.get("game_pk"),
                 "game_mapping_status": game_map.get("mapping_status"),
                 "game_mapping_evidence": game_map.get("mapping_evidence"),
+                "game_type": game_type,
+                "game_type_source": "mlb_statsapi_game_pk" if game_type else None,
                 "home_team": game_map.get("home_team"),
                 "away_team": game_map.get("away_team"),
                 "provider_player_id": metadata.get("playerId"),

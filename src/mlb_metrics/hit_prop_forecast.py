@@ -88,8 +88,10 @@ def contract_yes_probability(
             "p_hit_given_qualify": p_hit_given_qualify,
             "note": "Positive-AB hit rates are not contract payout probabilities.",
         }
-    pq = _clip_prob(p_qualify)
-    ph = _clip_prob(p_hit_given_qualify)
+    pq = hit_prop_research._number(p_qualify)
+    ph = hit_prop_research._number(p_hit_given_qualify)
+    pq = pq if pq is not None and 0 <= pq <= 1 else None
+    ph = ph if ph is not None and 0 <= ph <= 1 else None
     if pq is None or ph is None:
         return {
             "contract_yes_probability": None,
@@ -154,7 +156,13 @@ def baseball_proxy_components(
         source = "opportunity_components"
     elif game_hit_probability is not None and start_rate is not None:
         source = "start_rate_x_game_hit_probability_proxy"
-    return contract_yes_probability(p_qualify=pq, p_hit_given_qualify=ph, source=source)
+    proxy = contract_yes_probability(p_qualify=pq, p_hit_given_qualify=ph, source=source)
+    if proxy["status"] == "ok":
+        proxy["appearance_hit_proxy"] = proxy["contract_yes_probability"]
+        proxy["contract_yes_probability"] = None
+        proxy["status"] = "unverified_start_and_pa_alignment"
+        proxy["note"] = "Appearance/start-rate proxies do not establish contract qualification or nonbinary settlement value."
+    return proxy
 
 
 def binary_label_from_settlement(settlement: dict[str, Any]) -> dict[str, Any]:
@@ -371,7 +379,7 @@ def chronological_train_calibrate_predict(
         resid = predict_market_residual(
             model,
             test[market_col].to_numpy(dtype=float),
-            bb_cal,
+            test[baseball_col].to_numpy(dtype=float),
         )
         part = test.copy()
         part["baseball_contract_probability_calibrated"] = bb_cal
@@ -434,7 +442,8 @@ def attach_forecasts_to_contracts(
         frame["baseball_contract_probability"] = None
         frame["baseball_forecast_status"] = "hitter_features_missing_keys"
         return frame
-    merged = frame.merge(feats, on=merge_keys, how="left", suffixes=("", "_feat"))
+    feats = feats.dropna(subset=merge_keys)
+    merged = frame.merge(feats, on=merge_keys, how="left", suffixes=("", "_feat"), validate="many_to_one")
     probs = []
     statuses = []
     sources = []

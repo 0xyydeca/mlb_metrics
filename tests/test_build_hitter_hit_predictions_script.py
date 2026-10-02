@@ -1,10 +1,6 @@
-"""End-to-end smoke test for scripts/build_hitter_hit_predictions.py's
-wiring: synthetic wave.csv/pave.csv/confidence.csv + a monkeypatched
-schedule fetch + a saved fake model artifact, checked that
-hitter_hit_predictions.csv gets written correctly, and that a failed/empty
-schedule fetch or a missing model artifact leaves prior output untouched
-(resilience), mirroring test_build_dfs_rankings_script.py's exact pattern."""
+"""Hitter export: exact game identity, dated outputs, and explicit unavailable states."""
 
+import json
 import datetime
 import importlib.util
 import sys
@@ -75,7 +71,7 @@ def test_build_hitter_hit_predictions_writes_csv(tmp_path, monkeypatch):
     model_path = str(tmp_path / "model.joblib")
     ml_models.save_model(_ConstantProbaModel(0.61), model_path)
     monkeypatch.setattr(module.config, "HITTER_HIT_PROBABILITY_MODEL_PATH", model_path)
-    monkeypatch.setattr(module.schedule, "fetch_probable_pitchers", lambda date: _schedule_df())
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", lambda date: _schedule_df())
 
     sys.argv = ["build_hitter_hit_predictions.py", "--data-dir", str(data_dir), "--as-of-date", "2026-06-20"]
     module.main()
@@ -103,17 +99,13 @@ def test_build_hitter_hit_predictions_excludes_hitter_who_has_not_played_recentl
     model_path = str(tmp_path / "model.joblib")
     ml_models.save_model(_ConstantProbaModel(0.61), model_path)
     monkeypatch.setattr(module.config, "HITTER_HIT_PROBABILITY_MODEL_PATH", model_path)
-    monkeypatch.setattr(module.schedule, "fetch_probable_pitchers", lambda date: _schedule_df())
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", lambda date: _schedule_df())
 
     sys.argv = ["build_hitter_hit_predictions.py", "--data-dir", str(data_dir), "--as-of-date", "2026-06-20"]
     module.main()
 
-    # The lone hitter in this fixture is recency-excluded, so `qualified`
-    # is empty by the time it reaches dfs_ml.predict_hitter_hit_probability,
-    # which returns empty for an empty input regardless of the model -
-    # same "leave yesterday's output in place, if any" path as a missing
-    # model artifact, and itself proof the excluded hitter never got scored.
-    assert not (data_dir / "hitter_hit_predictions.csv").exists()
+    # No qualified hitters must publish an empty current export.
+    assert pd.read_csv(data_dir / "hitter_hit_predictions.csv").empty
 
 
 def test_build_hitter_hit_predictions_keeps_hitter_within_recency_window(tmp_path, monkeypatch):
@@ -127,7 +119,7 @@ def test_build_hitter_hit_predictions_keeps_hitter_within_recency_window(tmp_pat
     model_path = str(tmp_path / "model.joblib")
     ml_models.save_model(_ConstantProbaModel(0.61), model_path)
     monkeypatch.setattr(module.config, "HITTER_HIT_PROBABILITY_MODEL_PATH", model_path)
-    monkeypatch.setattr(module.schedule, "fetch_probable_pitchers", lambda date: _schedule_df())
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", lambda date: _schedule_df())
 
     sys.argv = ["build_hitter_hit_predictions.py", "--data-dir", str(data_dir), "--as-of-date", "2026-06-20"]
     module.main()
@@ -137,7 +129,7 @@ def test_build_hitter_hit_predictions_keeps_hitter_within_recency_window(tmp_pat
     assert result.iloc[0]["key_mlbam"] == 1
 
 
-def test_build_hitter_hit_predictions_missing_daily_csvs_writes_nothing(tmp_path, monkeypatch):
+def test_build_hitter_hit_predictions_missing_daily_csvs_clears_export(tmp_path, monkeypatch):
     module = _load_module()
     data_dir = tmp_path / "data"
     data_dir.mkdir()
@@ -145,10 +137,10 @@ def test_build_hitter_hit_predictions_missing_daily_csvs_writes_nothing(tmp_path
     sys.argv = ["build_hitter_hit_predictions.py", "--data-dir", str(data_dir), "--as-of-date", "2026-06-20"]
     module.main()
 
-    assert not (data_dir / "hitter_hit_predictions.csv").exists()
+    assert pd.read_csv(data_dir / "hitter_hit_predictions.csv").empty
 
 
-def test_build_hitter_hit_predictions_failed_schedule_leaves_existing_file_untouched(tmp_path, monkeypatch):
+def test_build_hitter_hit_predictions_failed_schedule_clears_stale_file(tmp_path, monkeypatch):
     module = _load_module()
     data_dir = tmp_path / "data"
     data_dir.mkdir()
@@ -158,15 +150,15 @@ def test_build_hitter_hit_predictions_failed_schedule_leaves_existing_file_untou
     def _boom(date):
         raise RuntimeError("statsapi is down")
 
-    monkeypatch.setattr(module.schedule, "fetch_probable_pitchers", _boom)
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", _boom)
 
     sys.argv = ["build_hitter_hit_predictions.py", "--data-dir", str(data_dir), "--as-of-date", "2026-06-20"]
     module.main()
 
-    assert (data_dir / "hitter_hit_predictions.csv").read_text() == "stale,data\n1,2\n"
+    assert pd.read_csv(data_dir / "hitter_hit_predictions.csv").empty
 
 
-def test_build_hitter_hit_predictions_missing_model_leaves_existing_file_untouched(tmp_path, monkeypatch):
+def test_build_hitter_hit_predictions_missing_model_clears_stale_file(tmp_path, monkeypatch):
     module = _load_module()
     data_dir = tmp_path / "data"
     data_dir.mkdir()
@@ -174,9 +166,40 @@ def test_build_hitter_hit_predictions_missing_model_leaves_existing_file_untouch
     (data_dir / "hitter_hit_predictions.csv").write_text("stale,data\n1,2\n")
 
     monkeypatch.setattr(module.config, "HITTER_HIT_PROBABILITY_MODEL_PATH", str(tmp_path / "missing.joblib"))
-    monkeypatch.setattr(module.schedule, "fetch_probable_pitchers", lambda date: _schedule_df())
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", lambda date: _schedule_df())
 
     sys.argv = ["build_hitter_hit_predictions.py", "--data-dir", str(data_dir), "--as-of-date", "2026-06-20"]
     module.main()
 
-    assert (data_dir / "hitter_hit_predictions.csv").read_text() == "stale,data\n1,2\n"
+    assert pd.read_csv(data_dir / "hitter_hit_predictions.csv").empty
+
+
+def test_doubleheader_predictions_keep_game_identity(tmp_path, monkeypatch):
+    module = _load_module()
+    _write_daily_csvs(tmp_path)
+    model_path = str(tmp_path / "model.joblib")
+    ml_models.save_model(_ConstantProbaModel(0.61), model_path)
+    monkeypatch.setattr(module.config, "HITTER_HIT_PROBABILITY_MODEL_PATH", model_path)
+    games = pd.concat([_schedule_df(), _schedule_df().assign(game_pk=2)], ignore_index=True)
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", lambda date: games)
+    monkeypatch.setattr(sys, "argv", ["script", "--data-dir", str(tmp_path), "--as-of-date", "2026-06-20"])
+    module.main()
+    result = pd.read_csv(tmp_path / "hitter_hit_predictions.csv")
+    assert len(result) == 2
+    assert set(result.game_pk) == {1, 2}
+    assert result.forecast_date.eq("2026-06-20").all()
+    assert not result.duplicated(["game_pk", "key_mlbam"]).any()
+
+
+def test_empty_schedule_clears_stale_export_with_dated_status(tmp_path, monkeypatch):
+    module = _load_module()
+    _write_daily_csvs(tmp_path)
+    (tmp_path / "hitter_hit_predictions.csv").write_text("stale,data\n1,2\n")
+    monkeypatch.setattr(module.schedule, "fetch_hitter_schedule", lambda date: pd.DataFrame())
+    monkeypatch.setattr(sys, "argv", ["script", "--data-dir", str(tmp_path), "--as-of-date", "2026-06-20"])
+    module.main()
+    assert pd.read_csv(tmp_path / "hitter_hit_predictions.csv").empty
+    status = json.loads((tmp_path / "hitter_hit_predictions_status.json").read_text())
+    assert status["forecast_date"] == "2026-06-20"
+    assert status["status"] == "no_scheduled_games"
+    assert status["n_rows"] == 0

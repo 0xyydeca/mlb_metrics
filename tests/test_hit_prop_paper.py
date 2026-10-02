@@ -27,8 +27,9 @@ def test_positive_ab_source_rejected_and_components_required():
     assert incomplete["status"] == "incomplete_components"
 
     ok = forecast.baseball_proxy_components(start_rate=0.9, game_hit_probability=0.5)
-    assert ok["status"] == "ok"
-    assert ok["contract_yes_probability"] == pytest.approx(0.45)
+    assert ok["status"] == "unverified_start_and_pa_alignment"
+    assert ok["contract_yes_probability"] is None
+    assert ok["appearance_hit_proxy"] == pytest.approx(0.45)
 
 
 def test_missing_market_mid_stays_missing():
@@ -144,3 +145,23 @@ def test_modes_unchanged():
     assert config.GAME_PREDICTION_MODE == "shadow"
     assert config.BETTING_MODE == "disabled"
     assert config.HIT_PROP_PAPER_PROTOCOL_ID.startswith("polymarket_us_mlb_hitter_hits")
+
+
+def test_duplicate_feature_identity_is_rejected():
+    with pytest.raises(pd.errors.MergeError):
+        forecast.attach_forecasts_to_contracts([{"game_pk": 1, "key_mlbam": 2}], hitter_features=pd.DataFrame([{"game_pk": 1, "key_mlbam": 2}, {"game_pk": 1, "key_mlbam": 2}]))
+
+
+def test_residual_predict_uses_same_raw_features_as_training(monkeypatch):
+    rows = pd.DataFrame([{"date": date, "y_binary": i % 2, "market_mid_probability": 0.5, "baseball_contract_probability": 0.3} for date in ["2026-06-01", "2026-06-02", "2026-06-03"] for i in range(50)])
+    monkeypatch.setattr(forecast, "apply_calibrator", lambda cal, p: np.full(len(p), 0.9))
+    def predict(model, mid, baseball):
+        assert np.all(baseball == 0.3)
+        return np.full(len(mid), 0.5)
+    monkeypatch.setattr(forecast, "predict_market_residual", predict)
+    assert forecast.chronological_train_calibrate_predict(rows)["status"] == "ok"
+
+
+@pytest.mark.parametrize("pq,ph,expected", [(0, 1, 0), (1, 1, 1), (-0.1, 0.5, None), (1.1, 0.5, None)])
+def test_contract_probability_preserves_boundaries_and_rejects_invalid(pq, ph, expected):
+    assert forecast.contract_yes_probability(p_qualify=pq, p_hit_given_qualify=ph, source="explicit_components")["contract_yes_probability"] == expected

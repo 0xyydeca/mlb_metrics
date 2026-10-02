@@ -112,3 +112,19 @@ def test_write_readiness_report(tmp_path, monkeypatch):
 def test_modes_unchanged():
     assert config.GAME_PREDICTION_MODE == "shadow"
     assert config.BETTING_MODE == "disabled"
+
+
+def test_quote_dates_do_not_substitute_for_eligible_decisions(monkeypatch):
+    monkeypatch.setattr(readiness.hit_prop_ops, "eligible_decision_dates", lambda: [])
+    monkeypatch.setattr(readiness.hit_prop_paper, "count_collection_dates", lambda: {"n_rows": 10000, "n_dates_with_executable_book": 100, "book_dates": ["2026-06-01"]})
+    report = readiness.build_readiness_report(allow_scoring=True)
+    assert report["pre_score_audit"]["n_eligible_independent_dates"] == 0
+    assert report["scoring_attempted"] is False
+
+
+def test_date_count_does_not_assign_holdout_or_authorize_scoring(monkeypatch):
+    monkeypatch.setattr(readiness.hit_prop_ops, "eligible_decision_dates", lambda: [f"day{i}" for i in range(200)])
+    report = readiness.build_readiness_report(allow_scoring=True)
+    assert report["pre_score_audit"]["untouched_evaluation"]["freeze_assigned"] is False
+    assert report["scoring_attempted"] is False
+    assert "untouched_evaluation_period_not_assigned" in report["scoring_blocked_reasons"]

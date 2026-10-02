@@ -13,6 +13,8 @@ from mlb_metrics import config, hit_prop_ops as ops
 def _contract(**overrides):
     base = {
         "capture_id": "c1",
+        "game_type": "R",
+        "game_type_source": "mlb_statsapi_game_pk",
         "market_id": "m1",
         "market_slug": "slug-1",
         "game_pk": 100,
@@ -59,7 +61,7 @@ def test_explicit_exclusions_not_silent_drops():
 def test_postseason_separated():
     policy = ops.load_frozen_policy()
     row = ops.evaluate_contract_before_outcome(
-        _contract(requested_local_date="2026-10-05"),
+        _contract(requested_local_date="2026-09-29", game_type="F"),
         policy=policy,
         decision_time_utc="2026-10-05T12:00:00Z",
         lineup_started=True,
@@ -128,3 +130,46 @@ def test_checkpoint_7_14_and_no_premature_eval():
 def test_modes_fail_closed():
     assert config.GAME_PREDICTION_MODE == "shadow"
     assert config.BETTING_MODE == "disabled"
+
+
+@pytest.mark.parametrize("game_type,expected", [("R", "regular_season"), ("F", "postseason"), ("D", "postseason"), ("L", "postseason"), ("W", "postseason"), (None, "unknown_season"), ("S", "unknown_season"), ("2026-10-01", "unknown_season")])
+def test_cohort_uses_verified_game_type(game_type, expected):
+    assert ops.classify_cohort(game_type) == expected
+
+
+@pytest.mark.parametrize("receipt", [None, "bad", "2099-05-31T23:00:01Z"])
+def test_missing_or_future_quote_cannot_buy(receipt):
+    result = ops.evaluate_contract_before_outcome(
+        _contract(book_receive_time_utc=receipt), policy=ops.load_frozen_policy(),
+        decision_time_utc="2099-05-31T23:00:00Z", lineup_started=True)
+    assert result["decision"]["action"] == "pass"
+    assert "missing_or_future_quote_timestamp" in result["pass_reasons"]
+
+
+def test_legacy_or_ineligible_dates_do_not_count(tmp_path):
+    paths = ops.prospective_paths(str(tmp_path))
+    pd.DataFrame([{"requested_local_date": "2026-09-29", "cohort": "regular_season"}]).to_csv(paths["decisions"], index=False)
+    assert ops.eligible_decision_dates(paths) == []
+    row = ops.evaluate_contract_before_outcome(_contract(), policy=ops.load_frozen_policy(), decision_time_utc="2099-05-31T23:00:00Z", lineup_started=True)["decision"]
+    pd.DataFrame([row, {**row, "requested_local_date": "2099-06-01", "game_type": "F"}, {**row, "requested_local_date": "2099-06-02", "lineup_availability": "unknown"}]).to_csv(paths["decisions"], index=False)
+    assert ops.eligible_decision_dates(paths) == []  # market-only baseline is not independent evidence
+
+
+def test_lineup_exact_identity_timestamp_and_unknowns():
+    contracts = [_contract(), _contract(game_pk=101), _contract(key_mlbam=201)]
+    row = {"game_pk": 100, "key_mlbam": 200, "fetched_at_utc": "2099-05-31T22:59:00Z", "game_datetime": "2099-06-01T00:00:00Z", "source": "statsapi_schedule_lineups", "lineup_status": "confirmed", "is_confirmed_starter": True, "snapshot_id": "snapshot-test"}
+    enriched, mapping = ops.attach_verified_lineups(contracts, pd.DataFrame([row]), decision_time_utc="2099-05-31T23:00:00Z")
+    assert mapping == {(100, 200): True}
+    assert enriched[0]["lineup_snapshot_id"] == "snapshot-test"
+    assert "lineup_snapshot_id" not in contracts[0]
+    for override in [{"fetched_at_utc": "2099-05-31T23:00:01Z"}, {"fetched_at_utc": "2099-05-31T22:00:00Z"}, {"game_datetime": "2099-05-31T23:00:00Z"}, {"is_confirmed_starter": pd.NA}, {"lineup_status": "unconfirmed"}]:
+        _, mapping = ops.attach_verified_lineups(contracts, pd.DataFrame([{**row, **override}]), decision_time_utc="2099-05-31T23:00:00Z")
+        assert mapping == {}
+    _, mapping = ops.attach_verified_lineups(contracts, pd.DataFrame([row, row]), decision_time_utc="2099-05-31T23:00:00Z")
+    assert mapping == {}
+
+
+@pytest.mark.parametrize("overrides", [{"scheduled_start_utc": None}, {"scheduled_start_utc": "NaT"}, {"game_pk": None}, {"key_mlbam": 0}, {"game_pk": 1.5}, {"game_type_source": None}])
+def test_incomplete_identity_or_schedule_cannot_buy(overrides):
+    row = ops.evaluate_contract_before_outcome(_contract(**overrides), policy=ops.load_frozen_policy(), decision_time_utc="2099-05-31T23:00:00Z", lineup_started=True)
+    assert row["decision"]["action"] == "pass"

@@ -200,6 +200,7 @@ def normalize_schedule_games(raw: dict, fallback_date=None) -> pd.DataFrame:
                     "home_score": home.get("score"),
                     "away_score": away.get("score"),
                     "game_datetime": game.get("gameDate"),
+                    "game_type": game.get("gameType"),
                 }
             )
 
@@ -208,7 +209,7 @@ def normalize_schedule_games(raw: dict, fallback_date=None) -> pd.DataFrame:
         columns=[
             "game_pk", "date", "home_team", "away_team",
             "home_probable_pitcher_key_mlbam", "away_probable_pitcher_key_mlbam",
-            "status", "home_score", "away_score", "game_datetime",
+            "status", "home_score", "away_score", "game_datetime", "game_type",
         ],
     )
 

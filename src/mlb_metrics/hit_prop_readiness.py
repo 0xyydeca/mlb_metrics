@@ -155,9 +155,11 @@ def audit_pre_score(
     )
 
     # Untouched evaluation period: freeze only after structural floor; currently unassigned.
-    n_eligible = len(prospective_dates) if prospective_dates else int(collection.get("n_dates_with_executable_book") or 0)
+    n_eligible = len(prospective_dates)
     floor = int(config.HIT_PROP_MIN_ELIGIBLE_DATES)
-    freeze_assigned = n_eligible >= floor
+    # Date counts alone are not a registered, immutable holdout assignment.
+    # No assignment loader exists yet; keep evaluation closed until implemented.
+    freeze_assigned = False
     untouched_status = {
         "freeze_assigned": freeze_assigned,
         "n_eligible_independent_dates": n_eligible,
@@ -165,7 +167,7 @@ def audit_pre_score(
         "untouched_evaluation_period_status": (
             "assigned_but_not_scored_here"
             if freeze_assigned
-            else "not_assigned_insufficient_dates"
+            else ("not_assigned_insufficient_dates" if n_eligible < floor else "not_assigned_missing_manifest")
         ),
         "note": (
             "Untouched evaluation tail is assigned only once the structural date floor "
@@ -175,7 +177,7 @@ def audit_pre_score(
     add(
         "untouched_evaluation_period_gated",
         untouched_status["untouched_evaluation_period_status"]
-        in {"not_assigned_insufficient_dates", "assigned_but_not_scored_here"},
+        in {"not_assigned_insufficient_dates", "not_assigned_missing_manifest", "assigned_but_not_scored_here"},
         untouched_status,
     )
 
@@ -196,7 +198,7 @@ def audit_pre_score(
         "failed_checks": failed,
         "checks": checks,
         "n_eligible_independent_dates": n_eligible,
-        "eligible_dates": prospective_dates or collection.get("book_dates") or collection.get("dates") or [],
+        "eligible_dates": prospective_dates,
         "collection": collection,
         "model_hashes": model_hashes,
         "untouched_evaluation": untouched_status,
@@ -447,7 +449,7 @@ def build_readiness_report(*, allow_scoring: bool = True) -> dict[str, Any]:
         scoring_blocked_reasons.append("untouched_evaluation_period_not_assigned")
 
     # Even when allow_scoring=True, only score if structural gates pass.
-    if allow_scoring and fold_precision["scoring_allowed"] and pre["status"] == "passed":
+    if allow_scoring and not scoring_blocked_reasons:
         # Nested labeled settled binary frame would be loaded here. Currently none.
         scoring_attempted = True
         probability_report = {

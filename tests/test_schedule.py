@@ -293,3 +293,11 @@ def test_build_probable_pitchers_table_keeps_team_row_when_starter_not_in_pave()
 
     assert len(result) == 1
     assert result.iloc[0]["pitcher_name"] == ""
+
+
+def test_game_type_is_preserved_without_calendar_inference():
+    raw = _raw_schedule([("2026-09-29", 147, 110, None, None)], game_pks=[1])
+    raw["dates"][0]["games"][0]["gameType"] = "F"
+    assert schedule.normalize_schedule_games(raw).iloc[0].game_type == "F"
+    del raw["dates"][0]["games"][0]["gameType"]
+    assert pd.isna(schedule.normalize_schedule_games(raw).iloc[0].game_type)

@@ -25,9 +25,15 @@ PROP_DECISION_EXTRA_COLUMNS = [
     "threshold",
     "policy_hash",
     "cohort",
+    "game_type",
+    "game_type_source",
+    "input_validation_version",
     "requested_local_date",
     "quote_age_seconds",
     "lineup_availability",
+    "lineup_snapshot_id",
+    "lineup_fetched_at_utc",
+    "lineup_source",
     "pass_reasons_json",
     "exclusion_code",
     "market_slug_key",
@@ -82,18 +88,15 @@ def sim_paths(root: str | None = None) -> dict[str, str]:
     }
 
 
-def classify_cohort(requested_local_date: str | None) -> str:
-    """Regular season vs postseason separation (explicit; no silent pooling)."""
-    if not requested_local_date:
+def classify_cohort(game_type: str | None) -> str:
+    """Classify verified MLB gameType, never infer postseason from month."""
+    if not isinstance(game_type, str):
         return "unknown_season"
-    try:
-        day = pd.Timestamp(requested_local_date).date()
-    except (TypeError, ValueError):
-        return "unknown_season"
-    # MLB postseason typically begins early October; keep conservative split.
-    if day.month >= 10:
-        return "postseason_or_late_october"
-    return "regular_season"
+    if game_type == "R":
+        return "regular_season"
+    if game_type in {"F", "D", "L", "W"}:
+        return "postseason"
+    return "unknown_season"
 
 
 def quote_age_seconds(receive_time_utc: Any, decision_time_utc: str) -> float | None:
@@ -109,6 +112,32 @@ def quote_age_seconds(receive_time_utc: Any, decision_time_utc: str) -> float | 
         return float((dec - recv).total_seconds())
     except (TypeError, ValueError):
         return None
+
+
+def attach_verified_lineups(contracts, snapshots, *, decision_time_utc):
+    """Attach exact-game pregame evidence; absent players remain unknown."""
+    result = [dict(row) for row in contracts]
+    mapping = {}
+    required = {"game_pk", "key_mlbam", "fetched_at_utc", "game_datetime", "source", "lineup_status", "is_confirmed_starter", "snapshot_id"}
+    if snapshots.empty or not required.issubset(snapshots.columns):
+        return result, mapping
+    for contract in result:
+        rows = snapshots[(snapshots.game_pk == contract.get("game_pk")) & (snapshots.key_mlbam == contract.get("key_mlbam"))]
+        if len(rows) != 1:
+            continue
+        row = rows.iloc[0]
+        age = quote_age_seconds(row.fetched_at_utc, decision_time_utc)
+        start_age = quote_age_seconds(row.game_datetime, decision_time_utc)
+        if age is None or not 0 <= age <= config.HIT_PROP_LINEUP_MAX_AGE_SECONDS or start_age is None or not start_age < 0:
+            continue
+        if row.source != "statsapi_schedule_lineups" or row.lineup_status != "confirmed" or pd.isna(row.is_confirmed_starter):
+            continue
+        flag = str(row.is_confirmed_starter).lower()
+        if flag not in {"true", "false", "1", "0"}:
+            continue
+        mapping[(contract.get("game_pk"), contract.get("key_mlbam"))] = flag in {"true", "1"}
+        contract.update(lineup_snapshot_id=row.snapshot_id, lineup_fetched_at_utc=row.fetched_at_utc, lineup_source=row.source)
+    return result, mapping
 
 
 def evaluate_contract_before_outcome(
@@ -138,11 +167,23 @@ def evaluate_contract_before_outcome(
         reasons.append("missing_rules_hash")
         exclusion_code = exclusion_code or "missing_rules"
 
+    for identity in ("game_pk", "key_mlbam"):
+        value = hit_prop_research._number(contract.get(identity))
+        if value is None or value <= 0 or not value.is_integer():
+            reasons.append(f"invalid_identity:{identity}")
+            exclusion_code = exclusion_code or "identity_unmapped"
+
     start = contract.get("scheduled_start_utc")
+    if not isinstance(start, str) or not start.strip():
+        reasons.append("missing_scheduled_start")
+        exclusion_code = exclusion_code or "bad_schedule"
+        start = None
     if start:
         try:
             start_ts = pd.Timestamp(str(start).replace("Z", "+00:00"))
             dec_ts = pd.Timestamp(str(decision_time_utc).replace("Z", "+00:00"))
+            if pd.isna(start_ts) or pd.isna(dec_ts):
+                raise ValueError("Missing schedule timestamp")
             if start_ts.tzinfo is None:
                 start_ts = start_ts.tz_localize("UTC")
             if dec_ts.tzinfo is None:
@@ -171,11 +212,9 @@ def evaluate_contract_before_outcome(
     age = quote_age_seconds(contract.get("book_receive_time_utc"), decision_time_utc)
     max_age = float(entry.get("quote_max_age_seconds") or config.POLYMARKET_QUOTE_MAX_AGE_SECONDS)
     if entry.get("require_fresh_eligible_book", True):
-        if age is None and book_status == "captured":
-            # Captured earlier in the same run may use receive≈decision; allow if prices present.
-            if contract.get("yes_buy_price") is None:
-                reasons.append("missing_executable_yes_buy")
-                exclusion_code = exclusion_code or "stale_or_missing_quote"
+        if age is None or not pd.notna(age) or age < 0:
+            reasons.append("missing_or_future_quote_timestamp")
+            exclusion_code = exclusion_code or "invalid_quote_time"
         elif age is not None and age > max_age:
             # Prospective paper ops: recorded capture receipts may be minutes old;
             # flag explicitly rather than silently using them as live-fresh.
@@ -203,7 +242,12 @@ def evaluate_contract_before_outcome(
     else:
         lineup_availability = "confirmed_starting"
 
-    cohort = classify_cohort(contract.get("requested_local_date"))
+    cohort = classify_cohort(
+        contract.get("game_type") if contract.get("game_type_source") == "mlb_statsapi_game_pk" else None
+    )
+    if cohort == "unknown_season":
+        reasons.append("unverified_game_type")
+        exclusion_code = exclusion_code or "unknown_season"
     if cohort.startswith("postseason"):
         reasons.append("postseason_cohort_separate")
         exclusion_code = exclusion_code or "postseason_separate"
@@ -251,9 +295,14 @@ def evaluate_contract_before_outcome(
     decision["threshold"] = 1
     decision["policy_hash"] = policy.get("policy_hash")
     decision["cohort"] = cohort
+    decision["game_type"] = contract.get("game_type")
+    decision["game_type_source"] = contract.get("game_type_source")
+    decision["input_validation_version"] = config.HIT_PROP_INPUT_VALIDATION_VERSION
     decision["requested_local_date"] = contract.get("requested_local_date")
     decision["quote_age_seconds"] = age
     decision["lineup_availability"] = lineup_availability
+    for name in ("lineup_snapshot_id", "lineup_fetched_at_utc", "lineup_source"):
+        decision[name] = contract.get(name)
     decision["pass_reasons_json"] = json.dumps(reasons)
     decision["exclusion_code"] = exclusion_code
     decision["market_slug_key"] = contract.get("market_slug")
@@ -543,8 +592,28 @@ def eligible_decision_dates(paths: dict[str, str] | None = None) -> list[str]:
     frame = pd.read_csv(paths["decisions"])
     if frame.empty or "requested_local_date" not in frame.columns:
         return []
-    # Count dates that had at least one logged candidate (buy or pass) under frozen policy.
-    return sorted({str(d) for d in frame["requested_local_date"].dropna().unique()})
+    # Legacy date-only labels and quote-only collection are not eligible evidence.
+    required = {
+        "cohort", "game_type", "game_type_source", "input_validation_version",
+        "lineup_availability", "lineup_snapshot_id", "lineup_fetched_at_utc",
+        "lineup_source", "pass_reason", "store_kind", "model_name",
+    }
+    if not required.issubset(frame.columns):
+        return []
+    eligible = frame[
+        frame["cohort"].eq("regular_season")
+        & frame["game_type"].eq("R")
+        & frame["game_type_source"].eq("mlb_statsapi_game_pk")
+        & frame["input_validation_version"].eq(config.HIT_PROP_INPUT_VALIDATION_VERSION)
+        & frame["lineup_availability"].eq("confirmed_starting")
+        & frame["lineup_snapshot_id"].notna()
+        & frame["lineup_source"].eq("statsapi_schedule_lineups")
+        & frame["model_name"].notna()
+        & frame["model_name"].ne(hit_prop_forecast.CANDIDATE_MARKET_MID)
+        & frame["store_kind"].eq("prospective")
+        & frame["pass_reason"].fillna("").eq("")
+    ]
+    return sorted(set(eligible["requested_local_date"].dropna().astype(str)))
 
 
 def checkpoint_status(n_eligible_dates: int, policy: dict[str, Any] | None = None) -> dict[str, Any]:

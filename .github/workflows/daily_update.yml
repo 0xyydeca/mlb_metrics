@@ -82,6 +82,23 @@ jobs:
         run: |
           python scripts/build_hitter_hit_predictions.py
 
+      - name: Verify hitter export date and availability
+        run: |
+          python - <<'PYCODE'
+          import datetime, json
+          from zoneinfo import ZoneInfo
+          import pandas as pd
+          with open("docs/data/hitter_hit_predictions_status.json") as handle:
+              status = json.load(handle)
+          today = datetime.datetime.now(ZoneInfo("America/Phoenix")).date().isoformat()
+          assert status["forecast_date"] == today, status
+          assert status["status"] in {"generated", "no_scheduled_games", "no_qualified_hitters"}, status
+          rows = pd.read_csv("docs/data/hitter_hit_predictions.csv")
+          assert len(rows) == status["n_rows"]
+          assert rows["forecast_date"].eq(today).all()
+          assert not rows.duplicated(["game_pk", "key_mlbam"]).any()
+          PYCODE
+
       - name: Build hitter hit log
         run: |
           python scripts/build_hitter_hit_log.py --days 10

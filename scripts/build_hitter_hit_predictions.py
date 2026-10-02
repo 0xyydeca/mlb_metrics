@@ -13,11 +13,8 @@ already apply) - a season-long injured-list stay can leave season-to-date
 rates looking strong even though the hitter hasn't actually played in
 weeks, and this tab has no other way to notice that.
 
-Mirrors scripts/build_dfs_rankings.py's resilience shape exactly (same
-wave.csv/pave.csv/confidence.csv + schedule-fetch dependency, same
-leave-yesterday's-output-in-place failure handling). If the model artifact
-itself is missing/not yet trained, writes nothing and prints why, rather
-than crashing - matches ml_models.load_model's own fallback discipline.
+Writes a dated status file and an empty current export when inputs are unavailable,
+so a previous slate is never silently presented as today's predictions.
 
 Usage:
     python scripts/build_hitter_hit_predictions.py
@@ -25,6 +22,7 @@ Usage:
 
 import argparse
 import datetime
+import json
 import os
 import sys
 
@@ -33,6 +31,20 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import pandas as pd
 
 from mlb_metrics import config, dfs_ml, matchup, schedule
+
+
+OUTPUT_COLUMNS = ["key_mlbam", "game_pk", "name_first", "name_last", "team", "opponent", "is_home", "Model_Hit_Probability", "forecast_date", "generated_at_utc"]
+
+
+def publish(args, result=None, *, status):
+    os.makedirs(args.data_dir, exist_ok=True)
+    generated = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    result = pd.DataFrame(columns=OUTPUT_COLUMNS) if result is None else result.copy()
+    result["forecast_date"] = args.as_of_date.isoformat()
+    result["generated_at_utc"] = generated
+    result.reindex(columns=OUTPUT_COLUMNS).to_csv(os.path.join(args.data_dir, "hitter_hit_predictions.csv"), index=False)
+    with open(os.path.join(args.data_dir, "hitter_hit_predictions_status.json"), "w") as handle:
+        json.dump({"status": status, "forecast_date": args.as_of_date.isoformat(), "generated_at_utc": generated, "n_rows": len(result), "research_only": True}, handle, indent=2)
 
 
 def main():
@@ -46,6 +58,7 @@ def main():
     confidence_path = os.path.join(args.data_dir, "confidence.csv")
     if not (os.path.exists(wave_path) and os.path.exists(pave_path) and os.path.exists(confidence_path)):
         print(f"No wave.csv/pave.csv/confidence.csv in {args.data_dir} - run scripts/wave.py first.")
+        publish(args, status="missing_daily_inputs")
         return
 
     wave = pd.read_csv(wave_path)
@@ -56,14 +69,14 @@ def main():
     confidence = pd.read_csv(confidence_path)
 
     try:
-        schedule_df = schedule.fetch_probable_pitchers(args.as_of_date)
+        schedule_df = schedule.fetch_hitter_schedule(args.as_of_date)
     except Exception as exc:
-        print(f"WARNING: failed to fetch today's schedule/probable pitchers ({exc}); "
-              f"leaving yesterday's hitter_hit_predictions.csv in place, if any.")
+        print(f"WARNING: schedule unavailable ({exc}).")
+        publish(args, status="schedule_unavailable")
         return
 
     if schedule_df.empty:
-        print("No games scheduled today - leaving yesterday's hitter_hit_predictions.csv in place, if any.")
+        publish(args, status="no_scheduled_games")
         return
 
     matchup_probability = matchup.compute_matchup_hit_probability(wave, pave, confidence, schedule_df)
@@ -71,7 +84,7 @@ def main():
     hitter_features = hitter_features.merge(
         wave[["key_mlbam", "name_first", "name_last", "team", "Last_Game_Date"]], on="key_mlbam", how="left"
     )
-    hitter_features = hitter_features.merge(schedule_df[["team", "opponent"]].drop_duplicates(), on="team", how="left")
+    hitter_features = hitter_features.merge(schedule_df[["game_pk", "team", "opponent"]].drop_duplicates(), on=["game_pk", "team"], how="left", validate="many_to_one")
 
     hitter_features["Total_PA"] = hitter_features["PA_L"] + hitter_features["PA_R"]
     qualified = hitter_features[hitter_features["Total_PA"] >= config.BACKTEST_MIN_PLATE_APPEARANCES].copy()
@@ -91,19 +104,20 @@ def main():
         qualified["Last_Game_Date"].isna() | (days_since_last_game <= config.HITTER_MAX_DAYS_SINCE_LAST_GAME)
     ].drop(columns=["Last_Game_Date"])
 
+    if qualified.empty:
+        publish(args, status="no_qualified_hitters")
+        return
     predictions = dfs_ml.predict_hitter_hit_probability(qualified)
     if predictions.empty:
-        print(f"No model artifact at {config.HITTER_HIT_PROBABILITY_MODEL_PATH} - "
-              f"leaving yesterday's hitter_hit_predictions.csv in place, if any.")
+        publish(args, status="model_unavailable")
         return
 
-    result = qualified[["key_mlbam", "name_first", "name_last", "team", "opponent", "is_home"]].merge(
-        predictions, on="key_mlbam", how="inner"
+    result = qualified[["key_mlbam", "game_pk", "name_first", "name_last", "team", "opponent", "is_home"]].merge(
+        predictions, on=["game_pk", "key_mlbam"], how="inner", validate="one_to_one"
     )
     result = result.sort_values("Model_Hit_Probability", ascending=False)
 
-    os.makedirs(args.data_dir, exist_ok=True)
-    result.to_csv(os.path.join(args.data_dir, "hitter_hit_predictions.csv"), index=False)
+    publish(args, result, status="generated")
     print(f"Wrote hitter_hit_predictions.csv ({len(result)} rows) for {args.as_of_date}.")
 
 

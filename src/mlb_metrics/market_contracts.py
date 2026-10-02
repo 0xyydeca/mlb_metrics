@@ -103,7 +103,7 @@ def fetch_live_schedule_for_mapping(
             continue
         if part is None or part.empty:
             continue
-        frames.append(part[["game_pk", "home_team", "away_team", "game_datetime", "date"]].copy())
+        frames.append(part[[c for c in ["game_pk", "home_team", "away_team", "game_datetime", "date", "game_type"] if c in part]].copy())
     if not frames:
         return pd.DataFrame(columns=["game_pk", "home_team", "away_team", "game_datetime", "date"])
     out = pd.concat(frames, ignore_index=True)

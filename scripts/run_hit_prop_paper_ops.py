@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import pandas as pd
 
-from mlb_metrics import config, hit_prop_ops, hit_prop_research, schedule
+from mlb_metrics import config, hit_prop_ops, hit_prop_research, lineup_snapshots, schedule
 
 
 def _load_latest_contracts(date_iso: str | None = None) -> tuple[list[dict], dict]:
@@ -101,9 +101,23 @@ def main() -> int:
     cycle = None
     if not args.skip_cycle:
         contracts, universe = _load_latest_contracts(date_iso)
+        snapshots = pd.DataFrame()
+        if contracts:
+            try:
+                snapshots = lineup_snapshots.fetch_lineup_snapshots(date_iso)
+            except Exception as exc:
+                universe["lineup_fetch_error"] = f"{type(exc).__name__}: {exc}"
+        decision_time = hit_prop_ops.utc_now_iso()
+        contracts, lineup_map = hit_prop_ops.attach_verified_lineups(
+            contracts, snapshots, decision_time_utc=decision_time
+        )
+        universe["n_verified_lineup_keys"] = len(lineup_map)
+        universe["lineup_observations"] = snapshots.to_dict(orient="records")
         cycle = hit_prop_ops.run_ops_cycle(
             contracts,
             policy=policy,
+            decision_time_utc=decision_time,
+            lineup_by_key=lineup_map,
             persist=True,
             store_kind="prospective",
             universe=universe,
