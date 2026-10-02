@@ -691,3 +691,15 @@ def test_run_resolves_game_picks_across_two_runs(monkeypatch, tmp_path):
     current_row = by_version[by_version["model_version"] == pipeline.config.GAME_PICK_MODEL_VERSION].iloc[0]
     assert current_row["n_bets_advised"] == 0
     assert current_row["total_profit_units"] == 0
+
+
+@pytest.mark.parametrize("as_of,expected_end", [(datetime.date(2026, 10, 30), datetime.date(2026, 10, 29)), (datetime.date(2026, 11, 2), datetime.date(2026, 10, 31))])
+def test_postseason_fetch_continues_through_scheduled_world_series(monkeypatch, tmp_path, as_of, expected_end):
+    class FetchObserved(Exception):
+        pass
+    def fetch(start, end):
+        assert end == expected_end
+        raise FetchObserved
+    monkeypatch.setattr(pipeline.data, "fetch_statcast_range", fetch)
+    with pytest.raises(FetchObserved):
+        pipeline.run(as_of, output_dir=str(tmp_path), persist_raw=False, log_predictions=False)

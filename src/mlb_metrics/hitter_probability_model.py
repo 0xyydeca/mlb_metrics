@@ -132,7 +132,7 @@ MISSINGNESS_INDICATOR_COLUMNS = [
 ]
 
 MODEL_TYPE = "hitter_opportunity_probability"
-SHADOW_MODEL_VERSION = "opportunity-v1"
+SHADOW_MODEL_VERSION = config.HITTER_OPPORTUNITY_SHADOW_MODEL_VERSION
 
 
 # ---------------------------------------------------------------------------
@@ -965,7 +965,7 @@ def _aggregate_opportunity_folds(fold_reports: Sequence[dict]) -> dict:
     keys = ["log_loss", "brier", "roc_auc"]
     out = {}
     for key in keys:
-        vals = [fr.get("metrics", {}).get(key) for fr in fold_reports]
+        vals = [fr.get("metrics", {}).get("brier_score" if key == "brier" else key) for fr in fold_reports]
         out[f"mean_{key}"] = model_validation._mean_ignore_nan(vals)
     appear_ll = [fr.get("appearance_metrics", {}).get("log_loss") for fr in fold_reports]
     out["mean_appearance_log_loss"] = model_validation._mean_ignore_nan(appear_ll)
@@ -1138,14 +1138,30 @@ def write_shadow_predictions(predictions: pd.DataFrame, path: str) -> None:
 
 
 def prepare_opportunity_training_frame(df: pd.DataFrame) -> pd.DataFrame:
-    """Drop no-game rows for training; keep DNPs (Appeared==0) as negatives."""
+    """Keep confirmed DNP negatives; reject unknown labels and no-game groups.
+
+    The opportunity builder uses No_Game=1 for a player who did not appear,
+    not just for a cancelled game. A same-date/game observed participant
+    distinguishes those negatives from an entirely unobserved game.
+    """
     out = df.copy()
-    if "No_Game" in out.columns:
-        out = out[out["No_Game"].astype(float) != 1.0]
     required = [APPEARANCE_LABEL, EXPECTED_PA_LABEL, CONDITIONAL_HIT_LABEL, "Hits", "date"]
     missing = [c for c in required if c not in out.columns]
     if missing:
         raise ValueError(f"Opportunity log missing required columns: {missing}")
+    appeared = pd.to_numeric(out[APPEARANCE_LABEL], errors="coerce")
+    out = out[appeared.isin([0, 1])].copy()
+    if "No_Game" in out.columns:
+        no_game = pd.to_numeric(out["No_Game"], errors="coerce").eq(1)
+        played_group = pd.Series(False, index=out.index)
+        if {"date", "game_pk"}.issubset(out.columns):
+            observed = pd.to_numeric(out[APPEARANCE_LABEL], errors="coerce").eq(1) & ~no_game
+            played_group = observed.groupby([out["date"], out["game_pk"]]).transform("any").fillna(False)
+        confirmed_dnp = pd.to_numeric(out[APPEARANCE_LABEL], errors="coerce").eq(0) & played_group
+        out = out[~no_game | confirmed_dnp].copy()
+    # Appeared players need observed hit/PA labels; missing is not zero.
+    observed_labels = out[[CONDITIONAL_HIT_LABEL, EXPECTED_PA_LABEL, "Hits"]].apply(pd.to_numeric, errors="coerce").notna().all(axis=1)
+    out = out[pd.to_numeric(out[APPEARANCE_LABEL]).eq(0) | observed_labels].copy()
     # Coerce labels
     out[APPEARANCE_LABEL] = out[APPEARANCE_LABEL].astype(float)
     out[CONDITIONAL_HIT_LABEL] = out[CONDITIONAL_HIT_LABEL].astype(float).fillna(0.0)

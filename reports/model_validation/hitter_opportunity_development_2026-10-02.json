@@ -1,0 +1,762 @@
+{
+  "ablation": {
+    "mean_inner_log_loss_by_family": {
+      "hgbm": 0.5913272309874179,
+      "logit": 0.5942305829825225
+    },
+    "mean_inner_log_loss_by_feature_set": {
+      "expanded": 0.5928339177560538,
+      "reduced": 0.5931386607846161
+    },
+    "mean_inner_log_loss_by_formulation": {
+      "direct": 0.5932216470596333,
+      "pa_distribution": 0.5915741425345445
+    },
+    "note": "Ablation uses inner-fold selection scores only; outer folds are not used to choose feature set or formulation.",
+    "selected_counts": {
+      "family_token": {
+        "hgbm": 4
+      },
+      "feature_set": {
+        "expanded": 1,
+        "reduced": 3
+      },
+      "formulation": {
+        "direct": 4,
+        "pa_distribution": 0
+      }
+    }
+  },
+  "aggregate": {
+    "mean_log_loss": 0.5891257532626926,
+    "mean_brier": 0.20440577305524266,
+    "mean_roc_auc": 0.7218164004318723,
+    "mean_appearance_log_loss": 0.4352681970594389,
+    "mean_expected_pa_mae": 0.7980233275242717
+  },
+  "appearance_label_counts": {
+    "0.0": 8202,
+    "1.0": 18866
+  },
+  "config": {
+    "bootstrap_samples": 1000,
+    "calibration_min_train_dates": null,
+    "calibration_test_block_dates": null,
+    "freeze_dates": 0,
+    "higher_is_better": false,
+    "inner_min_train_dates": 20,
+    "inner_test_block_dates": 5,
+    "outer_min_train_dates": 30,
+    "outer_test_block_dates": 10,
+    "primary_score": "log_loss",
+    "random_seed": 0,
+    "report_dir": "/Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-10-02/remaining-work/development-validation-v2"
+  },
+  "formulation_comparison": {
+    "mean_outer_log_loss_by_formulation": {
+      "direct": 0.5891257532626926,
+      "pa_distribution": null
+    },
+    "n_outer_folds_by_formulation": {
+      "direct": 4,
+      "pa_distribution": 0
+    },
+    "note": "Compares direct conditional classifier vs PA-distribution challenger using nested outer folds (formulation selected inside each outer train block). Not a single final-holdout bake-off."
+  },
+  "freeze_dates": [],
+  "freeze_warning": "Optional freeze period: excluded from every nested train/test fold and from every selection decision. Do not repeatedly inspect these dates during model or policy development.",
+  "inner_selection_details": [
+    {
+      "inner_scores": [
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5958673650062494,
+          "n_inner_folds_scored": 2,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5968748333079295,
+          "n_inner_folds_scored": 2,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5957915641840776,
+          "n_inner_folds_scored": 2,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5971266146993377,
+          "n_inner_folds_scored": 2,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5911014370971689,
+          "n_inner_folds_scored": 2,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5924312476364302,
+          "n_inner_folds_scored": 2,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.592083913734901,
+          "n_inner_folds_scored": 2,
+          "name": "pa_distribution|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5953301467915499,
+          "n_inner_folds_scored": 2,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5966053345864177,
+          "n_inner_folds_scored": 2,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5953628730563083,
+          "n_inner_folds_scored": 2,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5969782696619118,
+          "n_inner_folds_scored": 2,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.591623129887068,
+          "n_inner_folds_scored": 2,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5929861752274426,
+          "n_inner_folds_scored": 2,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.5918254674010667,
+          "n_inner_folds_scored": 2,
+          "name": "pa_distribution|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        }
+      ],
+      "outer_fold_id": 0,
+      "selected": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    },
+    {
+      "inner_scores": [
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5919168793608841,
+          "n_inner_folds_scored": 4,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5922537134743591,
+          "n_inner_folds_scored": 4,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5918439624177874,
+          "n_inner_folds_scored": 4,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5923397398836628,
+          "n_inner_folds_scored": 4,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5886438450922454,
+          "n_inner_folds_scored": 4,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5892611503516769,
+          "n_inner_folds_scored": 4,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.5895122972153231,
+          "n_inner_folds_scored": 4,
+          "name": "pa_distribution|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5913714739168242,
+          "n_inner_folds_scored": 4,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5917409169500181,
+          "n_inner_folds_scored": 4,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.591361536924493,
+          "n_inner_folds_scored": 4,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5919123573557504,
+          "n_inner_folds_scored": 4,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5890886098364403,
+          "n_inner_folds_scored": 4,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.589755501406849,
+          "n_inner_folds_scored": 4,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.5892979223389788,
+          "n_inner_folds_scored": 4,
+          "name": "pa_distribution|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        }
+      ],
+      "outer_fold_id": 1,
+      "selected": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    },
+    {
+      "inner_scores": [
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5941962689856153,
+          "n_inner_folds_scored": 6,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5943817249161615,
+          "n_inner_folds_scored": 6,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5941558064378382,
+          "n_inner_folds_scored": 6,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5945089668600215,
+          "n_inner_folds_scored": 6,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.590940280780162,
+          "n_inner_folds_scored": 6,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5912916971895384,
+          "n_inner_folds_scored": 6,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.592024716827319,
+          "n_inner_folds_scored": 6,
+          "name": "pa_distribution|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5932505051963864,
+          "n_inner_folds_scored": 6,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5935450868460145,
+          "n_inner_folds_scored": 6,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5932082461023308,
+          "n_inner_folds_scored": 6,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5936865883397985,
+          "n_inner_folds_scored": 6,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5912177427667976,
+          "n_inner_folds_scored": 6,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.591502764770546,
+          "n_inner_folds_scored": 6,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.5915483278021283,
+          "n_inner_folds_scored": 6,
+          "name": "pa_distribution|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        }
+      ],
+      "outer_fold_id": 2,
+      "selected": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    },
+    {
+      "inner_scores": [
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5951643862167793,
+          "n_inner_folds_scored": 8,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5953175031025397,
+          "n_inner_folds_scored": 8,
+          "name": "direct|reduced|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5951464868881073,
+          "n_inner_folds_scored": 8,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5954896549378188,
+          "n_inner_folds_scored": 8,
+          "name": "direct|reduced|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5924030793414289,
+          "n_inner_folds_scored": 8,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "direct",
+          "mean_primary_score": 0.5923333163631401,
+          "n_inner_folds_scored": 8,
+          "name": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|reduced|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "reduced",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.5934800496607471,
+          "n_inner_folds_scored": 8,
+          "name": "pa_distribution|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5945563293062531,
+          "n_inner_folds_scored": 8,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5948120005968123,
+          "n_inner_folds_scored": 8,
+          "name": "direct|expanded|logit|params={'C': 0.1}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5944281207646047,
+          "n_inner_folds_scored": 8,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5948533983660795,
+          "n_inner_folds_scored": 8,
+          "name": "direct|expanded|logit|params={'C': 1.0}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5922616099337221,
+          "n_inner_folds_scored": 8,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "direct",
+          "mean_primary_score": 0.5924188157410184,
+          "n_inner_folds_scored": 8,
+          "name": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=sigmoid"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 0.1}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": null,
+          "n_inner_folds_scored": 0,
+          "name": "pa_distribution|expanded|logit|params={'C': 1.0}|cal=None"
+        },
+        {
+          "feature_set": "expanded",
+          "formulation": "pa_distribution",
+          "mean_primary_score": 0.592820445295893,
+          "n_inner_folds_scored": 8,
+          "name": "pa_distribution|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+        }
+      ],
+      "outer_fold_id": 3,
+      "selected": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    }
+  ],
+  "input_rows": 27068,
+  "live_wiring": "none \u2014 does not alter predictions.select_picks",
+  "model_type": "hitter_opportunity_probability",
+  "n_active_dates": 70,
+  "n_input_dates": 70,
+  "n_outer_folds": 4,
+  "n_specs": 18,
+  "outer_folds": [
+    {
+      "appearance_metrics": {
+        "accuracy": 0.8023553507424476,
+        "base_rate": 0.6871479774705581,
+        "baseline_log_loss": 0.6213636409733054,
+        "brier_score": 0.13611129827009547,
+        "calibration_intercept": -0.19150890348402586,
+        "calibration_slope": 1.213969262466228,
+        "log_loss": 0.4265192032147385,
+        "n": 3906,
+        "roc_auc": 0.8541924808710647
+      },
+      "expected_pa_mae_on_appeared": 0.7995028553304365,
+      "feature_set": "reduced",
+      "fold_id": 0,
+      "formulation": "direct",
+      "metrics": {
+        "accuracy": 0.6638504864311316,
+        "base_rate": 0.3919610855094726,
+        "baseline_log_loss": 0.6696172262944904,
+        "brier_score": 0.20385748895615305,
+        "calibration_intercept": 0.03156715183480685,
+        "calibration_slope": 1.0866610440184794,
+        "log_loss": 0.5861523278992612,
+        "n": 3906,
+        "roc_auc": 0.7196551273677334
+      },
+      "n_test_rows": 3906,
+      "n_train_rows": 11496,
+      "selected_spec": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    },
+    {
+      "appearance_metrics": {
+        "accuracy": 0.791948051948052,
+        "base_rate": 0.7036363636363636,
+        "baseline_log_loss": 0.6077516619828297,
+        "brier_score": 0.14055638928414815,
+        "calibration_intercept": -0.16943864560957012,
+        "calibration_slope": 1.1403245432587292,
+        "log_loss": 0.4358396890656393,
+        "n": 3850,
+        "roc_auc": 0.8385818492518042
+      },
+      "expected_pa_mae_on_appeared": 0.7826148097301034,
+      "feature_set": "reduced",
+      "fold_id": 1,
+      "formulation": "direct",
+      "metrics": {
+        "accuracy": 0.6667532467532468,
+        "base_rate": 0.4031168831168831,
+        "baseline_log_loss": 0.6742552322229766,
+        "brier_score": 0.20746056772405141,
+        "calibration_intercept": 0.05189512851609289,
+        "calibration_slope": 1.1313265356863216,
+        "log_loss": 0.5964114433845427,
+        "n": 3850,
+        "roc_auc": 0.7160571608660153
+      },
+      "n_test_rows": 3850,
+      "n_train_rows": 15402,
+      "selected_spec": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    },
+    {
+      "appearance_metrics": {
+        "accuracy": 0.7968829841594277,
+        "base_rate": 0.7000510986203372,
+        "baseline_log_loss": 0.6108210000861802,
+        "brier_score": 0.13990802590321919,
+        "calibration_intercept": -0.1615469701538712,
+        "calibration_slope": 1.1254089415184299,
+        "log_loss": 0.43519702527458215,
+        "n": 3914,
+        "roc_auc": 0.8400699772441835
+      },
+      "expected_pa_mae_on_appeared": 0.8138158638475554,
+      "feature_set": "reduced",
+      "fold_id": 2,
+      "formulation": "direct",
+      "metrics": {
+        "accuracy": 0.6612161471640265,
+        "base_rate": 0.3972917731221257,
+        "baseline_log_loss": 0.6718982837259652,
+        "brier_score": 0.207211933718978,
+        "calibration_intercept": -0.008447567543221932,
+        "calibration_slope": 1.0817734460799535,
+        "log_loss": 0.5964764366946362,
+        "n": 3914,
+        "roc_auc": 0.7137948801129694
+      },
+      "n_test_rows": 3914,
+      "n_train_rows": 19252,
+      "selected_spec": "direct|reduced|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    },
+    {
+      "appearance_metrics": {
+        "accuracy": 0.7885699641209636,
+        "base_rate": 0.6860584315735521,
+        "baseline_log_loss": 0.6222181574841721,
+        "brier_score": 0.14396728863827504,
+        "calibration_intercept": -0.15967828019855054,
+        "calibration_slope": 1.109194725850064,
+        "log_loss": 0.4435168706827956,
+        "n": 3902,
+        "roc_auc": 0.8426782950759684
+      },
+      "expected_pa_mae_on_appeared": 0.7961597811889917,
+      "feature_set": "expanded",
+      "fold_id": 3,
+      "formulation": "direct",
+      "metrics": {
+        "accuracy": 0.6765761148129165,
+        "base_rate": 0.3867247565351102,
+        "baseline_log_loss": 0.6672604618172386,
+        "brier_score": 0.19909310182178808,
+        "calibration_intercept": 0.028006329148401673,
+        "calibration_slope": 1.2181869285584401,
+        "log_loss": 0.5774628050723302,
+        "n": 3902,
+        "roc_auc": 0.7377584333807712
+      },
+      "n_test_rows": 3902,
+      "n_train_rows": 23166,
+      "selected_spec": "direct|expanded|hgbm|params={'max_depth': 2, 'learning_rate': 0.1, 'max_iter': 50, 'min_samples_leaf': 50}|cal=None"
+    }
+  ],
+  "shadow": true,
+  "status": "ok",
+  "training_preparation_version": "v2-preserve-confirmed-dnp-negatives",
+  "training_rows": 27068,
+  "aggregation_correction": {
+    "original_report_sha256": "6a490d3a4b91ed643837e32a13d97d7ce8abc8637792d8d3944b3a35a6373991",
+    "change": "Read existing fold brier_score rather than nonexistent brier; no refitting or re-selection."
+  },
+  "limitations": [
+    "Reconstructed historical actual starter availability unverified",
+    "Development data, not untouched prospective venue evaluation",
+    "Appearance-conditioned target is not exact start+PA or nonbinary contract value",
+    "Missing prediction-time venue quotes: no ROI, market advantage, or readiness claim",
+    "No production artifact saved"
+  ],
+  "prediction_integrity": {
+    "rows": 15572,
+    "dates": 40,
+    "first_date": "2026-08-06",
+    "last_date": "2026-09-14",
+    "duplicates": 0,
+    "missing_final_probability": 0,
+    "outside_probability_bounds": 0
+  },
+  "raw_source_commit": "a59e397289e42c9fa99fe2d9099dbd8d3a1d6299",
+  "development_dataset_sha256": "2bf06b0abd5be03c710a1474515537ee5cad0b9bd3cb881e876cf1d4df262c52",
+  "source_artifact": "/Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-10-02/remaining-work/development-validation-v2/hitter_opportunity_probability_nested_corrected.json",
+  "edge_claimed": false,
+  "model_artifact_saved": false,
+  "betting_mode": "disabled",
+  "research_only": true
+}

@@ -373,3 +373,22 @@ def test_train_script_exists_and_mentions_shadow():
 def test_config_paths_present():
     assert config.HITTER_OPPORTUNITY_PROBABILITY_MODEL_PATH.endswith(".joblib")
     assert "shadow" in config.HITTER_OPPORTUNITY_SHADOW_PREDICTIONS_PATH
+
+
+def test_training_keeps_real_builder_dnp_marker_but_not_unobserved_games():
+    rows = pd.DataFrame([
+        {"date": "2026-06-01", "game_pk": 1, "key_mlbam": 10, "Appeared": 1, "Plate_Appearances": 4, "Got_Hit": 1, "Hits": 1, "No_Game": 0},
+        {"date": "2026-06-01", "game_pk": 1, "key_mlbam": 11, "Appeared": 0, "Plate_Appearances": 0, "Got_Hit": 0, "Hits": 0, "No_Game": 1},
+        {"date": "2026-06-01", "game_pk": 2, "key_mlbam": 11, "Appeared": 0, "Plate_Appearances": 0, "Got_Hit": 0, "Hits": 0, "No_Game": 1},
+        {"date": "2026-06-01", "game_pk": 1, "key_mlbam": 12, "Appeared": None, "Plate_Appearances": None, "Got_Hit": None, "Hits": None, "No_Game": 0},
+        {"date": "2026-06-01", "game_pk": 1, "key_mlbam": 13, "Appeared": 1, "Plate_Appearances": 4, "Got_Hit": None, "Hits": None, "No_Game": 0},
+    ])
+    prepared = hpm.prepare_opportunity_training_frame(rows)
+    assert list(zip(prepared.game_pk, prepared.key_mlbam)) == [(1, 10), (1, 11)]
+    assert prepared.Appeared.tolist() == [1, 0]
+    assert prepared.Got_Hit.tolist() == [1, 0]
+
+
+def test_aggregate_brier_reads_probability_metrics_key():
+    summary = hpm._aggregate_opportunity_folds([{"metrics": {"brier_score": 0.2}}, {"metrics": {"brier_score": 0.3}}])
+    assert summary["mean_brier"] == pytest.approx(0.25)

@@ -16,7 +16,9 @@ from datetime import date
 
 # 2026 MLB season boundaries used for the full-season Statcast pull.
 SEASON_START = date(2026, 3, 25)
-SEASON_END = date(2026, 10, 10)
+# Scheduled World Series Game 7: https://www.mlb.com/postseason (verified 2026-10-02).
+# This ingestion boundary does not make postseason eligible for regular-season evaluation.
+SEASON_END = date(2026, 10, 31)
 
 # WAVE (hitter batting-average-based hit probability): full/81d/30d/10d.
 WAVE_WINDOWS = [
@@ -2493,3 +2495,7 @@ HIT_PROP_ENTRY_MINUTES_BEFORE_START = POLYMARKET_ENTRY_MINUTES_BEFORE_START
 HIT_PROP_INPUT_VALIDATION_VERSION = "verified_game_type_and_quote_time_v2"
 
 HIT_PROP_LINEUP_MAX_AGE_SECONDS = 300
+
+HITTER_OPPORTUNITY_TRAINING_VERSION = "v2-preserve-confirmed-dnp-negatives"
+
+HITTER_OPPORTUNITY_SHADOW_MODEL_VERSION = "opportunity-v2-dnp-preserved"

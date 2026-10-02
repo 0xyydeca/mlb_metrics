@@ -138,6 +138,10 @@ def main():
         nested_config=nested_config,
         include_full_grids=args.full_grids,
     )
+    report["training_preparation_version"] = config.HITTER_OPPORTUNITY_TRAINING_VERSION
+    report["input_rows"] = len(raw)
+    report["training_rows"] = len(rows)
+    report["appearance_label_counts"] = rows["Appeared"].value_counts().to_dict()
     shadow = report.pop("_shadow_predictions", pd.DataFrame())
     last_model = report.pop("_last_fitted_model", None)
     selected_specs = report.pop("_selected_specs", [])
