@@ -1,0 +1,5 @@
+provider_event_id,sportsbook,captured_at_utc,game_datetime,date,home_team,away_team,home_moneyline,away_moneyline,market_home_win_probability,source_status,game_pk,match_method,snapshot_id,snapshot_role
+401817088,DraftKings,2026-09-25T19:14:45Z,2026-09-25T20:05Z,2026-09-25 00:00:00,NYY,BAL,-113,-106,0.50763258897418,ambiguous_match,,,odds_c6964a2d4697,intraday
+401817088,DraftKings,2026-09-25T22:19:36Z,2026-09-25T20:05Z,2026-09-25 00:00:00,NYY,BAL,-106,-113,0.4923674110258199,ambiguous_match,,,odds_ec44bdf3415f,intraday
+401817088,DraftKings,2026-09-26T00:53:03Z,2026-09-25T20:05Z,2026-09-25 00:00:00,NYY,BAL,-106,-113,0.4923674110258199,ambiguous_match,,,odds_289023ada089,intraday
+401817088,DraftKings,2026-09-26T04:56:46Z,2026-09-25T20:05Z,2026-09-25 00:00:00,NYY,BAL,-106,-113,0.4923674110258199,ambiguous_match,,,odds_304978814d9c,intraday

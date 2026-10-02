@@ -1,6 +1,9 @@
 name: Daily Update
 
 on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/daily_update.yml]
   # 10:23 UTC = 3:23 AM Arizona time (UTC-7, fixed - the same real
   # convention schedule.today_local() already uses for "today," and the
   # user's own real timezone) - moved from the old "0 12 * * *" (noon
@@ -34,6 +37,7 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     permissions:
       contents: write

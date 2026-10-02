@@ -82,6 +82,10 @@ jobs:
           git add data/predictions/market_odds_snapshots.csv \
                   data/predictions/market_odds_event_map.csv
 
+          if [ -f data/predictions/market_odds_snapshots_quarantine.csv ]; then
+            git add data/predictions/market_odds_snapshots_quarantine.csv
+          fi
+
           git commit -m "Market odds capture" || echo "No changes"
 
           branch=$(git rev-parse --abbrev-ref HEAD)

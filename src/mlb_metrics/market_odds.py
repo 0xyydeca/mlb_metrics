@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import tempfile
 from datetime import datetime, timezone
 from typing import Sequence
 
@@ -482,23 +483,53 @@ def match_provider_events_to_games(
 # ---------------------------------------------------------------------------
 
 
+def _write_snapshot_file(frame: pd.DataFrame, path: str) -> None:
+    """Replace a snapshot view atomically; leave the previous file on failure."""
+    folder = os.path.dirname(path) or "."
+    os.makedirs(folder, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", dir=folder, delete=False) as handle:
+            temporary = handle.name
+            frame.to_csv(handle, index=False)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary and os.path.exists(temporary):
+            os.unlink(temporary)
+
+
 def append_odds_snapshots(snapshots: pd.DataFrame, path: str | None = None) -> pd.DataFrame:
-    """Append-only immutable odds snapshot table."""
+    """Preserve observations, separating unresolved identities from serving.
+
+    Unmapped/ambiguous rows are retained in a sibling ``_quarantine.csv``.
+    Write that audit first so a failed migration never loses observations.
+    Calling with an empty frame also audits existing rows; no IDs are guessed.
+    """
     path = path or config.MARKET_ODDS_SNAPSHOTS_PATH
     frame = normalize_snapshot_frame(snapshots)
-    if frame.empty:
-        if os.path.exists(path):
-            return normalize_snapshot_frame(pd.read_csv(path))
-        return frame
-    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     if os.path.exists(path):
-        existing = normalize_snapshot_frame(pd.read_csv(path))
-        combined = pd.concat([existing, frame], ignore_index=True)
-    else:
-        combined = frame
-    combined = combined.drop_duplicates(subset=["snapshot_id"], keep="first")
-    combined.to_csv(path, index=False)
-    return combined
+        existing = normalize_snapshot_frame(pd.read_csv(path, float_precision="round_trip"))
+        frame = pd.concat([existing, frame], ignore_index=True)
+    if frame.empty:
+        return frame
+    frame = frame.drop_duplicates(subset=["snapshot_id"], keep="first")
+    game_ids = pd.to_numeric(frame["game_pk"], errors="coerce")
+    valid = game_ids.notna() & game_ids.gt(0) & game_ids.mod(1).eq(0)
+    valid &= ~frame["source_status"].isin([SOURCE_AMBIGUOUS_MATCH, SOURCE_UNMATCHED])
+    rejected = frame.loc[~valid].copy()
+    accepted = frame.loc[valid].copy()
+    if not rejected.empty:
+        stem, extension = os.path.splitext(path)
+        quarantine_path = stem + "_quarantine" + (extension or ".csv")
+        if os.path.exists(quarantine_path):
+            old = normalize_snapshot_frame(pd.read_csv(quarantine_path, float_precision="round_trip"))
+            rejected = pd.concat([old, rejected], ignore_index=True)
+        rejected = rejected.drop_duplicates(subset=["snapshot_id"], keep="first")
+        _write_snapshot_file(rejected, quarantine_path)
+    _write_snapshot_file(accepted, path)
+    return accepted
 
 
 def mark_post_start_snapshots(snapshots: pd.DataFrame) -> pd.DataFrame:

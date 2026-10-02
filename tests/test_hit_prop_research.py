@@ -530,3 +530,23 @@ def test_workflow_reports_prop_process_crash(tmp_path, step):
     result = subprocess.run(["bash", "-e", "-c", command], cwd=tmp_path,
                             env={**os.environ, "PATH": str(tmp_path) + ":" + os.environ["PATH"]})
     assert result.returncode == 7
+
+
+def test_empty_prop_event_is_counted_as_successful_fetch():
+    report = run(Adapter(markets=[]))
+    assert report["status"] == "no_eligible_contracts"
+    assert report["universe"]["n_events_fetched"] == 1
+    assert report["universe"]["n_event_requests"] == 1
+    assert report["universe"]["n_events_not_fetched_due_to_budget"] == 0
+    assert report["universe"]["n_events_failed"] == 0
+
+
+def test_failed_event_is_not_a_budget_omission():
+    class Failed(Adapter):
+        def fetch_event_details(self, slug):
+            raise TimeoutError("fixture timeout")
+    report = run(Failed())
+    assert report["status"] == "partial"
+    assert report["universe"]["n_events_fetched"] == 0
+    assert report["universe"]["n_events_failed"] == 1
+    assert report["universe"]["n_events_not_fetched_due_to_budget"] == 0

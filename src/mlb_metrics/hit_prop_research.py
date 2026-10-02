@@ -960,11 +960,13 @@ def capture(
     }
 
     attempts = 0
+    event_attempts = 0
     persisted_rows: list[dict[str, Any]] = []
     # Prefer not-yet-completed events for restart recovery.
     ordered = sorted(set(eligible))
     ordered = [x for x in ordered if x[1] not in done_events] + [x for x in ordered if x[1] in done_events]
     for _, slug in ordered[:event_limit]:
+        event_attempts += 1
         try:
             envelope = adapter.fetch_event_details(slug)
             event = envelope["event"]
@@ -1132,9 +1134,11 @@ def capture(
         else ("captured" if report["contracts"] else "no_eligible_contracts")
     )
     report["universe"]["n_contracts_in_fetched_events"] = len(report["contracts"])
-    report["universe"]["n_events_fetched"] = len({r["event_slug"] for r in report["contracts"]})
+    report["universe"]["n_event_requests"] = event_attempts
+    report["universe"]["n_events_fetched"] = len(report["event_snapshots"])
+    report["universe"]["n_events_failed"] = event_attempts - len(report["event_snapshots"])
     report["universe"]["n_events_not_fetched_due_to_budget"] = max(
-        0, len(universe_slugs) - report["universe"]["n_events_fetched"]
+        0, len(universe_slugs) - event_attempts
     )
 
     blockers = []
