@@ -7,6 +7,16 @@ import pytest
 from mlb_metrics import pipeline
 
 
+@pytest.fixture(autouse=True)
+def _use_fixture_lineups(monkeypatch):
+    """Pipeline fixtures must not merge live players into synthetic games."""
+    monkeypatch.setattr(
+        pipeline.lineup_snapshots,
+        "fetch_lineup_snapshots",
+        lambda date: pipeline.lineup_snapshots.empty_snapshot_frame(),
+    )
+
+
 def test_build_all_pitch_events_keeps_every_row_no_pre_filtering():
     # No pre-filter on pitch_type/zone here - a row with a null pitch_type
     # but a perfectly real description/zone (e.g. a real ball/strike call)
@@ -222,7 +232,10 @@ def _minimal_outputs():
     return {"wave": wave, "pave": pave, "confidence": confidence}
 
 
-def test_run_logs_matchup_probability_when_schedule_fetch_succeeds(monkeypatch, tmp_path):
+@pytest.mark.parametrize("with_partial_lineup", [False, True])
+def test_run_logs_matchup_probability_when_schedule_fetch_succeeds(
+    monkeypatch, tmp_path, with_partial_lineup,
+):
     """Matchup_Hit_Probability is no longer a separate parallel metric row -
     it's merged into the same Game_Hit_Probability-tagged pick pool and
     factored into both the joint qualifier gate and the ranking (see
@@ -240,7 +253,22 @@ def test_run_logs_matchup_probability_when_schedule_fetch_succeeds(monkeypatch, 
         "probable_pitcher_key_mlbam": 999, "is_home": True, "game_pk": 824651,
     }])
     monkeypatch.setattr(pipeline.schedule, "fetch_probable_pitchers", lambda date: schedule_df)
-    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", lambda date: schedule_df)
+    hitter_schedule = schedule_df.copy()
+    lineup_frame = None
+    if with_partial_lineup:
+        # Same hitter, two games, but only the first has a confirmed lineup.
+        # This must exercise a nullable left join through the full pipeline.
+        hitter_schedule = pd.concat([
+            schedule_df, schedule_df.assign(game_pk=824652),
+        ], ignore_index=True)
+        lineup_frame = pd.DataFrame([{
+            "game_pk": 824651, "key_mlbam": 1, "team": "NYY", "opponent": "BOS",
+            "batting_order": 2, "is_confirmed_starter": True,
+            "lineup_status": "confirmed", "as_of_date": "2026-06-20",
+            "fetched_at_utc": "2026-06-20T15:00:00Z",
+            "game_datetime": "2026-06-20T17:00:00Z", "source": "fixture",
+        }])
+    monkeypatch.setattr(pipeline.schedule, "fetch_hitter_schedule", lambda date: hitter_schedule)
     # Scoped to hitter-pick metrics only - game picks get their own tests below.
     monkeypatch.setattr(pipeline.schedule, "fetch_todays_games", lambda date: pd.DataFrame())
     # This test is scoped to the Matchup_Approach tier specifically (its
@@ -256,6 +284,7 @@ def test_run_logs_matchup_probability_when_schedule_fetch_succeeds(monkeypatch, 
         output_dir=str(tmp_path / "out"),
         predictions_dir=predictions_dir,
         persist_raw=False,
+        lineup_snapshot_frame=lineup_frame,
     )
 
     logged = pd.read_csv(f"{predictions_dir}/predictions.csv")

@@ -92,6 +92,70 @@ def test_confirmed_lineup_sets_scratch_risk_appearance_and_order():
     assert bool(out.iloc[0]["is_confirmed_starter"]) is True
 
 
+def test_partial_lineup_preserves_unknown_players_and_other_doubleheader_game():
+    pool = pd.DataFrame([
+        _pool_row(1, 100, p_appear=0.7),
+        _pool_row(2, 100, p_appear=0.4),
+        _pool_row(1, 101, p_appear=0.6),
+    ])
+    snaps = pd.DataFrame([
+        _snap(game_pk=100, team="NYY", opponent="BOS", key_mlbam=1, batting_order=2),
+    ])
+
+    out = lineup_snapshots.apply_confirmed_lineup_to_pool(pool, snaps).set_index(
+        ["game_pk", "key_mlbam"]
+    )
+
+    assert len(out) == 3
+    assert out.loc[(100, 1), "P_Appear"] == pytest.approx(
+        1.0 - config.LINEUP_CONFIRMED_SCRATCH_RISK
+    )
+    for key, expected in [((100, 2), 0.4), ((101, 1), 0.6)]:
+        assert out.loc[key, "P_Appear"] == pytest.approx(expected)
+        assert pd.isna(out.loc[key, "is_confirmed_starter"])
+        assert out.loc[key, "lineup_status"] == "unconfirmed"
+        assert out.loc[key, "avg_batting_order"] == 3
+
+
+@pytest.mark.parametrize("starter_flag", [pd.NA, None, float("nan"), False])
+@pytest.mark.parametrize("status", [pd.NA, None, float("nan"), "unconfirmed"])
+def test_scratch_overlay_preserves_unknown_or_nonstarter_appearance(starter_flag, status):
+    pool = pd.DataFrame([
+        _pool_row(1, 100),
+        {**_pool_row(2, 100, p_appear=0.4),
+         "is_confirmed_starter": starter_flag, "lineup_status": status},
+    ])
+    snaps = pd.DataFrame([
+        _snap(game_pk=100, team="NYY", opponent="BOS", key_mlbam=1,
+              batting_order=pd.NA, is_confirmed_starter=False, lineup_status="scratched"),
+    ])
+
+    out = lineup_snapshots.apply_confirmed_lineup_to_pool(pool, snaps).set_index("key_mlbam")
+
+    assert out.loc[1, "P_Appear"] == 0.0
+    assert out.loc[1, "lineup_status"] == "scratched"
+    assert out.loc[2, "P_Appear"] == pytest.approx(0.4)
+    assert out.loc[2, "lineup_status"] == "unconfirmed"
+    if starter_flag is False:
+        assert out.loc[2, "is_confirmed_starter"] == False  # noqa: E712
+    else:
+        assert pd.isna(out.loc[2, "is_confirmed_starter"])
+
+
+def test_scratch_only_does_not_mark_other_players_as_confirmed_nonstarters():
+    pool = pd.DataFrame([_pool_row(1, 100), _pool_row(2, 100, p_appear=float("nan"))])
+    snaps = pd.DataFrame([
+        _snap(game_pk=100, team="NYY", opponent="BOS", key_mlbam=1,
+              batting_order=pd.NA, is_confirmed_starter=False, lineup_status="scratched"),
+    ])
+    out = lineup_snapshots.apply_confirmed_lineup_to_pool(pool, snaps).set_index("key_mlbam")
+
+    assert out.loc[1, "is_confirmed_starter"] == False  # noqa: E712
+    assert pd.isna(out.loc[2, "is_confirmed_starter"])
+    assert pd.isna(out.loc[2, "P_Appear"])
+    assert out.loc[2, "lineup_status"] == "unconfirmed"
+
+
 def test_confirmed_player_missing_from_history_added_with_priors():
     pool = pd.DataFrame([_pool_row(1, 100)])
     snaps = lineup_snapshots.normalize_snapshot_frame(pd.DataFrame([

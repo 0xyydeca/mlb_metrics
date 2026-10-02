@@ -409,17 +409,24 @@ def apply_confirmed_lineup_to_pool(
         keys = [c for c in ("game_pk", "key_mlbam") if c in base.columns]
         base = base.merge(overlay, on=keys, how="left", suffixes=("", "_lineup"))
 
+    # A partial left join leaves unknown starter flags. Keep them nullable:
+    # bool(pd.NA) raises, while bool(np.nan) would incorrectly confirm a player.
+    # Normalize before scratch assignment as an all-missing CSV column may be
+    # inferred as float, which cannot safely accept a boolean/string update.
+    base["is_confirmed_starter"] = base.get(
+        "is_confirmed_starter", pd.Series(pd.NA, index=base.index, dtype="boolean")
+    ).astype("boolean")
+    base["lineup_status"] = base.get(
+        "lineup_status", pd.Series(pd.NA, index=base.index, dtype="string")
+    ).astype("string").fillna(LINEUP_STATUS_UNCONFIRMED)
+
     # Scratches: override status / appearance for previously confirmed players
     if not scratched.empty and {"game_pk", "key_mlbam"}.issubset(base.columns):
         scratch_keys = scratched[["game_pk", "key_mlbam"]].drop_duplicates()
         scratch_keys = scratch_keys.assign(_scratched=True)
         base = base.merge(scratch_keys, on=["game_pk", "key_mlbam"], how="left")
         mask = base["_scratched"].eq(True)
-        if "lineup_status" not in base.columns:
-            base["lineup_status"] = LINEUP_STATUS_UNCONFIRMED
         base.loc[mask, "lineup_status"] = LINEUP_STATUS_SCRATCHED
-        if "is_confirmed_starter" not in base.columns:
-            base["is_confirmed_starter"] = False
         base.loc[mask, "is_confirmed_starter"] = False
         base = base.drop(columns=["_scratched"], errors="ignore")
 
@@ -427,9 +434,10 @@ def apply_confirmed_lineup_to_pool(
     appear = []
     for _, row in base.iterrows():
         status = row.get("lineup_status")
+        starter = row["is_confirmed_starter"]
         if status == LINEUP_STATUS_SCRATCHED:
             appear.append(0.0)
-        elif bool(row.get("is_confirmed_starter")) is True:
+        elif pd.notna(starter) and bool(starter):
             appear.append(confirmed_appearance_probability(True))
         else:
             existing = row.get("P_Appear", np.nan)
