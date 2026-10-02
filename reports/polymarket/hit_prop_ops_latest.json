@@ -32,32 +32,32 @@
     "2026-10-01"
   ],
   "future_observations_claimed": false,
-  "generated_at_utc": "2026-10-02T00:00:19Z",
+  "generated_at_utc": "2026-10-02T05:57:19Z",
   "history_integrity": {
     "files": {
       "checkpoint_state": {
-        "bytes": 6828,
+        "bytes": 7180,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
-        "sha16": "3593fe75ea22bd0c"
+        "sha16": "9c5744592ab7acc7"
       },
       "cycle_log": {
-        "bytes": 10892,
+        "bytes": 12232,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
-        "sha16": "5c99ecb4f2d5ffcc"
+        "sha16": "61c4466ad24dee4d"
       },
       "decisions": {
-        "bytes": 142603,
+        "bytes": 152630,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/decisions.csv",
-        "sha16": "55d38c52db16a03d"
+        "sha16": "9671655a6aaad571"
       },
       "exclusions": {
-        "bytes": 49216,
+        "bytes": 52901,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/exclusions.csv",
-        "sha16": "5ff400b13fb68068"
+        "sha16": "c4526172a6582811"
       },
       "positions": {
         "bytes": 0,
@@ -65,13 +65,13 @@
         "sha16": null
       }
     },
-    "generated_at_utc": "2026-10-02T00:00:19Z",
+    "generated_at_utc": "2026-10-02T05:57:19Z",
     "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
     "retrievable": true
   },
   "host": "github_actions_ubuntu_latest",
   "last_cycle": {
-    "cycle_id": "hp_ops_20261002T000019Z",
+    "cycle_id": "hp_ops_20261002T055719Z",
     "n_buy": 0,
     "n_contracts_in_denominator": 11,
     "n_pass": 11
@@ -101,9 +101,9 @@
   "reconcile": {
     "actionable": false,
     "fees_paid_total": 0.0,
-    "generated_at_utc": "2026-10-02T00:00:19Z",
+    "generated_at_utc": "2026-10-02T05:57:19Z",
     "issues": [],
-    "n_decisions": 205,
+    "n_decisions": 216,
     "n_duplicate_decision_ids": 0,
     "n_open_positions": 0,
     "n_positions": 0,
