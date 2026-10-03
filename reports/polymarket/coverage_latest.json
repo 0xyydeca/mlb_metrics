@@ -1,22 +1,22 @@
 {
-  "captured_at_utc": "2026-10-03T02:53:20Z",
-  "finished_at_utc": "2026-10-03T02:53:21Z",
+  "captured_at_utc": "2026-10-03T05:32:01Z",
+  "finished_at_utc": "2026-10-03T05:32:03Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
-  "n_markets": 8,
+  "n_markets": 10,
   "n_schedule_games": 179,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
-    "n_contracts": 196,
+    "n_contracts": 198,
     "n_mapped": 194,
-    "n_unmatched": 1,
+    "n_unmatched": 3,
     "n_ambiguous": 1,
     "n_incomplete": 0,
-    "mapped_rate": 0.9897959183673469
+    "mapped_rate": 0.9797979797979798
   },
   "quote_health": {
-    "n_index_rows": 8,
-    "latest_receive_time_utc": "2026-10-03T02:53:21Z",
+    "n_index_rows": 10,
+    "latest_receive_time_utc": "2026-10-03T05:32:03Z",
     "age_seconds": 0.0,
     "stale": false,
     "max_age_seconds": 30.0,
@@ -30,12 +30,12 @@
     "n_missing": 186,
     "max_age_seconds": 30.0
   },
-  "n_books_captured": 8,
-  "n_books_written": 8,
+  "n_books_captured": 10,
+  "n_books_written": 10,
   "n_book_http_failures": 0,
   "book_failure_samples": [],
   "book_liquidity_counts": {
-    "eligible_book": 8
+    "eligible_book": 10
   },
   "sample_home_buys": [
     {
@@ -57,14 +57,14 @@
       "team": "LAD",
       "outcome_id": "2326971",
       "is_long": false,
-      "executable_buy": 0.675,
-      "display_price": 0.33,
+      "executable_buy": 0.6699999999999999,
+      "display_price": 0.335,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.015246562500000001,
-      "total_acquisition_cost_per_contract": 0.6902465625,
+      "est_taker_fee_per_contract": 0.015366450000000004,
+      "total_acquisition_cost_per_contract": 0.68536645,
       "market_id": "1163744",
       "side": "home"
     },
@@ -102,14 +102,14 @@
       "team": "MIL",
       "outcome_id": "2309405",
       "is_long": false,
-      "executable_buy": 0.55,
-      "display_price": 0.455,
+      "executable_buy": 0.5549999999999999,
+      "display_price": 0.45,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.01720125,
-      "total_acquisition_cost_per_contract": 0.5672012500000001,
+      "est_taker_fee_per_contract": 0.0171647625,
+      "total_acquisition_cost_per_contract": 0.5721647624999999,
       "market_id": "1154961",
       "side": "home"
     }
@@ -152,8 +152,8 @@
     "quote": {
       "market_id": "1153144",
       "market_slug": "aec-mlb-cws-cle-2026-10-03",
-      "receive_time_utc": "2026-10-03T02:53:21Z",
-      "age_seconds": 0.0,
+      "receive_time_utc": "2026-10-03T05:32:02Z",
+      "age_seconds": 1.0,
       "stale": false,
       "eligible": true,
       "best_ask": 0.425,
