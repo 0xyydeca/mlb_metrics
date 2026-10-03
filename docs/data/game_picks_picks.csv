@@ -1,6 +1,6 @@
 date,game_pk,home_team,away_team,predicted_winner,predicted_loser,predicted_probability,above_threshold,status,market_home_win_probability,market_predicted_winner_probability,market_odds_snapshot_id,market_odds_snapshot_role,bet_units,bet_side,bet_team,bet_moneyline,bet_profit_units
-2026-10-03,849835,TB,NYY,TB,NYY,0.5587507761189228,False,pending,0.54911742133538,0.54911742133538,odds_2c3561b5afb2,morning,0.0,,,,
-2026-10-03,849830,MIL,SD,MIL,SD,0.5586238276390879,False,pending,0.6360260888682611,0.6360260888682611,odds_b0b5c5a58f87,morning,0.0,,,,
+2026-10-03,849835,TB,NYY,TB,NYY,0.5587507761189228,False,pending,0.5630832299476779,0.5630832299476779,odds_71f7fa12ea9f,lineup_lock,0.0,,,,
+2026-10-03,849830,MIL,SD,MIL,SD,0.5586238276390879,False,pending,0.6470144735489325,0.6470144735489325,odds_a84da8319785,lineup_lock,0.0,,,,
 2026-10-03,849829,CLE,CWS,CWS,CLE,0.5268270044170991,False,pending,0.5727229047978585,0.4272770952021415,odds_256de865eef5,morning,0.0,,,,
 2026-10-03,849828,LAD,ATL,LAD,ATL,0.5543565024747151,False,pending,0.6497373029772329,0.6497373029772329,odds_b2790c9f8974,morning,0.0,,,,
 2026-09-15,823574,NYM,BAL,NYM,BAL,0.5233244946476582,False,loss,0.551057677674631,0.551057677674631,odds_0eefeb644de8,morning,0.0,,,,
