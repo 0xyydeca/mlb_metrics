@@ -1,18 +1,18 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261003T053204Z",
+  "capture_id": "hp_20261003T184508Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-10-03T05:32:05Z",
+  "generated_at_utc": "2026-10-03T18:45:11Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
-  "n_books_captured": 0,
-  "n_contracts": 0,
-  "n_mapped_game_pk": 0,
-  "n_mapped_key_mlbam": 0,
+  "n_books_captured": 38,
+  "n_contracts": 38,
+  "n_mapped_game_pk": 38,
+  "n_mapped_key_mlbam": 38,
   "n_quarantined": 0,
   "remaining_blockers": [
     "no_registered_prop_evaluation_outcomes_yet",
@@ -20,22 +20,26 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-261e2398f5f941d8a7b4446dfb3c25d0.json",
-  "requested_local_date": "2026-10-02",
+  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-f4ad05721d184dfb8254bb2fe6951b3b.json",
+  "requested_local_date": "2026-10-03",
   "research_only": true,
-  "status": "no_eligible_contracts",
+  "status": "captured",
   "universe": {
     "complete_denominator_claimed": true,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-02 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
-    "event_slugs": [],
-    "n_contracts_in_fetched_events": 0,
-    "n_event_requests": 0,
-    "n_events": 0,
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-03 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "event_slugs": [
+      "mlb-atl-lad-2026-10-03",
+      "mlb-nyy-tb-2026-10-03",
+      "mlb-sd-mil-2026-10-03"
+    ],
+    "n_contracts_in_fetched_events": 38,
+    "n_event_requests": 3,
+    "n_events": 3,
     "n_events_failed": 0,
-    "n_events_fetched": 0,
+    "n_events_fetched": 3,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 0,
-    "n_excluded_wrong_local_day": 10,
+    "n_excluded_already_started": 1,
+    "n_excluded_wrong_local_day": 6,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }
 }
