@@ -277,14 +277,47 @@ def match_event_to_game(
     start = _timestamp(event.get("startTime") or event.get("gameStartTime"))
     home, away = teams_from_event(event)
 
+    # Wrong-day quarantine relative to requested Phoenix local date.
+    if requested_local_date is not None and start is not None:
+        local_day = start.astimezone(schedule.LOCAL_TIMEZONE).date()
+        if local_day != requested_local_date:
+            return {
+                "mapping_status": MAPPING_WRONG_DAY,
+                "game_pk": None,
+                "home_team": home,
+                "away_team": away,
+                "mapping_evidence": json.dumps(
+                    {
+                        "reason": "start_local_date_mismatch",
+                        "requested_local_date": requested_local_date.isoformat(),
+                        "event_local_date": local_day.isoformat(),
+                    }
+                ),
+            }
+
     # Prefer already-verified moneyline registry mapping for the same event.
     if moneyline_registry is not None and not moneyline_registry.empty and slug:
         hit = moneyline_registry[
             (moneyline_registry.get("event_slug") == slug)
             & (moneyline_registry.get("mapping_status") == "mapped")
         ] if "event_slug" in moneyline_registry.columns else moneyline_registry.iloc[0:0]
-        if not hit.empty and pd.notna(hit.iloc[0].get("game_pk")):
-            gpk = int(hit.iloc[0]["game_pk"])
+        if not hit.empty:
+            ids = pd.to_numeric(hit.get("game_pk", pd.Series(index=hit.index, dtype=float)), errors="coerce")
+            valid = ids.notna() & (ids > 0) & (ids % 1 == 0)
+            if not valid.all():
+                return {
+                    "mapping_status": MAPPING_INCOMPLETE, "game_pk": None,
+                    "home_team": home, "away_team": away,
+                    "mapping_evidence": json.dumps({"reason": "invalid_cached_game_pk", "event_slug": slug}),
+                }
+            candidates = sorted(set(ids.astype(int)))
+            if len(candidates) != 1:
+                return {
+                    "mapping_status": MAPPING_AMBIGUOUS, "game_pk": None,
+                    "home_team": home, "away_team": away,
+                    "mapping_evidence": json.dumps({"reason": "cached_event_maps_to_multiple_games", "event_slug": slug, "candidates": candidates}),
+                }
+            gpk = candidates[0]
             # Provider ID conflict check against other mapped rows.
             if provider_game_id is not None and "provider_game_id" in hit.columns:
                 other = moneyline_registry[
@@ -329,24 +362,6 @@ def match_event_to_game(
             "away_team": away,
             "mapping_evidence": json.dumps({"reason": "missing_home_away", "slug": slug}),
         }
-
-    # Wrong-day quarantine relative to requested Phoenix local date.
-    if requested_local_date is not None and start is not None:
-        local_day = start.astimezone(schedule.LOCAL_TIMEZONE).date()
-        if local_day != requested_local_date:
-            return {
-                "mapping_status": MAPPING_WRONG_DAY,
-                "game_pk": None,
-                "home_team": home,
-                "away_team": away,
-                "mapping_evidence": json.dumps(
-                    {
-                        "reason": "start_local_date_mismatch",
-                        "requested_local_date": requested_local_date.isoformat(),
-                        "event_local_date": local_day.isoformat(),
-                    }
-                ),
-            }
 
     if schedule_games is None or schedule_games.empty:
         return {

@@ -1,0 +1,16 @@
+{
+  "checked_at_utc": "2026-10-04T02:17:49.990664+00:00",
+  "base_commit": "39d8ffc",
+  "scope": "Cached contract game identity validation only",
+  "before_new_tests": {
+    "failed": 7,
+    "passed": 1
+  },
+  "focused_tests_passed": 68,
+  "python_tests_passed": 1216,
+  "javascript_tests_passed": 33,
+  "existing_local_modified_files_preserved": 22,
+  "independent_model_dates": 0,
+  "betting_mode": "disabled",
+  "training_or_capture_or_holdout_scoring_run": false
+}
