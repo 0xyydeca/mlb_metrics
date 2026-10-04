@@ -1,5 +1,14 @@
 # Project brief: mlb_metrics
 
+## October 4 additional identity and lineup edge-case repairs
+
+- Reproduced 20 failures before repair: invalid cached/roster player IDs (zero, negative, fractional, boolean, nonfinite, missing, or text), an entirely wrong-team roster incorrectly accepted as a game match, and nullable/string/numeric lineup flags treated as confirmed starters.
+- Invalid matching player IDs now return explicit incomplete identity evidence without integer truncation or conversion crashes. Empty game-team roster subsets stay empty, allowing explicit wrong-team rejection. Only actual boolean lineup flags confirm participation; other values stay unknown. Integral CSV ID formats remain supported.
+- Verification: full suite 1,261 passed (1,167 warnings, 122.38 seconds). After the final integral-string compatibility adjustment, 108 focused tests passed, including four additional valid-format controls. All 33 JavaScript tests and whitespace checks passed. Full-suite count precedes those four added controls; the affected modules were rechecked afterward.
+- Existing regressions cover doubleheader ambiguity, duplicate identity, future/missing quotes, unknown versus zero outcomes, walk-only PA, unfinished/interrupted games, and nonbinary exclusion. This is bounded engineering verification, not exhaustive proof of every edge case or live-provider behavior.
+- Still unfinished: independently validated contract-qualified forecasts, nonbinary payout modeling/provenance, immutable untouched evaluation assignment, and adequate prospective price-matched evidence. No training, captures, historical ledger rewrites, threshold changes, evaluation scoring, or betting enablement performed. Frozen policy and model-selection versions remain unchanged; these fixes reject malformed inputs rather than alter ranking formulas.
+- Reproduction and validation logs: working-document folder `research/2026-10-04/edge-case-repair/`. No hosted workflow was dispatched; hosted runtime remains unverified for this repair.
+
 ## October 4 owner-main merge recovery
 
 - Merge verification: 1,241 Python tests passed (1,166 warnings; 176.14 seconds), 33 JavaScript tests passed, and staged whitespace checks passed. Verified 200 unique registry keys, 1,957 unique prop observation keys, 356 unique decisions/exclusions, and 19 unique audit cycles; checkpoint decision IDs match the ledger. All local contract keys are retained.

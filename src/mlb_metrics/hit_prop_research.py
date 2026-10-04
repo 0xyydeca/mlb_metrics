@@ -435,7 +435,12 @@ def match_player_to_key_mlbam(
     # Prior verified provider map (conflict if disagrees with unique name match later).
     prior_key = None
     if provider_player_id is not None and str(provider_player_id) in prior_provider_map:
-        prior_key = int(prior_provider_map[str(provider_player_id)])
+        raw_key = prior_provider_map[str(provider_player_id)]
+        value = _number(raw_key)
+        if pd.api.types.is_bool(raw_key) or value is None or value <= 0 or not value.is_integer():
+            return {"mapping_status": MAPPING_INCOMPLETE, "key_mlbam": None,
+                    "mapping_evidence": json.dumps({"reason": "invalid_prior_player_id"})}
+        prior_key = int(value)
 
     game_teams = {
         t for t in (normalize_team_abbr(home_team), normalize_team_abbr(away_team)) if t
@@ -489,19 +494,27 @@ def match_player_to_key_mlbam(
     if game_teams and "team" in frame.columns:
         team_norm = frame["team"].map(normalize_team_abbr)
         on_game = frame[team_norm.isin(game_teams)]
-        if not on_game.empty:
-            scoped = on_game
+        scoped = on_game
 
     hits = scoped[scoped["name_norm"] == norm]
     # If scoped-to-game miss but global unique name exists on another club → traded/wrong team.
     global_hits = frame[frame["name_norm"] == norm]
+    # Reject malformed matching identities instead of truncating or dropping them.
+    relevant = frame[frame["name_norm"].str.split().str[-1] == norm.split()[-1]]
+    if "key_mlbam" not in frame.columns or any(
+        pd.api.types.is_bool(raw) or (value := _number(raw)) is None
+        or value <= 0 or not value.is_integer()
+        for raw in relevant["key_mlbam"].tolist()
+    ):
+        return {"mapping_status": MAPPING_INCOMPLETE, "key_mlbam": None,
+                "mapping_evidence": json.dumps({"reason": "invalid_candidate_player_id"})}
     keys = (
-        sorted({int(x) for x in hits["key_mlbam"].dropna().astype(int).tolist()})
+        sorted({int(_number(x)) for x in hits["key_mlbam"].tolist()})
         if "key_mlbam" in hits.columns
         else []
     )
     global_keys = (
-        sorted({int(x) for x in global_hits["key_mlbam"].dropna().astype(int).tolist()})
+        sorted({int(_number(x)) for x in global_hits["key_mlbam"].tolist()})
         if "key_mlbam" in global_hits.columns
         else []
     )
@@ -562,7 +575,7 @@ def match_player_to_key_mlbam(
     last = norm.split()[-1] if norm else ""
     if last:
         last_hits = scoped[scoped["name_norm"].str.endswith(" " + last) | (scoped["name_norm"] == last)]
-        last_keys = sorted({int(x) for x in last_hits["key_mlbam"].dropna().astype(int).tolist()})
+        last_keys = sorted({int(_number(x)) for x in last_hits["key_mlbam"].tolist()})
         if len(last_keys) > 1:
             return {
                 "mapping_status": MAPPING_AMBIGUOUS,

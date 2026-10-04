@@ -173,3 +173,10 @@ def test_lineup_exact_identity_timestamp_and_unknowns():
 def test_incomplete_identity_or_schedule_cannot_buy(overrides):
     row = ops.evaluate_contract_before_outcome(_contract(**overrides), policy=ops.load_frozen_policy(), decision_time_utc="2099-05-31T23:00:00Z", lineup_started=True)
     assert row["decision"]["action"] == "pass"
+
+
+@pytest.mark.parametrize("unknown", [pd.NA, float("nan"), "False", "True", 0, 1])
+def test_nonboolean_lineup_confirmation_stays_unknown(unknown):
+    result = ops.evaluate_contract_before_outcome(_contract(), policy=ops.load_frozen_policy(), decision_time_utc="2099-05-31T23:00:00Z", lineup_started=unknown)
+    assert "lineup_availability_unknown" in result["pass_reasons"]
+    assert result["decision"]["action"] == "pass"

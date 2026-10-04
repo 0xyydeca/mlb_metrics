@@ -620,3 +620,30 @@ def test_interrupted_games_keep_unresolved_settlement_class(status):
     result = research.classify_contract_outcome(started=True, plate_appearances=3, at_bats=3, hits=1, game_status=status, rules={})
     assert result["settlement_class"] == "last_fair_market_price_or_unresolved"
     assert result["binary_yes"] is None
+
+
+@pytest.mark.parametrize("bad", [0, -1, 1.5, "oops", float("inf"), True])
+def test_invalid_provider_player_identity_is_quarantined(bad):
+    result = research.match_player_to_key_mlbam("Fixture Player", provider_player_id="x", prior_provider_map={"x": bad})
+    assert result["mapping_status"] == research.MAPPING_INCOMPLETE
+    assert result["key_mlbam"] is None
+
+@pytest.mark.parametrize("bad", [0, -1, 1.5, "oops", float("inf"), None, True])
+def test_invalid_roster_player_identity_is_quarantined(bad):
+    frame = pd.DataFrame([{"player_name": "Fixture Player", "key_mlbam": bad}])
+    result = research.match_player_to_key_mlbam("Fixture Player", candidate_players=frame)
+    assert result["mapping_status"] == research.MAPPING_INCOMPLETE
+    assert result["key_mlbam"] is None
+
+def test_roster_entirely_outside_game_does_not_map_player():
+    frame = pd.DataFrame([{"player_name": "Fixture Player", "key_mlbam": 123, "team": "BOS"}])
+    result = research.match_player_to_key_mlbam("Fixture Player", candidate_players=frame, home_team="LAD", away_team="SD")
+    assert result["mapping_status"] == research.MAPPING_TRADED_OR_WRONG_TEAM
+
+
+@pytest.mark.parametrize("key", [123, 123.0, "123", "123.0"])
+def test_valid_integral_roster_player_identity_formats(key):
+    frame = pd.DataFrame([{"player_name": "Fixture Player", "key_mlbam": key}])
+    result = research.match_player_to_key_mlbam("Fixture Player", candidate_players=frame)
+    assert result["mapping_status"] == research.MAPPING_MAPPED
+    assert result["key_mlbam"] == 123

@@ -230,12 +230,12 @@ def evaluate_contract_before_outcome(
         reasons.append("invalid_or_missing_yes_buy_size")
         exclusion_code = exclusion_code or "invalid_size"
 
-    if lineup_started is None:
+    if not pd.api.types.is_bool(lineup_started):
         reasons.append("lineup_availability_unknown")
         # Do not auto-buy without lineup confirmation under frozen policy.
         exclusion_code = exclusion_code or "lineup_unknown"
         lineup_availability = "unknown"
-    elif lineup_started is False:
+    elif not lineup_started:
         reasons.append("not_in_starting_lineup")
         exclusion_code = exclusion_code or "lineup_dnp"
         lineup_availability = "confirmed_not_starting"
