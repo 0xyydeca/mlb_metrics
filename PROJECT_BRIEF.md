@@ -1,5 +1,14 @@
 # Project brief: mlb_metrics
 
+## October 4 fractional nonparticipation payout repair
+
+- Added `hit_prop_settlement.resolve_fractional_payout` and integrated optional evidence into the prop paper simulator. A normalized final nonparticipation record must match venue, market ID/slug, game, player, and rules hash; identify Yes/USD per contract; include an official-domain source URL and matching archived-byte SHA-256; and carry valid aware settlement/receipt times available at the requested accounting cutoff. Missing/invalid evidence remains pending. Wrong-position evidence or conflicting assumed/recorded prices is rejected.
+- The interface accepts caller-normalized records, not a verified live venue API response. Hashes bind archived bytes but cannot authenticate their origin or prove normalization correct; `normalization_independently_verified=False` remains explicit. A tested venue-response adapter and genuine final records are still required. Live documentation lookup failed with a connection error; no endpoint/schema was invented and no current rule change was asserted.
+- Recorded fractional payouts now flow through quantity, acquisition cost, proceeds and net P&L. Existing bare LFMP inputs remain available only as explicitly labeled `assumed_simulation` examples. NaN/infinite/out-of-range/boolean payouts are rejected by the shared ledger. Interrupted/ambiguous settlement classes cannot consume nonparticipation evidence.
+- This repairs realized accounting, not forecast-time uncertainty: expected payout is still `P(qualifying hit) + P(nonqualification) * E(LFMP | nonqualification, information at forecast)`. No valid conditional LFMP model was trained and no final payout was leaked into a pregame forecast. Existing bounds and all readiness gates remain unchanged. No historical ledger rewritten, nested outcomes opened, orders placed or production collector run.
+- Verification: 204 affected settlement/paper/market/ledger tests passed (11 warnings). Full suite not repeated after the prior run stalled in a network connection. 49 additional ops/readiness tests passed; whitespace check passed. Report: `reports/model_validation/fractional_payout_accounting_2026-10-04.json`. New inputs are synthetic tests only; no real fractional payout was resolved in this run.
+
+
 ## October 4 historical timing guard repair
 
 - Added strict observed-history filtering to the opportunity builder (`require_observed_history=True`; CLI `--require-observed-history`). Every included Statcast row needs timezone-aware game completion and exact-version `source_observed_at_utc` strictly before its cutoff, including prior-date games. Missing, naive, invalid, equal-cutoff and future observations are rejected. Target-game rows are now excluded even when their recorded game date precedes the forecast date.

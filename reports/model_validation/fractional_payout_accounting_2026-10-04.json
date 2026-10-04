@@ -1,0 +1,21 @@
+{
+  "audit_date": "2026-10-04",
+  "component": "fractional_nonparticipation_accounting",
+  "validation_status": "software_tests_passed",
+  "readiness_verdict": "insufficient_evidence",
+  "affected_tests_passed": 204,
+  "actual_payouts_resolved": 0,
+  "live_adapter_verified": false,
+  "conditional_lfmp_model_validated": false,
+  "forecast_bounds_preserved": true,
+  "nested_outcomes_opened": false,
+  "full_suite": "not_repeated_prior_network_stall",
+  "source_contracts": "data/polymarket/research/hit_props/contracts.csv",
+  "limitations": [
+    "Normalized evidence requires independent source and normalization verification",
+    "No live API schema verified; web lookup connection failed",
+    "Future fair-market settlement remains unknown until a conditional model is validated"
+  ],
+  "ops_readiness_tests_passed": 49,
+  "source_contracts_sha256": "c1a57fb6d7ae56be3f52523a31db4cba9d03893951b676c1f550add2d777f7b6"
+}

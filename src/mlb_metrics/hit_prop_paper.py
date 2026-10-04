@@ -14,7 +14,7 @@ from typing import Any
 
 import pandas as pd
 
-from mlb_metrics import config, hit_prop_forecast, hit_prop_research, paper_ledger, polymarket_research
+from mlb_metrics import config, hit_prop_forecast, hit_prop_research, hit_prop_settlement, paper_ledger, polymarket_research
 
 
 def _sha(payload: Any) -> str:
@@ -298,6 +298,10 @@ def simulate_prop_paper_trade(
     market_mid_probability: float | None,
     settlement: dict[str, Any] | None = None,
     lfmp_price: float | None = None,
+    settlement_contract: dict | None = None,
+    settlement_evidence: dict | None = None,
+    settlement_source_bytes: bytes | None = None,
+    settlement_as_of_utc: str | None = None,
     requested_qty: float | None = None,
     delay_seconds: int = 0,
     adverse_ticks: int = 0,
@@ -342,6 +346,23 @@ def simulate_prop_paper_trade(
     decision["stat"] = "hits"
     decision["threshold"] = 1
 
+    payout_evidence = None
+    if settlement_evidence is not None:
+        if not settlement or settlement.get("settlement_class") != "last_fair_market_price":
+            raise ValueError("Final nonparticipation evidence requires an unambiguous LFMP classification")
+        if lfmp_price is not None:
+            raise ValueError("Do not mix assumed LFMP with recorded settlement evidence")
+        contract = dict(settlement_contract or {})
+        # Bind supplied contract evidence to this actual simulated position.
+        for key, value in (("market_id", market_id), ("market_slug", market_slug),
+                           ("game_pk", game_pk), ("key_mlbam", key_mlbam)):
+            if contract.get(key) != str(value):
+                raise ValueError("Settlement contract does not match position: " + key)
+        payout_evidence = hit_prop_settlement.resolve_fractional_payout(
+            contract=contract, evidence=settlement_evidence,
+            source_bytes=settlement_source_bytes, as_of_utc=settlement_as_of_utc)
+        if payout_evidence["status"] == "resolved":
+            lfmp_price = payout_evidence["yes_payout"]
     settled = None
     if purchase["filled_qty"] <= 0:
         settled = paper_ledger.settle_position(
@@ -403,6 +424,15 @@ def simulate_prop_paper_trade(
             winning_team=None,
             settlement_rule="unknown_pending",
         )
+
+    if settlement and settlement.get("settlement_class") in {
+        "last_fair_market_price", "last_fair_market_price_or_unresolved"
+    }:
+        settled["payout_evidence"] = payout_evidence
+        settled["payout_source"] = ("recorded_settlement" if payout_evidence and payout_evidence["status"] == "resolved"
+                                    else "assumed_simulation" if lfmp_price is not None else "unknown")
+        if settled["payout_source"] == "assumed_simulation":
+            settled["settlement_rule"] = "assumed_lfmp_simulation"
 
     return {
         "decision": decision,

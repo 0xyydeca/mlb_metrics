@@ -137,7 +137,7 @@ def test_forecast_settlement_example_and_paper_trade():
     walk = example["paper_trades"]["walk_only_binary_no"]
     assert walk["position"]["settlement_payout_per_contract"] == 0.0
     dnp = example["paper_trades"]["dnp_lfmp_with_conservative_stress"]
-    assert dnp["position"]["settlement_rule"] in {"venue_settlement_px", "last_fair_market_price"}
+    assert dnp["position"]["settlement_rule"] in {"assumed_lfmp_simulation"}
     assert example["paper_trades"]["skipped_unfilled"]["action"] == "pass"
 
 

@@ -8,6 +8,7 @@ Canceled contracts are not treated as $0 losses or automatic refunds.
 from __future__ import annotations
 
 import hashlib
+import math
 import json
 import os
 from datetime import datetime, timezone
@@ -298,7 +299,11 @@ def settle_position(
             "open_exposure": float(acquisition_cost),
         }
     if settlement_px is not None:
+        if isinstance(settlement_px, bool):
+            raise ValueError("Settlement payout must be a finite value in [0, 1]")
         px = float(settlement_px)
+        if not math.isfinite(px) or not 0 <= px <= 1:
+            raise ValueError("Settlement payout must be a finite value in [0, 1]")
         proceeds = px * float(filled_qty)
         return {
             "status": "settled",
