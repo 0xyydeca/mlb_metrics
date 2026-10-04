@@ -80,6 +80,12 @@ jobs:
           PYTHONPATH=src python scripts/capture_hit_prop_research.py \
             --output-dir reports/polymarket/hit_prop_run_captures --persist-store
 
+      - name: Archive independent pregame research forecasts and delayed quotes
+        if: ${{ always() && steps.hit_prop_capture.outcome == 'success' }}
+        run: |
+          PYTHONPATH=src python scripts/capture_hit_prop_forward.py
+          PYTHONPATH=src python scripts/capture_hit_prop_forward.py --audit-only
+
       - name: Hit-prop frozen paper ops cycle
         if: ${{ always() && steps.hit_prop_capture.outcome == 'success' }}
         run: PYTHONPATH=src python scripts/run_hit_prop_paper_ops.py
@@ -171,7 +177,8 @@ jobs:
           for path in \
             data/polymarket/research/hit_props/contracts.csv \
             data/polymarket/research/hit_props/capture_summaries \
-            data/polymarket/research/hit_props/prospective; do
+            data/polymarket/research/hit_props/prospective \
+            data/polymarket/research/hit_props/independent_forward; do
             if [ -e "$path" ]; then
               git add -f -- "$path"
             fi

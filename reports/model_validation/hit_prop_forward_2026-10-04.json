@@ -1,0 +1,212 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 0,
+  "intact_pregame_forecasts": 0,
+  "execution_quotes_matched": 0,
+  "integrity_errors": [],
+  "missing_execution": 0,
+  "cohort_counts": {},
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 2,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 36
+  },
+  "audit_date": "2026-10-04",
+  "workflow_yaml": "parsed_with_Ruby_YAML",
+  "hosted_runtime": "not_yet_verified",
+  "full_suite": "not_repeated_after_prior_network_stall",
+  "live_capture_reports": [
+    {
+      "exclusions": [
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-andpag-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-ausril-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-drabal-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-frefre-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-kyltuc-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-lantho-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-matols-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-maudub-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-michar-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-migroj-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-moobet-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-ozzalb-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-ronacu-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-seamur-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-shooht-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-teoher-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-tomedm-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-wilsmi-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        }
+      ],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-04T23:48:51.464216+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 1927,
+      "loaded_capture_rows": 18,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261004T234851427672Z-35ba1f8d",
+      "started_at_utc": "2026-10-04T23:48:51.428203+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-andpag-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-ausril-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-drabal-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-frefre-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-kyltuc-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-lantho-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-matols-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-maudub-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-michar-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-migroj-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-moobet-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-ozzalb-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-ronacu-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-seamur-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-shooht-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-teoher-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-tomedm-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-atl-lad-2026-10-04-hits-wilsmi-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        }
+      ],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-04T23:52:01.136358+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 1927,
+      "loaded_capture_rows": 18,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261004T235201093083Z-dad6cdea",
+      "started_at_utc": "2026-10-04T23:52:01.093282+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    }
+  ],
+  "affected_tests_passed": 149,
+  "real_artifact_smoke_rows": 18,
+  "smoke_predictions_recorded_as_prospective": false
+}

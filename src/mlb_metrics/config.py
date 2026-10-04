@@ -2522,3 +2522,12 @@ HIT_PROP_BENCHMARK_QUOTE_AGE = 30
 HIT_PROP_BENCHMARK_TAKER_THETA = 0.0695
 HIT_PROP_BENCHMARK_FEE_EFFECTIVE_UTC = "2026-10-01T14:00:00Z"
 HIT_PROP_BENCHMARK_FEE_SOURCE = "https://docs.polymarket.us/fees"
+
+# Independent prospective research capture. Not a promotion or a new holdout.
+HIT_PROP_FORWARD_VERSION = "independent-prospective-capture-v1"
+HIT_PROP_FORWARD_DIR = "data/polymarket/research/hit_props/independent_forward"
+HIT_PROP_FORWARD_MODEL_PATH = "data/models/research/hit_prop_three_state_development_v1.joblib"
+HIT_PROP_FORWARD_MODEL_SHA256 = "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f"
+HIT_PROP_FORWARD_MAX_CONTRACTS = 12
+HIT_PROP_FORWARD_ENTRY_MINUTES = 30
+HIT_PROP_FORWARD_REQUEST_TIMEOUT = 10

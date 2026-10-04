@@ -1,0 +1,29 @@
+{
+  "delay_seconds": 60,
+  "entry_minutes": 30,
+  "features": [
+    "WAVE",
+    "PA_L",
+    "PA_R",
+    "Exit_Velo",
+    "Barrel_Rate",
+    "xBA",
+    "xwOBA",
+    "Whiff_Rate",
+    "Chase_Rate",
+    "avg_batting_order",
+    "start_rate",
+    "Days_Rest",
+    "is_home"
+  ],
+  "fee_effective_utc": "2026-10-01T14:00:00Z",
+  "fee_theta": 0.0695,
+  "formal_holdout_assignment": "unassigned_research_only",
+  "max_contracts_per_cycle": 12,
+  "model_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "quantity": 1.0,
+  "quote_age_seconds": 30,
+  "selection": "first eligible forecast; slug order; all omissions recorded",
+  "settlement_scoring": "blocked_until_registered_evaluation_gates_pass",
+  "version": "independent-prospective-capture-v1"
+}
