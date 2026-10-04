@@ -1,0 +1,47 @@
+{
+  "status": "insufficient_evidence",
+  "real_money_ready": false,
+  "outcomes_opened": false,
+  "forecasts_sha256": "ee77d29d106e23ebe7606e92101602823cefba93957a8b73913d49d5b03d3662",
+  "quotes_sha256": "c1a57fb6d7ae56be3f52523a31db4cba9d03893951b676c1f550add2d777f7b6",
+  "coverage": {
+    "forecast_rows": 14447,
+    "quote_rows": 1975,
+    "forecast_dates": [
+      "2026-08-04",
+      "2026-09-14"
+    ],
+    "quote_dates": [
+      "2026-09-18",
+      "2026-10-04"
+    ],
+    "overlapping_game_player_keys": 0
+  },
+  "matched_comparisons": 0,
+  "excluded_forecasts": 14447,
+  "exclusion_reason_counts": {
+    "missing_or_invalid_contract_identity;unsupported_or_missing_venue;invalid_or_poststart_forecast_time;missing_or_late:feature_cutoff_utc;missing_or_late:training_end_time_utc;missing_or_late:artifact_created_at_utc;missing_artifact_hash;uncertified_prediction_time_inputs;not_independent_model": 14447
+  },
+  "realized_returns": null,
+  "fee_source": "https://docs.polymarket.us/fees",
+  "assumptions": {
+    "quantity": 1.0,
+    "delay_seconds": 60,
+    "quote_max_age_seconds": 30,
+    "fee_model": "standard US rounded order fee cap; no rebates; single buy held to settlement",
+    "fills": "Top-of-book size-limited hypothetical execution; not actual fills",
+    "nonbinary": "Expected payout bounds, not a conditional hit probability or invented LFMP",
+    "baseline": "Same-time midpoint is a payout reference, not a fee-adjusted probability",
+    "evaluation": "No outcome scoring or promotion; registered formal evaluation remains separate"
+  },
+  "source_git_revision": "0979021424d7b7ef3ec51de1e3eef1469562a8d2",
+  "benchmark_code_sha256": "6be81f42ae073b7928ab7f5b62b7ee6a45c86ec72646fc3e5604e5db8366ff48",
+  "verification": {
+    "full_suite_passed": 1348,
+    "final_focused_tests_passed": 34,
+    "javascript_tests_passed": 33,
+    "note": "Full suite preceded two extra tests, row-provenance additions and stricter fee-coefficient matching; final focused tests cover all changes. Hosted CI not dispatched."
+  },
+  "fee_schedule_verified_date": "2026-10-04",
+  "fee_effective_from_utc": "2026-10-01T14:00:00Z"
+}
