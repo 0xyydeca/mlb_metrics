@@ -1,5 +1,18 @@
 # Project brief: mlb_metrics
 
+## October 3 maintenance — cached game identity validation
+
+- Compared both briefs: current October 2 sections agree; older claims remain historical. Local checkout started at `1a346ed` with 22 existing modified data/report files. Used an isolated owner-main checkout at `39d8ffc` to preserve them. Remote changes since the prior repair were generated data/reports, not source changes. Actual work occurred late October 3 UTC, not at the earlier heartbeat timestamp.
+- Completed the next bounded identity task: cached moneyline mappings could bypass the requested Phoenix date, accept zero/negative/fractional IDs (or crash on text), and select the first of two conflicting game IDs when no provider ID was supplied. Seven new regression cases failed before repair; the duplicate-same-identity control passed.
+- Moved requested-local-date validation before cached lookup. Cached mapped rows must all contain positive integer game IDs and agree on one ID. Invalid IDs and conflicting IDs now return explicit incomplete/ambiguous quarantine evidence; same-ID duplicate observations remain usable. No observations, past decisions, frozen policies, thresholds, or evaluation periods were rewritten.
+- Current owner-main exported 49 hitter forecasts dated October 3. Latest inspected lineup-lock and capture workflow runs succeeded. Saved prop ops still reports zero eligible independent-model dates and is non-actionable. This is a status check, not a fresh capture or a claim of an edge.
+- No training, historical backfill, formal scoring, orders, deposits, paid services, or pilot settings changes in this maintenance run. `GAME_PREDICTION_MODE=shadow`, `BETTING_MODE=disabled` remain unchanged.
+- Remaining prerequisites are unchanged: independent contract-qualified forecasts with artifact/cutoff provenance, nonbinary settlement handling, immutable untouched evaluation assignment, and adequate prospective price-matched evidence. Postseason remains separate. Actual venue and personal USD limits remain unresolved; no real-money launch is supported.
+
+- Verification: **1,216 Python tests passed** (1,167 warnings; 215.78 seconds), 68 focused identity/ops tests passed, all 33 JavaScript tests passed, and `git diff --check` passed. Local Python 3.14 differs from hosted Python 3.12; no new hosted verification was dispatched for this bounded repair.
+
+- Published repair: `cb1c83c3279054017c14fb11f59798984e4854c3` on owner main. Verification report retrieved from the committed Git object and parsed in an isolated interpreter. Copied the tested source/test repair into the original checkout only after verifying those files had no user edits. All 22 pre-existing modified files retain their exact SHA-256 hashes. Original branch pointer remains at `1a346ed`; the three maintenance files are local changes matching the published repair, pending reconciliation of the existing generated-data edits before a full branch sync.
+
 ## October 2 readiness repairs — current verified status
 
 This section supersedes earlier completion claims and the earlier October 2 blockers below; older entries remain audit history.

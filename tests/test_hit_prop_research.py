@@ -550,3 +550,41 @@ def test_failed_event_is_not_a_budget_omission():
     assert report["universe"]["n_events_fetched"] == 0
     assert report["universe"]["n_events_failed"] == 1
     assert report["universe"]["n_events_not_fetched_due_to_budget"] == 0
+
+
+def _cached_event_fixture():
+    event = {"slug": "mlb-bos-nyy-2026-09-18", "startTime": "2026-09-18T20:00:00Z", "gameId": 111}
+    registry = pd.DataFrame([{"event_slug": event["slug"], "game_pk": 999001, "mapping_status": "mapped", "provider_game_id": 111, "home_team": "NYY", "away_team": "BOS"}])
+    return event, registry
+
+
+def test_cached_mapping_cannot_bypass_requested_local_date():
+    event, registry = _cached_event_fixture()
+    result = research.match_event_to_game(event, pd.DataFrame(), moneyline_registry=registry, requested_local_date=dt.date(2026, 9, 19))
+    assert result["mapping_status"] == research.MAPPING_WRONG_DAY
+    assert result["game_pk"] is None
+
+
+@pytest.mark.parametrize("bad_id", [None, 0, -1, 999001.5, "invalid"])
+def test_cached_mapping_rejects_invalid_game_ids(bad_id):
+    event, registry = _cached_event_fixture()
+    registry["game_pk"] = bad_id
+    result = research.match_event_to_game(event, pd.DataFrame(), moneyline_registry=registry)
+    assert result["mapping_status"] == research.MAPPING_INCOMPLETE
+    assert result["game_pk"] is None
+
+
+def test_cached_mapping_rejects_two_game_ids_for_one_event_without_provider_id():
+    event, registry = _cached_event_fixture()
+    event.pop("gameId")
+    registry = pd.concat([registry, registry.assign(game_pk=999002)], ignore_index=True)
+    result = research.match_event_to_game(event, pd.DataFrame(), moneyline_registry=registry)
+    assert result["mapping_status"] == research.MAPPING_AMBIGUOUS
+    assert result["game_pk"] is None
+
+
+def test_cached_duplicate_same_identity_is_still_usable():
+    event, registry = _cached_event_fixture()
+    result = research.match_event_to_game(event, pd.DataFrame(), moneyline_registry=pd.concat([registry, registry]), requested_local_date=dt.date(2026, 9, 18))
+    assert result["mapping_status"] == research.MAPPING_MAPPED
+    assert result["game_pk"] == 999001

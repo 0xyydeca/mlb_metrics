@@ -1,13 +1,38 @@
 {
+  "cohorts": {
+    "postseason": {
+      "do_not_transfer_regular_season_results": true,
+      "end_local": "2026-10-31",
+      "id": "mlb_2026_postseason",
+      "primary_promotion_cohort": false,
+      "start_local": "2026-09-29"
+    },
+    "regular_season": {
+      "end_local": "2026-09-27",
+      "id": "mlb_2026_regular_season",
+      "primary_promotion_cohort": true
+    }
+  },
   "data_coverage": {
     "exploratory_dates": [
       "2026-09-14",
       "2026-09-15"
     ],
+    "ledger_collection_progress": {
+      "n_buy": 0,
+      "n_decision_rows": 228,
+      "n_distinct_decision_days": 1,
+      "n_pass": 228,
+      "n_prospective_days": 1,
+      "prospective_days": [
+        "2026-09-16"
+      ]
+    },
     "n_mapped_contracts": 57,
     "n_polymarket_labeled_eligible_dates": 0,
-    "n_quote_index_rows": 129,
-    "note": "Mapped contracts and quote rows are necessary but not sufficient. Nested evaluation requires labeled settled games with as-of quotes."
+    "n_quote_index_rows": 169,
+    "note": "Mapped contracts and quote rows are necessary but not sufficient. Nested evaluation requires labeled settled games with as-of quotes. Ledger decision-day counts are pre-outcome collection progress only.",
+    "prospective_collection_start_local": "2026-09-16"
   },
   "gates": {
     "betting_mode_required": "disabled",
@@ -24,11 +49,13 @@
     "validation_status": "insufficient_data",
     "verdict": "insufficient_evidence"
   },
-  "generated_at_utc": "2026-09-15T21:44:08Z",
+  "generated_at_utc": "2026-09-16T03:38:03Z",
   "limitations": [
     "Venue remains provisional Polymarket US until owner confirms.",
     "Sportsbook residual history cannot substitute for Polymarket priors.",
     "Fixture ledger proves accounting math, not edge.",
+    "Remaining 2026 regular season cannot meet the structural date floor alone.",
+    "30-minute capture cadence cannot guarantee a post-delay book within 60s.",
     "Betting stays disabled."
   ],
   "modes": {
@@ -46,8 +73,8 @@
       "n_settled": 1,
       "n_unfilled": 0,
       "open_exposure": 0.0,
-      "roi": NaN,
-      "settled_acquisition": 0.0,
+      "roi": 1.3936539446619123,
+      "settled_acquisition": 1.253314,
       "settled_net": 1.746686
     },
     "drawdown": {
@@ -108,12 +135,13 @@
       "settled_net": 1.746686
     }
   },
-  "policy_hash": "6155a8a06da828f5",
+  "policy_hash": "c5361ddb1a247394",
   "probability_quality_polymarket": {
     "market_prior_note": "Polymarket mid baseline not yet available for nested evaluation. Sportsbook residual shadow history is exploratory diagnostic only and cannot satisfy Polymarket gates.",
     "n_dates": 0,
     "n_games": 0,
     "reason": "no_polymarket_labeled_history",
+    "same_time_market_baseline_required": true,
     "status": "insufficient_data"
   },
   "probability_quality_sportsbook_diagnostic_only": {
@@ -126,7 +154,9 @@
     "additional_observations_required": {
       "approx_independent_days_for_target_edge": 197,
       "min_eligible_dates_structural": 70,
-      "need": "Accumulate Polymarket books + official results for >= structural floor complete outer blocks after freeze; re-run this script; do not inspect the registered freeze tail during tuning."
+      "need": "Accumulate Polymarket books + official results for >= structural floor complete outer blocks after freeze; continue past the 2026 regular season; re-run evaluation only at registered checkpoints; do not inspect the registered freeze tail during tuning.",
+      "remaining_regular_season_calendar_dates": 12,
+      "remaining_season_meets_structural_floor": false
     },
     "checkpoints_game_days": [
       7,
@@ -134,11 +164,37 @@
       28,
       70
     ],
+    "collection_host": {
+      "host": "github_actions_ubuntu_latest",
+      "missing_host": null,
+      "paid_services_purchased": false,
+      "runtime_note": "Authorized host is GitHub Actions (ubuntu-latest) via polymarket_capture.yml plus optional local runs. No additional paid services are required or purchased. Quote Parquet stays artifact/gitignored; registry, coverage, protocol, and evaluation JSON are committed when present.",
+      "workflow": ".github/workflows/polymarket_capture.yml"
+    },
     "frozen_policy_path": "reports/model_validation/polymarket_frozen_policy.json",
+    "future_observations_claimed": false,
     "future_results_manufactured": false
   },
-  "protocol_hash": "7f9618a855e44e5b",
-  "protocol_id": "polymarket_us_game_winner_v1",
+  "protocol_hash": "46c2471bb9fb8a7a",
+  "protocol_id": "polymarket_us_game_winner_v2",
+  "protocol_version": "2",
+  "remaining_season_capacity": {
+    "approx_independent_days_for_target_edge": 197,
+    "as_of_local": "2026-09-16",
+    "collection_start_local": "2026-09-16",
+    "conclusion": "insufficient_for_structural_floor_this_regular_season",
+    "max_remaining_postseason_calendar_dates": 33,
+    "max_remaining_regular_season_calendar_dates": 12,
+    "note": "Calendar dates are an upper bound, not observed eligible days. Postseason is a separate cohort and does not fill the regular-season floor.",
+    "postseason_window_local": [
+      "2026-09-29",
+      "2026-10-31"
+    ],
+    "regular_season_end_local": "2026-09-27",
+    "remaining_regular_season_meets_power_plan": false,
+    "remaining_regular_season_meets_structural_floor": false,
+    "structural_floor_dates": 70
+  },
   "sample_size_plan": {
     "alpha": 0.05,
     "approx_independent_days": 197,

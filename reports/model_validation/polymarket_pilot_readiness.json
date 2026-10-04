@@ -46,7 +46,7 @@
     "validation_status": "insufficient_data",
     "verdict": "insufficient_evidence"
   },
-  "generated_at_utc": "2026-09-16T20:18:22Z",
+  "generated_at_utc": "2026-10-02T21:50:01Z",
   "market_id": "mlb_pregame_moneyline",
   "modes": {
     "BETTING_MODE": "disabled",
@@ -57,7 +57,7 @@
     "existing_exposure_preserved": true,
     "new_bets_allowed": false,
     "paused": true,
-    "paused_at_utc": "2026-09-16T20:18:22Z",
+    "paused_at_utc": "2026-10-02T21:50:01Z",
     "previous_paused": true,
     "reason_labels": [
       "Registered evidence verdict no longer supports pilot"
@@ -71,7 +71,7 @@
   "reconcile": {
     "comparison_note": "Do not merge streams. Real fills are owner-recorded; paper fills are simulated.",
     "edge_claimed": false,
-    "generated_at_utc": "2026-09-16T20:18:22Z",
+    "generated_at_utc": "2026-10-02T21:50:01Z",
     "paper_ledger": {
       "n_settled": 1,
       "note": "Paper results are not real-money P&L.",
@@ -101,7 +101,7 @@
     "real_money_usd_stakes_enabled": false,
     "same_game_exposure_limit": 1.0,
     "same_team_exposure_limit": 1.0,
-    "saved_at_utc": "2026-09-16T20:18:22Z",
+    "saved_at_utc": "2026-10-02T21:50:01Z",
     "source": "agent_decision_owner_delegated_2026-09-16"
   },
   "software": {

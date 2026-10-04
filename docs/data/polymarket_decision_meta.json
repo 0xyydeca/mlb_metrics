@@ -10,9 +10,9 @@
     "missing_residual_or_market_scores",
     "strategy_roi_not_positive_under_base_and_conservative"
   ],
-  "generated_at_utc": "2026-09-16T02:48:13Z",
+  "generated_at_utc": "2026-10-02T21:50:40Z",
   "n_actionable": 0,
-  "n_board_rows": 114,
+  "n_board_rows": 388,
   "n_paper_candidate": 0,
   "notes": [
     "High win probability alone never triggers a recommendation.",
@@ -23,8 +23,8 @@
   "orders_automated": false,
   "paper_unit_label": "normalized_paper_unit",
   "personal_limits_required_for_stake_guidance": true,
-  "policy_hash": "6155a8a06da828f5",
-  "policy_version": "polymarket_us_game_winner_v1_frozen_v1",
+  "policy_hash": "c5361ddb1a247394",
+  "policy_version": "polymarket_us_game_winner_v2_frozen_v1",
   "validation_status": "insufficient_data",
   "venue_label": "polymarket_us_provisional_research"
 }

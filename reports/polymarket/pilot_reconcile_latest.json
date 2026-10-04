@@ -1,7 +1,7 @@
 {
   "comparison_note": "Do not merge streams. Real fills are owner-recorded; paper fills are simulated.",
   "edge_claimed": false,
-  "generated_at_utc": "2026-09-16T20:18:22Z",
+  "generated_at_utc": "2026-10-02T21:50:01Z",
   "paper_ledger": {
     "n_settled": 1,
     "note": "Paper results are not real-money P&L.",
