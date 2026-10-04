@@ -1,18 +1,18 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261004T184159Z",
+  "capture_id": "hp_20261004T220356Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-10-04T18:42:01Z",
+  "generated_at_utc": "2026-10-04T22:04:02Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
-  "n_books_captured": 30,
-  "n_contracts": 30,
-  "n_mapped_game_pk": 30,
-  "n_mapped_key_mlbam": 30,
+  "n_books_captured": 18,
+  "n_contracts": 18,
+  "n_mapped_game_pk": 18,
+  "n_mapped_key_mlbam": 18,
   "n_quarantined": 0,
   "remaining_blockers": [
     "no_registered_prop_evaluation_outcomes_yet",
@@ -20,7 +20,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-71430893bba3445d933d1546188aaa4d.json",
+  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-dfee86e3ebdd4962aef80c1cf409b3a9.json",
   "requested_local_date": "2026-10-04",
   "research_only": true,
   "status": "captured",
@@ -28,16 +28,15 @@
     "complete_denominator_claimed": true,
     "definition": "All active future MLB Polymarket US events with start local-date 2026-10-04 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-atl-lad-2026-10-04",
-      "mlb-sd-mil-2026-10-04"
+      "mlb-atl-lad-2026-10-04"
     ],
-    "n_contracts_in_fetched_events": 30,
-    "n_event_requests": 2,
-    "n_events": 2,
+    "n_contracts_in_fetched_events": 18,
+    "n_event_requests": 1,
+    "n_events": 1,
     "n_events_failed": 0,
-    "n_events_fetched": 2,
+    "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 0,
+    "n_excluded_already_started": 1,
     "n_excluded_wrong_local_day": 6,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }
