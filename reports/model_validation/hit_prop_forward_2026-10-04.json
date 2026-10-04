@@ -24,7 +24,7 @@
   },
   "audit_date": "2026-10-04",
   "workflow_yaml": "parsed_with_Ruby_YAML",
-  "hosted_runtime": "not_yet_verified",
+  "hosted_runtime": "unverified_github_api_connection_failed",
   "full_suite": "not_repeated_after_prior_network_stall",
   "live_capture_reports": [
     {
@@ -208,5 +208,6 @@
   ],
   "affected_tests_passed": 149,
   "real_artifact_smoke_rows": 18,
-  "smoke_predictions_recorded_as_prospective": false
+  "smoke_predictions_recorded_as_prospective": false,
+  "published_implementation_commit": "7d37648"
 }
