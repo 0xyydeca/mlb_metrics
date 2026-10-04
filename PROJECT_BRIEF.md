@@ -1,5 +1,10 @@
 # Project brief: mlb_metrics
 
+## October 4 settlement input validation follow-up
+
+- Reproduced and repaired 27 malformed-input regressions: nonboolean starter flags, negative/fractional/nonfinite/text/boolean counts, and inconsistent hit/AB/PA totals. Settlement now remains unknown_pending with explicit reasons instead of crashing, truncating values, or producing false final labels. Missing AB/hit observations remain distinct from zero; valid integral numeric formats are normalized.
+- Verification: 156 relevant research, paper, ops and readiness tests passed (11 warnings, 6.57 seconds); whitespace check passed. Full suite and hosted CI were not rerun for this bounded follow-up. No production outcomes rewritten, model promoted, holdout scored, or betting settings changed. Independent forecast/payout modeling and prospective evidence remain unfinished.
+
 ## October 4 additional identity and lineup edge-case repairs
 
 - Reproduced 20 failures before repair: invalid cached/roster player IDs (zero, negative, fractional, boolean, nonfinite, missing, or text), an entirely wrong-team roster incorrectly accepted as a game match, and nullable/string/numeric lineup flags treated as confirmed starters.

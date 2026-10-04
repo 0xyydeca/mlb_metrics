@@ -223,6 +223,28 @@ def classify_contract_outcome(
             "reason": "missing_participation_or_pa",
             "binary_yes": None,
         }
+    if not pd.api.types.is_bool(started):
+        return {"settlement_class": "unknown_pending", "binary_yes": None,
+                "reason": "invalid_participation_flag"}
+    counts = {"plate_appearances": plate_appearances, "at_bats": at_bats,
+              "hits": hits, "threshold": threshold}
+    for field, raw in counts.items():
+        if field in {"at_bats", "hits"} and pd.isna(raw):
+            counts[field] = None
+            continue
+        value = _number(raw)
+        if (pd.api.types.is_bool(raw) or value is None or not value.is_integer()
+                or value < (1 if field == "threshold" else 0)):
+            return {"settlement_class": "unknown_pending", "binary_yes": None,
+                    "reason": "invalid_boxscore_or_threshold:" + field}
+        counts[field] = int(value)
+    plate_appearances, at_bats, hits, threshold = (counts[k] for k in
+        ("plate_appearances", "at_bats", "hits", "threshold"))
+    if ((at_bats is not None and at_bats > plate_appearances)
+            or (hits is not None and hits > plate_appearances)
+            or (hits is not None and at_bats is not None and hits > at_bats)):
+        return {"settlement_class": "unknown_pending", "binary_yes": None,
+                "reason": "inconsistent_boxscore_counts"}
     nonparticipation_reason = None
     if rules.get("requires_starting_lineup") and not started:
         nonparticipation_reason = "not_in_starting_lineup"

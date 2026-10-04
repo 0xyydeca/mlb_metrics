@@ -647,3 +647,24 @@ def test_valid_integral_roster_player_identity_formats(key):
     result = research.match_player_to_key_mlbam("Fixture Player", candidate_players=frame)
     assert result["mapping_status"] == research.MAPPING_MAPPED
     assert result["key_mlbam"] == 123
+
+
+@pytest.mark.parametrize("field", ["plate_appearances", "at_bats", "hits", "threshold"])
+@pytest.mark.parametrize("bad", [-1, 0.5, float("inf"), "invalid", True])
+def test_malformed_settlement_counts_remain_pending(field, bad):
+    args = dict(started=True, plate_appearances=3, at_bats=3, hits=1, threshold=1, game_status="Final", rules={})
+    args[field] = bad
+    result = research.classify_contract_outcome(**args)
+    assert result["settlement_class"] == "unknown_pending"
+    assert result["binary_yes"] is None
+
+@pytest.mark.parametrize("started", ["False", "True", 0, 1])
+def test_settlement_requires_boolean_participation(started):
+    result = research.classify_contract_outcome(started=started, plate_appearances=3, at_bats=3, hits=1, game_status="Final", rules={})
+    assert result["settlement_class"] == "unknown_pending"
+
+@pytest.mark.parametrize("counts", [(2, 3, 1), (3, 2, 3), (0, 0, 1)])
+def test_inconsistent_boxscore_cannot_settle(counts):
+    pa, ab, hits = counts
+    result = research.classify_contract_outcome(started=True, plate_appearances=pa, at_bats=ab, hits=hits, game_status="Final", rules={})
+    assert result["settlement_class"] == "unknown_pending"
