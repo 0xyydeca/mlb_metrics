@@ -1,0 +1,9 @@
+date,game_pk,key_mlbam,old_state,target_state,label_reason
+2026-07-08,823848,665052,2,0,official_substitute
+2026-07-12,822876,666211,1,0,official_substitute
+2026-08-16,824642,665804,0,2,official_qualifying_pa
+2026-08-16,824642,701649,1,0,official_substitute
+2026-08-21,825045,670770,2,0,official_substitute
+2026-09-01,822854,683021,2,0,official_substitute
+2026-09-11,823817,681715,2,1,official_qualifying_pa
+2026-09-14,823656,641355,2,1,official_qualifying_pa

@@ -2499,3 +2499,18 @@ HIT_PROP_LINEUP_MAX_AGE_SECONDS = 300
 HITTER_OPPORTUNITY_TRAINING_VERSION = "v2-preserve-confirmed-dnp-negatives"
 
 HITTER_OPPORTUNITY_SHADOW_MODEL_VERSION = "opportunity-v2-dnp-preserved"
+
+# Fixed development experiment; never selected or promoted using paper holdouts.
+HIT_PROP_DEV_MODEL_VERSION = "hit-prop-three-state-development-v1"
+HIT_PROP_DEV_END_EXCLUSIVE = "2026-09-15"
+HIT_PROP_DEV_FEATURES = (
+    "WAVE", "PA_L", "PA_R", "Exit_Velo", "Barrel_Rate", "xBA", "xwOBA",
+    "Whiff_Rate", "Chase_Rate", "avg_batting_order", "start_rate", "Days_Rest", "is_home",
+)
+HIT_PROP_DEV_INITIAL_DATES = 28
+HIT_PROP_DEV_TEST_DATES = 14
+HIT_PROP_DEV_LOGISTIC_C = 1.0
+HIT_PROP_DEV_MAX_ITER = 1000
+HIT_PROP_DEV_BOOTSTRAP_SAMPLES = 1000
+HIT_PROP_DEV_SEED = 17
+HIT_PROP_DEV_LOG_EPSILON = 1e-12

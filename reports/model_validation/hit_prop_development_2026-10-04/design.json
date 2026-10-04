@@ -1,0 +1,13 @@
+{
+  "model_version": "hit-prop-three-state-development-v1",
+  "purpose": "Contract-target development on previously inspected historical dates; no model selection or profitability claim",
+  "development_end_exclusive": "2026-09-15",
+  "target": ["nonqualifying", "qualifying_no_hit", "qualifying_hit"],
+  "labels": "Official final regular-season boxscore battingOrder and participation counts; unknowns excluded with reasons",
+  "model": "Fixed regularized multinomial logistic; median imputation and scaling fit only within training folds",
+  "folds": "28 initial dates; successive 14-date blocks; no hyperparameter tuning; all previously inspected dates remain development",
+  "baseline": "Training-only three-class frequencies on identical rows; no historical market prices fabricated",
+  "forbidden_features": ["target-game lineup", "target-game batting order", "actual starting pitcher and derived matchup features", "target-game outcome", "venue closing prices"],
+  "nonbinary": "Output probability and expected payout bounds; no invented last-fair-market-price estimate",
+  "outputs": "Explicit research directory only; no production artifact promotion or paper-policy replacement"
+}

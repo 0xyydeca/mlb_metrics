@@ -1,0 +1,133 @@
+{
+  "generated_at_utc": "2026-10-04T22:36:15.286456+00:00",
+  "model_version": "hit-prop-three-state-development-v1",
+  "implementation_sha256": "c26d5b75f13e088059a1db3cc9d8efb49d56a0a312ff243c9ec07b67e89476d8",
+  "config_sha256": "f77c86a4a611595c1612c16f70a24d9ea0b933625f614e68e368a6d9b0e94bc5",
+  "research_only": true,
+  "production_serving_allowed": false,
+  "real_money_ready": false,
+  "features": [
+    "WAVE",
+    "PA_L",
+    "PA_R",
+    "Exit_Velo",
+    "Barrel_Rate",
+    "xBA",
+    "xwOBA",
+    "Whiff_Rate",
+    "Chase_Rate",
+    "avg_batting_order",
+    "start_rate",
+    "Days_Rest",
+    "is_home"
+  ],
+  "development_end_exclusive": "2026-09-15",
+  "limitations": [
+    "Already-inspected development dates, not a pristine holdout",
+    "Historical morning candidate universe differs from venue-listed, confirmed-lineup opportunities",
+    "Starter-dependent matchup features excluded; historical rate features still use reconstructed past batting order",
+    "Official labels obtained after outcomes; not pregame lineup snapshots",
+    "No matched executable historical prices, fees, liquidity, returns or profitability estimate",
+    "Postseason and interrupted-game nonbinary settlement are not modeled",
+    "Last-fair-market-price distribution remains unknown; only payout bounds available",
+    "Historical timestamps are reconstructed date cutoffs; UTC midnight does not certify prior-day game completion or provider data availability."
+  ],
+  "input_sha256": "2bf06b0abd5be03c710a1474515537ee5cad0b9bd3cb881e876cf1d4df262c52",
+  "schedule_sha256": "9df8a1233e0b680bcda575bf2686ef95524f90c27c2023e2c891637820c8eb67",
+  "n_input_rows": 27068,
+  "n_included_rows": 23676,
+  "n_excluded_rows": 3392,
+  "exclusion_reasons": {
+    "player_missing_from_official_roster": 2905,
+    "rescheduled_completion_cutoff_unverified": 453,
+    "starting_status_unknown": 34
+  },
+  "class_counts": {
+    "qualifying_hit": 9952,
+    "nonqualifying": 7306,
+    "qualifying_no_hit": 6418
+  },
+  "n_corrected_state_labels": 8,
+  "evaluation": {
+    "status": "development_only",
+    "folds": [
+      {
+        "training_start": "2026-07-04",
+        "training_end": "2026-08-03",
+        "test_start": "2026-08-04",
+        "test_end": "2026-08-17",
+        "n_training_rows": 9229,
+        "n_test_rows": 4758
+      },
+      {
+        "training_start": "2026-07-04",
+        "training_end": "2026-08-17",
+        "test_start": "2026-08-18",
+        "test_end": "2026-08-31",
+        "n_training_rows": 13987,
+        "n_test_rows": 4706
+      },
+      {
+        "training_start": "2026-07-04",
+        "training_end": "2026-08-31",
+        "test_start": "2026-09-01",
+        "test_end": "2026-09-14",
+        "n_training_rows": 18693,
+        "n_test_rows": 4983
+      }
+    ],
+    "n_rows": 14447,
+    "n_dates": 42,
+    "log_loss": 0.9597782363024062,
+    "baseline_log_loss": 1.0820417599634262,
+    "multiclass_brier_sum": 0.5769814290770734,
+    "baseline_multiclass_brier_sum": 0.6553778336958866,
+    "paired_log_loss_difference": -0.12226352366101992,
+    "date_block_bootstrap_95pct": [
+      -0.13220540821913992,
+      -0.11153145666167814
+    ],
+    "bootstrap_samples": 1000,
+    "uncertainty_limit": "Resamples dates; repeated-player and serial dependence across dates are not fully modeled.",
+    "formal_holdout": false,
+    "market_comparison": "unavailable_no_matched_historical_executable_prices",
+    "returns": null,
+    "real_money_ready": false
+  },
+  "status": "development_only",
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "artifact_path": "data/models/research/hit_prop_three_state_development_v1.joblib",
+  "prediction_time_availability_certified": false,
+  "conditional_qualified_hit_diagnostics": {
+    "n_rows": 9921,
+    "metrics": {
+      "model": {
+        "log_loss": 0.6649468113488692,
+        "brier_score": 0.23609493281064098
+      },
+      "training_frequency_baseline": {
+        "log_loss": 0.6697284181997881,
+        "brier_score": 0.2383822039861607
+      }
+    },
+    "note": "Same saved development predictions; no refitting, tuning, market-price or profit comparison."
+  },
+  "audit_updated_at_utc": "2026-10-04T22:38:59.961084+00:00",
+  "original_report_sha256": "e8e3e71acb4867148fdf8fbae0a17cecc958f9a8a771ff267cf340eaabc422ae",
+  "verification": {
+    "full_python_suite_passed": 1318,
+    "final_focused_tests_passed": 27,
+    "javascript_passed": 33,
+    "note": "Full suite preceded one additional CLI failure-persistence test and documentation/metadata changes; all affected final tests passed.",
+    "artifact_reload_validated": true,
+    "duplicate_prediction_keys": 0,
+    "protected_periods_scored": false
+  },
+  "local_original_artifact_path": "/Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-10-04/contract-model/run-01/development_only.joblib",
+  "collection": {
+    "n_official_boxscores": 938,
+    "n_request_errors": 0,
+    "raw_snapshot_location": "/Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-10-04/contract-model/boxscores",
+    "design_registered_before_training": "/Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-10-04/contract-model/design.json"
+  }
+}
