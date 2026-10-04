@@ -1,0 +1,13 @@
+{
+  "checked_at_utc": "2026-10-04T19:24:31.949800+00:00",
+  "base_commit": "8723ad6",
+  "scope": "Research settlement finality and explicit non-participation rule validation",
+  "before_targeted_tests_failed": 17,
+  "focused_tests_passed": 97,
+  "python_tests_passed": 1241,
+  "javascript_tests_passed": 33,
+  "original_checkout_observed_commit": "8e5b6ff",
+  "original_checkout_modified_by_this_run": false,
+  "betting_mode": "disabled",
+  "training_capture_or_holdout_scoring_run": false
+}

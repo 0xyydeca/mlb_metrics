@@ -79,3 +79,9 @@ fetched_at_utc,as_of_date,status,changed_game_pks,window_hours,upcoming_game_cou
 2026-10-01T20:20:02Z,2026-10-01,no_changes,,6.0,1.0
 2026-10-02T00:09:57Z,2026-10-01,no_games_in_window,,6.0,
 2026-10-02T05:26:32Z,2026-10-01,no_games_in_window,,6.0,
+2026-10-02T19:55:25Z,2026-10-02,no_games_in_window,,6.0,
+2026-10-02T23:44:36Z,2026-10-02,no_games_in_window,,6.0,
+2026-10-03T05:09:37Z,2026-10-02,no_games_in_window,,6.0,
+2026-10-03T22:08:41Z,2026-10-03,recomputed,"849830,849835",6.0,2.0
+2026-10-04T00:36:05Z,2026-10-03,no_games_in_window,,6.0,
+2026-10-04T05:42:58Z,2026-10-03,no_games_in_window,,6.0,

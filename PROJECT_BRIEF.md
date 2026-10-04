@@ -1,5 +1,22 @@
 # Project brief: mlb_metrics
 
+## October 4 owner-main merge recovery
+
+- Merge verification: 1,241 Python tests passed (1,166 warnings; 176.14 seconds), 33 JavaScript tests passed, and staged whitespace checks passed. Verified 200 unique registry keys, 1,957 unique prop observation keys, 356 unique decisions/exclusions, and 19 unique audit cycles; checkpoint decision IDs match the ledger. All local contract keys are retained.
+
+- Reconciled owner commit `8e5b6ff` with published maintenance `bc2f4c0`. Retained all local contract observation keys, the additional local audit cycle, both maintenance test sets, and the local October 3 publication note. Later registry timestamps and report snapshots come from the remote history. Older checkout-state notes below describe their observation time. No captures, training, scoring, or betting settings changes were performed. Original conflict stages are archived in the working-document folder under `research/2026-10-04/merge-recovery/`.
+
+## October 4 maintenance — finality and non-participation settlement
+
+- Compared working/repository briefs and read AGENTS.md plus the five-step readiness plan. Current October 3 sections agree. Used the isolated owner-main checkout at `8723ad6`; intervening remote changes were generated data, with no source/test changes. The original checkout had 25 modified files on entry and independently advanced to local commit `8e5b6ff` during this run. That commit and the original checkout were not changed by this maintenance work.
+- Completed a bounded contract-settlement repair. The research classifier previously labeled unfinished games as binary wins/losses or non-participation settlements using partial boxscores; nullable status could crash. It also assumed last-fair-market-price settlement when the parsed contract did not specify that rule. Seventeen targeted regressions failed before the repair.
+- Binary and final non-participation labels now require an explicitly final game. Scheduled, in-progress, delayed, missing and nullable statuses remain pending; postponed/suspended/cancelled states retain their existing unresolved class. Final non-participation requires an explicit parsed last-fair-market-price rule; unspecified rules stay pending. Nullable participation, PA and hit values stay unknown rather than becoming confirmed zeros. Existing walk-only PA semantics remain intact.
+- This changes research label validation only. No historical decisions, settlements, policy registrations, freeze periods, thresholds, models, captures, or production data were rewritten. No training, backfill, holdout scoring, paid service, order or real-money enablement was run.
+- At inspected owner-main state, the dated export contains 44 hitter forecasts for October 4; saved prop ops still reports zero eligible independent-model dates and non-actionable status. This is existing metadata, not a newly generated forecast or profitability evidence.
+- Remaining prerequisites: independently validated contract-qualified forecasts, nonbinary payout modeling and provenance, immutable untouched evaluation assignment, and adequate prospective prices/outcomes under the registered protocol. Postseason remains separate. Actual venue and USD limits remain unresolved; betting stays disabled.
+
+- Verification: **1,241 Python tests passed** (1,167 warnings, 135.01 seconds), 97 focused settlement/research/paper-ops tests passed, all 33 JavaScript tests passed, and `git diff --check` passed. New cases cover unfinished games, absent settlement rules, nullable boxscore values and interrupted games. Local Python 3.14 differs from hosted Python 3.12; no hosted workflow was dispatched for this bounded repair.
+
 ## October 3 maintenance — cached game identity validation
 
 - Compared both briefs: current October 2 sections agree; older claims remain historical. Local checkout started at `1a346ed` with 22 existing modified data/report files. Used an isolated owner-main checkout at `39d8ffc` to preserve them. Remote changes since the prior repair were generated data/reports, not source changes. Actual work occurred late October 3 UTC, not at the earlier heartbeat timestamp.

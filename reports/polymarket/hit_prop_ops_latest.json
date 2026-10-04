@@ -28,32 +28,32 @@
   "elapsed_eligible_days": 0,
   "eligible_dates": [],
   "future_observations_claimed": false,
-  "generated_at_utc": "2026-10-02T21:50:04Z",
+  "generated_at_utc": "2026-10-04T18:42:03Z",
   "history_integrity": {
     "files": {
       "checkpoint_state": {
-        "bytes": 7180,
+        "bytes": 11660,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
-        "sha16": "081358e010e11b34"
+        "sha16": "7de8d9797b209147"
       },
       "cycle_log": {
-        "bytes": 13185,
+        "bytes": 131897,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
-        "sha16": "e067786dd4b271e7"
+        "sha16": "250401f39d24d2f6"
       },
       "decisions": {
-        "bytes": 152630,
+        "bytes": 265903,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/decisions.csv",
-        "sha16": "9671655a6aaad571"
+        "sha16": "564bf262f925bd9c"
       },
       "exclusions": {
-        "bytes": 52901,
+        "bytes": 86662,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/exclusions.csv",
-        "sha16": "c4526172a6582811"
+        "sha16": "b1b387aeb8fb235d"
       },
       "positions": {
         "bytes": 0,
@@ -61,18 +61,19 @@
         "sha16": null
       }
     },
-    "generated_at_utc": "2026-10-02T21:50:04Z",
+    "generated_at_utc": "2026-10-04T18:42:03Z",
     "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
     "retrievable": true
   },
   "host": "github_actions_ubuntu_latest",
   "last_cycle": {
-    "cycle_id": "hp_ops_20261002T215004Z",
+    "cycle_id": "hp_ops_20261004T184203Z",
     "n_buy": 0,
-    "n_contracts_in_denominator": 0,
-    "n_pass": 0
+    "n_contracts_in_denominator": 30,
+    "n_pass": 30
   },
   "material_policy_change_requires_new_version": true,
+  "merge_recovery_note": "Preserved additional local zero-decision audit cycle hp_ops_20261002T215004Z; refreshed only cycle-log integrity metadata. Report evaluation timestamp and gates unchanged.",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
@@ -97,9 +98,9 @@
   "reconcile": {
     "actionable": false,
     "fees_paid_total": 0.0,
-    "generated_at_utc": "2026-10-02T21:50:04Z",
+    "generated_at_utc": "2026-10-04T18:42:03Z",
     "issues": [],
-    "n_decisions": 216,
+    "n_decisions": 356,
     "n_duplicate_decision_ids": 0,
     "n_open_positions": 0,
     "n_positions": 0,
