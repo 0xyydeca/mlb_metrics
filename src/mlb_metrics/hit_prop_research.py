@@ -202,39 +202,52 @@ def classify_contract_outcome(
 
     Returns research labels only — never a trading recommendation.
     """
-    status = str(game_status or "").lower()
+    status = game_status.strip().lower() if isinstance(game_status, str) else ""
     if status in {"postponed", "cancelled", "canceled", "suspended"}:
         return {
             "settlement_class": "last_fair_market_price_or_unresolved",
             "reason": "game_postponed_or_suspended",
             "binary_yes": None,
         }
-    if started is None or plate_appearances is None:
+    # A partial boxscore is not a settled outcome, even if a hit already exists.
+    # Venue settlement can still depend on the game becoming official/final.
+    if status != "final":
+        return {
+            "settlement_class": "unknown_pending",
+            "reason": "game_not_confirmed_final",
+            "binary_yes": None,
+        }
+    if pd.isna(started) or pd.isna(plate_appearances):
         return {
             "settlement_class": "unknown_pending",
             "reason": "missing_participation_or_pa",
             "binary_yes": None,
         }
+    nonparticipation_reason = None
     if rules.get("requires_starting_lineup") and not started:
+        nonparticipation_reason = "not_in_starting_lineup"
+    elif rules.get("requires_plate_appearance") and int(plate_appearances) <= 0:
+        nonparticipation_reason = "no_plate_appearance"
+    if nonparticipation_reason:
+        if rules.get("settlement_on_non_participation") != "last_fair_market_price":
+            return {
+                "settlement_class": "unknown_pending",
+                "reason": "unspecified_non_participation_settlement",
+                "binary_yes": None,
+            }
         return {
             "settlement_class": "last_fair_market_price",
-            "reason": "not_in_starting_lineup",
-            "binary_yes": None,
-        }
-    if rules.get("requires_plate_appearance") and int(plate_appearances) <= 0:
-        return {
-            "settlement_class": "last_fair_market_price",
-            "reason": "no_plate_appearance",
+            "reason": nonparticipation_reason,
             "binary_yes": None,
         }
     # Qualifying participation: PA can be walk-only (AB=0, PA>0).
-    if hits is None:
+    if pd.isna(hits):
         return {
             "settlement_class": "unknown_pending",
             "reason": "missing_hits",
             "binary_yes": None,
             "walk_only_appearance": bool(
-                at_bats is not None and int(at_bats) == 0 and int(plate_appearances) > 0
+                pd.notna(at_bats) and int(at_bats) == 0 and int(plate_appearances) > 0
             ),
         }
     yes = int(hits) >= int(threshold)
@@ -243,7 +256,7 @@ def classify_contract_outcome(
         "reason": "qualifying_pa_with_known_hits",
         "binary_yes": yes,
         "walk_only_appearance": bool(
-            at_bats is not None and int(at_bats) == 0 and int(plate_appearances) > 0
+            pd.notna(at_bats) and int(at_bats) == 0 and int(plate_appearances) > 0
         ),
         "note": "Confirmed zero at-bats with PA>0 is walk/HBP/sac participation, not missing data.",
     }

@@ -588,3 +588,35 @@ def test_cached_duplicate_same_identity_is_still_usable():
     result = research.match_event_to_game(event, pd.DataFrame(), moneyline_registry=pd.concat([registry, registry]), requested_local_date=dt.date(2026, 9, 18))
     assert result["mapping_status"] == research.MAPPING_MAPPED
     assert result["game_pk"] == 999001
+
+
+@pytest.mark.parametrize("status", ["Scheduled", "In Progress", "Delayed", None, pd.NA])
+@pytest.mark.parametrize("started,pa,hits", [(True, 3, 0), (True, 3, 1), (False, 0, 0)])
+def test_unfinished_games_never_receive_final_prop_labels(status, started, pa, hits):
+    rules = research.parse_contract_rules("starting lineup and plate appearance; otherwise last fair market price")
+    result = research.classify_contract_outcome(started=started, plate_appearances=pa, at_bats=pa, hits=hits, game_status=status, rules=rules)
+    assert result["settlement_class"] == "unknown_pending"
+    assert result["binary_yes"] is None
+
+
+@pytest.mark.parametrize("started,pa", [(False, 0), (True, 0)])
+def test_nonparticipation_does_not_invent_unspecified_payout_rule(started, pa):
+    rules = research.parse_contract_rules("Must be in the starting lineup and record a plate appearance.")
+    result = research.classify_contract_outcome(started=started, plate_appearances=pa, at_bats=0, hits=0, game_status="Final", rules=rules)
+    assert result["settlement_class"] == "unknown_pending"
+    assert result["reason"] == "unspecified_non_participation_settlement"
+
+
+@pytest.mark.parametrize("missing", [{"started": pd.NA}, {"plate_appearances": pd.NA}, {"hits": pd.NA}, {"hits": float("nan")}])
+def test_nullable_final_boxscore_fields_remain_unknown(missing):
+    args = dict(started=True, plate_appearances=1, at_bats=0, hits=0, game_status="Final", rules=research.parse_contract_rules("starting lineup and plate appearance; otherwise last fair market price"))
+    result = research.classify_contract_outcome(**(args | missing))
+    assert result["settlement_class"] == "unknown_pending"
+    assert result["binary_yes"] is None
+
+
+@pytest.mark.parametrize("status", ["Postponed", "Suspended", "Cancelled", "Canceled"])
+def test_interrupted_games_keep_unresolved_settlement_class(status):
+    result = research.classify_contract_outcome(started=True, plate_appearances=3, at_bats=3, hits=1, game_status=status, rules={})
+    assert result["settlement_class"] == "last_fair_market_price_or_unresolved"
+    assert result["binary_yes"] is None
