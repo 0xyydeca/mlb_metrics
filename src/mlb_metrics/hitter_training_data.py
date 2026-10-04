@@ -1,5 +1,9 @@
-"""No-lookahead historical hitter-opportunity dataset: one row per
+"""Reconstructed historical hitter-opportunity dataset: one row per
 pregame candidate per (date, game_pk).
+
+Date exclusion alone does not prove historical input availability. Strict history
+mode checks recorded completion and exact-row receipt; other reconstructed
+inputs still require independent evidence. Outputs remain uncertified.
 
 This is a training-table builder, not a live model. It does not change
 pipeline.run(), predictions.select_picks, or any served artifact.
@@ -137,54 +141,74 @@ def assert_unique_opportunity_keys(df: pd.DataFrame) -> None:
         )
 
 
+def audit_history_availability(persisted, prediction_timestamp_utc):
+    """Audit row timestamps; never infer receipt from a game date or file mtime.
+
+    ``source_observed_at_utc`` must describe when these exact row values were
+    received, including corrections. Timestamp checks alone do not authenticate
+    an archive or certify other inputs (schedule, roster, model training).
+    """
+    pred = pd.Timestamp(prediction_timestamp_utc)
+    if pd.isna(pred) or pred.tzinfo is None:
+        raise ValueError("prediction cutoff must be an explicit timezone-aware timestamp")
+    pred = pred.tz_convert("UTC")
+
+    def aware(value):
+        try:
+            ts = pd.Timestamp(value)
+            return ts.tz_convert("UTC") if not pd.isna(ts) and ts.tzinfo is not None else pd.NaT
+        except (ValueError, TypeError, OverflowError):
+            return pd.NaT
+
+    result = pd.DataFrame(index=persisted.index)
+    for column, label in ((GAME_COMPLETED_AT_COLUMN, "completion"),
+                          ("source_observed_at_utc", "observation")):
+        values = persisted[column] if column in persisted else pd.Series(pd.NaT, index=persisted.index)
+        times = pd.to_datetime(values.map(aware), utc=True)
+        result[label + "_missing_or_invalid"] = times.isna()
+        result[label + "_not_before_cutoff"] = times.notna() & (times >= pred)
+    result["timestamps_eligible"] = ~result.any(axis=1)
+    return result
+
+
 def slice_history_before_game(
     persisted: pd.DataFrame,
     as_of_date,
     *,
     target_game_pk=None,
     prediction_timestamp_utc=None,
+    require_observed_history=False,
 ) -> pd.DataFrame:
-    """Statcast rows strictly available when computing pregame features.
+    """Select historical rows; legacy date reconstruction is NOT certification.
 
-    Morning snapshot (`prediction_timestamp_utc` is None): `game_date <
-    as_of_date`. Same-date doubleheader game one is excluded from game
-    two, even if a `game_completed_at` column is present - completion
-    times are ignored unless a caller opts into a later snapshot.
-
-    Later snapshot: rows from an earlier same-date `game_pk` are included
-    only when `game_completed_at` is a real timestamp strictly before
-    `prediction_timestamp_utc`. Target-game rows are never included.
-    Missing/unparseable completion times do not count as completed.
+    Strict mode requires completion AND receipt of the exact row version before
+    the cutoff for every date. Missing/naive/future timestamps fail closed.
+    Without an explicit cutoff, UTC midnight is a reconstruction convention;
+    same-date games are excluded. Legacy mode retains date-only compatibility.
     """
     if persisted.empty:
         return persisted.copy()
-
     as_of = _normalize_date(as_of_date)
     dates = _date_series(persisted["game_date"])
-    prior = persisted.loc[dates < as_of].copy()
-
     exclude_target = persisted["game_pk"].ne(target_game_pk) if target_game_pk is not None else True
+    if require_observed_history:
+        cutoff = (morning_feature_as_of_timestamp(as_of_date)
+                  if prediction_timestamp_utc is None else prediction_timestamp_utc)
+        audit = audit_history_availability(persisted, cutoff)
+        date_ok = dates < as_of if prediction_timestamp_utc is None else dates <= as_of
+        return persisted.loc[date_ok & exclude_target & audit["timestamps_eligible"]].copy()
 
+    prior = persisted.loc[(dates < as_of) & exclude_target].copy()
     if prediction_timestamp_utc is None:
-        if target_game_pk is None:
-            return prior
-        return prior.loc[prior["game_pk"].ne(target_game_pk)].copy()
-
+        return prior
     same_day = persisted.loc[(dates == as_of) & exclude_target].copy()
     if same_day.empty or GAME_COMPLETED_AT_COLUMN not in same_day.columns:
         return prior
-
     pred = pd.Timestamp(prediction_timestamp_utc)
-    if pred.tzinfo is None:
-        pred = pred.tz_localize("UTC")
-    else:
-        pred = pred.tz_convert("UTC")
-
+    pred = pred.tz_localize("UTC") if pred.tzinfo is None else pred.tz_convert("UTC")
     completed_at = pd.to_datetime(same_day[GAME_COMPLETED_AT_COLUMN], utc=True, errors="coerce")
     usable = same_day.loc[completed_at.notna() & (completed_at < pred)]
-    if usable.empty:
-        return prior
-    return pd.concat([prior, usable], ignore_index=True)
+    return pd.concat([prior, usable], ignore_index=True) if not usable.empty else prior
 
 
 def batter_team_appearances(statcast: pd.DataFrame) -> pd.DataFrame:
@@ -558,6 +582,8 @@ def _attach_pregame_features(
     rows["as_of_date"] = _normalize_date(as_of_date)
     ts = pd.Timestamp(feature_as_of_timestamp)
     rows["feature_as_of_timestamp"] = ts.isoformat()
+    rows["feature_availability_status"] = "reconstructed_unverified"
+    rows["prediction_time_availability_certified"] = False
 
     last_game = pd.to_datetime(rows["Last_Game_Date"], errors="coerce")
     rows["Days_Rest"] = (rows["as_of_date"] - last_game.dt.normalize()).dt.days
@@ -599,6 +625,7 @@ def assemble_hitter_opportunity_dataset(
     lookback_days: int | None = None,
     prediction_timestamp_utc=None,
     persisted: pd.DataFrame | None = None,
+    require_observed_history: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build the opportunity log and per-team-game coverage tables.
 
@@ -660,6 +687,7 @@ def assemble_hitter_opportunity_dataset(
                 date,
                 target_game_pk=game_pk,
                 prediction_timestamp_utc=prediction_timestamp_utc,
+                require_observed_history=require_observed_history,
             )
             if history.empty:
                 continue

@@ -1,0 +1,68 @@
+{
+  "status": "insufficient_evidence",
+  "audit_date": "2026-10-04",
+  "source": "/Users/kyaryeh/Documents/ChatGPT/MLB stats/research/2026-10-02/remaining-work/hitter_opportunity_development.csv",
+  "source_sha256": "2bf06b0abd5be03c710a1474515537ee5cad0b9bd3cb881e876cf1d4df262c52",
+  "rows": 27068,
+  "has_exact_row_receipt": false,
+  "has_completion": false,
+  "raw_file_schema_audit": [
+    {
+      "path": "data/raw/statcast_2026_03.parquet",
+      "rows": 22610,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_04.parquet",
+      "rows": 117333,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_05.parquet",
+      "rows": 121779,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_06.parquet",
+      "rows": 115920,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_07.parquet",
+      "rows": 109421,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_08.parquet",
+      "rows": 123373,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_09.parquet",
+      "rows": 108683,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    },
+    {
+      "path": "data/raw/statcast_2026_10.parquet",
+      "rows": 1398,
+      "has_completion": false,
+      "has_exact_row_receipt": false
+    }
+  ],
+  "prediction_time_availability_certified": false,
+  "reason": "Reconstructed feature cutoffs are not observation evidence. Schema audit does not authenticate historic availability. No records or artifacts rewritten.",
+  "verification": {
+    "affected_module_tests_passed": 69,
+    "final_timing_tests_passed": 24,
+    "javascript_tests_passed": 33,
+    "full_suite": "interrupted_in_urllib3_connection_after_98_passes_159.94_seconds",
+    "hosted_ci": "not_run"
+  }
+}

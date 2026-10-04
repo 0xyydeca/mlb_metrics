@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 4 historical timing guard repair
+
+- Added strict observed-history filtering to the opportunity builder (`require_observed_history=True`; CLI `--require-observed-history`). Every included Statcast row needs timezone-aware game completion and exact-version `source_observed_at_utc` strictly before its cutoff, including prior-date games. Missing, naive, invalid, equal-cutoff and future observations are rejected. Target-game rows are now excluded even when their recorded game date precedes the forecast date.
+- Legacy reconstruction remains available for development compatibility; newly reconstructed feature rows explicitly carry `feature_availability_status=reconstructed_unverified` and `prediction_time_availability_certified=False`. Strict runs cannot append to an existing output file. Passing row timestamp checks does not authenticate archives or certify schedule, roster, model-training inputs or end-to-end availability.
+- Saved read-only audit: `reports/model_validation/historical_input_timing_2026-10-04.json`. The 27,068-row development input and all eight March–October 2026 raw Statcast files lack exact-row receipt and completion fields. Old cutoffs cannot establish availability. Existing datasets, models, frozen periods and betting gates were untouched. Remaining blocker: authentic historical snapshots or prospective immutable input capture across all input sources; no retrospective certification was granted.
+- Verification: 69 affected-module tests passed; final timing/CLI suite 24 passed (three added after the 69-test run); 33 JavaScript tests passed; whitespace check passed. Full Python suite was stopped while blocked in urllib3 connection code after 98 passes / 159.94 seconds; full-suite and hosted CI remain unverified. No production capture, training or backfill executed.
+
+
 ## October 4 market-price and fee benchmark
 
 - Added a read-only benchmark against same-contract Polymarket US prices rather than a historical-frequency baseline. Exact venue/market/game/player/rules identity and genuine pregame forecast/artifact/input provenance are required. Compare model expected payout bounds with the same-time two-sided midpoint and with the executable Yes ask observed after the fixed 60-second delay, plus rounded fees. Missing, stale, post-start, ambiguous, under-sized or mismatched-rule quotes are excluded explicitly; no closing prices substituted.

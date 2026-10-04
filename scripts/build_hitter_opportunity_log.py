@@ -37,6 +37,8 @@ def _coverage_path(output: str) -> str:
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--raw-dir", default="data/raw")
+    parser.add_argument("--require-observed-history", action="store_true",
+                        help="Require exact-row receipt and completion before each reconstructed cutoff; does not certify other inputs.")
     parser.add_argument("--season", type=int, default=config.SEASON_START.year)
     parser.add_argument("--days", type=int, default=None)
     parser.add_argument("--output", default="data/predictions/hitter_opportunity_log.csv")
@@ -48,8 +50,12 @@ def main():
     args = parser.parse_args()
     coverage_output = args.coverage_output or _coverage_path(args.output)
 
+    if args.require_observed_history and (os.path.exists(args.output) or os.path.exists(coverage_output)):
+        raise ValueError("Strict history runs require new output and coverage paths; cannot mix legacy rows into strict output")
+
     new_rows, new_coverage = hitter_training_data.assemble_hitter_opportunity_dataset(
         args.raw_dir, args.season, args.days,
+        require_observed_history=args.require_observed_history,
     )
 
     if new_rows.empty and not os.path.exists(args.output):
