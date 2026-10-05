@@ -1,0 +1,11 @@
+{
+  "betting_promotion_gate": null,
+  "methods": {
+    "residual_logistic": null
+  },
+  "source_report": "reports/model_validation/game_residual_nested.json",
+  "artifact_id": null,
+  "validation_status": "insufficient_data",
+  "artifact_saved": false,
+  "artifact_loaded": false
+}

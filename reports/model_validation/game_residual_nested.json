@@ -1,0 +1,28 @@
+{
+  "status": "insufficient_data",
+  "validation_status": "insufficient_data",
+  "artifact_saved": false,
+  "artifact_loaded": false,
+  "n_outer_folds": 0,
+  "methods": {},
+  "freeze_tail_dates": [
+    "2026-09-05 00:00:00",
+    "2026-09-06 00:00:00",
+    "2026-09-08 00:00:00",
+    "2026-09-09 00:00:00",
+    "2026-09-10 00:00:00",
+    "2026-09-11 00:00:00",
+    "2026-09-12 00:00:00",
+    "2026-09-13 00:00:00",
+    "2026-10-03 00:00:00"
+  ],
+  "eligible_dates": 9,
+  "date_range": {
+    "start": "2026-09-05 00:00:00",
+    "end": "2026-10-03 00:00:00"
+  },
+  "require_complete_test_blocks": true,
+  "preflight_valid_prediction_dates": 15,
+  "preflight_outer_folds_possible": 0,
+  "training_history_days": 120
+}
