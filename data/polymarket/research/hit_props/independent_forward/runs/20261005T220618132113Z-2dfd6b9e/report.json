@@ -1,0 +1,41 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-ryamcm-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-spejon-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-taywal-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-tregri-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-vicmes-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-yandia-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 0,
+  "finished_at_utc": "2026-10-05T22:07:19.682086+00:00",
+  "forecasts_saved": 12,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 1975,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261005T220618132113Z-2dfd6b9e",
+  "started_at_utc": "2026-10-05T22:06:18.132287+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

@@ -1,0 +1,136 @@
+{
+  "asks": [
+    {
+      "price": 0.64,
+      "size": 743.17
+    },
+    {
+      "price": 0.65,
+      "size": 8109.99
+    },
+    {
+      "price": 0.66,
+      "size": 12091.0
+    },
+    {
+      "price": 0.67,
+      "size": 375.0
+    },
+    {
+      "price": 0.68,
+      "size": 1250.0
+    },
+    {
+      "price": 0.69,
+      "size": 1000.0
+    },
+    {
+      "price": 0.74,
+      "size": 7037.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 7500.0
+    }
+  ],
+  "best_ask": 0.64,
+  "best_ask_size": 743.17,
+  "best_bid": 0.63,
+  "best_bid_size": 330.63,
+  "bids": [
+    {
+      "price": 0.63,
+      "size": 330.63
+    },
+    {
+      "price": 0.62,
+      "size": 40.0
+    },
+    {
+      "price": 0.61,
+      "size": 1025.0
+    },
+    {
+      "price": 0.6,
+      "size": 765.0
+    },
+    {
+      "price": 0.53,
+      "size": 87.23
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.19,
+      "size": 1834.9
+    },
+    {
+      "price": 0.08,
+      "size": 26.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 7500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.635,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.64,
+  "market_id": "1208067",
+  "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-codbel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "66df122c4c9d30350682b0fa31427e5c41b84e648136d036bb24da6b175bdc56",
+  "receive_time_utc": "2026-10-05T22:06:18Z",
+  "request_time_utc": "2026-10-05T22:06:18Z",
+  "source_transact_time_utc": "2026-10-05T22:05:58.455887689Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

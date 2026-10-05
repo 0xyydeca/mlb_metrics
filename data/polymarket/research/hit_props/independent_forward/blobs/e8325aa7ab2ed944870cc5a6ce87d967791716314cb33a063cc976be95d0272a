@@ -1,0 +1,148 @@
+{
+  "asks": [
+    {
+      "price": 0.62,
+      "size": 748.15
+    },
+    {
+      "price": 0.63,
+      "size": 8266.53
+    },
+    {
+      "price": 0.64,
+      "size": 13006.0
+    },
+    {
+      "price": 0.65,
+      "size": 1875.0
+    },
+    {
+      "price": 0.66,
+      "size": 1750.0
+    },
+    {
+      "price": 0.69,
+      "size": 10164.0
+    },
+    {
+      "price": 0.7,
+      "size": 500.0
+    },
+    {
+      "price": 0.82,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 7500.0
+    }
+  ],
+  "best_ask": 0.62,
+  "best_ask_size": 748.15,
+  "best_bid": 0.61,
+  "best_bid_size": 6.46,
+  "bids": [
+    {
+      "price": 0.61,
+      "size": 6.46
+    },
+    {
+      "price": 0.6,
+      "size": 1484.0
+    },
+    {
+      "price": 0.59,
+      "size": 40.0
+    },
+    {
+      "price": 0.58,
+      "size": 935.71
+    },
+    {
+      "price": 0.57,
+      "size": 88.72
+    },
+    {
+      "price": 0.53,
+      "size": 1125.0
+    },
+    {
+      "price": 0.52,
+      "size": 288.46
+    },
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.2,
+      "size": 1886.93
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 25.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 7501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.615,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1208061",
+  "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-benric-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "298bb27fcb678025052fd7190fe915a80424c704ade618a7c52a9a7f20ea37ff",
+  "receive_time_utc": "2026-10-05T22:07:18Z",
+  "request_time_utc": "2026-10-05T22:07:18Z",
+  "source_transact_time_utc": "2026-10-05T22:06:51.005511637Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

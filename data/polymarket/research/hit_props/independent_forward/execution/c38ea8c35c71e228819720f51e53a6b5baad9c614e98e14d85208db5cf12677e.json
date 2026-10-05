@@ -1,0 +1,7 @@
+{
+  "book_sha256": "d706b29d78a7bb799ebef3c857a728b46020fe1f50a9d6f4a2da2f1c430c85a3",
+  "forecast_id": "c38ea8c35c71e228819720f51e53a6b5baad9c614e98e14d85208db5cf12677e",
+  "hypothetical_fill_only": true,
+  "reason": "ValueError: delayed_quote_outside_registered_window",
+  "status": "missing_execution_quote"
+}

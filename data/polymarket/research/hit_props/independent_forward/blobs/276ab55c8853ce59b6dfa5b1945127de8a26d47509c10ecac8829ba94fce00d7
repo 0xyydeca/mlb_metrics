@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.46,
+      "size": 5.0
+    },
+    {
+      "price": 0.47,
+      "size": 25.0
+    },
+    {
+      "price": 0.48,
+      "size": 210.0
+    },
+    {
+      "price": 0.5,
+      "size": 15904.0
+    },
+    {
+      "price": 0.51,
+      "size": 389.23
+    },
+    {
+      "price": 0.52,
+      "size": 750.0
+    },
+    {
+      "price": 0.57,
+      "size": 5733.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 7500.0
+    }
+  ],
+  "best_ask": 0.46,
+  "best_ask_size": 5.0,
+  "best_bid": 0.45,
+  "best_bid_size": 419.0,
+  "bids": [
+    {
+      "price": 0.45,
+      "size": 419.0
+    },
+    {
+      "price": 0.44,
+      "size": 25.0
+    },
+    {
+      "price": 0.43,
+      "size": 239.86
+    },
+    {
+      "price": 0.39,
+      "size": 276.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 7500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.455,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1234387",
+  "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-auswel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "1921c4ff68dee67882c8e2db48ba2e7b558cfa1a39547114c5a0afb97e7c9d6b",
+  "receive_time_utc": "2026-10-05T22:07:18Z",
+  "request_time_utc": "2026-10-05T22:07:18Z",
+  "source_transact_time_utc": "2026-10-05T22:06:57.347974496Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

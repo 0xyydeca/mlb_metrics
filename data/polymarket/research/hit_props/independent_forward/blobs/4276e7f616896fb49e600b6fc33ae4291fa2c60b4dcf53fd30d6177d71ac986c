@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.65,
+      "size": 414.3
+    },
+    {
+      "price": 0.67,
+      "size": 500.0
+    },
+    {
+      "price": 0.68,
+      "size": 750.0
+    },
+    {
+      "price": 0.7,
+      "size": 500.0
+    },
+    {
+      "price": 0.73,
+      "size": 10000.0
+    },
+    {
+      "price": 0.88,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 7500.0
+    }
+  ],
+  "best_ask": 0.65,
+  "best_ask_size": 414.3,
+  "best_bid": 0.64,
+  "best_bid_size": 4.74,
+  "bids": [
+    {
+      "price": 0.64,
+      "size": 4.74
+    },
+    {
+      "price": 0.63,
+      "size": 0.2
+    },
+    {
+      "price": 0.58,
+      "size": 5.0
+    },
+    {
+      "price": 0.53,
+      "size": 283.01
+    },
+    {
+      "price": 0.44,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2025.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 7500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.645,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1208064",
+  "market_slug": "astatc-mlb-nyy-tb-2026-10-05-hits-luigar2-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "85aaafdca8e6e4dcfe96a7a0bbfbcf4d55c408048319302c4ae739ba05fc1e6d",
+  "receive_time_utc": "2026-10-05T22:07:19Z",
+  "request_time_utc": "2026-10-05T22:07:19Z",
+  "source_transact_time_utc": "2026-10-05T22:06:30.896355876Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
