@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import time
 import urllib.error
 import urllib.parse
@@ -497,22 +498,43 @@ class PolymarketUSAdapter:
         )
 
     def fetch_market_settlement(self, market_slug: str) -> dict[str, Any]:
-        """Official settlement price when available (docs: GET .../settlement).
+        """Read the expected slug/settlement response, failing closed on bad data.
 
-        Returns ``{"slug", "settlement", "request_time_utc", "receive_time_utc"}``.
+        Retains canonical parsed response evidence, not original HTTP bytes.
+        Live schema, payout orientation and finality still need verification;
+        this method does not certify contract semantics or invent final status.
         404 / unsettled markets raise RuntimeError — callers must keep positions open.
         """
+        if not isinstance(market_slug, str) or not market_slug.strip():
+            raise ValueError("Settlement request requires a nonempty market slug")
         request_time = _utc_now_iso()
         payload = self._http_get_json(
-            f"/v1/markets/{urllib.parse.quote(market_slug)}/settlement"
+            f"/v1/markets/{urllib.parse.quote(market_slug, safe='')}/settlement"
         )
         receive_time = _utc_now_iso()
-        if not isinstance(payload, dict) or "settlement" not in payload:
-            raise RuntimeError(f"Unexpected settlement payload for {market_slug}: {payload!r}")
+        if not isinstance(payload, dict) or payload.get("slug") != market_slug:
+            raise RuntimeError("Settlement response missing or mismatching requested market slug")
+        value = payload.get("settlement")
+        if isinstance(value, bool):
+            raise RuntimeError("Invalid settlement payout: boolean")
+        try:
+            price = float(value)
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise RuntimeError("Invalid settlement payout") from exc
+        if not math.isfinite(price) or not 0 <= price <= 1:
+            raise RuntimeError("Settlement payout must be finite and within [0, 1]")
+        # Canonical parsed JSON, not the original HTTP bytes or an authenticity
+        # certificate. Preserve it so downstream normalization remains auditable.
+        try:
+            canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+        except (TypeError, ValueError) as exc:
+            raise RuntimeError("Settlement response is not valid finite JSON") from exc
         return {
-            "slug": payload.get("slug") or market_slug,
-            "settlement": float(payload["settlement"]),
+            "slug": market_slug,
+            "settlement": price,
             "request_time_utc": request_time,
             "receive_time_utc": receive_time,
             "source": "polymarket_us_settlement_api",
+            "response_payload": json.loads(canonical),
+            "response_payload_sha256": hashlib.sha256(canonical).hexdigest(),
         }

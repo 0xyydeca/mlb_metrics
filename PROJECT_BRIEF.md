@@ -1,5 +1,15 @@
 # Project brief: mlb_metrics
 
+## October 5 maintenance — settlement adapter response validation
+
+- Both briefs agreed on current October 4 work; checkout was clean at `5a9e95c`. Read AGENTS.md and the readiness plan. Fresh local archive audit: two capture runs, zero forecasts, zero matched execution quotes, no integrity errors and no opened outcomes. This is local evidence only. GitHub API status check failed again; hosted collection remains unverified.
+- Reproduced 20 failing settlement-adapter regression cases (three existing behaviors passed). Adapter no longer substitutes the requested slug when the response lacks identity, accepts a different market, or treats booleans/nonfinite/out-of-range values as payouts. Invalid request IDs fail before network access; market path segments are encoded. Valid zero, one and fractional values remain supported.
+- Preserve the parsed response plus its canonical JSON SHA-256 and receipt/request timestamps. This is not raw HTTP evidence, proof of authenticity, verified payout orientation, or finality certification. Live venue schema/semantics remain unverified; no actual settlement endpoint called and no registered outcomes opened.
+- Verification: 93 related adapter, protocol, ledger and fractional-settlement tests passed in 4.79 seconds; whitespace check passed. Full suite/hosted CI not run for this bounded repair. Report: `reports/model_validation/settlement_adapter_2026-10-05.json`. No forecasts, models, frozen policy, training data, nested periods, payouts or betting settings changed.
+- Remaining blockers: actual venue confirmation, historical input provenance, formal untouched holdout assignment, verified actual settlement records, hosted capture verification and sufficient prospective price-matched evidence. Betting remains disabled; this is an engineering repair, not evidence of profitability.
+
+- Publishing encountered newer owner-main generated-data commits. Inspected and rebased onto `6cc2a47` (no intervening source changes). Retrieved two additional automated forward archive runs at October 5 01:04 and 05:59 UTC. Fresh synced audit: four runs, zero failed/incomplete runs, zero forecasts, zero matched quotes, no integrity errors; 72 cumulative cutoff exclusions across repeated captures. Archived reports confirm hosted recorder execution, but GitHub API run conclusion remains unavailable. Earlier local-only counts above describe the pre-fetch snapshot.
+
 ## October 4 independent prospective capture implementation
 
 - Added `scripts/capture_hit_prop_forward.py` and a separate immutable `independent_forward` research archive. Pinned the existing development artifact SHA-256 before deserialization; captured exact input bytes, feature matrices, model and rule identity, initial executable book, prediction timestamp and persistence receipt. First pregame forecast per contract is retained, with explicit candidate exclusions and request-budget omissions. Same-player doubleheader games remain separate. All records remain non-actionable; historical training and formal evaluation remain uncertified.

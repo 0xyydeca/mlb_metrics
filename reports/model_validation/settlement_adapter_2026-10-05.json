@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-05",
+  "component": "settlement_adapter_validation",
+  "before": {
+    "failed": 20,
+    "passed": 3
+  },
+  "after": {
+    "related_tests_passed": 93
+  },
+  "live_settlement_endpoint_called": false,
+  "live_schema_and_finality_verified": false,
+  "hosted_status": "github_api_connection_failed",
+  "local_archive": {
+    "capture_runs": 2,
+    "forecasts": 0,
+    "matched_quotes": 0,
+    "integrity_errors": 0
+  },
+  "outcomes_opened": false,
+  "verdict": "insufficient_evidence",
+  "real_money_ready": false,
+  "full_suite": "not_run_bounded_repair",
+  "modes_unchanged": true,
+  "synced_owner_main": "6cc2a47",
+  "synced_archive_audit": {
+    "status": "insufficient_evidence",
+    "forecasts": 0,
+    "intact_pregame_forecasts": 0,
+    "execution_quotes_matched": 0,
+    "integrity_errors": [],
+    "missing_execution": 0,
+    "cohort_counts": {},
+    "formal_eligible_dates": 0,
+    "outcomes_opened": false,
+    "realized_returns": null,
+    "real_money_ready": false,
+    "remaining_gates": [
+      "historical_training_provenance_uncertified",
+      "immutable_formal_holdout_assignment_missing",
+      "registered_sample_and_precision_requirements",
+      "verified_actual_contract_settlements_required"
+    ],
+    "capture_runs": 4,
+    "failed_runs": 0,
+    "incomplete_runs": 0,
+    "exclusion_reason_counts": {
+      "inside_entry_cutoff_or_invalid_start": 72
+    }
+  },
+  "hosted_recorder_evidence": "two_additional_runs_retrieved_from_owner_automated_data_commits; overall workflow conclusion unavailable"
+}
