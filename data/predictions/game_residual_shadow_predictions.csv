@@ -171,3 +171,4 @@ date,game_pk,home_team,away_team,market_home_win_probability,home_win_probabilit
 2026-10-05 00:00:00,849839,TB,NYY,0.4687499999999999,0.4984838635951756,0.4687499999999999,0.0,market_only_fallback,v1-market-residual,,shadow,lineup_lock,True,missing_artifact
 2026-10-06 00:00:00,849819,ATL,LAD,0.4891657638136511,0.4990948409233241,0.4891657638136511,0.0,market_only_fallback,v1-market-residual,,shadow,morning,True,missing_artifact
 2026-10-06 00:00:00,849826,SD,MIL,0.5537388434710868,0.5412139047028134,0.5537388434710868,0.0,market_only_fallback,v1-market-residual,,shadow,morning,True,missing_artifact
+2026-10-06 00:00:00,849819,ATL,LAD,0.5010897994768962,0.4990948409233241,0.5010897994768962,0.0,market_only_fallback,v1-market-residual,,shadow,lineup_lock,True,missing_artifact
