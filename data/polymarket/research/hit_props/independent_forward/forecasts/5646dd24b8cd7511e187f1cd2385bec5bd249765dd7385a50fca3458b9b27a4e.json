@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849826.0,
+    "game_type": "D",
+    "key_mlbam": 687957.0,
+    "market_id": "1233629",
+    "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-dushar-gte1",
+    "requested_local_date": "2026-10-06",
+    "rules_hash": "b9e27e59d56be4cc",
+    "rules_text": "This market will settle to Yes if Dustin Harris records 1 or more hits in the Milwaukee Brewers vs San Diego Padres MLB NL Division Series Game 3 scheduled for 2026-10-06 at 9:30PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-07T01:30:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "f351263b335e5a7466f0d5df972c295112b1ccd509770c249ffbce01a76bf571",
+  "forecast_id": "5646dd24b8cd7511e187f1cd2385bec5bd249765dd7385a50fca3458b9b27a4e",
+  "forecast_time_utc": "2026-10-06T23:58:40.082766+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "ab8ea382cb57854409a1c5d07f531743e4b3e892e2f0bc447c218c8aca9e48d8",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-06T23:58:39.654103+00:00",
+  "manifest_sha256": "6c82ef31e4102e3772970f227b59989afceb8d459067b029993034389901c09c",
+  "prediction_book_sha256": "925bf0f8cf3039c3d74178130c90cacd4e1d6b524f40db1204a31a8eac86fba2",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.12372687055754376,
+    "qualifying_hit": 0.561136939665129,
+    "qualifying_no_hit": 0.31513618977732716
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261006T235839644002Z-8addd29f"
+}

@@ -1,0 +1,136 @@
+{
+  "asks": [
+    {
+      "price": 0.7,
+      "size": 4139.08
+    },
+    {
+      "price": 0.71,
+      "size": 22670.69
+    },
+    {
+      "price": 0.72,
+      "size": 3177.0
+    },
+    {
+      "price": 0.73,
+      "size": 1000.0
+    },
+    {
+      "price": 0.74,
+      "size": 500.0
+    },
+    {
+      "price": 0.76,
+      "size": 3983.0
+    },
+    {
+      "price": 0.77,
+      "size": 2000.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32499.0
+    }
+  ],
+  "best_ask": 0.7,
+  "best_ask_size": 4139.08,
+  "best_bid": 0.69,
+  "best_bid_size": 5751.49,
+  "bids": [
+    {
+      "price": 0.69,
+      "size": 5751.49
+    },
+    {
+      "price": 0.68,
+      "size": 60.0
+    },
+    {
+      "price": 0.67,
+      "size": 40.0
+    },
+    {
+      "price": 0.64,
+      "size": 6082.23
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.695,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.7,
+  "market_id": "1223970",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-fertat-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "13ad92d6979f6a021ef5b634632f5c8154a31582aee0668fd55feb969012f17e",
+  "receive_time_utc": "2026-10-06T23:58:40.294564Z",
+  "request_time_utc": "2026-10-06T23:58:40.215982Z",
+  "source_transact_time_utc": "2026-10-06T23:58:02.746764418Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

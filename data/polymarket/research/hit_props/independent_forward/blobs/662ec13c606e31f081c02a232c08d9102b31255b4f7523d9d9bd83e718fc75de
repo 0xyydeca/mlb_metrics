@@ -1,0 +1,120 @@
+{
+  "asks": [
+    {
+      "price": 0.5,
+      "size": 408.17
+    },
+    {
+      "price": 0.51,
+      "size": 730.0
+    },
+    {
+      "price": 0.52,
+      "size": 10.0
+    },
+    {
+      "price": 0.53,
+      "size": 4650.0
+    },
+    {
+      "price": 0.54,
+      "size": 15669.0
+    },
+    {
+      "price": 0.55,
+      "size": 304.0
+    },
+    {
+      "price": 0.56,
+      "size": 750.0
+    },
+    {
+      "price": 0.57,
+      "size": 1979.0
+    },
+    {
+      "price": 0.58,
+      "size": 1016.77
+    },
+    {
+      "price": 0.95,
+      "size": 500.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3000.0
+    },
+    {
+      "price": 0.99,
+      "size": 7500.0
+    }
+  ],
+  "best_ask": 0.5,
+  "best_ask_size": 408.17,
+  "best_bid": 0.49,
+  "best_bid_size": 1663.05,
+  "bids": [
+    {
+      "price": 0.49,
+      "size": 1663.05
+    },
+    {
+      "price": 0.47,
+      "size": 144.0
+    },
+    {
+      "price": 0.43,
+      "size": 329.0
+    },
+    {
+      "price": 0.06,
+      "size": 62.0
+    },
+    {
+      "price": 0.05,
+      "size": 500.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3000.0
+    },
+    {
+      "price": 0.01,
+      "size": 7500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.495,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.49,
+  "market_id": "1262600",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-ethsal-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "e8524c8b7ebe59adb20d1808be06e8befce0b9e61baf021457d225b512e1c2ea",
+  "receive_time_utc": "2026-10-06T23:58:40.201596Z",
+  "request_time_utc": "2026-10-06T23:58:40.086315Z",
+  "source_transact_time_utc": "2026-10-06T23:58:36.849012376Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

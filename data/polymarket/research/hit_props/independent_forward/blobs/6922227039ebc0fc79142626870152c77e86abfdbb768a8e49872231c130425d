@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.62,
+      "size": 25728.15
+    },
+    {
+      "price": 0.64,
+      "size": 1250.0
+    },
+    {
+      "price": 0.65,
+      "size": 2500.0
+    },
+    {
+      "price": 0.66,
+      "size": 1000.0
+    },
+    {
+      "price": 0.67,
+      "size": 1000.0
+    },
+    {
+      "price": 0.68,
+      "size": 468.75
+    },
+    {
+      "price": 0.72,
+      "size": 18336.0
+    },
+    {
+      "price": 0.85,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32499.0
+    }
+  ],
+  "best_ask": 0.62,
+  "best_ask_size": 25728.15,
+  "best_bid": 0.61,
+  "best_bid_size": 12.07,
+  "bids": [
+    {
+      "price": 0.61,
+      "size": 12.07
+    },
+    {
+      "price": 0.6,
+      "size": 401.0
+    },
+    {
+      "price": 0.59,
+      "size": 10.0
+    },
+    {
+      "price": 0.58,
+      "size": 300.0
+    },
+    {
+      "price": 0.57,
+      "size": 981.0
+    },
+    {
+      "price": 0.56,
+      "size": 3213.0
+    },
+    {
+      "price": 0.51,
+      "size": 7406.0
+    },
+    {
+      "price": 0.5,
+      "size": 300.0
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.615,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1223982",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-britur-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "03fee29279931841bea18f77d77496305815b8be991e18595bf96b37876b33bc",
+  "receive_time_utc": "2026-10-06T23:58:39.810034Z",
+  "request_time_utc": "2026-10-06T23:58:39.721559Z",
+  "source_transact_time_utc": "2026-10-06T23:58:06.706348450Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

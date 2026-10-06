@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.51,
+      "size": 32.37
+    },
+    {
+      "price": 0.52,
+      "size": 10.2
+    },
+    {
+      "price": 0.56,
+      "size": 1000.0
+    },
+    {
+      "price": 0.57,
+      "size": 2067.0
+    },
+    {
+      "price": 0.58,
+      "size": 17438.0
+    },
+    {
+      "price": 0.59,
+      "size": 2447.15
+    },
+    {
+      "price": 0.6,
+      "size": 750.0
+    },
+    {
+      "price": 0.62,
+      "size": 394.73
+    },
+    {
+      "price": 0.63,
+      "size": 11278.0
+    },
+    {
+      "price": 0.83,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 7500.0
+    }
+  ],
+  "best_ask": 0.51,
+  "best_ask_size": 32.37,
+  "best_bid": 0.5,
+  "best_bid_size": 642.01,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 642.01
+    },
+    {
+      "price": 0.46,
+      "size": 258.0
+    },
+    {
+      "price": 0.45,
+      "size": 333.33
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 347.0
+    },
+    {
+      "price": 0.01,
+      "size": 7500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.505,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.5,
+  "market_id": "1233629",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-dushar-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "9efe4477b0444309fe9a27dddd718e4851f67de2cd713a27eb2a2c2f0ed25956",
+  "receive_time_utc": "2026-10-06T23:59:40.616847Z",
+  "request_time_utc": "2026-10-06T23:59:40.447937Z",
+  "source_transact_time_utc": "2026-10-06T23:59:12.257993108Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

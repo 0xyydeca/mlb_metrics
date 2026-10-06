@@ -1,0 +1,41 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-manmac-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-salfre-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-samtay-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-tyfra-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-wilcon2-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-xanbog-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 12,
+  "finished_at_utc": "2026-10-06T23:59:41.741985+00:00",
+  "forecasts_saved": 12,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 1993,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261006T235839644002Z-8addd29f",
+  "started_at_utc": "2026-10-06T23:58:39.644161+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}
