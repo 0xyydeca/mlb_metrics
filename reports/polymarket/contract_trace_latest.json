@@ -1,9 +1,17 @@
 {
   "actionable_suppressed": true,
   "away_team": "LAD",
-  "baseball": null,
+  "baseball": {
+    "away_lineup_status": "confirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-10-06T20:26:28Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
   "best_ask": 0.505,
-  "best_ask_size": 468387.15,
+  "best_ask_size": 2164795.53,
   "best_bid": 0.5,
   "contract_url": "https://polymarket.us/event/mlb-lad-atl-2026-10-06",
   "event_slug": "mlb-lad-atl-2026-10-06",
@@ -15,7 +23,6 @@
   "market_id": "1181266",
   "market_slug": "aec-mlb-lad-atl-2026-10-06",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-06T06:38:03Z",
-  "quote_request_time_utc": "2026-10-06T06:38:03Z",
+  "quote_receive_time_utc": "2026-10-06T20:26:28.398635Z",
+  "quote_request_time_utc": "2026-10-06T20:26:28.334341Z",
   "rules_hash": "714f92ef1fefb0a9",
   "rules_text_excerpt": "This market will settle to the winner of the Los Angeles Dodgers vs Atlanta Braves MLB NL Division Series Game 3 scheduled for 2026-10-06 at 6:00PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended an",
   "scheduled_start_utc": "2026-10-06T22:00:00Z",

@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.59,
+      "size": 6721.56
+    },
+    {
+      "price": 0.6,
+      "size": 25662.08
+    },
+    {
+      "price": 0.61,
+      "size": 5.1
+    },
+    {
+      "price": 0.68,
+      "size": 11470.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 4380.0
+    },
+    {
+      "price": 0.99,
+      "size": 32499.0
+    }
+  ],
+  "best_ask": 0.59,
+  "best_ask_size": 6721.56,
+  "best_bid": 0.58,
+  "best_bid_size": 1.31,
+  "bids": [
+    {
+      "price": 0.58,
+      "size": 1.31
+    },
+    {
+      "price": 0.56,
+      "size": 400.0
+    },
+    {
+      "price": 0.55,
+      "size": 12.0
+    },
+    {
+      "price": 0.54,
+      "size": 425.0
+    },
+    {
+      "price": 0.53,
+      "size": 4177.66
+    },
+    {
+      "price": 0.52,
+      "size": 1.0
+    },
+    {
+      "price": 0.48,
+      "size": 4375.0
+    },
+    {
+      "price": 0.47,
+      "size": 7841.53
+    },
+    {
+      "price": 0.41,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 32500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.585,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.58,
+  "market_id": "1222473",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-kyltuc-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "bb2b550f79d23ba8749024696a00ac3de99a512b9fc09f941d9a17b25f3216e5",
+  "receive_time_utc": "2026-10-06T20:27:37.541178Z",
+  "request_time_utc": "2026-10-06T20:27:37.385508Z",
+  "source_transact_time_utc": "2026-10-06T20:27:20.424053301Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

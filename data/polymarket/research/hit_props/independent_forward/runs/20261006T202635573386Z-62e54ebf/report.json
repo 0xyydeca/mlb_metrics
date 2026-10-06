@@ -1,0 +1,89 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-ozzalb-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-ronacu-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-seamur-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-shooht-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-teoher-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-wilsmi-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-britur-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-chryel-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-dushar-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-fertat-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-garmit-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-jaccho-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-jacmer-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-jakbau-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-manmac-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-tyfra-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-wilcon2-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-06-hits-xanbog-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 12,
+  "finished_at_utc": "2026-10-06T20:27:38.450740+00:00",
+  "forecasts_saved": 12,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 1993,
+  "loaded_capture_rows": 30,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261006T202635573386Z-62e54ebf",
+  "started_at_utc": "2026-10-06T20:26:35.573538+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

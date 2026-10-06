@@ -1,0 +1,100 @@
+{
+  "asks": [
+    {
+      "price": 0.58,
+      "size": 21.22
+    },
+    {
+      "price": 0.6,
+      "size": 3202.0
+    },
+    {
+      "price": 0.62,
+      "size": 2510.0
+    },
+    {
+      "price": 0.64,
+      "size": 10754.72
+    },
+    {
+      "price": 0.65,
+      "size": 2500.0
+    },
+    {
+      "price": 0.87,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 4380.0
+    },
+    {
+      "price": 0.99,
+      "size": 32499.0
+    }
+  ],
+  "best_ask": 0.58,
+  "best_ask_size": 21.22,
+  "best_bid": 0.57,
+  "best_bid_size": 731.72,
+  "bids": [
+    {
+      "price": 0.57,
+      "size": 731.72
+    },
+    {
+      "price": 0.56,
+      "size": 5.34
+    },
+    {
+      "price": 0.55,
+      "size": 2500.0
+    },
+    {
+      "price": 0.43,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 4380.0
+    },
+    {
+      "price": 0.01,
+      "size": 32500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.575,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.57,
+  "market_id": "1233622",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-maudub-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "73bcbcac6e2c4f49aa7654eb5dfc026e04cf74d749385a54d48285c09ab463df",
+  "receive_time_utc": "2026-10-06T20:27:37.700175Z",
+  "request_time_utc": "2026-10-06T20:27:37.656189Z",
+  "source_transact_time_utc": "2026-10-06T20:27:15.712698426Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

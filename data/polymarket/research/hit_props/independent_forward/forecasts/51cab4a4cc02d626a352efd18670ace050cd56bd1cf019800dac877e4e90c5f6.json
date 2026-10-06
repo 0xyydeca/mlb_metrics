@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849819.0,
+    "game_type": "D",
+    "key_mlbam": 663656.0,
+    "market_id": "1222473",
+    "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-kyltuc-gte1",
+    "requested_local_date": "2026-10-06",
+    "rules_hash": "0f820930ec62bc10",
+    "rules_text": "This market will settle to Yes if Kyle Tucker records 1 or more hits in the Los Angeles Dodgers vs Atlanta Braves MLB NL Division Series Game 3 scheduled for 2026-10-06 at 6:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-06T22:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "3073fe3d49c5d49bb16e864e2bc41716fc7b991b37655afcab709565e426d0f0",
+  "forecast_id": "51cab4a4cc02d626a352efd18670ace050cd56bd1cf019800dac877e4e90c5f6",
+  "forecast_time_utc": "2026-10-06T20:26:37.385247+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "adf75cc6fc6086caf5b735b461f8bcf1c886437e5be51137fa37b3284ace7dd4",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-06T20:26:35.825045+00:00",
+  "manifest_sha256": "1ba4faa537c524b62880b19a9e0bb84210255c4d7c779bbf34f5620ef4258258",
+  "prediction_book_sha256": "ac33054db067196e286d28b63867d6181d17466dfcb2de94f55fe3858fa08d34",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.08089901444324588,
+    "qualifying_hit": 0.6031091845624225,
+    "qualifying_no_hit": 0.3159918009943317
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261006T202635573386Z-62e54ebf"
+}

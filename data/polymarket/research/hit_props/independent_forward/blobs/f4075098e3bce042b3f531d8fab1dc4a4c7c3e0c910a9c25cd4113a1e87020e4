@@ -1,0 +1,108 @@
+{
+  "asks": [
+    {
+      "price": 0.57,
+      "size": 5494.08
+    },
+    {
+      "price": 0.58,
+      "size": 2750.0
+    },
+    {
+      "price": 0.59,
+      "size": 140.0
+    },
+    {
+      "price": 0.6,
+      "size": 267.59
+    },
+    {
+      "price": 0.63,
+      "size": 10000.0
+    },
+    {
+      "price": 0.64,
+      "size": 1750.0
+    },
+    {
+      "price": 0.67,
+      "size": 16764.0
+    },
+    {
+      "price": 0.85,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 27499.0
+    }
+  ],
+  "best_ask": 0.57,
+  "best_ask_size": 5494.08,
+  "best_bid": 0.56,
+  "best_bid_size": 830.58,
+  "bids": [
+    {
+      "price": 0.56,
+      "size": 830.58
+    },
+    {
+      "price": 0.54,
+      "size": 4618.0
+    },
+    {
+      "price": 0.48,
+      "size": 3821.0
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 4380.0
+    },
+    {
+      "price": 0.01,
+      "size": 31500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.565,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.57,
+  "market_id": "1254839",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-andpag-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "a58cf731d5f47b08e161948c018a8c6703119e42fb1b3b06a45766cc4227a236",
+  "receive_time_utc": "2026-10-06T20:26:35.977642Z",
+  "request_time_utc": "2026-10-06T20:26:35.911451Z",
+  "source_transact_time_utc": "2026-10-06T20:25:47.727790203Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

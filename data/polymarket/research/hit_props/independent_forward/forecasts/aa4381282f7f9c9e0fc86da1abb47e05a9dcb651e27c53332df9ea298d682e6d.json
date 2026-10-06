@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849819.0,
+    "game_type": "D",
+    "key_mlbam": 673490.0,
+    "market_id": "1253069",
+    "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-hakim-gte1",
+    "requested_local_date": "2026-10-06",
+    "rules_hash": "9eefde7fcf373bc6",
+    "rules_text": "This market will settle to Yes if Ha-Seong Kim records 1 or more hits in the Los Angeles Dodgers vs Atlanta Braves MLB game scheduled for 2026-10-06 at 6:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-06T22:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "591c5342b5c92438d7d073dbcf73dc88d63e520d715c9b01734b3e000bfb26ac",
+  "forecast_id": "aa4381282f7f9c9e0fc86da1abb47e05a9dcb651e27c53332df9ea298d682e6d",
+  "forecast_time_utc": "2026-10-06T20:26:37.069558+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "adf75cc6fc6086caf5b735b461f8bcf1c886437e5be51137fa37b3284ace7dd4",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-06T20:26:35.825045+00:00",
+  "manifest_sha256": "1ba4faa537c524b62880b19a9e0bb84210255c4d7c779bbf34f5620ef4258258",
+  "prediction_book_sha256": "80879adf0dc90f3e2ef0d92535cea5562cee63d2a61fcd1d2c239eca8b99e69f",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.5658505435805034,
+    "qualifying_hit": 0.2323061141651004,
+    "qualifying_no_hit": 0.2018433422543963
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261006T202635573386Z-62e54ebf"
+}

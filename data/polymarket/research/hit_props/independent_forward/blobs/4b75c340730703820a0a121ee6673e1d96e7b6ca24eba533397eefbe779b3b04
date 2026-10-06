@@ -1,0 +1,108 @@
+{
+  "asks": [
+    {
+      "price": 0.51,
+      "size": 5259.53
+    },
+    {
+      "price": 0.52,
+      "size": 2605.0
+    },
+    {
+      "price": 0.54,
+      "size": 3866.0
+    },
+    {
+      "price": 0.55,
+      "size": 12240.53
+    },
+    {
+      "price": 0.57,
+      "size": 12271.0
+    },
+    {
+      "price": 0.58,
+      "size": 1000.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 4380.0
+    },
+    {
+      "price": 0.99,
+      "size": 30762.0
+    }
+  ],
+  "best_ask": 0.51,
+  "best_ask_size": 5259.53,
+  "best_bid": 0.5,
+  "best_bid_size": 435.01,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 435.01
+    },
+    {
+      "price": 0.49,
+      "size": 2073.24
+    },
+    {
+      "price": 0.48,
+      "size": 1188.0
+    },
+    {
+      "price": 0.43,
+      "size": 2449.0
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 4380.0
+    },
+    {
+      "price": 0.01,
+      "size": 31500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.505,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.5,
+  "market_id": "1253062",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-ausril-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "6eacc4ff87980a80858c30432fb9672c4a27ed8651c602cc2bed809f912d99d1",
+  "receive_time_utc": "2026-10-06T20:27:36.334205Z",
+  "request_time_utc": "2026-10-06T20:27:36.292247Z",
+  "source_transact_time_utc": "2026-10-06T20:26:53.193192963Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

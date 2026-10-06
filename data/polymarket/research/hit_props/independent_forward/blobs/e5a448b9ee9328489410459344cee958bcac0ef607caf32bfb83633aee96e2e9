@@ -1,0 +1,140 @@
+{
+  "asks": [
+    {
+      "price": 0.65,
+      "size": 6282.26
+    },
+    {
+      "price": 0.66,
+      "size": 19906.47
+    },
+    {
+      "price": 0.67,
+      "size": 625.0
+    },
+    {
+      "price": 0.68,
+      "size": 1795.0
+    },
+    {
+      "price": 0.69,
+      "size": 1000.0
+    },
+    {
+      "price": 0.74,
+      "size": 7886.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32499.0
+    }
+  ],
+  "best_ask": 0.65,
+  "best_ask_size": 6282.26,
+  "best_bid": 0.64,
+  "best_bid_size": 723.6,
+  "bids": [
+    {
+      "price": 0.64,
+      "size": 723.6
+    },
+    {
+      "price": 0.63,
+      "size": 37.0
+    },
+    {
+      "price": 0.62,
+      "size": 3645.0
+    },
+    {
+      "price": 0.61,
+      "size": 21.0
+    },
+    {
+      "price": 0.6,
+      "size": 40.0
+    },
+    {
+      "price": 0.55,
+      "size": 4116.29
+    },
+    {
+      "price": 0.54,
+      "size": 6204.21
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32500.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.645,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.65,
+  "market_id": "1222458",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-06-hits-moobet-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "88fb40f7561e86b59f35a579bb0683141b32978ed4464a8f73f9ec3f7911f463",
+  "receive_time_utc": "2026-10-06T20:27:38.449039Z",
+  "request_time_utc": "2026-10-06T20:27:38.300914Z",
+  "source_transact_time_utc": "2026-10-06T20:27:17.803914552Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
