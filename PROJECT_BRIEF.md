@@ -1,5 +1,14 @@
 # Project brief: mlb_metrics
 
+## October 6 maintenance — delayed quote timestamp precision
+
+- Compared both briefs and read AGENTS.md/readiness plan; initial checkout clean. Inspected and fast-forwarded only generated-data changes to owner main `d1d88a5`. Fresh archive audit: seven capture runs, 12 intact pregame forecasts (all postseason), zero execution matches, 12 missing execution quotes, no integrity errors, and zero formal eligible dates. This supersedes the October 5 zero-forecast report. No outcomes or returns were opened.
+- All 12 execution records were rejected as `delayed_quote_outside_registered_window`. Archived request timestamps were 0.286897–0.800569 seconds before their forecast-plus-60-second deadlines because the adapter truncated microseconds while forecasts retained them. Reproduced four failing precision/integration regressions; a deliberately early legacy quote correctly failed eligibility in the control test.
+- Preserve fractional seconds in the adapter UTC request/receipt clock. The 60-second delay, 30-second window, entry cutoff, model/policy registration and all evaluation gates remain unchanged. Existing forecasts, quotes, exclusion records and frozen periods remain untouched; old truncated timestamps are not repaired or retrospectively counted as fills. Future captures must demonstrate actual quote matching.
+- Verification: 167 related forward capture, adapter, protocol, market benchmark, paper ops and readiness tests passed in 4.93 seconds; whitespace check passed. Full suite and new hosted run not executed for this bounded repair. Report: `reports/model_validation/delayed_quote_precision_2026-10-06.json`; before/after logs retained in working documents.
+- Remaining blockers: verified future executable-price matches, genuine settlement evidence, historical training provenance, untouched formal evaluation assignment and sufficient registered evidence. Venue confirmation remains unresolved. Postseason observations do not establish regular-season performance. Betting remains disabled; this repair does not demonstrate profitability.
+
+
 ## October 5 maintenance — settlement adapter response validation
 
 - Both briefs agreed on current October 4 work; checkout was clean at `5a9e95c`. Read AGENTS.md and the readiness plan. Fresh local archive audit: two capture runs, zero forecasts, zero matched execution quotes, no integrity errors and no opened outcomes. This is local evidence only. GitHub API status check failed again; hosted collection remains unverified.

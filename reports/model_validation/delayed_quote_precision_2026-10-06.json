@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-06",
+  "component": "quote_timestamp_precision",
+  "source_head": "d1d88a5",
+  "before_tests": {
+    "failed": 4,
+    "passed": 1
+  },
+  "after_tests_passed": 167,
+  "archive": {
+    "runs": 7,
+    "intact_pregame_forecasts": 12,
+    "cohort": "postseason",
+    "execution_matches": 0,
+    "missing_execution": 12,
+    "integrity_errors": 0,
+    "formal_eligible_dates": 0
+  },
+  "recorded_request_minus_deadline_seconds": {
+    "minimum": -0.800569,
+    "maximum": -0.286897
+  },
+  "old_records_rewritten": false,
+  "delay_and_windows_changed": false,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "verdict": "insufficient_evidence",
+  "new_hosted_runtime": "not_verified",
+  "full_suite": "not_run_bounded_repair"
+}

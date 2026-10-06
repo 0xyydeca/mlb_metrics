@@ -229,3 +229,42 @@ def test_forecast_already_saved_when_delay_starts(tmp_path, inputs):
         clock.sleep(seconds)
     result = forward.capture(root=tmp_path, **inputs, adapter=Adapter(clock), clock=clock, sleep=check_sleep)
     assert result['executable_quotes_matched'] == 1
+
+
+@pytest.mark.parametrize('microsecond', [1, 286897, 999999])
+def test_real_adapter_preserves_fractional_request_time_at_delay_boundary(tmp_path, inputs, monkeypatch, microsecond):
+    from mlb_metrics.venues import polymarket_us
+    clock = Clock()
+    clock.value += pd.Timedelta(microseconds=microsecond)
+    class AdapterClock:
+        @staticmethod
+        def now(tz):
+            return clock().to_pydatetime()
+    monkeypatch.setattr(polymarket_us, 'datetime', AdapterClock)
+    adapter = polymarket_us.PolymarketUSAdapter(max_retries=0, min_interval_seconds=0)
+    payload = {'marketData': {'state': 'MARKET_STATE_OPEN',
+                             'bids': [{'px': .48, 'qty': 10}],
+                             'offers': [{'px': .52, 'qty': 10}]}}
+    monkeypatch.setattr(adapter, '_http_get_json', lambda *args, **kwargs: payload)
+    report = capture(tmp_path, inputs, adapter=adapter, clock=clock)
+    assert report['forecasts_saved'] == 1
+    assert report['executable_quotes_matched'] == 1
+    assert forward.audit_store(tmp_path)['execution_quotes_matched'] == 1
+
+
+def test_second_precision_legacy_quote_still_fails_if_before_deadline():
+    clock = Clock()
+    book = Adapter(clock).fetch_market_book('slug', market_id='12', fee_coefficient=.0695).to_dict()
+    due = clock() + pd.Timedelta(microseconds=1)
+    assert forward.quote_reason(book, contract(), due, earliest=due) == 'delayed_quote_outside_registered_window'
+
+
+def test_adapter_timestamp_preserves_utc_day_boundary(monkeypatch):
+    from mlb_metrics.venues import polymarket_us
+    fixed = pd.Timestamp('2026-10-05T23:59:59.999999Z')
+    class AdapterClock:
+        @staticmethod
+        def now(tz):
+            return fixed.to_pydatetime()
+    monkeypatch.setattr(polymarket_us, 'datetime', AdapterClock)
+    assert pd.Timestamp(polymarket_us._utc_now_iso()) == fixed

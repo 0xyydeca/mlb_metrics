@@ -32,7 +32,9 @@ USER_AGENT = "mlb_metrics-polymarket-research/1.0 (+read-only; no trading)"
 
 
 def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    # Retain receipt/request precision: truncation makes a request issued at
+    # forecast + 60s appear earlier than that frozen execution deadline.
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _parse_json_list(value: Any) -> list[Any]:
