@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-07",
+  "component": "explicit_book_response_identity",
+  "source_head": "be17961",
+  "before_tests": {
+    "failed": 8,
+    "passed": 3
+  },
+  "after_tests_passed": 232,
+  "synced_archive_audit": {
+    "status": "insufficient_evidence",
+    "forecasts": 36,
+    "intact_pregame_forecasts": 36,
+    "execution_quotes_matched": 24,
+    "integrity_errors": [],
+    "missing_execution": 12,
+    "cohort_counts": {
+      "postseason": 36
+    },
+    "formal_eligible_dates": 0,
+    "outcomes_opened": false,
+    "realized_returns": null,
+    "real_money_ready": false,
+    "remaining_gates": [
+      "historical_training_provenance_uncertified",
+      "immutable_formal_holdout_assignment_missing",
+      "registered_sample_and_precision_requirements",
+      "verified_actual_contract_settlements_required"
+    ],
+    "capture_runs": 10,
+    "failed_runs": 0,
+    "incomplete_runs": 0,
+    "exclusion_reason_counts": {
+      "inside_entry_cutoff_or_invalid_start": 126,
+      "request_budget_omission": 30
+    }
+  },
+  "archive_date_breakdown": {
+    "2026-10-05": {
+      "forecasts": 12,
+      "matched": 0
+    },
+    "2026-10-06": {
+      "forecasts": 24,
+      "matched": 24
+    }
+  },
+  "old_records_rewritten": false,
+  "outcomes_opened": false,
+  "full_suite": "not_run_bounded_repair",
+  "live_parser_repair_verified": false,
+  "venue_confirmation": "unresolved",
+  "legacy_absent_response_identity": "request_bound_not_independently_verified",
+  "verdict": "insufficient_evidence",
+  "real_money_ready": false
+}

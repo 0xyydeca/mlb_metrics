@@ -226,6 +226,12 @@ def parse_book_response(
     md = payload.get("marketData") if isinstance(payload, dict) else None
     if not isinstance(md, dict):
         md = payload if isinstance(payload, dict) else {}
+    # Some legacy snapshots omit identity and remain request-bound. When the
+    # provider explicitly supplies it, never relabel a conflicting response.
+    if "marketSlug" in md:
+        response_slug = md["marketSlug"]
+        if not isinstance(response_slug, str) or not response_slug or response_slug != market_slug:
+            raise ValueError("Order-book marketSlug missing/invalid or different from requested market")
     bids_raw = list(md.get("bids") or [])
     asks_raw = list(md.get("offers") or md.get("asks") or [])
     bids = []

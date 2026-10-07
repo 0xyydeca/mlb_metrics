@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 7 maintenance — hosted quote matches and response identity
+
+- Both briefs agreed on October 6 status; checkout clean at `91e38b1`. Read both AGENTS.md files and the readiness plan. Inspected incoming changes (no source/workflow/instruction changes) and fast-forwarded generated data to owner main `be17961`. Fresh independent archive audit: ten runs, 36 intact pregame forecasts (all postseason), 24 matched delayed executable quotes, 12 historical missing execution quotes, no integrity errors, and zero formal eligible dates. October 6 forecasts account for all 24 matches; October 5 accounts for the 12 preserved timestamp failures. This is hosted archive evidence confirming the precision repair, not workflow API status or profitability evidence.
+- Completed a bounded quote identity repair: `parse_book_response` previously copied the requested market slug even when the response explicitly named a different market. Eight new mismatch/invalid-identity regressions failed before repair; three compatibility controls passed. Explicit nested or direct `marketSlug` values must now be valid strings matching the requested market before prices are accepted. Legacy responses without the field remain request-bound for compatibility and are not independently identity-certified.
+- Verification: 232 relevant book/adapter/protocol, forward capture, research and market-benchmark tests passed in 5.22 seconds; whitespace check passed. No full-suite or new hosted run triggered. Saved report: `reports/model_validation/book_identity_2026-10-07.json`; reproduction logs in the working documents. No original snapshots, forecasts or historical exclusions rewritten; no model/selection changes, training, paid services, captures, orders or settlement outcomes opened.
+- Remaining: genuine settlement evidence, historical training provenance, immutable untouched formal holdout assignment, actual venue confirmation and sufficient registered evaluation evidence. The current matches are hypothetical executions, all postseason; they do not establish regular-season profitability. Betting remains disabled and all readiness gates stay unchanged.
+
+
 ## October 6 maintenance — delayed quote timestamp precision
 
 - Compared both briefs and read AGENTS.md/readiness plan; initial checkout clean. Inspected and fast-forwarded only generated-data changes to owner main `d1d88a5`. Fresh archive audit: seven capture runs, 12 intact pregame forecasts (all postseason), zero execution matches, 12 missing execution quotes, no integrity errors, and zero formal eligible dates. This supersedes the October 5 zero-forecast report. No outcomes or returns were opened.
