@@ -28,32 +28,32 @@
   "elapsed_eligible_days": 0,
   "eligible_dates": [],
   "future_observations_claimed": false,
-  "generated_at_utc": "2026-10-06T23:59:46Z",
+  "generated_at_utc": "2026-10-07T06:15:22Z",
   "history_integrity": {
     "files": {
       "checkpoint_state": {
-        "bytes": 16652,
+        "bytes": 17228,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
-        "sha16": "52dc6914893539a2"
+        "sha16": "b4726a1d045e6c7d"
       },
       "cycle_log": {
-        "bytes": 251038,
+        "bytes": 266822,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
-        "sha16": "ff20a3ea3ff4eb35"
+        "sha16": "4d6c0e2adbe85928"
       },
       "decisions": {
-        "bytes": 403307,
+        "bytes": 420618,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/decisions.csv",
-        "sha16": "10ebac8f88f66a45"
+        "sha16": "a94b8c1ddd7c73f2"
       },
       "exclusions": {
-        "bytes": 130612,
+        "bytes": 136624,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/exclusions.csv",
-        "sha16": "1671346bab6ac4f2"
+        "sha16": "1bf55339e179930a"
       },
       "positions": {
         "bytes": 0,
@@ -61,13 +61,13 @@
         "sha16": null
       }
     },
-    "generated_at_utc": "2026-10-06T23:59:46Z",
+    "generated_at_utc": "2026-10-07T06:15:22Z",
     "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
     "retrievable": true
   },
   "host": "github_actions_ubuntu_latest",
   "last_cycle": {
-    "cycle_id": "hp_ops_20261006T235946Z",
+    "cycle_id": "hp_ops_20261007T061522Z",
     "n_buy": 0,
     "n_contracts_in_denominator": 18,
     "n_pass": 18
@@ -97,9 +97,9 @@
   "reconcile": {
     "actionable": false,
     "fees_paid_total": 0.0,
-    "generated_at_utc": "2026-10-06T23:59:46Z",
+    "generated_at_utc": "2026-10-07T06:15:22Z",
     "issues": [],
-    "n_decisions": 512,
+    "n_decisions": 530,
     "n_duplicate_decision_ids": 0,
     "n_open_positions": 0,
     "n_positions": 0,
