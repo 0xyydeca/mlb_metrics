@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849822.0,
+    "game_type": "D",
+    "key_mlbam": 605141.0,
+    "market_id": "1267040",
+    "market_slug": "astatc-mlb-lad-atl-2026-10-07-hits-moobet-gte1",
+    "requested_local_date": "2026-10-07",
+    "rules_hash": "3f0dd502ba07517e",
+    "rules_text": "This market will settle to Yes if Mookie Betts records 1 or more hits in the Los Angeles Dodgers vs Atlanta Braves MLB NL Division Series Game 4 scheduled for 2026-10-07 at 6:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-07T22:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "796f195a407e741309f2124cef33ff72b8dae462303438184346de98da0f86ea",
+  "forecast_id": "470354e10e7bb7cc38d016494284807c9b12cf593ba2ee1f8f347204e36d63fa",
+  "forecast_time_utc": "2026-10-07T20:41:57.818067+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "107a2905f8425c69b550b0951f062925ace04bba7055cc739e4f56a5e56f8e06",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-07T20:41:57.095943+00:00",
+  "manifest_sha256": "fe6b75baa52cb53d4caf54b0a19183751a0ecd63b7162bf9d9e8c1020cda88bc",
+  "prediction_book_sha256": "311cde18689b42254d58e3ebd44dcade7ba95a7a12ab4183820f0502b62699de",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.06649741439943259,
+    "qualifying_hit": 0.6429730681683113,
+    "qualifying_no_hit": 0.29052951743225597
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261007T204157084694Z-f09aacb7"
+}

@@ -1,0 +1,140 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 1.74
+    },
+    {
+      "price": 0.54,
+      "size": 443.9
+    },
+    {
+      "price": 0.55,
+      "size": 869.1
+    },
+    {
+      "price": 0.57,
+      "size": 57.0
+    },
+    {
+      "price": 0.58,
+      "size": 10500.0
+    },
+    {
+      "price": 0.59,
+      "size": 260.2
+    },
+    {
+      "price": 0.6,
+      "size": 750.0
+    },
+    {
+      "price": 0.62,
+      "size": 1000.0
+    },
+    {
+      "price": 0.79,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 1.74,
+  "best_bid": 0.52,
+  "best_bid_size": 3515.45,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 3515.45
+    },
+    {
+      "price": 0.51,
+      "size": 40.0
+    },
+    {
+      "price": 0.5,
+      "size": 0.1
+    },
+    {
+      "price": 0.47,
+      "size": 75.0
+    },
+    {
+      "price": 0.37,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.53,
+  "market_id": "1277389",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-07-hits-enrher-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "bdfe2ac8030a6434d8606834bc920e2dc4cd28858bc111bbeebe224638e69403",
+  "receive_time_utc": "2026-10-07T20:41:57.397774Z",
+  "request_time_utc": "2026-10-07T20:41:57.360937Z",
+  "source_transact_time_utc": "2026-10-07T20:40:56.420399998Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

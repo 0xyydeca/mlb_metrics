@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.59,
+      "size": 3396.17
+    },
+    {
+      "price": 0.6,
+      "size": 250.0
+    },
+    {
+      "price": 0.61,
+      "size": 511.0
+    },
+    {
+      "price": 0.62,
+      "size": 10000.0
+    },
+    {
+      "price": 0.63,
+      "size": 1750.0
+    },
+    {
+      "price": 0.64,
+      "size": 1000.0
+    },
+    {
+      "price": 0.66,
+      "size": 441.17
+    },
+    {
+      "price": 0.87,
+      "size": 1.0
+    },
+    {
+      "price": 0.9,
+      "size": 10.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.59,
+  "best_ask_size": 3396.17,
+  "best_bid": 0.58,
+  "best_bid_size": 28.56,
+  "bids": [
+    {
+      "price": 0.58,
+      "size": 28.56
+    },
+    {
+      "price": 0.57,
+      "size": 706.37
+    },
+    {
+      "price": 0.56,
+      "size": 2106.0
+    },
+    {
+      "price": 0.55,
+      "size": 11.0
+    },
+    {
+      "price": 0.48,
+      "size": 4687.5
+    },
+    {
+      "price": 0.43,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 63.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.585,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.59,
+  "market_id": "1268527",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-07-hits-maudub-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "aa3bb3f66cfc623b4f6366bcbbe849d0f09e24597b8a3e9a0880c4cde14cd69e",
+  "receive_time_utc": "2026-10-07T20:41:57.609780Z",
+  "request_time_utc": "2026-10-07T20:41:57.582145Z",
+  "source_transact_time_utc": "2026-10-07T20:41:26.700914654Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

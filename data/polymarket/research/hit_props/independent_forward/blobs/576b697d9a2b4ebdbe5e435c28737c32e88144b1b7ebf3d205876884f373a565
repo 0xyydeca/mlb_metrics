@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.65,
+      "size": 730.15
+    },
+    {
+      "price": 0.66,
+      "size": 2656.0
+    },
+    {
+      "price": 0.67,
+      "size": 1015.0
+    },
+    {
+      "price": 0.68,
+      "size": 5557.0
+    },
+    {
+      "price": 0.69,
+      "size": 15041.0
+    },
+    {
+      "price": 0.7,
+      "size": 2750.0
+    },
+    {
+      "price": 0.75,
+      "size": 4375.0
+    },
+    {
+      "price": 0.76,
+      "size": 6727.0
+    },
+    {
+      "price": 0.9,
+      "size": 11.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.65,
+  "best_ask_size": 730.15,
+  "best_bid": 0.64,
+  "best_bid_size": 755.24,
+  "bids": [
+    {
+      "price": 0.64,
+      "size": 755.24
+    },
+    {
+      "price": 0.63,
+      "size": 1371.0
+    },
+    {
+      "price": 0.62,
+      "size": 814.0
+    },
+    {
+      "price": 0.57,
+      "size": 2.0
+    },
+    {
+      "price": 0.56,
+      "size": 897.0
+    },
+    {
+      "price": 0.45,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.07,
+      "size": 5.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.645,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.65,
+  "market_id": "1267052",
+  "market_slug": "astatc-mlb-lad-atl-2026-10-07-hits-michar-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "414280cfff456ad33e4af9e8f57f42a6694ea32744564d0d5ba013ae867bf61c",
+  "receive_time_utc": "2026-10-07T20:42:57.831949Z",
+  "request_time_utc": "2026-10-07T20:42:57.778164Z",
+  "source_transact_time_utc": "2026-10-07T20:42:44.519379308Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
