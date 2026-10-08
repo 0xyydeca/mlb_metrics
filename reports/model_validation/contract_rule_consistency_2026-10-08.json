@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-08",
+  "component": "archived_contract_rule_consistency",
+  "source_head": "edcf92a",
+  "before_tests_failed": 4,
+  "related_tests_passed": 226,
+  "archive_before": {
+    "status": "insufficient_evidence",
+    "forecasts": 56,
+    "intact_pregame_forecasts": 56,
+    "execution_quotes_matched": 43,
+    "integrity_errors": [],
+    "missing_execution": 13,
+    "cohort_counts": {
+      "postseason": 56
+    },
+    "formal_eligible_dates": 0,
+    "outcomes_opened": false,
+    "realized_returns": null,
+    "real_money_ready": false,
+    "remaining_gates": [
+      "historical_training_provenance_uncertified",
+      "immutable_formal_holdout_assignment_missing",
+      "registered_sample_and_precision_requirements",
+      "verified_actual_contract_settlements_required"
+    ],
+    "capture_runs": 13,
+    "failed_runs": 0,
+    "incomplete_runs": 0,
+    "exclusion_reason_counts": {
+      "inside_entry_cutoff_or_invalid_start": 144,
+      "request_budget_omission": 70,
+      "ValueError: invalid_crossed_or_insufficient_book": 4
+    }
+  },
+  "archive_after": {
+    "status": "insufficient_evidence",
+    "forecasts": 56,
+    "intact_pregame_forecasts": 56,
+    "execution_quotes_matched": 43,
+    "integrity_errors": [],
+    "missing_execution": 13,
+    "cohort_counts": {
+      "postseason": 56
+    },
+    "formal_eligible_dates": 0,
+    "outcomes_opened": false,
+    "realized_returns": null,
+    "real_money_ready": false,
+    "remaining_gates": [
+      "historical_training_provenance_uncertified",
+      "immutable_formal_holdout_assignment_missing",
+      "registered_sample_and_precision_requirements",
+      "verified_actual_contract_settlements_required"
+    ],
+    "capture_runs": 13,
+    "failed_runs": 0,
+    "incomplete_runs": 0,
+    "exclusion_reason_counts": {
+      "inside_entry_cutoff_or_invalid_start": 144,
+      "request_budget_omission": 70,
+      "ValueError: invalid_crossed_or_insufficient_book": 4
+    }
+  },
+  "old_records_rewritten": false,
+  "outcomes_opened": false,
+  "parser_limitation": "existing heuristic text parser; consistency only, not exhaustive semantic or finality certification",
+  "full_suite": "not_run_bounded_repair",
+  "new_hosted_run": "not_run",
+  "verdict": "insufficient_evidence",
+  "real_money_ready": false
+}

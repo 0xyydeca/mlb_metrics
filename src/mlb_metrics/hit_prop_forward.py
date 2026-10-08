@@ -18,7 +18,7 @@ from uuid import uuid4
 import joblib
 import pandas as pd
 
-from mlb_metrics import config, schedule, hit_prop_development as development
+from mlb_metrics import config, schedule, hit_prop_research, hit_prop_development as development
 from mlb_metrics import hit_prop_market_benchmark as benchmark
 from mlb_metrics.venues.polymarket_us import normalize_team_abbr, rules_hash
 
@@ -72,6 +72,25 @@ def clock_date(now):
     return now.tz_convert(schedule.LOCAL_TIMEZONE).date().isoformat()
 
 
+def contract_rule_reason(contract):
+    """Check the stored rule flags against the archived text's existing parser.
+
+    This validates consistency, not the completeness of natural-language parsing
+    or venue finality. Unknown participation/payout rules remain unsupported.
+    """
+    text = contract.get('rules_text')
+    if not isinstance(text, str) or not text or rules_hash(text) != contract.get('rules_hash'):
+        return 'rules_hash_mismatch'
+    parsed = hit_prop_research.parse_contract_rules(text)
+    for key in ('requires_starting_lineup', 'requires_plate_appearance'):
+        if parsed[key] is not True or str(contract.get(key)).lower() != 'true':
+            return 'contract_rule_metadata_disagreement'
+    if (parsed['settlement_on_non_participation'] != 'last_fair_market_price'
+        or contract.get('settlement_on_non_participation') != parsed['settlement_on_non_participation']):
+        return 'contract_rule_metadata_disagreement'
+    return None
+
+
 def candidate_reason(contract, wave, now):
     try:
         identity(contract)
@@ -95,9 +114,9 @@ def candidate_reason(contract, wave, now):
         or str(contract.get('requires_plate_appearance')).lower() != 'true'
         or contract.get('settlement_on_non_participation') != 'last_fair_market_price'):
         return 'unsupported_contract'
-    text = contract.get('rules_text')
-    if not isinstance(text, str) or not text or rules_hash(text) != contract.get('rules_hash'):
-        return 'rules_hash_mismatch'
+    rule_reason = contract_rule_reason(contract)
+    if rule_reason:
+        return rule_reason
     if benchmark.number(contract.get('fee_coefficient')) != config.HIT_PROP_BENCHMARK_TAKER_THETA:
         return 'unverified_fee_schedule'
     if now < benchmark.timestamp(config.HIT_PROP_BENCHMARK_FEE_EFFECTIVE_UTC):
@@ -366,6 +385,11 @@ def audit_store(root):
             contract = candidates.iloc[-1].to_dict()
             if identity(contract) != identity(f['contract']):
                 raise ValueError('Captured contract mismatch')
+            if contract.get('rules_text') != f['contract'].get('rules_text'):
+                raise ValueError('Forecast rule text differs from archived contract')
+            rule_reason = contract_rule_reason(contract)
+            if rule_reason:
+                raise ValueError(rule_reason)
             reason = quote_reason(first_book, contract, predicted)
             if reason:
                 raise ValueError(reason)

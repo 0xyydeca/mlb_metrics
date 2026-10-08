@@ -268,3 +268,29 @@ def test_adapter_timestamp_preserves_utc_day_boundary(monkeypatch):
             return fixed.to_pydatetime()
     monkeypatch.setattr(polymarket_us, 'datetime', AdapterClock)
     assert pd.Timestamp(polymarket_us._utc_now_iso()) == fixed
+
+
+@pytest.mark.parametrize('text', [
+    'Record a plate appearance; otherwise last fair market price.',
+    'Must be in the starting lineup; otherwise last fair market price.',
+    'Must be in the starting lineup and record a plate appearance.',
+])
+def test_rule_flags_cannot_override_archived_text(tmp_path, inputs, text):
+    inputs['contracts_bytes'] = pd.DataFrame([contract(rules_text=text, rules_hash=rules_hash(text))]).to_csv(index=False).encode()
+    report = capture(tmp_path, inputs)
+    assert report['forecasts_saved'] == 0
+    assert report['exclusions'][0]['reason'] == 'contract_rule_metadata_disagreement'
+
+
+def test_forecast_rule_text_must_match_input_archive_even_with_updated_receipt(tmp_path, inputs):
+    capture(tmp_path, inputs)
+    path = next((tmp_path/'forecasts').glob('*.json'))
+    row = json.loads(path.read_bytes())
+    row['contract']['rules_text'] = 'Different contract participation requirement'
+    raw = forward.encode(row)
+    path.write_bytes(raw)
+    receipt_path = tmp_path/'receipts'/path.name
+    receipt = json.loads(receipt_path.read_bytes())
+    receipt['forecast_sha256'] = forward.sha(raw)
+    receipt_path.write_bytes(forward.encode(receipt))
+    assert forward.audit_store(tmp_path)['status'] == 'integrity_failure'
