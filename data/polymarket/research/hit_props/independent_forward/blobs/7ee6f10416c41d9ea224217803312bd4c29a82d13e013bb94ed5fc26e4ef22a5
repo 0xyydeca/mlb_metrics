@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.59,
+      "size": 406.15
+    },
+    {
+      "price": 0.6,
+      "size": 5420.0
+    },
+    {
+      "price": 0.61,
+      "size": 5279.0
+    },
+    {
+      "price": 0.62,
+      "size": 290.0
+    },
+    {
+      "price": 0.63,
+      "size": 5463.0
+    },
+    {
+      "price": 0.64,
+      "size": 11786.0
+    },
+    {
+      "price": 0.65,
+      "size": 8242.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 30000.0
+    }
+  ],
+  "best_ask": 0.59,
+  "best_ask_size": 406.15,
+  "best_bid": 0.58,
+  "best_bid_size": 6640.8,
+  "bids": [
+    {
+      "price": 0.58,
+      "size": 6640.8
+    },
+    {
+      "price": 0.57,
+      "size": 3551.0
+    },
+    {
+      "price": 0.56,
+      "size": 52.0
+    },
+    {
+      "price": 0.55,
+      "size": 12.0
+    },
+    {
+      "price": 0.54,
+      "size": 2378.34
+    },
+    {
+      "price": 0.52,
+      "size": 480.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 30001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.585,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.59,
+  "market_id": "1286149",
+  "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-migvar-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "87672bc325e53ce1ad0f2de66b746792b822929d46bc6ddf20d50af6d88aa53a",
+  "receive_time_utc": "2026-10-08T20:45:30.138765Z",
+  "request_time_utc": "2026-10-08T20:45:30.092670Z",
+  "source_transact_time_utc": "2026-10-08T20:44:48.373281309Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

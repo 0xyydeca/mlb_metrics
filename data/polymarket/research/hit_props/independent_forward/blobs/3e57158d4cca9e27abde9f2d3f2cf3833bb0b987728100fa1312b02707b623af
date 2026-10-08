@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.66,
+      "size": 14679.08
+    },
+    {
+      "price": 0.67,
+      "size": 7340.0
+    },
+    {
+      "price": 0.7,
+      "size": 2155.0
+    },
+    {
+      "price": 0.71,
+      "size": 4310.0
+    },
+    {
+      "price": 0.76,
+      "size": 13000.0
+    },
+    {
+      "price": 0.83,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 5001.0
+    }
+  ],
+  "best_ask": 0.66,
+  "best_ask_size": 14679.08,
+  "best_bid": 0.65,
+  "best_bid_size": 320.29,
+  "bids": [
+    {
+      "price": 0.65,
+      "size": 320.29
+    },
+    {
+      "price": 0.64,
+      "size": 2671.53
+    },
+    {
+      "price": 0.63,
+      "size": 1484.0
+    },
+    {
+      "price": 0.61,
+      "size": 3.0
+    },
+    {
+      "price": 0.6,
+      "size": 5.0
+    },
+    {
+      "price": 0.57,
+      "size": 559.0
+    },
+    {
+      "price": 0.56,
+      "size": 446.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 51.0
+    },
+    {
+      "price": 0.01,
+      "size": 5001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.655,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.66,
+  "market_id": "1286701",
+  "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-chamei-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "4f35b20a1473c8e04fb6c076792837af53288db2f9c59de8a8ba5229c70f0364",
+  "receive_time_utc": "2026-10-08T20:45:29.642707Z",
+  "request_time_utc": "2026-10-08T20:45:29.525812Z",
+  "source_transact_time_utc": "2026-10-08T20:45:13.136529813Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

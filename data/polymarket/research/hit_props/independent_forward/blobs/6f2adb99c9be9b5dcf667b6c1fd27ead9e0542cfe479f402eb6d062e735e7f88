@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.51,
+      "size": 2430.52
+    },
+    {
+      "price": 0.52,
+      "size": 1208.0
+    },
+    {
+      "price": 0.53,
+      "size": 1621.0
+    },
+    {
+      "price": 0.54,
+      "size": 1651.0
+    },
+    {
+      "price": 0.55,
+      "size": 15319.0
+    },
+    {
+      "price": 0.56,
+      "size": 2840.0
+    },
+    {
+      "price": 0.62,
+      "size": 3864.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 5001.0
+    }
+  ],
+  "best_ask": 0.51,
+  "best_ask_size": 2430.52,
+  "best_bid": 0.5,
+  "best_bid_size": 3003.8,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 3003.8
+    },
+    {
+      "price": 0.48,
+      "size": 1485.0
+    },
+    {
+      "price": 0.44,
+      "size": 864.0
+    },
+    {
+      "price": 0.41,
+      "size": 1.0
+    },
+    {
+      "price": 0.33,
+      "size": 757.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 5001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.505,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.51,
+  "market_id": "1299592",
+  "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-bredoy-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "3e5254ce4b89369f28090b0578217fdb27e262ddad9db71ae4f14b4ca98fe2f4",
+  "receive_time_utc": "2026-10-08T20:45:29.471803Z",
+  "request_time_utc": "2026-10-08T20:45:29.418215Z",
+  "source_transact_time_utc": "2026-10-08T20:45:08.993528989Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

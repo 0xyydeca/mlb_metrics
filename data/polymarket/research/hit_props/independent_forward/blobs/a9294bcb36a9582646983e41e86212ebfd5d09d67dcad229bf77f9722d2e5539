@@ -1,0 +1,108 @@
+{
+  "asks": [
+    {
+      "price": 0.58,
+      "size": 12910.15
+    },
+    {
+      "price": 0.59,
+      "size": 1000.0
+    },
+    {
+      "price": 0.6,
+      "size": 250.0
+    },
+    {
+      "price": 0.61,
+      "size": 501.0
+    },
+    {
+      "price": 0.63,
+      "size": 3378.0
+    },
+    {
+      "price": 0.82,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 5001.0
+    }
+  ],
+  "best_ask": 0.58,
+  "best_ask_size": 12910.15,
+  "best_bid": 0.57,
+  "best_bid_size": 19.81,
+  "bids": [
+    {
+      "price": 0.57,
+      "size": 19.81
+    },
+    {
+      "price": 0.56,
+      "size": 75.44
+    },
+    {
+      "price": 0.53,
+      "size": 300.0
+    },
+    {
+      "price": 0.52,
+      "size": 1000.0
+    },
+    {
+      "price": 0.46,
+      "size": 543.0
+    },
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 5001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.575,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.58,
+  "market_id": "1286152",
+  "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-angmar-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "ba137e56c12c010200f0993252541267aef7390a15ba9d619e0565cfa59997b8",
+  "receive_time_utc": "2026-10-08T20:45:29.072895Z",
+  "request_time_utc": "2026-10-08T20:45:29.007431Z",
+  "source_transact_time_utc": "2026-10-08T20:45:13.847489232Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

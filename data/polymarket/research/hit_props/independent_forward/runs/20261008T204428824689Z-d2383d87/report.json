@@ -1,0 +1,41 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-munmur-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-natlow-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-rangri-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-stekwa-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-tompha-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-trabaz-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 12,
+  "finished_at_utc": "2026-10-08T20:45:30.140413+00:00",
+  "forecasts_saved": 12,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2105,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261008T204428824689Z-d2383d87",
+  "started_at_utc": "2026-10-08T20:44:28.824836+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

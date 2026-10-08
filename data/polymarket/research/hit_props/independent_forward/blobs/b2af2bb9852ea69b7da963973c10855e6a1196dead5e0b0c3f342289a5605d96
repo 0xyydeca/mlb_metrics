@@ -1,0 +1,64 @@
+{
+  "asks": [
+    {
+      "price": 0.71,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 500.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.71,
+  "best_ask_size": 1.0,
+  "best_bid": 0.32,
+  "best_bid_size": 1.0,
+  "bids": [
+    {
+      "price": 0.32,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.515,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1300117",
+  "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-aushed-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "843ca30c1dbcbc3a2364bded3d56bd0daf0afea0e33e95e13858f3ac2313df20",
+  "receive_time_utc": "2026-10-08T20:45:29.232003Z",
+  "request_time_utc": "2026-10-08T20:45:29.074909Z",
+  "source_transact_time_utc": "2026-10-08T20:42:54.513735560Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

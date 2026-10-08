@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849832.0,
+    "game_type": "D",
+    "key_mlbam": 678246.0,
+    "market_id": "1286149",
+    "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-migvar-gte1",
+    "requested_local_date": "2026-10-08",
+    "rules_hash": "d65db2da19adfd34",
+    "rules_text": "This market will settle to Yes if Miguel Vargas records 1 or more hits in the Cleveland Guardians vs Chicago White Sox MLB AL Division Series Game 4 scheduled for 2026-10-08 at 5:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-09T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "aa396ba98057fb5755763db27b2ff08536b53ba47e2e3155bdd9f69b5abd16b7",
+  "forecast_id": "fdd0119cf9dc3b36ac2eda0a320b28219845f352edb144b700b28d11784db874",
+  "forecast_time_utc": "2026-10-08T20:44:29.822617+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "c5d770a90211c743eb2ad4dd97694842b5ac90db105f7d90afa9bf9b36c0e00c",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-08T20:44:28.835703+00:00",
+  "manifest_sha256": "852d32722b42a6f69f441027db556ca97d674e12aef617760b091e1400fe4509",
+  "prediction_book_sha256": "37979e7cef3fbe8906efe8c191831544bea582ede23bc92e24271cdd7d85b469",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.0659696435632399,
+    "qualifying_hit": 0.6143054161344058,
+    "qualifying_no_hit": 0.3197249403023543
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261008T204428824689Z-d2383d87"
+}

@@ -1,10 +1,10 @@
 {
-  "captured_at_utc": "2026-10-08T06:24:16Z",
-  "finished_at_utc": "2026-10-08T06:24:17Z",
+  "captured_at_utc": "2026-10-08T20:44:22Z",
+  "finished_at_utc": "2026-10-08T20:44:23Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
   "n_markets": 1,
-  "n_schedule_games": 187,
+  "n_schedule_games": 184,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
     "n_contracts": 203,
@@ -16,8 +16,8 @@
   },
   "quote_health": {
     "n_index_rows": 1,
-    "latest_receive_time_utc": "2026-10-08T06:24:17.799442Z",
-    "age_seconds": -0.799442,
+    "latest_receive_time_utc": "2026-10-08T20:44:23.933821Z",
+    "age_seconds": -0.933821,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
@@ -55,10 +55,10 @@
     }
   ],
   "coverage_waterfall": {
-    "n_schedule_games": 187,
+    "n_schedule_games": 184,
     "n_mapped_contracts": 201,
     "n_usable_prices": 1,
-    "n_usable_baseball_snapshots": 4,
+    "n_usable_baseball_snapshots": 1,
     "removed_price_reasons": {
       "missing_quote": 200
     },
@@ -92,8 +92,8 @@
     "quote": {
       "market_id": "1284981",
       "market_slug": "aec-mlb-cle-cws-2026-10-08",
-      "receive_time_utc": "2026-10-08T06:24:17.799442Z",
-      "age_seconds": -0.799442,
+      "receive_time_utc": "2026-10-08T20:44:23.933821Z",
+      "age_seconds": -0.933821,
       "stale": false,
       "eligible": true,
       "best_ask": 0.52,
@@ -113,11 +113,30 @@
       "est_taker_fee_per_contract": 0.0173593625,
       "total_acquisition_cost_per_contract": 0.5023593625
     },
-    "baseball": null,
-    "actionable": false,
-    "pass_reasons": [
-      "missing_baseball_snapshot"
-    ],
+    "baseball": {
+      "game_pk": "849832",
+      "date": "2026-10-08 00:00:00",
+      "game_datetime": "2026-10-09T00:00:00Z",
+      "home_team": "CWS",
+      "away_team": "CLE",
+      "status": "Pre-Game",
+      "home_probable_pitcher_key_mlbam": "696146",
+      "away_probable_pitcher_key_mlbam": "800048",
+      "home_starter_status": "probable",
+      "away_starter_status": "probable",
+      "home_lineup_status": "confirmed",
+      "away_lineup_status": "confirmed",
+      "home_confirmed_starter_count": "9",
+      "away_confirmed_starter_count": "9",
+      "lineup_batting_order_source": "schedule_lineups_list_index",
+      "usable_for_game_winner": "True",
+      "pass_reason": null,
+      "fetched_at_utc": "2026-10-08T20:44:23Z",
+      "source": "schedule_plus_lineups",
+      "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
+    },
+    "actionable": true,
+    "pass_reasons": [],
     "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"CWS\\\", \\\"away\\\": \\\"CLE\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
   },
   "modes": {
