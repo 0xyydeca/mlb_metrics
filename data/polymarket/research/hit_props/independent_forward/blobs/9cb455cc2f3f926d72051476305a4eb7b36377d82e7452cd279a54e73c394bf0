@@ -1,0 +1,128 @@
+{
+  "asks": [
+    {
+      "price": 0.64,
+      "size": 3053.06
+    },
+    {
+      "price": 0.65,
+      "size": 285.0
+    },
+    {
+      "price": 0.66,
+      "size": 16984.51
+    },
+    {
+      "price": 0.67,
+      "size": 1375.0
+    },
+    {
+      "price": 0.68,
+      "size": 750.0
+    },
+    {
+      "price": 0.72,
+      "size": 8158.0
+    },
+    {
+      "price": 0.77,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 4375.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.64,
+  "best_ask_size": 3053.06,
+  "best_bid": 0.63,
+  "best_bid_size": 13.72,
+  "bids": [
+    {
+      "price": 0.63,
+      "size": 13.72
+    },
+    {
+      "price": 0.62,
+      "size": 411.95
+    },
+    {
+      "price": 0.6,
+      "size": 477.0
+    },
+    {
+      "price": 0.59,
+      "size": 2649.0
+    },
+    {
+      "price": 0.54,
+      "size": 1297.0
+    },
+    {
+      "price": 0.36,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.635,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.63,
+  "market_id": "1281613",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-coopra-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "959b8c7e65050e4d35b355cde10900c54faf7e0fceb0424dbefa2583f25ad884",
+  "receive_time_utc": "2026-10-08T00:32:44.024322Z",
+  "request_time_utc": "2026-10-08T00:32:43.952412Z",
+  "source_transact_time_utc": "2026-10-08T00:32:20.781310639Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

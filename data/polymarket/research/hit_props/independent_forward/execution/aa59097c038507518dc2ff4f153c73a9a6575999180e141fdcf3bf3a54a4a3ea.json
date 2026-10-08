@@ -1,0 +1,7 @@
+{
+  "book_sha256": "12118c85252a5e2513c593e3683faabc10abce1ff9156ce53c1ef0f7adb83401",
+  "forecast_id": "aa59097c038507518dc2ff4f153c73a9a6575999180e141fdcf3bf3a54a4a3ea",
+  "hypothetical_fill_only": true,
+  "reason": "ValueError: invalid_crossed_or_insufficient_book",
+  "status": "missing_execution_quote"
+}

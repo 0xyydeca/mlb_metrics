@@ -1,0 +1,120 @@
+{
+  "asks": [
+    {
+      "price": 0.54,
+      "size": 0.1
+    },
+    {
+      "price": 0.56,
+      "size": 900.0
+    },
+    {
+      "price": 0.57,
+      "size": 2516.35
+    },
+    {
+      "price": 0.58,
+      "size": 238.0
+    },
+    {
+      "price": 0.59,
+      "size": 1827.0
+    },
+    {
+      "price": 0.6,
+      "size": 1852.0
+    },
+    {
+      "price": 0.61,
+      "size": 14023.0
+    },
+    {
+      "price": 0.62,
+      "size": 1750.0
+    },
+    {
+      "price": 0.67,
+      "size": 4375.0
+    },
+    {
+      "price": 0.68,
+      "size": 7704.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.54,
+  "best_ask_size": 0.1,
+  "best_bid": 0.53,
+  "best_bid_size": 5219.5,
+  "bids": [
+    {
+      "price": 0.53,
+      "size": 5219.5
+    },
+    {
+      "price": 0.47,
+      "size": 2995.0
+    },
+    {
+      "price": 0.41,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 4375.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.535,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1281616",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-joeort-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "be65ea63ba1601f39587b5a7a9260d1d2c4a064e001a504517562e67c6666746",
+  "receive_time_utc": "2026-10-08T00:31:44.492045Z",
+  "request_time_utc": "2026-10-08T00:31:44.448547Z",
+  "source_transact_time_utc": "2026-10-08T00:31:14.311738375Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

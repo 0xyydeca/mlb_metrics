@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849827.0,
+    "game_type": "D",
+    "key_mlbam": 694192.0,
+    "market_id": "1271144",
+    "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-jaccho-gte1",
+    "requested_local_date": "2026-10-07",
+    "rules_hash": "65e1d6194dc5ceba",
+    "rules_text": "This market will settle to Yes if Jackson Chourio records 1 or more hits in the Milwaukee Brewers vs San Diego Padres MLB NL Division Series Game 4 scheduled for 2026-10-07 at 10:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-08T02:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "d16aea16e7067ceaa697fb440da7121bdd92611f35b1d4a39a05c41371956f6d",
+  "forecast_id": "2524d293b7b1fe1c8ce24d860dabed7d7b2ceb608ac110035f3bf1b8c03fb9d7",
+  "forecast_time_utc": "2026-10-08T00:31:44.202924+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "22b71a7abe0e4c85a142f1e590b5b8405002cac40af49bad98793638d22294d0",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-08T00:31:43.365110+00:00",
+  "manifest_sha256": "2ea5ebff28cc6747eb5874606773ff71dd1546125e80c1eea3611fb4488758fe",
+  "prediction_book_sha256": "e230a80ec1de84a8e42f945647419902c0300fc7cdcdb92ba29507f15ae502bb",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.04658665194067955,
+    "qualifying_hit": 0.6561878692296066,
+    "qualifying_no_hit": 0.29722547882971384
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261008T003143341595Z-357b426c"
+}

@@ -1,0 +1,128 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 10.17
+    },
+    {
+      "price": 0.55,
+      "size": 425.0
+    },
+    {
+      "price": 0.56,
+      "size": 1382.93
+    },
+    {
+      "price": 0.57,
+      "size": 232.0
+    },
+    {
+      "price": 0.58,
+      "size": 15863.0
+    },
+    {
+      "price": 0.59,
+      "size": 375.0
+    },
+    {
+      "price": 0.6,
+      "size": 1250.0
+    },
+    {
+      "price": 0.61,
+      "size": 1000.0
+    },
+    {
+      "price": 0.67,
+      "size": 4375.0
+    },
+    {
+      "price": 0.68,
+      "size": 5117.0
+    },
+    {
+      "price": 0.83,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 10.17,
+  "best_bid": 0.52,
+  "best_bid_size": 934.6,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 934.6
+    },
+    {
+      "price": 0.51,
+      "size": 3439.0
+    },
+    {
+      "price": 0.5,
+      "size": 37.22
+    },
+    {
+      "price": 0.46,
+      "size": 671.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.04,
+      "size": 4433.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1280584",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-luicam-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "0665214f95ed5e4e0147e4c9ab62ec7e6d5cdd486c59153f4e1f9211e6c0c3f2",
+  "receive_time_utc": "2026-10-08T00:31:44.579732Z",
+  "request_time_utc": "2026-10-08T00:31:44.493963Z",
+  "source_transact_time_utc": "2026-10-08T00:31:38.545695239Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

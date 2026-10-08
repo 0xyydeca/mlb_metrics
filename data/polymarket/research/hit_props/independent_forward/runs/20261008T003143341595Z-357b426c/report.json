@@ -1,0 +1,53 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-aushay-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-chryel-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-joeort-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-manmac-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-salfre-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-samtay-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-tyfra-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-wilcon2-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-xanbog-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 8,
+  "finished_at_utc": "2026-10-08T00:32:44.769193+00:00",
+  "forecasts_saved": 9,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2041,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261008T003143341595Z-357b426c",
+  "started_at_utc": "2026-10-08T00:31:43.341751+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

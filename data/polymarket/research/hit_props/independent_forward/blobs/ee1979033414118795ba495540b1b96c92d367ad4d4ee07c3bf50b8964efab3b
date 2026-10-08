@@ -1,0 +1,128 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 14388.83
+    },
+    {
+      "price": 0.57,
+      "size": 5706.0
+    },
+    {
+      "price": 0.58,
+      "size": 875.0
+    },
+    {
+      "price": 0.59,
+      "size": 2250.0
+    },
+    {
+      "price": 0.6,
+      "size": 1000.0
+    },
+    {
+      "price": 0.62,
+      "size": 1000.0
+    },
+    {
+      "price": 0.63,
+      "size": 10656.0
+    },
+    {
+      "price": 0.64,
+      "size": 1416.66
+    },
+    {
+      "price": 0.76,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 4375.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32500.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 14388.83,
+  "best_bid": 0.55,
+  "best_bid_size": 12.48,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 12.48
+    },
+    {
+      "price": 0.54,
+      "size": 400.0
+    },
+    {
+      "price": 0.53,
+      "size": 815.0
+    },
+    {
+      "price": 0.52,
+      "size": 4364.0
+    },
+    {
+      "price": 0.46,
+      "size": 2807.0
+    },
+    {
+      "price": 0.45,
+      "size": 4708.33
+    },
+    {
+      "price": 0.35,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 32501.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.56,
+  "market_id": "1271159",
+  "market_slug": "astatc-mlb-mil-sd-2026-10-07-hits-jakbau-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "a8a76bb46b590f10368a673a88329acf9eed02233f400232ce9075dfa1d5c1a3",
+  "receive_time_utc": "2026-10-08T00:31:44.361091Z",
+  "request_time_utc": "2026-10-08T00:31:44.285596Z",
+  "source_transact_time_utc": "2026-10-08T00:30:57.787127694Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
