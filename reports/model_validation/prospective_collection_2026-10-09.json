@@ -1,0 +1,46 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 68,
+  "intact_pregame_forecasts": 68,
+  "execution_quotes_matched": 55,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 68
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 16,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 180,
+    "request_budget_omission": 76,
+    "ValueError: invalid_crossed_or_insufficient_book": 4
+  },
+  "audit_date": "2026-10-09",
+  "source_commit": "d1ac75a1642b27a4e39c0a758132ac2fe82ce906",
+  "task": "Bounded prospective collection operational review; no outcome scoring",
+  "checks": {
+    "forward_regressions": "49 passed in 1.85 seconds",
+    "full_suite": "not run; no source change"
+  },
+  "owner_input_missing": "Actual venue confirmation",
+  "prior_day_delta": {
+    "forecasts": 12,
+    "execution_quotes_matched": 12
+  },
+  "limitations": [
+    "Postseason research only; hypothetical executions, not actual fills",
+    "No settlement outcomes opened or net returns measured",
+    "Historical training provenance and immutable formal evaluation assignment remain unresolved"
+  ]
+}

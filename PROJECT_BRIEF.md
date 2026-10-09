@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 9 maintenance — prospective collection operational review
+
+- Read applicable instructions, compared both briefs and consulted the five-step readiness plan. Clean checkout; fetched and inspected incoming owner-main changes (no source, tests, workflow or instruction changes), then fast-forwarded generated archives to `d1ac75a`.
+- Fresh read-only audit: 16 capture runs, zero failed/incomplete runs, 68 intact pregame forecasts, 55 matched delayed executable quotes, 13 missing execution quotes, and zero integrity errors. Compared with October 8, 12 new forecasts and 12 new price matches. All 68 are postseason research; formal eligible dates remain zero. Matches are hypothetical executions, not actual fills.
+- Cumulative exclusions across runs: 180 entry-cutoff exclusions, 76 request-budget omissions and four invalid/crossed/insufficient-book failures. These are repeated capture-level counts, not unique missed opportunities. Original forecasts, omissions and missing quotes remain untouched.
+- Completed the next bounded collection-health review under step 3. Forward regression suite: 49 passed in 1.85 seconds. No source changes, new capture, training, backfill, settlement reads or outcome scoring. Full suite and hosted API status were not checked; committed archive evidence confirms collector output. Saved report: `reports/model_validation/prospective_collection_2026-10-09.json`; copy in working-document `research/2026-10-09/collection-review/audit.json`.
+- Remaining blockers: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine contract settlements and sufficient registered evidence. Returns remain unknown; betting stays disabled. Next necessary follow-up is collection health and completion of these prerequisites, not premature performance scoring. The engineering/readiness plan is not declared complete.
+
 ## October 8 maintenance — archived contract-rule consistency
 
 - Read both AGENTS.md files, compared matching October 7 brief sections and consulted the readiness plan. Initial checkout clean; fetched and inspected incoming changes (no source/workflow/instruction changes), then fast-forwarded generated data to owner main `edcf92a`. Fresh archive audit: 13 runs, 56 intact pregame forecasts, 43 delayed executable-quote matches, 13 missing execution quotes, no integrity errors, and zero formal eligible dates. All forecasts remain postseason research; no outcomes or returns were opened.
