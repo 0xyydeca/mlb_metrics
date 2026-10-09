@@ -1820,3 +1820,4 @@ provider_event_id,sportsbook,captured_at_utc,game_datetime,date,home_team,away_t
 401908005,DraftKings,2026-10-08T06:01:49Z,2026-10-08T02:00Z,2026-10-07 00:00:00,SD,MIL,-110,-110,0.5,post_start,849827.0,provider_map,odds_2a3cab651bb6,intraday
 401907993,DraftKings,2026-10-08T20:41:44Z,2026-10-09T00:00Z,2026-10-08 00:00:00,CWS,CLE,-103,-117,0.48481627695110846,ok,849832.0,unique_matchup,odds_6ebe36c2e2cd,intraday
 401907993,DraftKings,2026-10-09T00:39:11Z,2026-10-09T00:00Z,2026-10-08 00:00:00,CWS,CLE,-102,-118,0.4826358742837298,post_start,849832.0,provider_map,odds_5af6c5266f0c,intraday
+401907993,DraftKings,2026-10-09T06:07:06Z,2026-10-09T00:00Z,2026-10-08 00:00:00,CWS,CLE,-102,-118,0.4826358742837298,post_start,849832.0,provider_map,odds_2648c04d7cb8,intraday
