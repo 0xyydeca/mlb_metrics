@@ -1,63 +1,78 @@
 {
-  "captured_at_utc": "2026-10-08T20:44:22Z",
-  "finished_at_utc": "2026-10-08T20:44:23Z",
+  "captured_at_utc": "2026-10-09T00:46:13Z",
+  "finished_at_utc": "2026-10-09T00:46:14Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
-  "n_markets": 1,
+  "n_markets": 2,
   "n_schedule_games": 184,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
-    "n_contracts": 203,
-    "n_mapped": 201,
+    "n_contracts": 204,
+    "n_mapped": 202,
     "n_unmatched": 1,
     "n_ambiguous": 1,
     "n_incomplete": 0,
-    "mapped_rate": 0.9901477832512315
+    "mapped_rate": 0.9901960784313726
   },
   "quote_health": {
-    "n_index_rows": 1,
-    "latest_receive_time_utc": "2026-10-08T20:44:23.933821Z",
-    "age_seconds": -0.933821,
+    "n_index_rows": 2,
+    "latest_receive_time_utc": "2026-10-09T00:46:14.091600Z",
+    "age_seconds": -0.09160000000000001,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
   },
   "per_contract_quote_health": {
-    "n_markets_checked": 201,
-    "n_fresh_eligible": 1,
+    "n_markets_checked": 202,
+    "n_fresh_eligible": 2,
     "n_stale": 200,
     "n_ineligible": 0,
     "n_missing": 200,
     "max_age_seconds": 30.0
   },
-  "n_books_captured": 1,
-  "n_books_written": 1,
+  "n_books_captured": 2,
+  "n_books_written": 2,
   "n_book_http_failures": 0,
   "book_failure_samples": [],
   "book_liquidity_counts": {
-    "eligible_book": 1
+    "eligible_book": 2
   },
   "sample_home_buys": [
     {
       "team": "CWS",
       "outcome_id": "2569441",
       "is_long": false,
-      "executable_buy": 0.485,
-      "display_price": 0.52,
+      "executable_buy": 0.515,
+      "display_price": 0.47,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173593625,
-      "total_acquisition_cost_per_contract": 0.5023593625,
+      "est_taker_fee_per_contract": 0.017359362500000003,
+      "total_acquisition_cost_per_contract": 0.5323593625,
       "market_id": "1284981",
+      "side": "home"
+    },
+    {
+      "team": "MIL",
+      "outcome_id": "2605249",
+      "is_long": false,
+      "executable_buy": 0.515,
+      "display_price": 0.495,
+      "method": "one_minus_book_best_bid_short",
+      "eligible": true,
+      "reason": null,
+      "fee_version": "us_taker_theta_0.0695_2026-09-17",
+      "est_taker_fee_per_contract": 0.017359362500000003,
+      "total_acquisition_cost_per_contract": 0.5323593625,
+      "market_id": "1302885",
       "side": "home"
     }
   ],
   "coverage_waterfall": {
     "n_schedule_games": 184,
-    "n_mapped_contracts": 201,
-    "n_usable_prices": 1,
+    "n_mapped_contracts": 202,
+    "n_usable_prices": 2,
     "n_usable_baseball_snapshots": 1,
     "removed_price_reasons": {
       "missing_quote": 200
@@ -92,26 +107,26 @@
     "quote": {
       "market_id": "1284981",
       "market_slug": "aec-mlb-cle-cws-2026-10-08",
-      "receive_time_utc": "2026-10-08T20:44:23.933821Z",
-      "age_seconds": -0.933821,
+      "receive_time_utc": "2026-10-09T00:46:14.034600Z",
+      "age_seconds": -0.034599999999999964,
       "stale": false,
       "eligible": true,
-      "best_ask": 0.52,
-      "best_bid": 0.515,
+      "best_ask": 0.49,
+      "best_bid": 0.485,
       "pass_reason": null
     },
     "home_executable_buy": {
       "team": "CWS",
       "outcome_id": "2569441",
       "is_long": false,
-      "executable_buy": 0.485,
-      "display_price": 0.52,
+      "executable_buy": 0.515,
+      "display_price": 0.47,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173593625,
-      "total_acquisition_cost_per_contract": 0.5023593625
+      "est_taker_fee_per_contract": 0.017359362500000003,
+      "total_acquisition_cost_per_contract": 0.5323593625
     },
     "baseball": {
       "game_pk": "849832",
@@ -119,7 +134,7 @@
       "game_datetime": "2026-10-09T00:00:00Z",
       "home_team": "CWS",
       "away_team": "CLE",
-      "status": "Pre-Game",
+      "status": "In Progress",
       "home_probable_pitcher_key_mlbam": "696146",
       "away_probable_pitcher_key_mlbam": "800048",
       "home_starter_status": "probable",
@@ -131,7 +146,7 @@
       "lineup_batting_order_source": "schedule_lineups_list_index",
       "usable_for_game_winner": "True",
       "pass_reason": null,
-      "fetched_at_utc": "2026-10-08T20:44:23Z",
+      "fetched_at_utc": "2026-10-09T00:46:14Z",
       "source": "schedule_plus_lineups",
       "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
     },
