@@ -354,3 +354,4 @@ provider_event_id,game_pk,home_team,away_team,date,match_method
 401907987,849838.0,NYY,TB,2026-10-07 00:00:00,provider_map
 401908005,849827.0,SD,MIL,2026-10-07 00:00:00,provider_map
 401907993,849832.0,CWS,CLE,2026-10-08 00:00:00,unique_matchup
+401907993,849832.0,CWS,CLE,2026-10-08 00:00:00,provider_map
