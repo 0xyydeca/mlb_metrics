@@ -1,6 +1,6 @@
 {
-  "captured_at_utc": "2026-10-10T00:07:20Z",
-  "finished_at_utc": "2026-10-10T00:07:22Z",
+  "captured_at_utc": "2026-10-10T06:07:54Z",
+  "finished_at_utc": "2026-10-10T06:07:55Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
   "n_markets": 3,
@@ -16,8 +16,8 @@
   },
   "quote_health": {
     "n_index_rows": 3,
-    "latest_receive_time_utc": "2026-10-10T00:07:22.058798Z",
-    "age_seconds": -0.05879800000000002,
+    "latest_receive_time_utc": "2026-10-10T06:07:55.078562Z",
+    "age_seconds": -0.07856200000000002,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
@@ -72,14 +72,14 @@
       "team": "MIL",
       "outcome_id": "2625605",
       "is_long": false,
-      "executable_buy": 0.485,
-      "display_price": 0.52,
+      "executable_buy": 0.475,
+      "display_price": 0.53,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173593625,
-      "total_acquisition_cost_per_contract": 0.5023593625,
+      "est_taker_fee_per_contract": 0.0173315625,
+      "total_acquisition_cost_per_contract": 0.4923315625,
       "market_id": "1313063",
       "side": "home"
     }
@@ -122,8 +122,8 @@
     "quote": {
       "market_id": "1305714",
       "market_slug": "aec-mlb-cws-cle-2026-10-10",
-      "receive_time_utc": "2026-10-10T00:07:21.881315Z",
-      "age_seconds": 0.118685,
+      "receive_time_utc": "2026-10-10T06:07:54.973946Z",
+      "age_seconds": 0.026054,
       "stale": false,
       "eligible": true,
       "best_ask": 0.44,
