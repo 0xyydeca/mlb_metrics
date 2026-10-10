@@ -1,5 +1,12 @@
 # Project brief: mlb_metrics
 
+## October 10 maintenance — collection-health follow-up
+
+- Read both instruction files, compared matching October 9 brief sections and consulted the readiness plan. Checkout clean; incoming owner-main changes contained no source/test/workflow/instruction changes. Fast-forwarded generated evidence to `f376cb9`.
+- Fresh audit: 19 complete runs, no failed runs or integrity errors, 68 intact pregame forecasts, 55 delayed price matches, 13 missing execution quotes, zero formal eligible dates. All forecasts remain postseason research. Three newly archived runs saved no forecasts because their current-local-date contract slices had zero rows; each retained 2,123 historical/other-date rows without replaying them. This does not establish whether the venue had no available contracts or the upstream collector lacked coverage.
+- Saved step-3 operational review in `reports/model_validation/prospective_collection_2026-10-10.json` and working-document `research/2026-10-10/collection-review/audit.json`. Checked archive integrity and all three new run reports; unchanged-code regression suites were not repeated. No training, capture, backfill, outcomes, settlement reads, policy changes or orders.
+- No material readiness change. Actual venue confirmation, historical training provenance, immutable formal evaluation assignment, genuine settlements and sufficient registered evidence remain outstanding. Returns remain unknown and betting disabled. No engineering-completion claim.
+
 ## October 9 maintenance — prospective collection operational review
 
 - Read applicable instructions, compared both briefs and consulted the five-step readiness plan. Clean checkout; fetched and inspected incoming owner-main changes (no source, tests, workflow or instruction changes), then fast-forwarded generated archives to `d1ac75a`.

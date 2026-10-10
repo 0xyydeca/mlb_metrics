@@ -1,0 +1,84 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 68,
+  "intact_pregame_forecasts": 68,
+  "execution_quotes_matched": 55,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 68
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 19,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 180,
+    "request_budget_omission": 76,
+    "ValueError: invalid_crossed_or_insufficient_book": 4
+  },
+  "audit_date": "2026-10-10",
+  "source_commit": "f376cb9ac300095e85d04b3bacd12e06dd207914",
+  "task": "Step 3 bounded collection-health follow-up",
+  "new_run_reports": [
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-09T20:10:33.179257+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2123,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261009T201033093516Z-7091016b",
+      "started_at_utc": "2026-10-09T20:10:33.093706+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-10T00:07:25.758941+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2123,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261010T000724729061Z-646255a5",
+      "started_at_utc": "2026-10-10T00:07:24.729190+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-10T06:07:57.953771+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2123,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261010T060757876317Z-ef47320a",
+      "started_at_utc": "2026-10-10T06:07:57.876495+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    }
+  ],
+  "checks": "Fresh archive integrity audit and three new run reports inspected; unchanged code tests not repeated",
+  "owner_input_missing": "Actual venue confirmation"
+}
