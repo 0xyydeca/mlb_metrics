@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.42,
+      "size": 3535.15
+    },
+    {
+      "price": 0.43,
+      "size": 20.0
+    },
+    {
+      "price": 0.44,
+      "size": 11000.0
+    },
+    {
+      "price": 0.46,
+      "size": 750.0
+    },
+    {
+      "price": 0.47,
+      "size": 2358.0
+    },
+    {
+      "price": 0.5,
+      "size": 1000.0
+    },
+    {
+      "price": 0.78,
+      "size": 4376.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.42,
+  "best_ask_size": 3535.15,
+  "best_bid": 0.41,
+  "best_bid_size": 909.12,
+  "bids": [
+    {
+      "price": 0.41,
+      "size": 909.12
+    },
+    {
+      "price": 0.4,
+      "size": 3129.0
+    },
+    {
+      "price": 0.39,
+      "size": 4429.43
+    },
+    {
+      "price": 0.38,
+      "size": 40.0
+    },
+    {
+      "price": 0.36,
+      "size": 1.0
+    },
+    {
+      "price": 0.3,
+      "size": 4375.0
+    },
+    {
+      "price": 0.29,
+      "size": 862.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.415,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.41,
+  "market_id": "1312009",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-colmon-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "6fd1446474ea9ead6eda3707565342d51691b8ed902c4284ee42b7af58883960",
+  "receive_time_utc": "2026-10-10T19:24:37.648946Z",
+  "request_time_utc": "2026-10-10T19:24:37.614098Z",
+  "source_transact_time_utc": "2026-10-10T19:24:15.223538141Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

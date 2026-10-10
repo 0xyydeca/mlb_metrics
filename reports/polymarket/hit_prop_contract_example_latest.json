@@ -1,35 +1,35 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261008T204424Z",
+  "capture_id": "hp_20261010T192333Z",
   "contract": {
-    "book_receive_time_utc": "2026-10-08T20:44:25.644223Z",
-    "book_request_time_utc": "2026-10-08T20:44:25Z",
+    "book_receive_time_utc": "2026-10-10T19:23:34.175968Z",
+    "book_request_time_utc": "2026-10-10T19:23:34Z",
     "book_status": "captured",
-    "event_slug": "mlb-cle-cws-2026-10-08",
+    "event_slug": "mlb-cws-cle-2026-10-10",
     "fee_coefficient": 0.0695,
-    "market_id": "1286152",
-    "market_slug": "astatc-mlb-cle-cws-2026-10-08-hits-angmar-gte1",
-    "no_buy_price": 0.43000000000000005,
-    "no_buy_size": 18.81,
+    "market_id": "1311997",
+    "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-angmar-gte1",
+    "no_buy_price": 0.44999999999999996,
+    "no_buy_size": 3811.36,
     "player_name": "Angel Mart\u00ednez",
-    "provider_game_id": 10079764,
+    "provider_game_id": 10079765,
     "provider_player_id": 472,
-    "question": "Will Angel Martinez record at least 1 hits in Game 4: CLE Guardians vs. CHI White Sox?",
-    "rules_hash": "c501d0388e145fff",
-    "rules_text": "This market will settle to Yes if Angel Mart\u00ednez records 1 or more hits in the Cleveland Guardians vs Chicago White Sox MLB AL Division Series Game 4 scheduled for 2026-10-08 at 5:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "question": "Will Angel Martinez record at least 1 hits in Game 5: CHI White Sox vs. CLE Guardians?",
+    "rules_hash": "979d1f4e8aedb647",
+    "rules_text": "This market will settle to Yes if Angel Mart\u00ednez records 1 or more hits in the Chicago White Sox vs Cleveland Guardians MLB AL Division Series Game 5 scheduled for 2026-10-10 at 8:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
-    "scheduled_start_utc": "2026-10-09T00:00:00Z",
-    "yes_buy_price": 0.58,
-    "yes_buy_size": 12910.15
+    "scheduled_start_utc": "2026-10-11T00:00:00Z",
+    "yes_buy_price": 0.56,
+    "yes_buy_size": 906.15
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-10-08T20:44:27Z",
+  "generated_at_utc": "2026-10-10T19:23:35Z",
   "identity_mapping": {
     "game": {
-      "away_team": "CLE",
-      "game_pk": 849832,
-      "home_team": "CWS",
-      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-cle-cws-2026-10-08\", \"game_pk\": 849832}",
+      "away_team": "CWS",
+      "game_pk": 849831,
+      "home_team": "CLE",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-cws-cle-2026-10-10\", \"game_pk\": 849831}",
       "mapping_status": "mapped"
     },
     "player": {
@@ -97,18 +97,18 @@
   },
   "universe": {
     "complete_denominator_claimed": true,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-08 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-10 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-cle-cws-2026-10-08"
+      "mlb-cws-cle-2026-10-10"
     ],
-    "n_contracts_in_fetched_events": 18,
+    "n_contracts_in_fetched_events": 15,
     "n_event_requests": 1,
     "n_events": 1,
     "n_events_failed": 0,
     "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
     "n_excluded_already_started": 0,
-    "n_excluded_wrong_local_day": 0,
+    "n_excluded_wrong_local_day": 2,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   },
   "venue_id": "polymarket_us",

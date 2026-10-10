@@ -1,9 +1,17 @@
 {
   "actionable_suppressed": true,
   "away_team": "CWS",
-  "baseball": null,
+  "baseball": {
+    "away_lineup_status": "unconfirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-10-10T19:23:32Z",
+    "home_lineup_status": "unconfirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
   "best_ask": 0.44,
-  "best_ask_size": 624159.74,
+  "best_ask_size": 1580204.81,
   "best_bid": 0.435,
   "contract_url": "https://polymarket.us/event/mlb-cws-cle-2026-10-10",
   "event_slug": "mlb-cws-cle-2026-10-10",
@@ -15,7 +23,6 @@
   "market_id": "1305714",
   "market_slug": "aec-mlb-cws-cle-2026-10-10",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-10T06:07:54.973946Z",
-  "quote_request_time_utc": "2026-10-10T06:07:54.955316Z",
+  "quote_receive_time_utc": "2026-10-10T19:23:32.714540Z",
+  "quote_request_time_utc": "2026-10-10T19:23:32.694239Z",
   "rules_hash": "e9e2d27bdd330958",
   "rules_text_excerpt": "This market will settle to the winner of the Chicago White Sox vs Cleveland Guardians MLB AL Division Series Game 5 scheduled for 2026-10-10 at 8:00PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspended",
   "scheduled_start_utc": "2026-10-11T00:00:00Z",

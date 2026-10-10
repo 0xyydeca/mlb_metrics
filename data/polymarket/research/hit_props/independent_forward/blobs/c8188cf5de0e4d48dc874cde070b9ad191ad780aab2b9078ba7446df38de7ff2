@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.6,
+      "size": 13505.15
+    },
+    {
+      "price": 0.61,
+      "size": 2979.0
+    },
+    {
+      "price": 0.62,
+      "size": 1020.0
+    },
+    {
+      "price": 0.63,
+      "size": 750.0
+    },
+    {
+      "price": 0.64,
+      "size": 170.0
+    },
+    {
+      "price": 0.65,
+      "size": 1000.0
+    },
+    {
+      "price": 0.66,
+      "size": 3676.0
+    },
+    {
+      "price": 0.81,
+      "size": 4376.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.6,
+  "best_ask_size": 13505.15,
+  "best_bid": 0.59,
+  "best_bid_size": 4713.94,
+  "bids": [
+    {
+      "price": 0.59,
+      "size": 4713.94
+    },
+    {
+      "price": 0.58,
+      "size": 2543.1
+    },
+    {
+      "price": 0.55,
+      "size": 12.0
+    },
+    {
+      "price": 0.5,
+      "size": 500.0
+    },
+    {
+      "price": 0.39,
+      "size": 4376.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.595,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1311991",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-joade-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "83ea9b089fbb6219ebedf2ed556ecbd52edd313d988aed48e486b68300e056cc",
+  "receive_time_utc": "2026-10-10T19:23:37.650660Z",
+  "request_time_utc": "2026-10-10T19:23:37.617489Z",
+  "source_transact_time_utc": "2026-10-10T19:23:13.903296770Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

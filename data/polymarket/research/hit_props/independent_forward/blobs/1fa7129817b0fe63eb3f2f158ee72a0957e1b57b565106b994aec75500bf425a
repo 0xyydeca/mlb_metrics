@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.59,
+      "size": 6.3
+    },
+    {
+      "price": 0.6,
+      "size": 300.0
+    },
+    {
+      "price": 0.61,
+      "size": 1122.0
+    },
+    {
+      "price": 0.62,
+      "size": 3631.0
+    },
+    {
+      "price": 0.63,
+      "size": 48.75
+    },
+    {
+      "price": 0.64,
+      "size": 277.0
+    },
+    {
+      "price": 0.66,
+      "size": 10750.0
+    },
+    {
+      "price": 0.67,
+      "size": 1000.0
+    },
+    {
+      "price": 0.68,
+      "size": 3906.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.59,
+  "best_ask_size": 6.3,
+  "best_bid": 0.58,
+  "best_bid_size": 3763.2,
+  "bids": [
+    {
+      "price": 0.58,
+      "size": 3763.2
+    },
+    {
+      "price": 0.57,
+      "size": 0.9
+    },
+    {
+      "price": 0.55,
+      "size": 454.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 62.0
+    },
+    {
+      "price": 0.01,
+      "size": 3000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.585,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.59,
+  "market_id": "1325488",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-samant-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "0630ee7f8aa551464c2243bf49d4a26cfb82a90f967faf2fdefc19485e4ccbcd",
+  "receive_time_utc": "2026-10-10T19:23:37.953899Z",
+  "request_time_utc": "2026-10-10T19:23:37.918379Z",
+  "source_transact_time_utc": "2026-10-10T19:22:45.869922436Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

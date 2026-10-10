@@ -1,0 +1,29 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-stekwa-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-trabaz-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-tripet-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 12,
+  "finished_at_utc": "2026-10-10T19:24:37.997271+00:00",
+  "forecasts_saved": 12,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2123,
+  "loaded_capture_rows": 15,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261010T192336640214Z-59a0cddd",
+  "started_at_utc": "2026-10-10T19:23:36.640384+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

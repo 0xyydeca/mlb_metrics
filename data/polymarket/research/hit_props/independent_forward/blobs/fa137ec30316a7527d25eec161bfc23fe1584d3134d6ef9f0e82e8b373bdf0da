@@ -1,0 +1,96 @@
+{
+  "asks": [
+    {
+      "price": 0.63,
+      "size": 606.05
+    },
+    {
+      "price": 0.64,
+      "size": 865.0
+    },
+    {
+      "price": 0.65,
+      "size": 1000.0
+    },
+    {
+      "price": 0.69,
+      "size": 10750.0
+    },
+    {
+      "price": 0.7,
+      "size": 1000.0
+    },
+    {
+      "price": 0.73,
+      "size": 4629.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.63,
+  "best_ask_size": 606.05,
+  "best_bid": 0.62,
+  "best_bid_size": 3599.21,
+  "bids": [
+    {
+      "price": 0.62,
+      "size": 3599.21
+    },
+    {
+      "price": 0.59,
+      "size": 423.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 3000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.625,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.58,
+  "market_id": "1311985",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-chadel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "1318ffc96e5f34ae8e5f0af459ee29a333333835bebd15d85ea34f57f03e7688",
+  "receive_time_utc": "2026-10-10T19:23:37.499079Z",
+  "request_time_utc": "2026-10-10T19:23:37.465614Z",
+  "source_transact_time_utc": "2026-10-10T19:23:15.022384588Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

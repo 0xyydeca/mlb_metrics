@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849831.0,
+    "game_type": "D",
+    "key_mlbam": 805367.0,
+    "market_id": "1312000",
+    "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-chamei-gte1",
+    "requested_local_date": "2026-10-10",
+    "rules_hash": "0757767f78af8666",
+    "rules_text": "This market will settle to Yes if Chase Meidroth records 1 or more hits in the Chicago White Sox vs Cleveland Guardians MLB AL Division Series Game 5 scheduled for 2026-10-10 at 8:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-11T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "644b2c81c688234a63898df7d326460e741ff140fbe3ba5ca9ce925d47c191c6",
+  "forecast_id": "3125889781f39e2c1bddc283ec515ad07182c6e398c0d449aeedfb7cff9edce6",
+  "forecast_time_utc": "2026-10-10T19:23:37.563950+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "dbad340c269e34e07b37e94da069b02baa90677c47073add47065c5620946a17",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "1172bae939dd2a6feb3a7054a6a4d96e64b813830de7c34194da2c2cef8b755a"
+  },
+  "inputs_observed_at_utc": "2026-10-10T19:23:37.293278+00:00",
+  "manifest_sha256": "7dfcb2e2ad3794348ccfaafef5622516e0dfdd20aa024325868f2aba17e197ef",
+  "prediction_book_sha256": "7bf6327cf620c850275caf1cf1172713ab83af8419997ce3d0c69a1e63382b5a",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.07644619551135674,
+    "qualifying_hit": 0.6242435938823137,
+    "qualifying_no_hit": 0.29931021060632956
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261010T192336640214Z-59a0cddd"
+}

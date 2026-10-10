@@ -1,0 +1,104 @@
+{
+  "asks": [
+    {
+      "price": 0.64,
+      "size": 16585.67
+    },
+    {
+      "price": 0.65,
+      "size": 1750.0
+    },
+    {
+      "price": 0.67,
+      "size": 1000.0
+    },
+    {
+      "price": 0.69,
+      "size": 4032.0
+    },
+    {
+      "price": 0.87,
+      "size": 4376.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.64,
+  "best_ask_size": 16585.67,
+  "best_bid": 0.63,
+  "best_bid_size": 608.08,
+  "bids": [
+    {
+      "price": 0.63,
+      "size": 608.08
+    },
+    {
+      "price": 0.62,
+      "size": 2970.0
+    },
+    {
+      "price": 0.61,
+      "size": 3040.98
+    },
+    {
+      "price": 0.6,
+      "size": 40.0
+    },
+    {
+      "price": 0.54,
+      "size": 462.0
+    },
+    {
+      "price": 0.43,
+      "size": 4376.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.635,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.64,
+  "market_id": "1311988",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-josram-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "41efbd977f3e65140f2d635373edebfd1beac92205aa398c42b18643b21c8657",
+  "receive_time_utc": "2026-10-10T19:24:37.748109Z",
+  "request_time_utc": "2026-10-10T19:24:37.710520Z",
+  "source_transact_time_utc": "2026-10-10T19:22:22.527887999Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

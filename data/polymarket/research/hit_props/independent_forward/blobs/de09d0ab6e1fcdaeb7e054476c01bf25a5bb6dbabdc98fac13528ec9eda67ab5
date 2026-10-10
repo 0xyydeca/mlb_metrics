@@ -1,0 +1,92 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 1915.05
+    },
+    {
+      "price": 0.54,
+      "size": 2182.37
+    },
+    {
+      "price": 0.56,
+      "size": 10000.0
+    },
+    {
+      "price": 0.57,
+      "size": 750.0
+    },
+    {
+      "price": 0.59,
+      "size": 5048.0
+    },
+    {
+      "price": 0.82,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 1915.05,
+  "best_bid": 0.52,
+  "best_bid_size": 3916.54,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 3916.54
+    },
+    {
+      "price": 0.42,
+      "size": 595.0
+    },
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 3000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.53,
+  "market_id": "1323566",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-kyltee-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "fc6254d38d9bdbfdbca72f00af18835d0b306bdda94ae07fa3926a68dc479fe3",
+  "receive_time_utc": "2026-10-10T19:24:37.795243Z",
+  "request_time_utc": "2026-10-10T19:24:37.766381Z",
+  "source_transact_time_utc": "2026-10-10T19:24:09.738500254Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

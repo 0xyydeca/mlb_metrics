@@ -1,0 +1,96 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 606.15
+    },
+    {
+      "price": 0.57,
+      "size": 3635.0
+    },
+    {
+      "price": 0.61,
+      "size": 10750.0
+    },
+    {
+      "price": 0.62,
+      "size": 2000.0
+    },
+    {
+      "price": 0.64,
+      "size": 3472.0
+    },
+    {
+      "price": 0.83,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 606.15,
+  "best_bid": 0.55,
+  "best_bid_size": 4000.93,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 4000.93
+    },
+    {
+      "price": 0.52,
+      "size": 2.0
+    },
+    {
+      "price": 0.45,
+      "size": 555.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 3000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.56,
+  "market_id": "1312000",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-chamei-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "0b4da40a002aed9be739531cabfd2b5bb7f8ae17a00b3eef56f6c67052b259bc",
+  "receive_time_utc": "2026-10-10T19:23:37.552571Z",
+  "request_time_utc": "2026-10-10T19:23:37.514324Z",
+  "source_transact_time_utc": "2026-10-10T19:22:52.108228951Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

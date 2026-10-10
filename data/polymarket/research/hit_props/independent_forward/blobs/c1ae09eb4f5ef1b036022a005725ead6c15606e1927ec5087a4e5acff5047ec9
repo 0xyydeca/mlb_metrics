@@ -1,0 +1,108 @@
+{
+  "asks": [
+    {
+      "price": 0.51,
+      "size": 15008.15
+    },
+    {
+      "price": 0.52,
+      "size": 1244.76
+    },
+    {
+      "price": 0.54,
+      "size": 750.0
+    },
+    {
+      "price": 0.56,
+      "size": 2840.0
+    },
+    {
+      "price": 0.57,
+      "size": 1000.0
+    },
+    {
+      "price": 0.78,
+      "size": 4376.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.51,
+  "best_ask_size": 15008.15,
+  "best_bid": 0.5,
+  "best_bid_size": 2665.58,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 2665.58
+    },
+    {
+      "price": 0.49,
+      "size": 1417.0
+    },
+    {
+      "price": 0.48,
+      "size": 2550.0
+    },
+    {
+      "price": 0.39,
+      "size": 4375.0
+    },
+    {
+      "price": 0.38,
+      "size": 657.0
+    },
+    {
+      "price": 0.37,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.505,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.5,
+  "market_id": "1312006",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-munmur-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "12643a2d8d32365b8348d6a72ae102c299973d53ff164690313b87bc4459c723",
+  "receive_time_utc": "2026-10-10T19:23:37.854051Z",
+  "request_time_utc": "2026-10-10T19:23:37.822047Z",
+  "source_transact_time_utc": "2026-10-10T19:22:50.146037565Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
