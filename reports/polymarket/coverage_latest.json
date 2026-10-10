@@ -1,6 +1,6 @@
 {
-  "captured_at_utc": "2026-10-09T20:10:29Z",
-  "finished_at_utc": "2026-10-09T20:10:30Z",
+  "captured_at_utc": "2026-10-10T00:07:20Z",
+  "finished_at_utc": "2026-10-10T00:07:22Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
   "n_markets": 3,
@@ -16,8 +16,8 @@
   },
   "quote_health": {
     "n_index_rows": 3,
-    "latest_receive_time_utc": "2026-10-09T20:10:30.004957Z",
-    "age_seconds": -0.004956999999999989,
+    "latest_receive_time_utc": "2026-10-10T00:07:22.058798Z",
+    "age_seconds": -0.05879800000000002,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
@@ -122,8 +122,8 @@
     "quote": {
       "market_id": "1305714",
       "market_slug": "aec-mlb-cws-cle-2026-10-10",
-      "receive_time_utc": "2026-10-09T20:10:29.908235Z",
-      "age_seconds": 0.091765,
+      "receive_time_utc": "2026-10-10T00:07:21.881315Z",
+      "age_seconds": 0.118685,
       "stale": false,
       "eligible": true,
       "best_ask": 0.44,

@@ -28,20 +28,20 @@
   "elapsed_eligible_days": 0,
   "eligible_dates": [],
   "future_observations_claimed": false,
-  "generated_at_utc": "2026-10-09T20:10:39Z",
+  "generated_at_utc": "2026-10-10T00:07:29Z",
   "history_integrity": {
     "files": {
       "checkpoint_state": {
         "bytes": 21580,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
-        "sha16": "8f85284890691b8b"
+        "sha16": "e60b27ccfe2aecb0"
       },
       "cycle_log": {
-        "bytes": 376918,
+        "bytes": 377871,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
-        "sha16": "f53f17c4b6ec4297"
+        "sha16": "9ada57f4db8f1e32"
       },
       "decisions": {
         "bytes": 540343,
@@ -61,13 +61,13 @@
         "sha16": null
       }
     },
-    "generated_at_utc": "2026-10-09T20:10:39Z",
+    "generated_at_utc": "2026-10-10T00:07:29Z",
     "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
     "retrievable": true
   },
   "host": "github_actions_ubuntu_latest",
   "last_cycle": {
-    "cycle_id": "hp_ops_20261009T201039Z",
+    "cycle_id": "hp_ops_20261010T000729Z",
     "n_buy": 0,
     "n_contracts_in_denominator": 0,
     "n_pass": 0
@@ -97,7 +97,7 @@
   "reconcile": {
     "actionable": false,
     "fees_paid_total": 0.0,
-    "generated_at_utc": "2026-10-09T20:10:39Z",
+    "generated_at_utc": "2026-10-10T00:07:29Z",
     "issues": [],
     "n_decisions": 666,
     "n_duplicate_decision_ids": 0,
