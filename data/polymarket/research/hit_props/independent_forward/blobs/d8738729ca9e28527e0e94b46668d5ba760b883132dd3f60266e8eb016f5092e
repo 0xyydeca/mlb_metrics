@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.54,
+      "size": 13191.34
+    },
+    {
+      "price": 0.55,
+      "size": 3750.0
+    },
+    {
+      "price": 0.56,
+      "size": 8546.0
+    },
+    {
+      "price": 0.58,
+      "size": 2024.0
+    },
+    {
+      "price": 0.59,
+      "size": 9847.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 4380.0
+    },
+    {
+      "price": 0.99,
+      "size": 30000.0
+    }
+  ],
+  "best_ask": 0.54,
+  "best_ask_size": 13191.34,
+  "best_bid": 0.53,
+  "best_bid_size": 617.44,
+  "bids": [
+    {
+      "price": 0.53,
+      "size": 617.44
+    },
+    {
+      "price": 0.52,
+      "size": 3495.0
+    },
+    {
+      "price": 0.5,
+      "size": 2391.0
+    },
+    {
+      "price": 0.49,
+      "size": 185.0
+    },
+    {
+      "price": 0.44,
+      "size": 49.0
+    },
+    {
+      "price": 0.43,
+      "size": 12185.0
+    },
+    {
+      "price": 0.39,
+      "size": 641.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 30001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.535,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.53,
+  "market_id": "1347041",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-patbai-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "05073c1a5edc3760ce2839cd6542c78e271b5202d793faa0379cc4bc8a28b573",
+  "receive_time_utc": "2026-10-10T22:45:41.879723Z",
+  "request_time_utc": "2026-10-10T22:45:41.840912Z",
+  "source_transact_time_utc": "2026-10-10T22:45:05.602615533Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

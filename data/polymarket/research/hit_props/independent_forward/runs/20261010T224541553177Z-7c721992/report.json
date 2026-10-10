@@ -1,0 +1,57 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-chadel-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-chamei-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-colmon-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-joade-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-josram-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-kyltee-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-migvar-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-munmur-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-natlow-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-samant-gte1",
+      "reason": "first_forecast_already_saved"
+    }
+  ],
+  "executable_quotes_matched": 8,
+  "finished_at_utc": "2026-10-10T22:46:42.165298+00:00",
+  "forecasts_saved": 8,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2123,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261010T224541553177Z-7c721992",
+  "started_at_utc": "2026-10-10T22:45:41.553337+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.55,
+      "size": 5829.15
+    },
+    {
+      "price": 0.56,
+      "size": 1000.0
+    },
+    {
+      "price": 0.57,
+      "size": 17938.72
+    },
+    {
+      "price": 0.58,
+      "size": 383.0
+    },
+    {
+      "price": 0.59,
+      "size": 2830.15
+    },
+    {
+      "price": 0.6,
+      "size": 4125.0
+    },
+    {
+      "price": 0.65,
+      "size": 14700.0
+    },
+    {
+      "price": 0.82,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 30000.0
+    }
+  ],
+  "best_ask": 0.55,
+  "best_ask_size": 5829.15,
+  "best_bid": 0.54,
+  "best_bid_size": 2572.4,
+  "bids": [
+    {
+      "price": 0.54,
+      "size": 2572.4
+    },
+    {
+      "price": 0.53,
+      "size": 1901.0
+    },
+    {
+      "price": 0.52,
+      "size": 4305.0
+    },
+    {
+      "price": 0.48,
+      "size": 2129.0
+    },
+    {
+      "price": 0.44,
+      "size": 4943.0
+    },
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 30001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.545,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1347032",
+  "market_slug": "astatc-mlb-cws-cle-2026-10-10-hits-braroc-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "a288043cb0e69cf951ef09bc8b802d4af46617db1452cf92fb9e572cc4b1941c",
+  "receive_time_utc": "2026-10-10T22:46:41.855182Z",
+  "request_time_utc": "2026-10-10T22:46:41.782771Z",
+  "source_transact_time_utc": "2026-10-10T22:46:06.698268565Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
