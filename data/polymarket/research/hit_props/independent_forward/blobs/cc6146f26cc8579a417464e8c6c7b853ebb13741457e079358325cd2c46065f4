@@ -1,0 +1,148 @@
+{
+  "asks": [
+    {
+      "price": 0.51,
+      "size": 616.15
+    },
+    {
+      "price": 0.52,
+      "size": 675.0
+    },
+    {
+      "price": 0.53,
+      "size": 6359.0
+    },
+    {
+      "price": 0.54,
+      "size": 645.0
+    },
+    {
+      "price": 0.55,
+      "size": 1404.83
+    },
+    {
+      "price": 0.56,
+      "size": 227.0
+    },
+    {
+      "price": 0.58,
+      "size": 3054.0
+    },
+    {
+      "price": 0.59,
+      "size": 4048.0
+    },
+    {
+      "price": 0.6,
+      "size": 750.0
+    },
+    {
+      "price": 0.85,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 30000.0
+    }
+  ],
+  "best_ask": 0.51,
+  "best_ask_size": 616.15,
+  "best_bid": 0.5,
+  "best_bid_size": 2943.05,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 2943.05
+    },
+    {
+      "price": 0.49,
+      "size": 4609.05
+    },
+    {
+      "price": 0.48,
+      "size": 24.0
+    },
+    {
+      "price": 0.43,
+      "size": 856.0
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.41,
+      "size": 609.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 30001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.505,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.51,
+  "market_id": "1380540",
+  "market_slug": "astatc-mlb-lad-mil-2026-10-11-hits-andpag-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "b38f4a6bd7522e6f774b3b4975d533dea35c295d28548abaaea7fdd756d70d8e",
+  "receive_time_utc": "2026-10-11T23:17:25.164126Z",
+  "request_time_utc": "2026-10-11T23:17:25.093231Z",
+  "source_transact_time_utc": "2026-10-11T23:16:45.431521408Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
