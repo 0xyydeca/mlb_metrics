@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849809.0,
+    "game_type": "L",
+    "key_mlbam": 660271.0,
+    "market_id": "1336366",
+    "market_slug": "astatc-mlb-lad-mil-2026-10-11-hits-shooht-gte1",
+    "requested_local_date": "2026-10-11",
+    "rules_hash": "e6071a2ed9f18b7a",
+    "rules_text": "This market will settle to Yes if Shohei Ohtani records 1 or more hits in the Los Angeles Dodgers vs Milwaukee Brewers MLB NL Championship Series Game 1 scheduled for 2026-10-11 at 8:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-12T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "e2782fc0bbaef347c6f9718460575cc39c47796577eaaef74426f6ebd83c2d3e",
+  "forecast_id": "e510085e63f627d71b1ebf01638f8ba5331c202d880c416cf99694e10a1168f9",
+  "forecast_time_utc": "2026-10-11T19:37:33.278260+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "bdd7f2bcbeb6cb7c54b2b6537f117dfc199e30b3aae7d2ed747bf5fd60503a40",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "385e050d6102902f724e28adbc9575cb9f0c1071f7a7d10b799c816a63853442"
+  },
+  "inputs_observed_at_utc": "2026-10-11T19:37:32.739631+00:00",
+  "manifest_sha256": "177a8bfb4f90f4b888b60917d47a9034d353cbc4fd2d693dd8c7626440eea3a8",
+  "prediction_book_sha256": "f32e27d5fec35305328863b5f5671fc29ec392c6c3c4446f5cd017870dd80a72",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.18710572571433134,
+    "qualifying_hit": 0.5323022939082264,
+    "qualifying_no_hit": 0.2805919803774424
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261011T193732728717Z-e78f875d"
+}

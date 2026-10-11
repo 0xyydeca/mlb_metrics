@@ -1,9 +1,17 @@
 {
   "actionable_suppressed": true,
   "away_team": "LAD",
-  "baseball": null,
+  "baseball": {
+    "away_lineup_status": "unconfirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-10-11T19:37:29Z",
+    "home_lineup_status": "unconfirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
   "best_ask": 0.5,
-  "best_ask_size": 1302361.11,
+  "best_ask_size": 108065.32,
   "best_bid": 0.495,
   "contract_url": "https://polymarket.us/event/mlb-lad-mil-2026-10-11",
   "event_slug": "mlb-lad-mil-2026-10-11",
@@ -15,7 +23,6 @@
   "market_id": "1302885",
   "market_slug": "aec-mlb-lad-mil-2026-10-11",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-11T06:05:14.755306Z",
-  "quote_request_time_utc": "2026-10-11T06:05:14.703168Z",
+  "quote_receive_time_utc": "2026-10-11T19:37:28.881952Z",
+  "quote_request_time_utc": "2026-10-11T19:37:28.859482Z",
   "rules_hash": "61aeb26b327e55b5",
   "rules_text_excerpt": "This market will settle to the winner of the Los Angeles Dodgers vs Milwaukee Brewers MLB NL Championship Series Game 1 scheduled for 2026-10-11 at 8:00PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspe",
   "scheduled_start_utc": "2026-10-12T00:00:00Z",

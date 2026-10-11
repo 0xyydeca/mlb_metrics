@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.62,
+      "size": 1580.15
+    },
+    {
+      "price": 0.63,
+      "size": 1575.0
+    },
+    {
+      "price": 0.64,
+      "size": 140.0
+    },
+    {
+      "price": 0.65,
+      "size": 88.74
+    },
+    {
+      "price": 0.67,
+      "size": 11897.51
+    },
+    {
+      "price": 0.68,
+      "size": 2000.0
+    },
+    {
+      "price": 0.69,
+      "size": 4782.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 4380.0
+    },
+    {
+      "price": 0.99,
+      "size": 30000.0
+    }
+  ],
+  "best_ask": 0.62,
+  "best_ask_size": 1580.15,
+  "best_bid": 0.61,
+  "best_bid_size": 5605.4,
+  "bids": [
+    {
+      "price": 0.61,
+      "size": 5605.4
+    },
+    {
+      "price": 0.59,
+      "size": 40.0
+    },
+    {
+      "price": 0.56,
+      "size": 92.87
+    },
+    {
+      "price": 0.52,
+      "size": 480.0
+    },
+    {
+      "price": 0.51,
+      "size": 6124.07
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 30001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.615,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.62,
+  "market_id": "1336342",
+  "market_slug": "astatc-mlb-lad-mil-2026-10-11-hits-moobet-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "621c9371ad05f024897a7857e829147c31821b14d1b573df2e726cdd697cd257",
+  "receive_time_utc": "2026-10-11T19:38:33.330918Z",
+  "request_time_utc": "2026-10-11T19:38:33.297217Z",
+  "source_transact_time_utc": "2026-10-11T19:37:54.660333034Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
