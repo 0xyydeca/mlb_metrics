@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 11 maintenance — empty-input diagnosis and resumed collection
+
+- Read applicable instructions, compared matching brief sections and consulted the readiness plan. Clean checkout; inspected incoming owner-main changes with no source/test/workflow/instruction changes, then fast-forwarded archives to `2c0e39a`.
+- Fresh audit: 23 complete runs, zero failed/incomplete runs or integrity errors, 88 intact pregame forecasts, 75 delayed price matches and 13 missing execution quotes. Twenty additional forecasts and matches since October 10. All remain postseason research; formal eligible dates zero, returns unknown, betting disabled.
+- Investigated the prior empty runs using upstream capture summaries. October 9 local-date empty captures report zero same-day future events, other-day exclusions and no request errors. October 10 pregame captures subsequently fetched one event with 15 then 18 contracts/books; later empty captures explicitly excluded started or other-day events. Thus the saved provider list/date-filter evidence explains empty inputs and collection has resumed. This does not independently prove provider-list completeness or that no omitted venue contracts existed. Full provider response bodies are retained by the workflow artifacts, not these compact summaries; they were not independently retrieved in this review.
+- Saved bounded step-3 diagnosis and fresh integrity audit at `reports/model_validation/prospective_collection_2026-10-11.json`, with working-document copy under `research/2026-10-11/collection-review/`. No source changes; unchanged regression suites not repeated. No new capture, training, backfill, settlement reads, scoring, policy changes or orders. Original exclusions and missing quotes preserved.
+- Remaining: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, verified actual settlements and sufficient registered evidence. Collection health does not complete these prerequisites or demonstrate an edge.
+
 ## October 10 maintenance — collection-health follow-up
 
 - Read both instruction files, compared matching October 9 brief sections and consulted the readiness plan. Checkout clean; incoming owner-main changes contained no source/test/workflow/instruction changes. Fast-forwarded generated evidence to `f376cb9`.

@@ -1,0 +1,243 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 88,
+  "intact_pregame_forecasts": 88,
+  "execution_quotes_matched": 75,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 88
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 23,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 216,
+    "request_budget_omission": 79,
+    "ValueError: invalid_crossed_or_insufficient_book": 4,
+    "first_forecast_already_saved": 10
+  },
+  "audit_date": "2026-10-11",
+  "source_commit": "2c0e39abe15eddc41da94959cf8be454f0f38708",
+  "task": "Step 3 empty-input diagnosis and archive integrity review",
+  "upstream_capture_summaries": [
+    {
+      "capture_id": "hp_20261009T004614Z",
+      "requested_local_date": "2026-10-08",
+      "capture_started_at_utc": "2026-10-09T00:46:14.680928+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-08 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 1,
+        "n_excluded_wrong_local_day": 1,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    },
+    {
+      "capture_id": "hp_20261009T062544Z",
+      "requested_local_date": "2026-10-08",
+      "capture_started_at_utc": "2026-10-09T06:25:44.375752+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-08 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 2,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    },
+    {
+      "capture_id": "hp_20261009T201030Z",
+      "requested_local_date": "2026-10-09",
+      "capture_started_at_utc": "2026-10-09T20:10:30.610560+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-09 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 3,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    },
+    {
+      "capture_id": "hp_20261010T000722Z",
+      "requested_local_date": "2026-10-09",
+      "capture_started_at_utc": "2026-10-10T00:07:22.580731+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-09 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 3,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    },
+    {
+      "capture_id": "hp_20261010T060755Z",
+      "requested_local_date": "2026-10-09",
+      "capture_started_at_utc": "2026-10-10T06:07:55.686123+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-09 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 3,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    },
+    {
+      "capture_id": "hp_20261010T192333Z",
+      "requested_local_date": "2026-10-10",
+      "capture_started_at_utc": "2026-10-10T19:23:33.435098+00:00",
+      "status": "captured",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-10 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [
+          "mlb-cws-cle-2026-10-10"
+        ],
+        "n_events": 1,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 2,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 15,
+        "n_event_requests": 1,
+        "n_events_fetched": 1,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 15
+    },
+    {
+      "capture_id": "hp_20261010T224537Z",
+      "requested_local_date": "2026-10-10",
+      "capture_started_at_utc": "2026-10-10T22:45:37.595524+00:00",
+      "status": "captured",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-10 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [
+          "mlb-cws-cle-2026-10-10"
+        ],
+        "n_events": 1,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 2,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 18,
+        "n_event_requests": 1,
+        "n_events_fetched": 1,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 18
+    },
+    {
+      "capture_id": "hp_20261011T012327Z",
+      "requested_local_date": "2026-10-10",
+      "capture_started_at_utc": "2026-10-11T01:23:27.239429+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-10 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 1,
+        "n_excluded_wrong_local_day": 2,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    },
+    {
+      "capture_id": "hp_20261011T060515Z",
+      "requested_local_date": "2026-10-10",
+      "capture_started_at_utc": "2026-10-11T06:05:15.712558+00:00",
+      "status": "no_eligible_contracts",
+      "universe": {
+        "definition": "All active future MLB Polymarket US events with start local-date 2026-10-10 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+        "event_slugs": [],
+        "n_events": 0,
+        "n_excluded_already_started": 0,
+        "n_excluded_wrong_local_day": 5,
+        "complete_denominator_claimed": true,
+        "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent.",
+        "n_contracts_in_fetched_events": 0,
+        "n_event_requests": 0,
+        "n_events_fetched": 0,
+        "n_events_failed": 0,
+        "n_events_not_fetched_due_to_budget": 0
+      },
+      "errors": [],
+      "n_books_captured": 0
+    }
+  ],
+  "checks": "Fresh archive audit and upstream capture summaries inspected; no source changes or repeated regression suite",
+  "limitations": [
+    "Provider list completeness not independently verified",
+    "No outcomes opened; no profitability measured",
+    "Actual venue confirmation remains missing"
+  ]
+}
