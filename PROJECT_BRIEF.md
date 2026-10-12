@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 12 maintenance — repeat-capture archive preservation
+
+- Read both AGENTS.md files, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming owner-main changes with no source/test/workflow/instruction changes, then fast-forwarded generated data to `53c7c22`.
+- Fresh archive audit: 27 complete runs, zero failed/incomplete runs or integrity errors, 107 intact pregame forecasts, 94 delayed executable-price matches, 13 missing execution quotes. Nineteen new forecasts and matches since October 11. All remain postseason research, with zero formal eligible dates and unknown returns.
+- Completed a bounded step-3 repeat-capture preservation check: all 134 incoming independent-forward archive paths were additions; no existing archive files were modified or deleted relative to `f910048`. New pregame runs saved 12 then seven forecasts; the second skipped 11 already-saved forecasts. Two later runs each rejected 18 rows at the entry/start cutoff. Existing first forecasts and missing executions remain preserved; no historical repair or replay.
+- Saved `reports/model_validation/prospective_collection_2026-10-12.json` and working-document `research/2026-10-12/collection-review/audit.json`. Checks: fresh archive integrity audit, Git addition-only assertion and four new run reports. No source changes; unchanged regression suites not repeated. No new capture, training, backfill, settlement reads, outcome scoring, policy changes or orders.
+- Blockers unchanged: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Price matches are hypothetical executions; betting remains disabled and no profitability or engineering-completion claim is made.
+
 ## October 11 maintenance — empty-input diagnosis and resumed collection
 
 - Read applicable instructions, compared matching brief sections and consulted the readiness plan. Clean checkout; inspected incoming owner-main changes with no source/test/workflow/instruction changes, then fast-forwarded archives to `2c0e39a`.
