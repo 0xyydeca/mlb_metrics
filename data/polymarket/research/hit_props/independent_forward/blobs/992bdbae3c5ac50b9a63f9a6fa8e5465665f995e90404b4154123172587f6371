@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.55,
+      "size": 2538.55
+    },
+    {
+      "price": 0.56,
+      "size": 1007.0
+    },
+    {
+      "price": 0.57,
+      "size": 14781.0
+    },
+    {
+      "price": 0.58,
+      "size": 1524.0
+    },
+    {
+      "price": 0.59,
+      "size": 3048.0
+    },
+    {
+      "price": 0.6,
+      "size": 1750.0
+    },
+    {
+      "price": 0.66,
+      "size": 1895.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 7801.0
+    }
+  ],
+  "best_ask": 0.55,
+  "best_ask_size": 2538.55,
+  "best_bid": 0.54,
+  "best_bid_size": 19.1,
+  "bids": [
+    {
+      "price": 0.54,
+      "size": 19.1
+    },
+    {
+      "price": 0.53,
+      "size": 600.0
+    },
+    {
+      "price": 0.52,
+      "size": 10.0
+    },
+    {
+      "price": 0.5,
+      "size": 314.0
+    },
+    {
+      "price": 0.43,
+      "size": 1125.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 63.0
+    },
+    {
+      "price": 0.01,
+      "size": 8000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.545,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.54,
+  "market_id": "1403223",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-nicfor-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "1e5e8aedcff417d271edb4a77d65e7202df21f013f93c46abb2292835fa816fb",
+  "receive_time_utc": "2026-10-12T22:32:19.783936Z",
+  "request_time_utc": "2026-10-12T22:32:19.702661Z",
+  "source_transact_time_utc": "2026-10-12T22:32:14.507706436Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

@@ -1,0 +1,41 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-ryavil-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-stekwa-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-taywal-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-trabaz-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-vicmes-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-yandia-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 12,
+  "finished_at_utc": "2026-10-12T22:33:20.472676+00:00",
+  "forecasts_saved": 12,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2186,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261012T223218652122Z-3c99e8b2",
+  "started_at_utc": "2026-10-12T22:32:18.652289+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

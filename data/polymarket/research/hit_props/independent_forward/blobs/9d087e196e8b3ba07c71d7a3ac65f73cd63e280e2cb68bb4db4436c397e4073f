@@ -1,0 +1,148 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 1017.35
+    },
+    {
+      "price": 0.57,
+      "size": 2494.95
+    },
+    {
+      "price": 0.58,
+      "size": 284.56
+    },
+    {
+      "price": 0.59,
+      "size": 2285.3
+    },
+    {
+      "price": 0.6,
+      "size": 2501.0
+    },
+    {
+      "price": 0.61,
+      "size": 14198.0
+    },
+    {
+      "price": 0.62,
+      "size": 875.0
+    },
+    {
+      "price": 0.63,
+      "size": 1750.0
+    },
+    {
+      "price": 0.65,
+      "size": 3571.0
+    },
+    {
+      "price": 0.66,
+      "size": 4375.0
+    },
+    {
+      "price": 0.67,
+      "size": 8316.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 1002.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 32999.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 1017.35,
+  "best_bid": 0.55,
+  "best_bid_size": 4946.0,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 4946.0
+    },
+    {
+      "price": 0.54,
+      "size": 1050.0
+    },
+    {
+      "price": 0.53,
+      "size": 100.0
+    },
+    {
+      "price": 0.5,
+      "size": 2476.0
+    },
+    {
+      "price": 0.43,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4429.0
+    },
+    {
+      "price": 0.05,
+      "size": 1002.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 30000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.55,
+  "market_id": "1403219",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-benwil-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "6eab57cb17f2eca84f9aaab5755e7213b4172951168654904a2eaa7924fa1013",
+  "receive_time_utc": "2026-10-12T22:33:18.906663Z",
+  "request_time_utc": "2026-10-12T22:33:18.821970Z",
+  "source_transact_time_utc": "2026-10-12T22:32:47.468176149Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

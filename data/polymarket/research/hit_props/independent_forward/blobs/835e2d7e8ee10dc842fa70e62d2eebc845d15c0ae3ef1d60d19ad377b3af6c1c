@@ -1,0 +1,152 @@
+{
+  "asks": [
+    {
+      "price": 0.63,
+      "size": 6615.15
+    },
+    {
+      "price": 0.64,
+      "size": 1388.0
+    },
+    {
+      "price": 0.65,
+      "size": 40.0
+    },
+    {
+      "price": 0.66,
+      "size": 8657.0
+    },
+    {
+      "price": 0.67,
+      "size": 11123.0
+    },
+    {
+      "price": 0.68,
+      "size": 750.0
+    },
+    {
+      "price": 0.69,
+      "size": 2958.0
+    },
+    {
+      "price": 0.7,
+      "size": 5166.0
+    },
+    {
+      "price": 0.74,
+      "size": 4375.0
+    },
+    {
+      "price": 0.75,
+      "size": 11454.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 502.0
+    },
+    {
+      "price": 0.96,
+      "size": 1000.0
+    },
+    {
+      "price": 0.97,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 3005.0
+    },
+    {
+      "price": 0.99,
+      "size": 29999.0
+    }
+  ],
+  "best_ask": 0.63,
+  "best_ask_size": 6615.15,
+  "best_bid": 0.62,
+  "best_bid_size": 9487.67,
+  "bids": [
+    {
+      "price": 0.62,
+      "size": 9487.67
+    },
+    {
+      "price": 0.61,
+      "size": 1809.98
+    },
+    {
+      "price": 0.6,
+      "size": 140.0
+    },
+    {
+      "price": 0.59,
+      "size": 216.0
+    },
+    {
+      "price": 0.58,
+      "size": 431.0
+    },
+    {
+      "price": 0.53,
+      "size": 628.0
+    },
+    {
+      "price": 0.41,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 4375.0
+    },
+    {
+      "price": 0.05,
+      "size": 502.0
+    },
+    {
+      "price": 0.04,
+      "size": 1000.0
+    },
+    {
+      "price": 0.03,
+      "size": 2000.0
+    },
+    {
+      "price": 0.02,
+      "size": 3005.0
+    },
+    {
+      "price": 0.01,
+      "size": 30000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.625,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1368670",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-jonara-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "d8dc75b599df866d70401cce52ee0da8f8be22d5bb5a7987dc5061390290cc8b",
+  "receive_time_utc": "2026-10-12T22:33:19.647255Z",
+  "request_time_utc": "2026-10-12T22:33:19.481825Z",
+  "source_transact_time_utc": "2026-10-12T22:32:47.463224857Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

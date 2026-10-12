@@ -1,40 +1,40 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261011T231720Z",
+  "capture_id": "hp_20261012T223213Z",
   "contract": {
-    "book_receive_time_utc": "2026-10-11T23:17:21.578870Z",
-    "book_request_time_utc": "2026-10-11T23:17:21Z",
+    "book_receive_time_utc": "2026-10-12T22:32:14.921816Z",
+    "book_request_time_utc": "2026-10-12T22:32:14Z",
     "book_status": "captured",
-    "event_slug": "mlb-lad-mil-2026-10-11",
+    "event_slug": "mlb-cle-tb-2026-10-12",
     "fee_coefficient": 0.0695,
-    "market_id": "1380540",
-    "market_slug": "astatc-mlb-lad-mil-2026-10-11-hits-andpag-gte1",
-    "no_buy_price": 0.5,
-    "no_buy_size": 2943.05,
-    "player_name": "Andy Pages",
-    "provider_game_id": 10079781,
-    "provider_player_id": 392,
-    "question": "Will Andy Pages record at least 1 hits in LAD vs MIL?",
-    "rules_hash": "7576efa55e21f09c",
-    "rules_text": "This market will settle to Yes if Andy Pages records 1 or more hits in the Los Angeles Dodgers vs Milwaukee Brewers MLB NL Championship Series Game 1 scheduled for 2026-10-11 at 8:00PM ET. Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, or suspended and not rescheduled to a date within two days of the originally scheduled date, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "market_id": "1403219",
+    "market_slug": "astatc-mlb-cle-tb-2026-10-12-hits-benwil-gte1",
+    "no_buy_price": 0.44999999999999996,
+    "no_buy_size": 4946.0,
+    "player_name": "Ben Williamson",
+    "provider_game_id": 10079788,
+    "provider_player_id": 740,
+    "question": "Will Ben Williamson record at least 1 hits in Game 1: CLE Guardians vs. TB Rays?",
+    "rules_hash": "c237476c2f4c8b6c",
+    "rules_text": "This market will settle to Yes if Ben Williamson records 1 or more hits in the Cleveland Guardians vs Tampa Bay Rays MLB game scheduled for October 12, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
-    "scheduled_start_utc": "2026-10-12T00:00:00Z",
-    "yes_buy_price": 0.51,
-    "yes_buy_size": 616.15
+    "scheduled_start_utc": "2026-10-13T00:00:00Z",
+    "yes_buy_price": 0.56,
+    "yes_buy_size": 1016.35
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-10-11T23:17:23Z",
+  "generated_at_utc": "2026-10-12T22:32:17Z",
   "identity_mapping": {
     "game": {
-      "away_team": "LAD",
-      "game_pk": 849809,
-      "home_team": "MIL",
-      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-lad-mil-2026-10-11\", \"game_pk\": 849809}",
+      "away_team": "CLE",
+      "game_pk": 849820,
+      "home_team": "TB",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-cle-tb-2026-10-12\", \"game_pk\": 849820}",
       "mapping_status": "mapped"
     },
     "player": {
-      "key_mlbam": 681624,
-      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"andy pages\", \"key_mlbam\": 681624}",
+      "key_mlbam": 810938,
+      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"ben williamson\", \"key_mlbam\": 810938}",
       "mapping_status": "mapped"
     }
   },
@@ -97,9 +97,9 @@
   },
   "universe": {
     "complete_denominator_claimed": true,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-11 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-12 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-lad-mil-2026-10-11"
+      "mlb-cle-tb-2026-10-12"
     ],
     "n_contracts_in_fetched_events": 18,
     "n_event_requests": 1,
@@ -107,7 +107,7 @@
     "n_events_failed": 0,
     "n_events_fetched": 1,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 0,
+    "n_excluded_already_started": 1,
     "n_excluded_wrong_local_day": 4,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   },
