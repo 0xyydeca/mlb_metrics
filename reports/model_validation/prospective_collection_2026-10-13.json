@@ -1,0 +1,42 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 119,
+  "intact_pregame_forecasts": 119,
+  "execution_quotes_matched": 106,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 119
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 30,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 288,
+    "request_budget_omission": 85,
+    "ValueError: invalid_crossed_or_insufficient_book": 4,
+    "first_forecast_already_saved": 21
+  },
+  "audit_date": "2026-10-13",
+  "source_commit": "1184e281277ea3cd5d8387875c320469c1285543",
+  "task": "Step 3 cross-contract identity duplication check",
+  "identity_check": {
+    "distinct_game_player_pairs": 119,
+    "duplicate_game_player_pairs": [],
+    "invalid_identifier_forecasts": [],
+    "distinct_games": 9,
+    "distinct_players": 68
+  },
+  "checks": "Fresh archive integrity audit and identifier/duplicate checks; no source changes or repeated regression suite",
+  "owner_input_missing": "Actual venue confirmation"
+}

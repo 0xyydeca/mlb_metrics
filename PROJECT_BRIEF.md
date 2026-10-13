@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 13 maintenance — cross-contract identity duplication check
+
+- Read both instruction files, compared matching briefs and consulted the readiness plan. Checkout clean; inspected incoming changes (no source/test/workflow/instruction changes) and fast-forwarded generated evidence to owner main `1184e28`.
+- Fresh audit: 30 complete runs, zero failed/incomplete runs or integrity errors, 119 intact pregame forecasts, 106 delayed price matches and 13 missing execution quotes. Twelve new forecasts and matches. All are postseason research; formal eligible dates remain zero and returns unknown.
+- Completed a bounded step-3 identity check across all saved forecasts: 119 distinct game/player pairs, no repeated game/player pairs across contracts, and no invalid/nonpositive/nonintegral identifiers. This supplements contract-level archive integrity; it does not independently authenticate provider identity or make observations statistically independent.
+- Saved `reports/model_validation/prospective_collection_2026-10-13.json`, with working-document copy in `research/2026-10-13/collection-review/`. Checks: fresh archive audit plus identifier and duplicate assertions. No source changes; unchanged regression suites not repeated. No capture, training, backfill, settlement reads, outcome scoring, original-record changes or orders.
+- Still blocked on actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled; collection progress does not establish profitability or complete the engineering plan.
+
 ## October 12 maintenance — repeat-capture archive preservation
 
 - Read both AGENTS.md files, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming owner-main changes with no source/test/workflow/instruction changes, then fast-forwarded generated data to `53c7c22`.
