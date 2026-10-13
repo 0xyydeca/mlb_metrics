@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 2985.87
+    },
+    {
+      "price": 0.57,
+      "size": 1000.0
+    },
+    {
+      "price": 0.58,
+      "size": 12897.0
+    },
+    {
+      "price": 0.59,
+      "size": 2072.0
+    },
+    {
+      "price": 0.6,
+      "size": 2364.0
+    },
+    {
+      "price": 0.61,
+      "size": 1645.0
+    },
+    {
+      "price": 0.62,
+      "size": 3289.0
+    },
+    {
+      "price": 0.67,
+      "size": 8805.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 2985.87,
+  "best_bid": 0.55,
+  "best_bid_size": 2510.2,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 2510.2
+    },
+    {
+      "price": 0.54,
+      "size": 1491.45
+    },
+    {
+      "price": 0.53,
+      "size": 1844.0
+    },
+    {
+      "price": 0.52,
+      "size": 929.0
+    },
+    {
+      "price": 0.47,
+      "size": 1869.0
+    },
+    {
+      "price": 0.46,
+      "size": 543.0
+    },
+    {
+      "price": 0.43,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1428335",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-13-hits-benwil-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "f56f36fc350af8fe36d4752a8203b1b059ce2c8b9ec97b716080ed0144b26d8d",
+  "receive_time_utc": "2026-10-13T20:45:26.200443Z",
+  "request_time_utc": "2026-10-13T20:45:26.154251Z",
+  "source_transact_time_utc": "2026-10-13T20:45:09.082515Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

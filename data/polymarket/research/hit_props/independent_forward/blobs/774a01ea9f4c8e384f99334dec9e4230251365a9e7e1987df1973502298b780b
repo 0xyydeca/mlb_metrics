@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.62,
+      "size": 924.1
+    },
+    {
+      "price": 0.63,
+      "size": 1010.0
+    },
+    {
+      "price": 0.64,
+      "size": 299.0
+    },
+    {
+      "price": 0.65,
+      "size": 2552.0
+    },
+    {
+      "price": 0.66,
+      "size": 15093.0
+    },
+    {
+      "price": 0.67,
+      "size": 1375.0
+    },
+    {
+      "price": 0.68,
+      "size": 2766.0
+    },
+    {
+      "price": 0.69,
+      "size": 4032.0
+    },
+    {
+      "price": 0.74,
+      "size": 10284.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.62,
+  "best_ask_size": 924.1,
+  "best_bid": 0.61,
+  "best_bid_size": 3629.34,
+  "bids": [
+    {
+      "price": 0.61,
+      "size": 3629.34
+    },
+    {
+      "price": 0.6,
+      "size": 1815.0
+    },
+    {
+      "price": 0.52,
+      "size": 480.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 1.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.615,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.62,
+  "market_id": "1409573",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-13-hits-chadel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "ba3aef3b82591a293d5442a43acc5ae922239ec22c8d40748308fc2a0decf99f",
+  "receive_time_utc": "2026-10-13T20:46:26.588651Z",
+  "request_time_utc": "2026-10-13T20:46:26.362597Z",
+  "source_transact_time_utc": "2026-10-13T20:45:55.900570397Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
