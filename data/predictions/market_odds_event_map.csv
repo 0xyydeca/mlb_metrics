@@ -359,3 +359,4 @@ provider_event_id,game_pk,home_team,away_team,date,match_method
 401908031,849812.0,MIL,LAD,2026-10-12 00:00:00,provider_map
 401908023,849820.0,TB,CLE,2026-10-12 00:00:00,provider_map
 401908024,849813.0,TB,CLE,2026-10-13 00:00:00,unique_matchup
+401908024,849813.0,TB,CLE,2026-10-13 00:00:00,provider_map
