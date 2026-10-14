@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849811.0,
+    "game_type": "L",
+    "key_mlbam": 641343.0,
+    "market_id": "1416122",
+    "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-jakbau-gte1",
+    "requested_local_date": "2026-10-14",
+    "rules_hash": "434805a2b2ffdc6d",
+    "rules_text": "This market will settle to Yes if Jake Bauers records 1 or more hits in the Milwaukee Brewers vs Los Angeles Dodgers MLB NL Championship Series Game 3 scheduled for October 14, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-15T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "f9d41a857b9b987c3a6d9b1555ae6b634e0d543c3d35df4f7bc719d2eef96416",
+  "forecast_id": "8cbc02ef700a80ce5ceac9921d09eb19e2074c22498d74796707b586dea90df3",
+  "forecast_time_utc": "2026-10-14T19:32:14.880177+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "1d3625e77ff331e1fef4915aaa560b2b9b7c0178b9474f6c7dab5f0776b58da5",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "5fd04c3f769c0b8139c4de60c85f5b58e880ea034bad7a84e17ebc23c9f65e34"
+  },
+  "inputs_observed_at_utc": "2026-10-14T19:32:14.483420+00:00",
+  "manifest_sha256": "238add3f5519ba03702bf29449559853de5f21f044dd8ea222b7c47760d37e4b",
+  "prediction_book_sha256": "f9193c033b9c48820a5b04a9e5f8dd4f3b926c403eaccde2dd93f761b1e3763b",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.09612310404985762,
+    "qualifying_hit": 0.5668471343051352,
+    "qualifying_no_hit": 0.33702976164500703
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261014T193214452371Z-7bf29dfb"
+}
