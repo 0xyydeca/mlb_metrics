@@ -1,0 +1,136 @@
+{
+  "asks": [
+    {
+      "price": 0.52,
+      "size": 7559.13
+    },
+    {
+      "price": 0.54,
+      "size": 17086.0
+    },
+    {
+      "price": 0.55,
+      "size": 1140.83
+    },
+    {
+      "price": 0.56,
+      "size": 3703.0
+    },
+    {
+      "price": 0.57,
+      "size": 2906.0
+    },
+    {
+      "price": 0.6,
+      "size": 11275.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 4000.0
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 34999.0
+    }
+  ],
+  "best_ask": 0.52,
+  "best_ask_size": 7559.13,
+  "best_bid": 0.51,
+  "best_bid_size": 2626.12,
+  "bids": [
+    {
+      "price": 0.51,
+      "size": 2626.12
+    },
+    {
+      "price": 0.49,
+      "size": 1266.9
+    },
+    {
+      "price": 0.48,
+      "size": 5807.0
+    },
+    {
+      "price": 0.42,
+      "size": 2888.0
+    },
+    {
+      "price": 0.41,
+      "size": 4375.0
+    },
+    {
+      "price": 0.4,
+      "size": 625.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 4000.0
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.515,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.51,
+  "market_id": "1448764",
+  "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-garmit-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "9a46a650b880b8257c25b56ce069394ced2a0d030fb0657186218d3b5d3a5365",
+  "receive_time_utc": "2026-10-14T22:46:38.960455Z",
+  "request_time_utc": "2026-10-14T22:46:38.919208Z",
+  "source_transact_time_utc": "2026-10-14T22:46:11.791978001Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

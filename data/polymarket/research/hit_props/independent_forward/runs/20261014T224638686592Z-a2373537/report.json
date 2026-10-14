@@ -1,0 +1,61 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-britur-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-coopra-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-frefre-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-jaccho-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-jakbau-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-kyltuc-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-moobet-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-shooht-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-teoher-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-wilcon2-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-lad-2026-10-14-hits-wilsmi-gte1",
+      "reason": "first_forecast_already_saved"
+    }
+  ],
+  "executable_quotes_matched": 7,
+  "finished_at_utc": "2026-10-14T22:47:39.472560+00:00",
+  "forecasts_saved": 7,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2222,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261014T224638686592Z-a2373537",
+  "started_at_utc": "2026-10-14T22:46:38.686786+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}
