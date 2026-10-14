@@ -4,14 +4,14 @@
   "baseball": {
     "away_lineup_status": "confirmed",
     "away_starter_status": "probable",
-    "fetched_at_utc": "2026-10-13T20:45:20Z",
+    "fetched_at_utc": "2026-10-14T00:01:08Z",
     "home_lineup_status": "confirmed",
     "home_starter_status": "probable",
     "pass_reason": NaN,
     "usable_for_game_winner": true
   },
   "best_ask": 0.445,
-  "best_ask_size": 158582.26,
+  "best_ask_size": 296602.97,
   "best_bid": 0.44,
   "contract_url": "https://polymarket.us/event/mlb-cle-tb-2026-10-13",
   "event_slug": "mlb-cle-tb-2026-10-13",
@@ -38,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-13T20:45:20.093122Z",
-  "quote_request_time_utc": "2026-10-13T20:45:20.042906Z",
+  "quote_receive_time_utc": "2026-10-14T00:01:07.848204Z",
+  "quote_request_time_utc": "2026-10-14T00:01:07.767685Z",
   "rules_hash": "098467907232fbb8",
   "rules_text_excerpt": "This market will settle to the winner of the Cleveland Guardians vs Tampa Bay Rays MLB AL Championship Series Game 2 scheduled for 2026-10-13 at 8:00PM ET. Extra innings are included if played. If the game is delayed, postponed, or suspende",
   "scheduled_start_utc": "2026-10-14T00:00:00Z",
