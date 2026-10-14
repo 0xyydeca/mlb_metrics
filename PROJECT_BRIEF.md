@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 14 maintenance — new-run coverage reconciliation
+
+- Read applicable instructions, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated archives to owner main `60ef5fe`.
+- Fresh audit: 33 complete runs, zero failed/incomplete runs or integrity errors, 131 intact pregame forecasts, 118 delayed price matches and 13 missing execution quotes. Twelve new forecasts and matches. All remain postseason research; formal eligible dates zero and returns unknown.
+- Reconciled all three new run denominators: the pregame run loaded 18 contracts, saved 12 forecasts with 12 delayed matches and explicitly omitted six at the frozen request budget. Two later runs each loaded 18 and excluded all 18 at the entry/start cutoff. Loaded rows equal forecasts plus exclusions in each run. This confirms recorded coverage accounting, not full venue coverage; six omitted opportunities were not recovered or retrospectively forecast. Budget/selection rules remain unchanged.
+- Saved `reports/model_validation/prospective_collection_2026-10-14.json` and working-document `research/2026-10-14/collection-review/audit.json`. Checks: fresh archive integrity audit and three run-denominator assertions. No source changes; unchanged regression suites not repeated. No capture, training, backfill, settlement reads, outcome scoring, archived-record changes or orders.
+- Remaining blockers: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled. Operational checks do not establish profitability or complete readiness.
+
 ## October 13 maintenance — cross-contract identity duplication check
 
 - Read both instruction files, compared matching briefs and consulted the readiness plan. Checkout clean; inspected incoming changes (no source/test/workflow/instruction changes) and fast-forwarded generated evidence to owner main `1184e28`.
