@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 15 maintenance — tracked-only archive recovery
+
+- Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; incoming changes contained no source/test/workflow/instruction changes. Fast-forwarded generated evidence to owner main `2d2b54c`.
+- Fresh audit: 37 complete runs, zero failed/incomplete runs or integrity errors, 149 intact pregame forecasts, 136 delayed price matches and 13 missing execution quotes. Eighteen new forecasts and matches. All remain postseason research; zero formal eligible dates and unknown returns.
+- Completed a bounded step-3 recovery check: exported only committed independent-forward files using `git archive`, extracted into a fresh temporary directory and audited that copy. All 149 forecasts and 136 matches were recovered with zero integrity errors. This checks independence from untracked archive files; it uses the existing code/Python environment and is not a clean dependency installation or hosted CI test. Temporary recovery files were removed.
+- Saved `reports/model_validation/prospective_collection_2026-10-15.json` and working-document `research/2026-10-15/collection-review/audit.json`. No source changes; unchanged regression suites not repeated. No capture, training, backfill, settlement reads, outcome scoring, original archive changes or orders.
+- Remaining blockers: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled; recovery success does not establish profitability or complete readiness.
+
 ## October 14 maintenance — new-run coverage reconciliation
 
 - Read applicable instructions, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated archives to owner main `60ef5fe`.

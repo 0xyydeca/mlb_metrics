@@ -1,0 +1,39 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 149,
+  "intact_pregame_forecasts": 149,
+  "execution_quotes_matched": 136,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 149
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 37,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 360,
+    "request_budget_omission": 91,
+    "ValueError: invalid_crossed_or_insufficient_book": 4,
+    "first_forecast_already_saved": 32
+  },
+  "audit_date": "2026-10-15",
+  "source_commit": "2d2b54cb85fa7598fc6fd3b9ee24239d333698be",
+  "task": "Step 3 tracked-only archive recovery check",
+  "recovery_check": {
+    "method": "git archive HEAD of independent_forward, extracted to a fresh temporary directory; audit using existing local code and Python environment",
+    "passed": true,
+    "limitation": "Not a clean dependency installation or hosted CI test"
+  },
+  "owner_input_missing": "Actual venue confirmation"
+}
