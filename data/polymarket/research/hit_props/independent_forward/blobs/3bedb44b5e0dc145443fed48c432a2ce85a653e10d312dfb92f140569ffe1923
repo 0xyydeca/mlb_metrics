@@ -1,0 +1,96 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 4415.15
+    },
+    {
+      "price": 0.64,
+      "size": 10000.0
+    },
+    {
+      "price": 0.65,
+      "size": 1250.0
+    },
+    {
+      "price": 0.66,
+      "size": 2000.0
+    },
+    {
+      "price": 0.69,
+      "size": 1000.0
+    },
+    {
+      "price": 0.86,
+      "size": 4376.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 4415.15,
+  "best_bid": 0.6,
+  "best_bid_size": 616.41,
+  "bids": [
+    {
+      "price": 0.6,
+      "size": 616.41
+    },
+    {
+      "price": 0.59,
+      "size": 2855.54
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 4380.0
+    },
+    {
+      "price": 0.01,
+      "size": 28000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.605,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1457015",
+  "market_slug": "astatc-mlb-mil-lad-2026-10-15-hits-teoher-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "909c55838d02a10bf87e53221303b914f7c4fa0578c2518fa8a0f3be407de2c3",
+  "receive_time_utc": "2026-10-15T22:31:59.951016Z",
+  "request_time_utc": "2026-10-15T22:31:59.914724Z",
+  "source_transact_time_utc": "2026-10-15T22:31:29.615176902Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

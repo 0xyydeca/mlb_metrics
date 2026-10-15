@@ -1,0 +1,80 @@
+{
+  "asks": [
+    {
+      "price": 0.41,
+      "size": 512.11
+    },
+    {
+      "price": 0.42,
+      "size": 2543.2
+    },
+    {
+      "price": 0.43,
+      "size": 248.0
+    },
+    {
+      "price": 0.44,
+      "size": 495.96
+    },
+    {
+      "price": 0.46,
+      "size": 500.0
+    },
+    {
+      "price": 0.48,
+      "size": 844.0
+    },
+    {
+      "price": 0.97,
+      "size": 52.0
+    },
+    {
+      "price": 0.98,
+      "size": 1535.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.41,
+  "best_ask_size": 512.11,
+  "best_bid": 0.4,
+  "best_bid_size": 121.17,
+  "bids": [
+    {
+      "price": 0.4,
+      "size": 121.17
+    },
+    {
+      "price": 0.38,
+      "size": 61.0
+    },
+    {
+      "price": 0.02,
+      "size": 48.0
+    },
+    {
+      "price": 0.01,
+      "size": 12823.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.405,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.39,
+  "market_id": "1473618",
+  "market_slug": "astatc-mlb-mil-lad-2026-10-15-hits-migroj-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "1f60278b52f37c7af8114145aab8fc274b75ef90757037932c54a0a7283790a0",
+  "receive_time_utc": "2026-10-15T22:31:59.845308Z",
+  "request_time_utc": "2026-10-15T22:31:59.823478Z",
+  "source_transact_time_utc": "2026-10-15T22:31:54.400435999Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

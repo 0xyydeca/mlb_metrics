@@ -1,0 +1,11 @@
+{
+  "acquisition_cost": 0.6,
+  "ask": 0.58,
+  "book_sha256": "90971928282bdf956664b97ba6f3681f04f0ffc6be707bbe67619ebac8b9020f",
+  "fee_cap": 0.02,
+  "forecast_id": "1cebc1dec3d49b8838c83658d29f782008e99cc37cbc659f4f038b64afe09f8b",
+  "hypothetical_fill_only": true,
+  "quantity": 1.0,
+  "quote_received_at_utc": "2026-10-15T22:32:59.694185Z",
+  "status": "executable_quote_matched"
+}

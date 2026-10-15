@@ -1,0 +1,76 @@
+{
+  "asks": [
+    {
+      "price": 0.46,
+      "size": 16.16
+    },
+    {
+      "price": 0.47,
+      "size": 600.0
+    },
+    {
+      "price": 0.48,
+      "size": 208.8
+    },
+    {
+      "price": 0.5,
+      "size": 1200.0
+    },
+    {
+      "price": 0.51,
+      "size": 500.0
+    },
+    {
+      "price": 0.52,
+      "size": 2750.0
+    },
+    {
+      "price": 0.98,
+      "size": 53.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.46,
+  "best_ask_size": 16.16,
+  "best_bid": 0.45,
+  "best_bid_size": 1.17,
+  "bids": [
+    {
+      "price": 0.45,
+      "size": 1.17
+    },
+    {
+      "price": 0.42,
+      "size": 192.0
+    },
+    {
+      "price": 0.02,
+      "size": 57.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.455,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.46,
+  "market_id": "1473615",
+  "market_slug": "astatc-mlb-mil-lad-2026-10-15-hits-enrher-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "7b39dacf4569101cf8087ca6964b66e0136c934d7149494a425ca3daf9acad8c",
+  "receive_time_utc": "2026-10-15T22:32:59.835421Z",
+  "request_time_utc": "2026-10-15T22:32:59.809616Z",
+  "source_transact_time_utc": "2026-10-15T22:31:52.876333864Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

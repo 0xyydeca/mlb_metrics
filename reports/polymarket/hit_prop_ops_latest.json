@@ -28,32 +28,32 @@
   "elapsed_eligible_days": 0,
   "eligible_dates": [],
   "future_observations_claimed": false,
-  "generated_at_utc": "2026-10-15T19:18:55Z",
+  "generated_at_utc": "2026-10-15T22:33:10Z",
   "history_integrity": {
     "files": {
       "checkpoint_state": {
-        "bytes": 31820,
+        "bytes": 32397,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/ops_checkpoint.json",
-        "sha16": "38dcdc3b198fe87e"
+        "sha16": "66436f98a3302990"
       },
       "cycle_log": {
-        "bytes": 542502,
+        "bytes": 558288,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/cycle_log.jsonl",
-        "sha16": "23bc5964edf68aea"
+        "sha16": "894a2cc34d29ef92"
       },
       "decisions": {
-        "bytes": 828515,
+        "bytes": 843439,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/decisions.csv",
-        "sha16": "8c3b2c09c8c0d99e"
+        "sha16": "1f6521cbfd3b3478"
       },
       "exclusions": {
-        "bytes": 269101,
+        "bytes": 273368,
         "exists": true,
         "path": "data/polymarket/research/hit_props/prospective/exclusions.csv",
-        "sha16": "da662b536da68d55"
+        "sha16": "ee06236ac2aa6d50"
       },
       "positions": {
         "bytes": 0,
@@ -61,16 +61,16 @@
         "sha16": null
       }
     },
-    "generated_at_utc": "2026-10-15T19:18:55Z",
+    "generated_at_utc": "2026-10-15T22:33:10Z",
     "note": "Sim fixtures live under ledger/sim and are excluded from this hash set.",
     "retrievable": true
   },
   "host": "github_actions_ubuntu_latest",
   "last_cycle": {
-    "cycle_id": "hp_ops_20261015T191855Z",
+    "cycle_id": "hp_ops_20261015T223310Z",
     "n_buy": 0,
-    "n_contracts_in_denominator": 12,
-    "n_pass": 12
+    "n_contracts_in_denominator": 18,
+    "n_pass": 18
   },
   "material_policy_change_requires_new_version": true,
   "modes": {
@@ -97,9 +97,9 @@
   "reconcile": {
     "actionable": false,
     "fees_paid_total": 0.0,
-    "generated_at_utc": "2026-10-15T19:18:55Z",
+    "generated_at_utc": "2026-10-15T22:33:10Z",
     "issues": [],
-    "n_decisions": 986,
+    "n_decisions": 1004,
     "n_duplicate_decision_ids": 0,
     "n_open_positions": 0,
     "n_positions": 0,
