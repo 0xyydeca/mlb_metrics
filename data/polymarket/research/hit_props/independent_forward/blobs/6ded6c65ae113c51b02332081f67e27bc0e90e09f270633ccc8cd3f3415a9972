@@ -1,0 +1,120 @@
+{
+  "asks": [
+    {
+      "price": 0.64,
+      "size": 606.15
+    },
+    {
+      "price": 0.65,
+      "size": 4511.05
+    },
+    {
+      "price": 0.66,
+      "size": 50.0
+    },
+    {
+      "price": 0.67,
+      "size": 80.0
+    },
+    {
+      "price": 0.68,
+      "size": 500.0
+    },
+    {
+      "price": 0.7,
+      "size": 1000.0
+    },
+    {
+      "price": 0.71,
+      "size": 750.0
+    },
+    {
+      "price": 0.88,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4335.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.97,
+      "size": 4000.0
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.64,
+  "best_ask_size": 606.15,
+  "best_bid": 0.63,
+  "best_bid_size": 3807.83,
+  "bids": [
+    {
+      "price": 0.63,
+      "size": 3807.83
+    },
+    {
+      "price": 0.62,
+      "size": 1203.4
+    },
+    {
+      "price": 0.44,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 3770.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.03,
+      "size": 4000.0
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.635,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.65,
+  "market_id": "1457006",
+  "market_slug": "astatc-mlb-mil-lad-2026-10-15-hits-jaccho-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "0cac7461e8fb534bb92203be20eac9fbeb2b1048d31f6928c0ec90eed91db9ce",
+  "receive_time_utc": "2026-10-15T19:18:45.047262Z",
+  "request_time_utc": "2026-10-15T19:18:44.887999Z",
+  "source_transact_time_utc": "2026-10-15T19:18:35.223378553Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

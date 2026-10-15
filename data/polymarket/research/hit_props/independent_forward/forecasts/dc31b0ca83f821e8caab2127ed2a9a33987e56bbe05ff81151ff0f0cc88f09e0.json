@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849810.0,
+    "game_type": "L",
+    "key_mlbam": 518692.0,
+    "market_id": "1457003",
+    "market_slug": "astatc-mlb-mil-lad-2026-10-15-hits-frefre-gte1",
+    "requested_local_date": "2026-10-15",
+    "rules_hash": "e23a50a7290d2363",
+    "rules_text": "This market will settle to Yes if Freddie Freeman records 1 or more hits in the Milwaukee Brewers vs Los Angeles Dodgers MLB NL Championship Series Game 4 scheduled for October 15, 2026 at 9:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-16T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "370b00ac63abb09e7fc83f683493b35689b518ec7120a0f7c471c141404b81a0",
+  "forecast_id": "dc31b0ca83f821e8caab2127ed2a9a33987e56bbe05ff81151ff0f0cc88f09e0",
+  "forecast_time_utc": "2026-10-15T19:17:44.501679+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "bd417d5602323db6b36e523c5f45fc758c835458d6e7c9a5d200b49f60f389b9",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "441d9109e0c1c309af20062d2971f2644342e6c22672c4392b89d150775f271a"
+  },
+  "inputs_observed_at_utc": "2026-10-15T19:17:44.196367+00:00",
+  "manifest_sha256": "ceab7a70aec816ea5bc06d3071eb8ee3a7764709e46b68c508b354a76d12ab2f",
+  "prediction_book_sha256": "12497d42f53d707abe300b37648a632f286f494d9a4c87fd7a323f478beb06fd",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.04976545392647034,
+    "qualifying_hit": 0.6593404755545483,
+    "qualifying_no_hit": 0.29089407051898136
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261015T191744036706Z-d081ec0d"
+}
