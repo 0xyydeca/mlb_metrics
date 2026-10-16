@@ -1,0 +1,72 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 3894.15
+    },
+    {
+      "price": 0.57,
+      "size": 2386.0
+    },
+    {
+      "price": 0.59,
+      "size": 1250.0
+    },
+    {
+      "price": 0.6,
+      "size": 1000.0
+    },
+    {
+      "price": 0.62,
+      "size": 3289.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 3894.15,
+  "best_bid": 0.55,
+  "best_bid_size": 2441.36,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 2441.36
+    },
+    {
+      "price": 0.54,
+      "size": 1048.5
+    },
+    {
+      "price": 0.53,
+      "size": 78.2
+    },
+    {
+      "price": 0.44,
+      "size": 568.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.56,
+  "market_id": "1474634",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-trabaz-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "8d925f45249b01f9a5fafc4ccddb9888f7b6b24acccf5979d812735d8fd810eb",
+  "receive_time_utc": "2026-10-16T18:52:56.670948Z",
+  "request_time_utc": "2026-10-16T18:52:56.618898Z",
+  "source_transact_time_utc": "2026-10-16T18:52:35.016949162Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

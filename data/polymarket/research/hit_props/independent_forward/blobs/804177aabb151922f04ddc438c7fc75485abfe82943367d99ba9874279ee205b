@@ -1,0 +1,68 @@
+{
+  "asks": [
+    {
+      "price": 0.58,
+      "size": 4401.15
+    },
+    {
+      "price": 0.59,
+      "size": 2000.0
+    },
+    {
+      "price": 0.62,
+      "size": 1500.0
+    },
+    {
+      "price": 0.63,
+      "size": 750.0
+    },
+    {
+      "price": 0.64,
+      "size": 3472.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.58,
+  "best_ask_size": 4401.15,
+  "best_bid": 0.57,
+  "best_bid_size": 2377.29,
+  "bids": [
+    {
+      "price": 0.57,
+      "size": 2377.29
+    },
+    {
+      "price": 0.56,
+      "size": 1010.38
+    },
+    {
+      "price": 0.48,
+      "size": 520.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.575,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.57,
+  "market_id": "1474631",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-natlow-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "871a40c205d61fa08e724096994f59156b7bda5da690e5392939b0d2aedbee4c",
+  "receive_time_utc": "2026-10-16T18:52:56.552282Z",
+  "request_time_utc": "2026-10-16T18:52:56.528323Z",
+  "source_transact_time_utc": "2026-10-16T18:50:48.105612001Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

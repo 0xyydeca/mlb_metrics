@@ -1,0 +1,72 @@
+{
+  "asks": [
+    {
+      "price": 0.67,
+      "size": 2461.4
+    },
+    {
+      "price": 0.7,
+      "size": 2250.0
+    },
+    {
+      "price": 0.72,
+      "size": 4464.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.67,
+  "best_ask_size": 2461.4,
+  "best_bid": 0.66,
+  "best_bid_size": 2135.99,
+  "bids": [
+    {
+      "price": 0.66,
+      "size": 2135.99
+    },
+    {
+      "price": 0.64,
+      "size": 1850.0
+    },
+    {
+      "price": 0.6,
+      "size": 416.0
+    },
+    {
+      "price": 0.27,
+      "size": 1.0
+    },
+    {
+      "price": 0.23,
+      "size": 1.0
+    },
+    {
+      "price": 0.14,
+      "size": 1.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.665,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.67,
+  "market_id": "1472692",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-stekwa-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "37d7c67fdcf78fd11f77f9228e201cbff594ee4bf0aa4c4eea5d354f440b5d78",
+  "receive_time_utc": "2026-10-16T18:53:57.282351Z",
+  "request_time_utc": "2026-10-16T18:53:57.183916Z",
+  "source_transact_time_utc": "2026-10-16T18:52:49.780502813Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

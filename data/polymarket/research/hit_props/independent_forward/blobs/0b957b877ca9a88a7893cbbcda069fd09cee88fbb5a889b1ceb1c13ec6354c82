@@ -1,0 +1,88 @@
+{
+  "asks": [
+    {
+      "price": 0.68,
+      "size": 614.15
+    },
+    {
+      "price": 0.69,
+      "size": 5513.74
+    },
+    {
+      "price": 0.7,
+      "size": 2000.0
+    },
+    {
+      "price": 0.71,
+      "size": 750.0
+    },
+    {
+      "price": 0.72,
+      "size": 500.0
+    },
+    {
+      "price": 0.76,
+      "size": 5208.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.68,
+  "best_ask_size": 614.15,
+  "best_bid": 0.67,
+  "best_bid_size": 1923.97,
+  "bids": [
+    {
+      "price": 0.67,
+      "size": 1923.97
+    },
+    {
+      "price": 0.65,
+      "size": 29.51
+    },
+    {
+      "price": 0.63,
+      "size": 4.76
+    },
+    {
+      "price": 0.6,
+      "size": 416.0
+    },
+    {
+      "price": 0.24,
+      "size": 1.0
+    },
+    {
+      "price": 0.21,
+      "size": 1.0
+    },
+    {
+      "price": 0.14,
+      "size": 1.0
+    },
+    {
+      "price": 0.01,
+      "size": 10001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.675,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.69,
+  "market_id": "1472683",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-chasim-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "62bc4dd37a7d4068ec219b044a5279316baf26b56d2799fe10e0872358e6aafc",
+  "receive_time_utc": "2026-10-16T18:53:56.404425Z",
+  "request_time_utc": "2026-10-16T18:53:56.279864Z",
+  "source_transact_time_utc": "2026-10-16T18:52:49.778285045Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

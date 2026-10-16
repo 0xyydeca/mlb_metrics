@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849817.0,
+    "game_type": "L",
+    "key_mlbam": 666018.0,
+    "market_id": "1472695",
+    "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-jonara-gte1",
+    "requested_local_date": "2026-10-16",
+    "rules_hash": "58809f8e20afe340",
+    "rules_text": "This market will settle to Yes if Jonathan Aranda records 1 or more hits in the Tampa Bay Rays vs Cleveland Guardians MLB AL Championship Series Game 4 scheduled for October 16, 2026 at 6:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-17T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "88b9a234f80e314bacf8381cdcdefa5a7e784e5508cf873e7b0fe34145279218",
+  "forecast_id": "9b8b67c729bac6d0bfe788981014d886c84eb30c7689e4910d26d6cf4abf0954",
+  "forecast_time_utc": "2026-10-16T18:52:56.304090+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "23a906a5ddbec26f5d22f54ecaef38f836f74245f91b888183225465994e5beb",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "75650fc4ec4c6045bfcc65e14910f800c096cb60e3824444ebc7af088d5c91be"
+  },
+  "inputs_observed_at_utc": "2026-10-16T18:52:55.943670+00:00",
+  "manifest_sha256": "5c707e0d878722b7f166f1f7719457c333757c055dc425a60aa52d29a2da9c91",
+  "prediction_book_sha256": "a38ed5a10ebf23fb347fe724969218ab2340e8198a05766c7f90edad979a3156",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.0601883366097332,
+    "qualifying_hit": 0.6461501616059399,
+    "qualifying_no_hit": 0.29366150178432693
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261016T185255932786Z-0ba99b7f"
+}

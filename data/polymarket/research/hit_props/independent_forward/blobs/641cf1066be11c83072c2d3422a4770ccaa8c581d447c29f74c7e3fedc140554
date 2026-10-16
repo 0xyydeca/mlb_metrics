@@ -1,0 +1,76 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 4440.15
+    },
+    {
+      "price": 0.62,
+      "size": 500.0
+    },
+    {
+      "price": 0.63,
+      "size": 750.0
+    },
+    {
+      "price": 0.65,
+      "size": 3571.0
+    },
+    {
+      "price": 0.98,
+      "size": 46.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 4440.15,
+  "best_bid": 0.6,
+  "best_bid_size": 612.18,
+  "bids": [
+    {
+      "price": 0.6,
+      "size": 612.18
+    },
+    {
+      "price": 0.59,
+      "size": 1698.23
+    },
+    {
+      "price": 0.58,
+      "size": 1000.0
+    },
+    {
+      "price": 0.5,
+      "size": 500.0
+    },
+    {
+      "price": 0.02,
+      "size": 58.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.605,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.6,
+  "market_id": "1492660",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-liahic-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "d8d6c6316dd326b77c7e13a8f1239f9a47b7cdb57a961548a35046992fab01ba",
+  "receive_time_utc": "2026-10-16T18:52:56.511417Z",
+  "request_time_utc": "2026-10-16T18:52:56.472311Z",
+  "source_transact_time_utc": "2026-10-16T18:52:36.261414519Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
