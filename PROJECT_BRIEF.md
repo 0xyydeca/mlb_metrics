@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 16 maintenance — new-run failure triage
+
+- Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated data to owner main `7d7b303`.
+- Fresh audit: 41 complete runs, zero failed/incomplete runs or integrity errors, 167 intact pregame forecasts, 154 delayed price matches and 13 missing execution quotes. Eighteen new forecasts and matches; all postseason research, with zero formal eligible dates and unknown returns.
+- Triaged the four new runs: pregame runs saved 11 then seven forecasts, all with delayed matches; two later runs saved none. One new initial-book rejection was recorded for `astatc-mlb-mil-lad-2026-10-15-hits-teoher-gte1` as `invalid_crossed_or_insufficient_book`. This combined error does not establish which condition failed; it is not a delayed-match failure. Preserved the rejection rather than altering eligibility or inventing a fill. The new-run forecast/match totals reconcile to the archive delta.
+- Saved `reports/model_validation/prospective_collection_2026-10-16.json` and working-document `research/2026-10-16/collection-review/audit.json`. Checks: fresh archive audit and four-run delta assertions. No source changes; unchanged regression suites not repeated. No capture, training, backfill, settlement reads, outcome scoring, original-record changes or orders.
+- Still blocked on actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled; collection does not establish profitability or complete readiness.
+
 ## October 15 maintenance — tracked-only archive recovery
 
 - Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; incoming changes contained no source/test/workflow/instruction changes. Fast-forwarded generated evidence to owner main `2d2b54c`.
