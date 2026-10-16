@@ -1,0 +1,64 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 3833.48
+    },
+    {
+      "price": 0.54,
+      "size": 217.0
+    },
+    {
+      "price": 0.56,
+      "size": 750.0
+    },
+    {
+      "price": 0.58,
+      "size": 2976.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 3833.48,
+  "best_bid": 0.52,
+  "best_bid_size": 3621.59,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 3621.59
+    },
+    {
+      "price": 0.51,
+      "size": 9.09
+    },
+    {
+      "price": 0.4,
+      "size": 625.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.52,
+  "market_id": "1499130",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-ricpal-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "145173251578e05793a8c4f8c0bf99756f18388cabc8bb997f5ce87942d465f0",
+  "receive_time_utc": "2026-10-16T21:49:57.264759Z",
+  "request_time_utc": "2026-10-16T21:49:57.200666Z",
+  "source_transact_time_utc": "2026-10-16T21:46:41.412573451Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

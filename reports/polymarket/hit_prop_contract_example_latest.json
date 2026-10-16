@@ -1,29 +1,29 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261016T185252Z",
+  "capture_id": "hp_20261016T214853Z",
   "contract": {
-    "book_receive_time_utc": "2026-10-16T18:52:53.048281Z",
-    "book_request_time_utc": "2026-10-16T18:52:52Z",
+    "book_receive_time_utc": "2026-10-16T21:48:54.028828Z",
+    "book_request_time_utc": "2026-10-16T21:48:53Z",
     "book_status": "captured",
     "event_slug": "mlb-tb-cle-2026-10-16",
     "fee_coefficient": 0.0695,
-    "market_id": "1472689",
-    "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-chadel-gte1",
-    "no_buy_price": 0.35,
-    "no_buy_size": 15.33,
-    "player_name": "Chase DeLauter",
+    "market_id": "1497763",
+    "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-braroc-gte1",
+    "no_buy_price": 0.48,
+    "no_buy_size": 2540.44,
+    "player_name": "Brayan Rocchio",
     "provider_game_id": 10079791,
-    "provider_player_id": 677,
-    "question": "Will Chase DeLauter record at least 1 hits in Game 4: TB Rays vs. CLE Guardians?",
-    "rules_hash": "c219d1343616aa9b",
-    "rules_text": "This market will settle to Yes if Chase DeLauter records 1 or more hits in the Tampa Bay Rays vs Cleveland Guardians MLB AL Championship Series Game 4 scheduled for October 16, 2026 at 6:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "provider_player_id": 382,
+    "question": "Will Brayan Rocchio record at least 1 hits in Game 4: TB Rays vs. CLE Guardians?",
+    "rules_hash": "87ef1c34c2cf3a99",
+    "rules_text": "This market will settle to Yes if Brayan Rocchio records 1 or more hits in the Tampa Bay Rays vs Cleveland Guardians MLB game scheduled for October 16, 2026 at 6:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
     "scheduled_start_utc": "2026-10-17T00:00:00Z",
-    "yes_buy_price": 0.66,
-    "yes_buy_size": 4711.15
+    "yes_buy_price": 0.53,
+    "yes_buy_size": 3187.08
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-10-16T18:52:54Z",
+  "generated_at_utc": "2026-10-16T21:48:55Z",
   "identity_mapping": {
     "game": {
       "away_team": "TB",
@@ -33,8 +33,8 @@
       "mapping_status": "mapped"
     },
     "player": {
-      "key_mlbam": 800050,
-      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"chase delauter\", \"key_mlbam\": 800050}",
+      "key_mlbam": 677587,
+      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"brayan rocchio\", \"key_mlbam\": 677587}",
       "mapping_status": "mapped"
     }
   },
@@ -101,7 +101,7 @@
     "event_slugs": [
       "mlb-tb-cle-2026-10-16"
     ],
-    "n_contracts_in_fetched_events": 12,
+    "n_contracts_in_fetched_events": 18,
     "n_event_requests": 1,
     "n_events": 1,
     "n_events_failed": 0,

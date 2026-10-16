@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 3187.08
+    },
+    {
+      "price": 0.54,
+      "size": 486.0
+    },
+    {
+      "price": 0.55,
+      "size": 1222.0
+    },
+    {
+      "price": 0.56,
+      "size": 500.0
+    },
+    {
+      "price": 0.58,
+      "size": 2976.0
+    },
+    {
+      "price": 0.94,
+      "size": 57.0
+    },
+    {
+      "price": 0.95,
+      "size": 2000.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 4000.0
+    },
+    {
+      "price": 0.98,
+      "size": 6000.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 3187.08,
+  "best_bid": 0.52,
+  "best_bid_size": 2540.44,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 2540.44
+    },
+    {
+      "price": 0.51,
+      "size": 2781.29
+    },
+    {
+      "price": 0.49,
+      "size": 1812.0
+    },
+    {
+      "price": 0.39,
+      "size": 641.0
+    },
+    {
+      "price": 0.06,
+      "size": 37.0
+    },
+    {
+      "price": 0.05,
+      "size": 2000.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 4000.0
+    },
+    {
+      "price": 0.02,
+      "size": 6000.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.53,
+  "market_id": "1497763",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-braroc-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "5ec457ac85b9b4bbf7b0393e4dc1aa1539c70c38406ba15fab2ad7e3aa5f03e4",
+  "receive_time_utc": "2026-10-16T21:48:56.975736Z",
+  "request_time_utc": "2026-10-16T21:48:56.900831Z",
+  "source_transact_time_utc": "2026-10-16T21:47:14.173367541Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

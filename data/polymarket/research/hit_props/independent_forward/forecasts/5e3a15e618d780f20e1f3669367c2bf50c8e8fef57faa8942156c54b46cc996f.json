@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849817.0,
+    "game_type": "L",
+    "key_mlbam": 690984.0,
+    "market_id": "1497762",
+    "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-pethal-gte1",
+    "requested_local_date": "2026-10-16",
+    "rules_hash": "732e40b6a3c1a46f",
+    "rules_text": "This market will settle to Yes if Petey Halpin records 1 or more hits in the Tampa Bay Rays vs Cleveland Guardians MLB AL Championship Series Game 4 scheduled for October 16, 2026 at 6:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-17T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "fe5fb3f103d2c5130e20def597eb96cc3aecddb30deb6bf7c0fb33f725171e5f",
+  "forecast_id": "5e3a15e618d780f20e1f3669367c2bf50c8e8fef57faa8942156c54b46cc996f",
+  "forecast_time_utc": "2026-10-16T21:48:57.105349+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "0d88b8127b7f96a36e94fbf6c949b19423c91d152d0debbf40fcb62f44a1f90b",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "75650fc4ec4c6045bfcc65e14910f800c096cb60e3824444ebc7af088d5c91be"
+  },
+  "inputs_observed_at_utc": "2026-10-16T21:48:56.828099+00:00",
+  "manifest_sha256": "e5e4a779ff0527a553c3b2c039044cccf7c5b939f9776a1af9f9ff40691f26cc",
+  "prediction_book_sha256": "47372b728a6867a27c7db6565f3ae19fde32beb0c93c0b1e750056a88bf1d809",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.482171851716914,
+    "qualifying_hit": 0.29007521810175,
+    "qualifying_no_hit": 0.22775293018133583
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261016T214856816765Z-afa3dbb9"
+}

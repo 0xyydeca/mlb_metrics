@@ -1,0 +1,72 @@
+{
+  "asks": [
+    {
+      "price": 0.43,
+      "size": 9.1
+    },
+    {
+      "price": 0.44,
+      "size": 3474.28
+    },
+    {
+      "price": 0.45,
+      "size": 530.36
+    },
+    {
+      "price": 0.47,
+      "size": 1038.0
+    },
+    {
+      "price": 0.5,
+      "size": 2500.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.43,
+  "best_ask_size": 9.1,
+  "best_bid": 0.42,
+  "best_bid_size": 3122.04,
+  "bids": [
+    {
+      "price": 0.42,
+      "size": 3122.04
+    },
+    {
+      "price": 0.41,
+      "size": 1000.0
+    },
+    {
+      "price": 0.34,
+      "size": 8.0
+    },
+    {
+      "price": 0.31,
+      "size": 806.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.425,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.44,
+  "market_id": "1499133",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-taywal-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "580a2d124262a3485f310f5170feb87885326d30451d0d06d8d771b760f95d98",
+  "receive_time_utc": "2026-10-16T21:48:57.199695Z",
+  "request_time_utc": "2026-10-16T21:48:57.161124Z",
+  "source_transact_time_utc": "2026-10-16T21:48:28.573630965Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

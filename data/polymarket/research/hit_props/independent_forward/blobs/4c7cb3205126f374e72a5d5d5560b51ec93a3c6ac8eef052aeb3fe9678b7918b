@@ -1,0 +1,84 @@
+{
+  "asks": [
+    {
+      "price": 0.5,
+      "size": 22.12
+    },
+    {
+      "price": 0.51,
+      "size": 10.0
+    },
+    {
+      "price": 0.52,
+      "size": 600.0
+    },
+    {
+      "price": 0.53,
+      "size": 3127.0
+    },
+    {
+      "price": 0.54,
+      "size": 217.0
+    },
+    {
+      "price": 0.56,
+      "size": 500.0
+    },
+    {
+      "price": 0.57,
+      "size": 750.0
+    },
+    {
+      "price": 0.59,
+      "size": 3048.0
+    },
+    {
+      "price": 0.98,
+      "size": 42.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.5,
+  "best_ask_size": 22.12,
+  "best_bid": 0.49,
+  "best_bid_size": 3769.6,
+  "bids": [
+    {
+      "price": 0.49,
+      "size": 3769.6
+    },
+    {
+      "price": 0.4,
+      "size": 625.0
+    },
+    {
+      "price": 0.02,
+      "size": 58.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.495,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1497762",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-pethal-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "35671310868ace1038e73eb8f0d96618952f04fd006061eacedd800d3da17627",
+  "receive_time_utc": "2026-10-16T21:49:57.198948Z",
+  "request_time_utc": "2026-10-16T21:49:57.134745Z",
+  "source_transact_time_utc": "2026-10-16T21:48:28.377917113Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

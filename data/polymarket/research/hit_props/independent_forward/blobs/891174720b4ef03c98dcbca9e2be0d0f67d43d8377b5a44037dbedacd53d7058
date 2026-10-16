@@ -1,0 +1,72 @@
+{
+  "asks": [
+    {
+      "price": 0.58,
+      "size": 2138.14
+    },
+    {
+      "price": 0.59,
+      "size": 400.0
+    },
+    {
+      "price": 0.6,
+      "size": 250.0
+    },
+    {
+      "price": 0.61,
+      "size": 500.0
+    },
+    {
+      "price": 0.62,
+      "size": 750.0
+    },
+    {
+      "price": 0.63,
+      "size": 3378.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.58,
+  "best_ask_size": 2138.14,
+  "best_bid": 0.57,
+  "best_bid_size": 2443.95,
+  "bids": [
+    {
+      "price": 0.57,
+      "size": 2443.95
+    },
+    {
+      "price": 0.55,
+      "size": 1000.0
+    },
+    {
+      "price": 0.49,
+      "size": 510.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.575,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1499126",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-vicmes-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "f0a4fec8d8da2c87be91907ec430b0bcf809790b8c14b36c3298af719089d326",
+  "receive_time_utc": "2026-10-16T21:49:57.390560Z",
+  "request_time_utc": "2026-10-16T21:49:57.329147Z",
+  "source_transact_time_utc": "2026-10-16T21:48:33.376024393Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
