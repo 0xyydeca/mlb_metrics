@@ -1,0 +1,80 @@
+{
+  "asks": [
+    {
+      "price": 0.51,
+      "size": 41.1
+    },
+    {
+      "price": 0.52,
+      "size": 1.17
+    },
+    {
+      "price": 0.53,
+      "size": 3873.0
+    },
+    {
+      "price": 0.54,
+      "size": 63.86
+    },
+    {
+      "price": 0.56,
+      "size": 10000.0
+    },
+    {
+      "price": 0.57,
+      "size": 500.0
+    },
+    {
+      "price": 0.59,
+      "size": 5798.0
+    },
+    {
+      "price": 0.62,
+      "size": 4410.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.51,
+  "best_ask_size": 41.1,
+  "best_bid": 0.5,
+  "best_bid_size": 2885.55,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 2885.55
+    },
+    {
+      "price": 0.44,
+      "size": 568.0
+    },
+    {
+      "price": 0.37,
+      "size": 4410.0
+    },
+    {
+      "price": 0.01,
+      "size": 28000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.505,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.51,
+  "market_id": "1497763",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-braroc-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "346af01c6113a3a1f5e338b4d45a7a9655b8bebae6d6e2f480d065de225e2c0b",
+  "receive_time_utc": "2026-10-17T19:49:57.108732Z",
+  "request_time_utc": "2026-10-17T19:49:57.075986Z",
+  "source_transact_time_utc": "2026-10-17T19:49:47.644476658Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

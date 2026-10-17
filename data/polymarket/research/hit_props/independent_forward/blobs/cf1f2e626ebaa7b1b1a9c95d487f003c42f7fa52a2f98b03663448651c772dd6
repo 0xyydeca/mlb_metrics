@@ -1,0 +1,84 @@
+{
+  "asks": [
+    {
+      "price": 0.57,
+      "size": 11.88
+    },
+    {
+      "price": 0.58,
+      "size": 10.0
+    },
+    {
+      "price": 0.59,
+      "size": 1336.0
+    },
+    {
+      "price": 0.6,
+      "size": 2500.0
+    },
+    {
+      "price": 0.64,
+      "size": 13000.0
+    },
+    {
+      "price": 0.65,
+      "size": 2750.0
+    },
+    {
+      "price": 0.67,
+      "size": 4375.0
+    },
+    {
+      "price": 0.68,
+      "size": 3906.0
+    },
+    {
+      "price": 0.7,
+      "size": 35.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.57,
+  "best_ask_size": 11.88,
+  "best_bid": 0.56,
+  "best_bid_size": 3531.3,
+  "bids": [
+    {
+      "price": 0.56,
+      "size": 3531.3
+    },
+    {
+      "price": 0.52,
+      "size": 2980.0
+    },
+    {
+      "price": 0.45,
+      "size": 4410.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.565,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.55,
+  "market_id": "1472701",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-joade-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "b79b0ee829e3a239debccda4b717a7555987e43357599cf4d1b1b68225b8ec6f",
+  "receive_time_utc": "2026-10-17T19:48:57.104425Z",
+  "request_time_utc": "2026-10-17T19:48:57.083808Z",
+  "source_transact_time_utc": "2026-10-17T19:48:26.604174292Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

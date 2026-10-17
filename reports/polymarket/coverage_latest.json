@@ -1,6 +1,6 @@
 {
-  "captured_at_utc": "2026-10-17T17:53:21Z",
-  "finished_at_utc": "2026-10-17T17:53:22Z",
+  "captured_at_utc": "2026-10-17T19:48:52Z",
+  "finished_at_utc": "2026-10-17T19:48:53Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
   "n_markets": 2,
@@ -16,8 +16,8 @@
   },
   "quote_health": {
     "n_index_rows": 2,
-    "latest_receive_time_utc": "2026-10-17T17:53:22.344611Z",
-    "age_seconds": -0.344611,
+    "latest_receive_time_utc": "2026-10-17T19:48:53.056526Z",
+    "age_seconds": -0.056525999999999965,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
@@ -57,14 +57,14 @@
       "team": "CLE",
       "outcome_id": "2872335",
       "is_long": false,
-      "executable_buy": 0.485,
-      "display_price": 0.52,
+      "executable_buy": 0.49,
+      "display_price": 0.515,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173593625,
-      "total_acquisition_cost_per_contract": 0.5023593625,
+      "est_taker_fee_per_contract": 0.017368050000000003,
+      "total_acquisition_cost_per_contract": 0.50736805,
       "market_id": "1436428",
       "side": "home"
     }
@@ -107,8 +107,8 @@
     "quote": {
       "market_id": "1409120",
       "market_slug": "aec-mlb-tb-cle-2026-10-16",
-      "receive_time_utc": "2026-10-17T17:53:22.245498Z",
-      "age_seconds": -0.245498,
+      "receive_time_utc": "2026-10-17T19:48:53.011186Z",
+      "age_seconds": -0.01118600000000003,
       "stale": false,
       "eligible": true,
       "best_ask": 0.505,
@@ -146,7 +146,7 @@
       "lineup_batting_order_source": null,
       "usable_for_game_winner": "True",
       "pass_reason": null,
-      "fetched_at_utc": "2026-10-17T17:53:22Z",
+      "fetched_at_utc": "2026-10-17T19:48:53Z",
       "source": "schedule_plus_lineups",
       "as_of_limitation": null
     },

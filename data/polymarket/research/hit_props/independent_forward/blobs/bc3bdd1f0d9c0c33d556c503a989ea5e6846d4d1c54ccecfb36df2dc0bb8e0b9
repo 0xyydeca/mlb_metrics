@@ -1,0 +1,96 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 11.15
+    },
+    {
+      "price": 0.62,
+      "size": 2000.0
+    },
+    {
+      "price": 0.63,
+      "size": 5208.86
+    },
+    {
+      "price": 0.66,
+      "size": 11723.72
+    },
+    {
+      "price": 0.67,
+      "size": 1250.0
+    },
+    {
+      "price": 0.68,
+      "size": 2000.0
+    },
+    {
+      "price": 0.71,
+      "size": 8685.0
+    },
+    {
+      "price": 0.72,
+      "size": 35.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 11.15,
+  "best_bid": 0.6,
+  "best_bid_size": 3344.2,
+  "bids": [
+    {
+      "price": 0.6,
+      "size": 3344.2
+    },
+    {
+      "price": 0.55,
+      "size": 3500.0
+    },
+    {
+      "price": 0.5,
+      "size": 6267.82
+    },
+    {
+      "price": 0.47,
+      "size": 35.0
+    },
+    {
+      "price": 0.28,
+      "size": 1.0
+    },
+    {
+      "price": 0.2,
+      "size": 1.0
+    },
+    {
+      "price": 0.15,
+      "size": 1.0
+    },
+    {
+      "price": 0.01,
+      "size": 50000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.605,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1472686",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-juncam-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "dcce789d243bf15207473a693423673f047a53cbd3cb6075d7cfdf0babe70f70",
+  "receive_time_utc": "2026-10-17T19:49:57.253755Z",
+  "request_time_utc": "2026-10-17T19:49:57.227713Z",
+  "source_transact_time_utc": "2026-10-17T19:49:28.051574203Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
