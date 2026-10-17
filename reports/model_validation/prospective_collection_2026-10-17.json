@@ -1,0 +1,40 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 185,
+  "intact_pregame_forecasts": 185,
+  "execution_quotes_matched": 172,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 185
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 45,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 432,
+    "request_budget_omission": 91,
+    "ValueError: invalid_crossed_or_insufficient_book": 5,
+    "first_forecast_already_saved": 55
+  },
+  "audit_date": "2026-10-17",
+  "source_commit": "76c0952151f6fc4b7c9132947d387d8d5c8ae20e",
+  "task": "Step 3 execution-record delta verification",
+  "execution_delta": {
+    "new_matched_records": 18,
+    "existing_records_modified_or_deleted": 0,
+    "base_commit": "27d4f7b"
+  },
+  "checks": "Fresh archive integrity audit and execution diff assertions; unchanged regression suites not repeated",
+  "owner_input_missing": "Actual venue confirmation"
+}

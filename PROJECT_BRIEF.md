@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 17 maintenance — execution-record delta verification
+
+- Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; incoming changes contained no source/test/workflow/instruction changes. Fast-forwarded generated archives to owner main `76c0952`.
+- Fresh audit: 45 complete runs, zero failed/incomplete runs or integrity errors, 185 intact pregame forecasts, 172 delayed price matches and 13 missing execution quotes. Eighteen additional forecasts and matches; all postseason research. Formal eligible dates remain zero; returns unknown.
+- Completed a bounded step-3 execution-record check against `27d4f7b`: all 18 incoming execution files are new matched records; no existing execution records were changed or deleted. Thus the increase is new evidence, not retrospective filling of missing quotes. The 13 historical missing executions remain intact.
+- Saved `reports/model_validation/prospective_collection_2026-10-17.json` and working-document `research/2026-10-17/collection-review/audit.json`. Checks: fresh archive audit and execution-diff assertions. No source changes; unchanged regression suites not repeated. No capture, training, backfill, settlement reads, outcome scoring, policy changes or orders.
+- Remaining blockers: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled. Collection-health checks alone do not resolve these prerequisites or complete the engineering plan.
+
 ## October 16 maintenance — new-run failure triage
 
 - Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated data to owner main `7d7b303`.
