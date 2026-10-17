@@ -1,4 +1,6 @@
 date,game_pk,rank,name,predicted_probability,combined_probability,actual_hit,status,grade
+2026-10-17,849816.0,1,Yandy Díaz,0.6033827260600805,0.6207541243484628,,pending,speculative
+2026-10-17,849816.0,2,Junior Caminero,0.6393479603366787,0.6143242935559641,,pending,speculative
 2026-10-16,849817.0,1,Chandler Simpson,0.6438850792941964,0.654906545887208,,pending,speculative
 2026-10-16,849817.0,2,Yandy Díaz,0.6033827260600805,0.6207541243484628,,pending,speculative
 2026-10-15,849810.0,1,Jackson Chourio,0.6365579356976703,0.6189965025157017,0.0,miss,speculative
