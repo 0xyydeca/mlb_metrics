@@ -1,0 +1,89 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-braroc-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-chadel-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-chasim-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-joade-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-jonara-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-jondel-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-josram-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-juncam-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-liahic-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-natlow-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-patbai-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-pethal-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-ricpal-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-stekwa-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-taywal-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-trabaz-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-vicmes-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-yandia-gte1",
+      "reason": "first_forecast_already_saved"
+    }
+  ],
+  "executable_quotes_matched": 0,
+  "finished_at_utc": "2026-10-17T23:35:28.363216+00:00",
+  "forecasts_saved": 0,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2311,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261017T233528039781Z-19717dca",
+  "started_at_utc": "2026-10-17T23:35:28.039945+00:00",
+  "status": "no_eligible_forecasts",
+  "version": "independent-prospective-capture-v1"
+}
