@@ -1,0 +1,64 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 500.2
+    },
+    {
+      "price": 0.57,
+      "size": 750.0
+    },
+    {
+      "price": 0.58,
+      "size": 2000.0
+    },
+    {
+      "price": 0.62,
+      "size": 35.0
+    },
+    {
+      "price": 0.99,
+      "size": 125000.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 500.2,
+  "best_bid": 0.55,
+  "best_bid_size": 0.1,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 0.1
+    },
+    {
+      "price": 0.45,
+      "size": 2.67
+    },
+    {
+      "price": 0.37,
+      "size": 35.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.49,
+  "market_id": "1497759",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-patbai-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "1356a43deaa1beab62e571c8f015005cdc1652c3bce3075ea47019bab82172b7",
+  "receive_time_utc": "2026-10-17T17:54:27.902967Z",
+  "request_time_utc": "2026-10-17T17:54:27.820091Z",
+  "source_transact_time_utc": "2026-10-17T17:51:43.790169628Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

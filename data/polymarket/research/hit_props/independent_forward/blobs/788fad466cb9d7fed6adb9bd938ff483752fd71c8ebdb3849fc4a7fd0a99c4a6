@@ -1,0 +1,60 @@
+{
+  "asks": [
+    {
+      "price": 0.55,
+      "size": 0.1
+    },
+    {
+      "price": 0.62,
+      "size": 1250.0
+    },
+    {
+      "price": 0.63,
+      "size": 2000.0
+    },
+    {
+      "price": 0.67,
+      "size": 35.0
+    },
+    {
+      "price": 0.99,
+      "size": 125000.0
+    }
+  ],
+  "best_ask": 0.55,
+  "best_ask_size": 0.1,
+  "best_bid": 0.54,
+  "best_bid_size": 2.28,
+  "bids": [
+    {
+      "price": 0.54,
+      "size": 2.28
+    },
+    {
+      "price": 0.42,
+      "size": 35.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.545,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.54,
+  "market_id": "1472704",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-jondel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "cfe4f88297e43e8c3f7e07c15a959e8c00abb6be2f67e40dbd148ead0b7484d0",
+  "receive_time_utc": "2026-10-17T17:53:27.538655Z",
+  "request_time_utc": "2026-10-17T17:53:27.501556Z",
+  "source_transact_time_utc": "2026-10-17T17:41:56.739375738Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

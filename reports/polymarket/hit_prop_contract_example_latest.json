@@ -1,35 +1,35 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261016T214853Z",
+  "capture_id": "hp_20261017T175323Z",
   "contract": {
-    "book_receive_time_utc": "2026-10-16T21:48:54.028828Z",
-    "book_request_time_utc": "2026-10-16T21:48:53Z",
+    "book_receive_time_utc": "2026-10-17T17:53:24.049979Z",
+    "book_request_time_utc": "2026-10-17T17:53:23Z",
     "book_status": "captured",
     "event_slug": "mlb-tb-cle-2026-10-16",
     "fee_coefficient": 0.0695,
     "market_id": "1497763",
     "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-braroc-gte1",
-    "no_buy_price": 0.48,
-    "no_buy_size": 2540.44,
+    "no_buy_price": 0.54,
+    "no_buy_size": 106.1,
     "player_name": "Brayan Rocchio",
-    "provider_game_id": 10079791,
+    "provider_game_id": 10079792,
     "provider_player_id": 382,
     "question": "Will Brayan Rocchio record at least 1 hits in Game 4: TB Rays vs. CLE Guardians?",
-    "rules_hash": "87ef1c34c2cf3a99",
-    "rules_text": "This market will settle to Yes if Brayan Rocchio records 1 or more hits in the Tampa Bay Rays vs Cleveland Guardians MLB game scheduled for October 16, 2026 at 6:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "rules_hash": "56fae61cc1b19ae7",
+    "rules_text": "This market will settle to Yes if Brayan Rocchio records 1 or more hits in the Tampa Bay Rays vs Cleveland Guardians MLB AL Championship Series Game 4 scheduled for October 16, 2026 at 6:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
-    "scheduled_start_utc": "2026-10-17T00:00:00Z",
-    "yes_buy_price": 0.53,
-    "yes_buy_size": 3187.08
+    "scheduled_start_utc": "2026-10-18T00:08:00Z",
+    "yes_buy_price": 0.47,
+    "yes_buy_size": 0.1
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-10-16T21:48:55Z",
+  "generated_at_utc": "2026-10-17T17:53:25Z",
   "identity_mapping": {
     "game": {
       "away_team": "TB",
-      "game_pk": 849817,
+      "game_pk": 849816,
       "home_team": "CLE",
-      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-tb-cle-2026-10-16\", \"game_pk\": 849817}",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-tb-cle-2026-10-16\", \"game_pk\": 849816}",
       "mapping_status": "mapped"
     },
     "player": {
@@ -97,7 +97,7 @@
   },
   "universe": {
     "complete_denominator_claimed": true,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-16 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-17 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
       "mlb-tb-cle-2026-10-16"
     ],

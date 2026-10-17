@@ -1,0 +1,64 @@
+{
+  "asks": [
+    {
+      "price": 0.65,
+      "size": 43.0
+    },
+    {
+      "price": 0.67,
+      "size": 3250.0
+    },
+    {
+      "price": 0.73,
+      "size": 35.0
+    },
+    {
+      "price": 0.99,
+      "size": 125000.0
+    }
+  ],
+  "best_ask": 0.65,
+  "best_ask_size": 43.0,
+  "best_bid": 0.56,
+  "best_bid_size": 127.0,
+  "bids": [
+    {
+      "price": 0.56,
+      "size": 127.0
+    },
+    {
+      "price": 0.48,
+      "size": 35.0
+    },
+    {
+      "price": 0.23,
+      "size": 2.0
+    },
+    {
+      "price": 0.15,
+      "size": 1.0
+    },
+    {
+      "price": 0.01,
+      "size": 1.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.605,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1472689",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-chadel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "2fc0cf9aeadc5080d2f14e45a2ec65bfe2eb76fdfe1ea88d02d3fc0c09ae82c3",
+  "receive_time_utc": "2026-10-17T17:53:27.303831Z",
+  "request_time_utc": "2026-10-17T17:53:27.263069Z",
+  "source_transact_time_utc": "2026-10-17T17:52:06.457012373Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

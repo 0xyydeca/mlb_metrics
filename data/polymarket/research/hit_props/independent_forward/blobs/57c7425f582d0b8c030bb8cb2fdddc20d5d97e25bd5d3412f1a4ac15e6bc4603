@@ -1,0 +1,84 @@
+{
+  "asks": [
+    {
+      "price": 0.71,
+      "size": 10.1
+    },
+    {
+      "price": 0.72,
+      "size": 500.0
+    },
+    {
+      "price": 0.73,
+      "size": 750.0
+    },
+    {
+      "price": 0.74,
+      "size": 2000.0
+    },
+    {
+      "price": 0.79,
+      "size": 35.0
+    },
+    {
+      "price": 0.99,
+      "size": 125000.0
+    }
+  ],
+  "best_ask": 0.71,
+  "best_ask_size": 10.1,
+  "best_bid": 0.7,
+  "best_bid_size": 0.1,
+  "bids": [
+    {
+      "price": 0.7,
+      "size": 0.1
+    },
+    {
+      "price": 0.64,
+      "size": 1.88
+    },
+    {
+      "price": 0.54,
+      "size": 35.0
+    },
+    {
+      "price": 0.24,
+      "size": 1.0
+    },
+    {
+      "price": 0.21,
+      "size": 1.0
+    },
+    {
+      "price": 0.15,
+      "size": 1.0
+    },
+    {
+      "price": 0.14,
+      "size": 1.0
+    },
+    {
+      "price": 0.01,
+      "size": 25001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.705,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.64,
+  "market_id": "1472683",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-chasim-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "c6b81c89b8c0e009f1647994278c6077b92f6641b3cb42963c592498f89972ab",
+  "receive_time_utc": "2026-10-17T17:53:27.379488Z",
+  "request_time_utc": "2026-10-17T17:53:27.336995Z",
+  "source_transact_time_utc": "2026-10-17T17:52:10.020045636Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
