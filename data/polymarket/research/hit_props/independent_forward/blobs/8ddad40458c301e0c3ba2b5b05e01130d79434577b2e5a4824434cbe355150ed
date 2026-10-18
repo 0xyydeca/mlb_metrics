@@ -1,0 +1,72 @@
+{
+  "asks": [
+    {
+      "price": 0.63,
+      "size": 4719.15
+    },
+    {
+      "price": 0.64,
+      "size": 1250.0
+    },
+    {
+      "price": 0.66,
+      "size": 500.0
+    },
+    {
+      "price": 0.67,
+      "size": 10750.0
+    },
+    {
+      "price": 0.68,
+      "size": 3906.0
+    }
+  ],
+  "best_ask": 0.63,
+  "best_ask_size": 4719.15,
+  "best_bid": 0.62,
+  "best_bid_size": 2284.35,
+  "bids": [
+    {
+      "price": 0.62,
+      "size": 2284.35
+    },
+    {
+      "price": 0.61,
+      "size": 1329.39
+    },
+    {
+      "price": 0.6,
+      "size": 1275.0
+    },
+    {
+      "price": 0.59,
+      "size": 1.0
+    },
+    {
+      "price": 0.55,
+      "size": 454.0
+    },
+    {
+      "price": 0.03,
+      "size": 25.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.625,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.63,
+  "market_id": "1507974",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-jonara-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "c474afc08e0d073bd53c15a712a5cd8155e2cba12de7d54458fdd33b2bb98d3c",
+  "receive_time_utc": "2026-10-18T18:13:27.363000Z",
+  "request_time_utc": "2026-10-18T18:13:27.278893Z",
+  "source_transact_time_utc": "2026-10-18T18:12:37.450481409Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

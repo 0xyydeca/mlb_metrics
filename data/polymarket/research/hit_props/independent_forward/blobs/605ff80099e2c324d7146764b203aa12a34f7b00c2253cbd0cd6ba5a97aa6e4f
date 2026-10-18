@@ -1,0 +1,68 @@
+{
+  "asks": [
+    {
+      "price": 0.64,
+      "size": 13874.74
+    },
+    {
+      "price": 0.65,
+      "size": 4.0
+    },
+    {
+      "price": 0.67,
+      "size": 1250.0
+    },
+    {
+      "price": 0.7,
+      "size": 4166.0
+    }
+  ],
+  "best_ask": 0.64,
+  "best_ask_size": 13874.74,
+  "best_bid": 0.63,
+  "best_bid_size": 936.2,
+  "bids": [
+    {
+      "price": 0.63,
+      "size": 936.2
+    },
+    {
+      "price": 0.62,
+      "size": 1010.0
+    },
+    {
+      "price": 0.61,
+      "size": 1.0
+    },
+    {
+      "price": 0.58,
+      "size": 86.78
+    },
+    {
+      "price": 0.56,
+      "size": 446.0
+    },
+    {
+      "price": 0.22,
+      "size": 1970.75
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.635,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.63,
+  "market_id": "1507981",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-juncam-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "ff02dd9bf9a0039688633665b5ca66c316570c729570cf657959b45651a06bf2",
+  "receive_time_utc": "2026-10-18T18:13:27.655817Z",
+  "request_time_utc": "2026-10-18T18:13:27.576948Z",
+  "source_transact_time_utc": "2026-10-18T18:12:54.604933228Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

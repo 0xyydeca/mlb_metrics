@@ -1,0 +1,64 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 1.0
+    },
+    {
+      "price": 0.6,
+      "size": 600.0
+    },
+    {
+      "price": 0.61,
+      "size": 1000.0
+    },
+    {
+      "price": 0.62,
+      "size": 500.0
+    },
+    {
+      "price": 0.63,
+      "size": 750.0
+    },
+    {
+      "price": 0.99,
+      "size": 2022.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 1.0,
+  "best_bid": 0.54,
+  "best_bid_size": 600.0,
+  "bids": [
+    {
+      "price": 0.54,
+      "size": 600.0
+    },
+    {
+      "price": 0.53,
+      "size": 1000.0
+    },
+    {
+      "price": 0.01,
+      "size": 3000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.55,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1567539",
+  "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-benwil-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "4c0672511f1b2a8f4e6cdca37e8dfc06aa6d2f45f438d7775697e20ccd052d07",
+  "receive_time_utc": "2026-10-18T18:13:26.855047Z",
+  "request_time_utc": "2026-10-18T18:13:26.750452Z",
+  "source_transact_time_utc": "2026-10-18T18:11:49.959291753Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

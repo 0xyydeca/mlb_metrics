@@ -1,0 +1,45 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-joade-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-pethal-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-ryavil-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-stekwa-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-taywal-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-trabaz-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-cle-2026-10-17-hits-yandia-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 11,
+  "finished_at_utc": "2026-10-18T18:14:28.284253+00:00",
+  "forecasts_saved": 11,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2383,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261018T181326657707Z-4e3c9c14",
+  "started_at_utc": "2026-10-18T18:13:26.657858+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}
