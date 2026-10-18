@@ -1,5 +1,5 @@
 date,game_pk,home_team,away_team,predicted_winner,predicted_loser,predicted_probability,above_threshold,status,market_home_win_probability,market_predicted_winner_probability,market_odds_snapshot_id,market_odds_snapshot_role,bet_units,bet_side,bet_team,bet_moneyline,bet_profit_units
-2026-10-18,849817,CLE,TB,CLE,TB,0.5155550581874468,False,pending,0.4556166535742341,0.4556166535742341,odds_c6a218d15f85,lineup_lock,0.0,,,,
+2026-10-18,849817,CLE,TB,CLE,TB,0.5155550581874468,False,pending,0.4571382337473199,0.4571382337473199,odds_cb20bc52652f,lineup_lock,0.0,,,,
 2026-10-17,849816,CLE,TB,CLE,TB,0.6061027691879398,True,loss,0.4945495770471788,0.4945495770471788,odds_216707497dac,lineup_lock,0.0,,,,
 2026-10-16,849817,CLE,TB,CLE,TB,0.6061027691879398,True,pending,0.4901832460732984,0.4901832460732984,odds_15c194834d0f,lineup_lock,0.0,,,,
 2026-10-15,849810,LAD,MIL,LAD,MIL,0.5215973577630026,False,loss,0.5825451699171612,0.5825451699171612,odds_93b7c1d16a3e,lineup_lock,0.0,,,,
