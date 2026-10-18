@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 18 maintenance — new quote-rejection triage
+
+- Read applicable instructions, compared matching briefs and consulted the readiness plan. Checkout clean; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated archives to owner main `f677329`.
+- Fresh audit: 51 complete runs, zero failed/incomplete runs or integrity errors, 203 intact pregame forecasts, 190 delayed price matches and 13 missing execution quotes. Eighteen new forecasts and matches across six new runs; all postseason research. Formal eligible dates remain zero; returns unknown.
+- Triaged five new initial-book rejections, bringing the cumulative invalid/crossed/insufficient-book count to ten. Saved their exact run/market identities in the report. The combined error does not identify which price/size condition failed; no narrower diagnosis or fabricated fill was assigned. Six-run totals reconcile to the forecast/match delta, and historical missing executions remain unchanged.
+- Saved `reports/model_validation/prospective_collection_2026-10-18.json` and working-document `research/2026-10-18/collection-review/audit.json`. Checks: fresh archive integrity audit plus new-run/rejection assertions. No source changes; unchanged regression suites not repeated. No new capture, training, backfill, settlement reads, outcome scoring, policy changes or orders.
+- Remaining blockers: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled. Daily collection-health checks do not resolve these prerequisites or establish profitability.
+
 ## October 17 maintenance — execution-record delta verification
 
 - Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; incoming changes contained no source/test/workflow/instruction changes. Fast-forwarded generated archives to owner main `76c0952`.

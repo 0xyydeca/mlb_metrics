@@ -1,0 +1,67 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 203,
+  "intact_pregame_forecasts": 203,
+  "execution_quotes_matched": 190,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 203
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 51,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 468,
+    "request_budget_omission": 97,
+    "ValueError: invalid_crossed_or_insufficient_book": 10,
+    "first_forecast_already_saved": 98
+  },
+  "audit_date": "2026-10-18",
+  "source_commit": "f677329619517da966e9cab2ba9d9e1605ed027f",
+  "task": "Step 3 new quote-rejection triage",
+  "new_book_rejections": [
+    {
+      "run_id": "20261017T175327111637Z-337e7312",
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-braroc-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "run_id": "20261017T175327111637Z-337e7312",
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-joade-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "run_id": "20261017T175327111637Z-337e7312",
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-jondel-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "run_id": "20261017T175327111637Z-337e7312",
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-juncam-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "run_id": "20261017T175327111637Z-337e7312",
+      "market_slug": "astatc-mlb-tb-cle-2026-10-16-hits-liahic-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    }
+  ],
+  "new_run_count": 6,
+  "checks": "Fresh integrity audit; six-run forecast/match delta and five new rejection assertions; unchanged regression suites not repeated",
+  "owner_input_missing": "Actual venue confirmation",
+  "limitations": [
+    "Combined book error does not distinguish invalid prices, crossed prices or insufficient size",
+    "No outcomes or actual settlements evaluated"
+  ]
+}
