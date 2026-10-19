@@ -1,5 +1,13 @@
 # Project brief: mlb_metrics
 
+## October 19 maintenance — collection follow-up
+
+- Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated archives to owner main `3699163`.
+- Fresh audit: 56 complete runs, zero failed/incomplete runs or integrity errors, 214 intact pregame forecasts, 201 delayed price matches and 13 missing execution quotes. Five new runs account for 11 new forecasts and matches. All remain postseason research; formal eligible dates zero and returns unknown.
+- New exclusions since the prior review: 72 entry/start-cutoff, six request-budget omissions and one combined invalid/crossed/insufficient-book rejection. These are capture-level counts, not independent observations. Preserved all exclusions and historical missing executions. No evidence prerequisite was cleared today.
+- Saved `reports/model_validation/prospective_collection_2026-10-19.json` and working-document `research/2026-10-19/collection-review/audit.json`. Checks: fresh archive audit and five-run delta assertions. No source changes; unchanged regression suites not repeated. No new capture, training, backfill, settlement reads, outcome scoring, policy changes or orders.
+- Remaining blockers: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled. Collection health alone cannot clear these prerequisites; the engineering plan is not declared complete.
+
 ## October 18 maintenance — new quote-rejection triage
 
 - Read applicable instructions, compared matching briefs and consulted the readiness plan. Checkout clean; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated archives to owner main `f677329`.
