@@ -1,9 +1,9 @@
 {
-  "captured_at_utc": "2026-10-18T22:44:37Z",
-  "finished_at_utc": "2026-10-18T22:44:37Z",
+  "captured_at_utc": "2026-10-19T00:34:54Z",
+  "finished_at_utc": "2026-10-19T00:34:55Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
-  "n_markets": 2,
+  "n_markets": 1,
   "n_schedule_games": 191,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
@@ -15,56 +15,41 @@
     "mapped_rate": 0.9906542056074766
   },
   "quote_health": {
-    "n_index_rows": 2,
-    "latest_receive_time_utc": "2026-10-18T22:44:37.603101Z",
-    "age_seconds": -0.603101,
+    "n_index_rows": 1,
+    "latest_receive_time_utc": "2026-10-19T00:34:55.584793Z",
+    "age_seconds": -0.584793,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
   },
   "per_contract_quote_health": {
     "n_markets_checked": 212,
-    "n_fresh_eligible": 2,
-    "n_stale": 210,
+    "n_fresh_eligible": 1,
+    "n_stale": 211,
     "n_ineligible": 0,
-    "n_missing": 210,
+    "n_missing": 211,
     "max_age_seconds": 30.0
   },
-  "n_books_captured": 2,
-  "n_books_written": 2,
+  "n_books_captured": 1,
+  "n_books_written": 1,
   "n_book_http_failures": 0,
   "book_failure_samples": [],
   "book_liquidity_counts": {
-    "eligible_book": 2
+    "eligible_book": 1
   },
   "sample_home_buys": [
-    {
-      "team": "CLE",
-      "outcome_id": "2872335",
-      "is_long": false,
-      "executable_buy": 0.10999999999999999,
-      "display_price": 0.895,
-      "method": "one_minus_book_best_bid_short",
-      "eligible": true,
-      "reason": null,
-      "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.00680405,
-      "total_acquisition_cost_per_contract": 0.11680404999999999,
-      "market_id": "1436428",
-      "side": "home"
-    },
     {
       "team": "TB",
       "outcome_id": "3084711",
       "is_long": false,
-      "executable_buy": 0.5549999999999999,
-      "display_price": 0.47,
+      "executable_buy": 0.5700000000000001,
+      "display_price": 0.435,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0171647625,
-      "total_acquisition_cost_per_contract": 0.5721647624999999,
+      "est_taker_fee_per_contract": 0.017034450000000003,
+      "total_acquisition_cost_per_contract": 0.5870344500000001,
       "market_id": "1542616",
       "side": "home"
     }
@@ -72,10 +57,10 @@
   "coverage_waterfall": {
     "n_schedule_games": 191,
     "n_mapped_contracts": 212,
-    "n_usable_prices": 2,
+    "n_usable_prices": 1,
     "n_usable_baseball_snapshots": 1,
     "removed_price_reasons": {
-      "missing_quote": 210
+      "missing_quote": 211
     },
     "removed_baseball_reasons": {},
     "notes": [
@@ -89,70 +74,51 @@
   },
   "sample_contract_trace": {
     "venue_id": "polymarket_us",
-    "market_id": "1436428",
-    "market_slug": "aec-mlb-tb-cle-2026-10-17",
-    "game_pk": 849817.0,
-    "home_team": "CLE",
-    "away_team": "TB",
-    "long_team": "TB",
-    "short_team": "CLE",
+    "market_id": "1542616",
+    "market_slug": "aec-mlb-cle-tb-2026-10-19",
+    "game_pk": 849815.0,
+    "home_team": "TB",
+    "away_team": "CLE",
+    "long_team": "CLE",
+    "short_team": "TB",
     "outcome_orientation_note": "long_team_recorded_separately_from_home_team",
     "orientation_assumes_long_is_home": false,
     "orientation_ok": true,
-    "rules_hash": "cb09d3a3a0806918",
-    "rules_text": "This market will settle to the winner of the Tampa Bay Rays vs Cleveland Guardians MLB AL Championship Series Game 5 scheduled for October 17, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "rules_hash": "477fb61e909a13cf",
+    "rules_text": "This market will settle to the winner of the Cleveland Guardians vs Tampa Bay Rays MLB AL Championship Series Game 6 scheduled for October 19, 2026 at 8:08PM ET (as of the listing of the event's first instrument). Extra innings are included if played. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "fee_version": "us_taker_theta_0.0695_2026-09-17",
     "price_unit": "usd_share_cost_0_to_1",
     "quantity_unit": "contracts",
     "quote": {
-      "market_id": "1436428",
-      "market_slug": "aec-mlb-tb-cle-2026-10-17",
-      "receive_time_utc": "2026-10-18T22:44:37.555595Z",
-      "age_seconds": -0.5555950000000001,
+      "market_id": "1542616",
+      "market_slug": "aec-mlb-cle-tb-2026-10-19",
+      "receive_time_utc": "2026-10-19T00:34:55.584793Z",
+      "age_seconds": -0.584793,
       "stale": false,
       "eligible": true,
-      "best_ask": 0.895,
-      "best_bid": 0.89,
+      "best_ask": 0.435,
+      "best_bid": 0.43,
       "pass_reason": null
     },
     "home_executable_buy": {
-      "team": "CLE",
-      "outcome_id": "2872335",
+      "team": "TB",
+      "outcome_id": "3084711",
       "is_long": false,
-      "executable_buy": 0.10999999999999999,
-      "display_price": 0.895,
+      "executable_buy": 0.5700000000000001,
+      "display_price": 0.435,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.00680405,
-      "total_acquisition_cost_per_contract": 0.11680404999999999
+      "est_taker_fee_per_contract": 0.017034450000000003,
+      "total_acquisition_cost_per_contract": 0.5870344500000001
     },
-    "baseball": {
-      "game_pk": "849817",
-      "date": "2026-10-18 00:00:00",
-      "game_datetime": "2026-10-18T21:08:00Z",
-      "home_team": "CLE",
-      "away_team": "TB",
-      "status": "In Progress",
-      "home_probable_pitcher_key_mlbam": "800048",
-      "away_probable_pitcher_key_mlbam": "656876",
-      "home_starter_status": "probable",
-      "away_starter_status": "probable",
-      "home_lineup_status": "confirmed",
-      "away_lineup_status": "confirmed",
-      "home_confirmed_starter_count": "9",
-      "away_confirmed_starter_count": "9",
-      "lineup_batting_order_source": "schedule_lineups_list_index",
-      "usable_for_game_winner": "True",
-      "pass_reason": null,
-      "fetched_at_utc": "2026-10-18T22:44:37Z",
-      "source": "schedule_plus_lineups",
-      "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
-    },
-    "actionable": true,
-    "pass_reasons": [],
-    "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"CLE\\\", \\\"away\\\": \\\"TB\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
+    "baseball": null,
+    "actionable": false,
+    "pass_reasons": [
+      "missing_baseball_snapshot"
+    ],
+    "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"TB\\\", \\\"away\\\": \\\"CLE\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
   },
   "modes": {
     "GAME_PREDICTION_MODE": "shadow",
