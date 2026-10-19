@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849815.0,
+    "game_type": "L",
+    "key_mlbam": 670764.0,
+    "market_id": "1598471",
+    "market_slug": "astatc-mlb-cle-tb-2026-10-19-hits-taywal-gte1",
+    "requested_local_date": "2026-10-19",
+    "rules_hash": "94b9f79e17c5848f",
+    "rules_text": "This market will settle to Yes if Taylor Walls records 1 or more hits in the Cleveland Guardians vs Tampa Bay Rays MLB AL Championship Series Game 6 scheduled for October 19, 2026 at 8:08PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-20T00:08:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "2d818d5c9e7189766e9662e3070248c135cb6680bab5dc9da69f8b1568359fbe",
+  "forecast_id": "5c6405844cc4a800807a045cb31779f8df2cd00c6bbec3bd81e192955c2bbf1a",
+  "forecast_time_utc": "2026-10-19T20:39:54.397519+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "c7784af592c5b6a05427bd305bdfce8857ed0cf4ecb5bb2619e427f8b88b719b",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "4e662919386820f7af3ed523f2372ca8d3f437f91cd97beef74dfae2a2cb9d53"
+  },
+  "inputs_observed_at_utc": "2026-10-19T20:39:53.643743+00:00",
+  "manifest_sha256": "a68eb992009d4b971d3d4d55ca25a455cf1bfee5520d2e7e210dd40e78367fb3",
+  "prediction_book_sha256": "fd671052275b3ce32a3409d71bee82f34994ff5ecc70415de5c2f23eab144ce0",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.36567580640865993,
+    "qualifying_hit": 0.3624657012528734,
+    "qualifying_no_hit": 0.27185849233846665
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261019T203953632277Z-969b019f"
+}

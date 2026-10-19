@@ -1,0 +1,160 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 2199.08
+    },
+    {
+      "price": 0.57,
+      "size": 2345.0
+    },
+    {
+      "price": 0.58,
+      "size": 3218.0
+    },
+    {
+      "price": 0.59,
+      "size": 3166.0
+    },
+    {
+      "price": 0.6,
+      "size": 13119.0
+    },
+    {
+      "price": 0.61,
+      "size": 1375.0
+    },
+    {
+      "price": 0.62,
+      "size": 2750.0
+    },
+    {
+      "price": 0.65,
+      "size": 33.0
+    },
+    {
+      "price": 0.67,
+      "size": 4375.0
+    },
+    {
+      "price": 0.68,
+      "size": 11969.0
+    },
+    {
+      "price": 0.81,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.93,
+      "size": 55.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 4000.0
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 34999.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 2199.08,
+  "best_bid": 0.55,
+  "best_bid_size": 712.82,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 712.82
+    },
+    {
+      "price": 0.54,
+      "size": 4704.0
+    },
+    {
+      "price": 0.53,
+      "size": 2838.0
+    },
+    {
+      "price": 0.52,
+      "size": 10.0
+    },
+    {
+      "price": 0.51,
+      "size": 20.0
+    },
+    {
+      "price": 0.41,
+      "size": 4430.0
+    },
+    {
+      "price": 0.4,
+      "size": 33.0
+    },
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.25,
+      "size": 0.18
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 4000.0
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.49,
+  "market_id": "1577358",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-19-hits-joade-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "ba4a6b32c48822517110c1fc9abf052b2463b220044d9b2353075697902936ef",
+  "receive_time_utc": "2026-10-19T20:39:53.887954Z",
+  "request_time_utc": "2026-10-19T20:39:53.850681Z",
+  "source_transact_time_utc": "2026-10-19T20:39:39.002649127Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

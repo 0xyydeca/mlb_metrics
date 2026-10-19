@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.64,
+      "size": 14977.06
+    },
+    {
+      "price": 0.65,
+      "size": 1317.0
+    },
+    {
+      "price": 0.66,
+      "size": 2917.0
+    },
+    {
+      "price": 0.67,
+      "size": 917.0
+    },
+    {
+      "price": 0.68,
+      "size": 1000.0
+    },
+    {
+      "price": 0.71,
+      "size": 33.0
+    },
+    {
+      "price": 0.73,
+      "size": 1834.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 4647.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.64,
+  "best_ask_size": 14977.06,
+  "best_bid": 0.63,
+  "best_bid_size": 29.45,
+  "bids": [
+    {
+      "price": 0.63,
+      "size": 29.45
+    },
+    {
+      "price": 0.62,
+      "size": 10.2
+    },
+    {
+      "price": 0.61,
+      "size": 700.0
+    },
+    {
+      "price": 0.6,
+      "size": 1035.94
+    },
+    {
+      "price": 0.59,
+      "size": 26.0
+    },
+    {
+      "price": 0.57,
+      "size": 695.0
+    },
+    {
+      "price": 0.51,
+      "size": 1104.0
+    },
+    {
+      "price": 0.46,
+      "size": 33.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.24,
+      "size": 1.0
+    },
+    {
+      "price": 0.19,
+      "size": 1.23
+    },
+    {
+      "price": 0.17,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 53.0
+    },
+    {
+      "price": 0.02,
+      "size": 119.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.635,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.63,
+  "market_id": "1577355",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-19-hits-chadel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "98ec3ba4d304fbf3196977d96a22723a3befcc1c4f0fc3f9529fb112bf12745d",
+  "receive_time_utc": "2026-10-19T20:39:53.767518Z",
+  "request_time_utc": "2026-10-19T20:39:53.715560Z",
+  "source_transact_time_utc": "2026-10-19T20:39:48.607356189Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

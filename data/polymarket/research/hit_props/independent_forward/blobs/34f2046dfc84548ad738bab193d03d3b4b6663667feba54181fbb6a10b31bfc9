@@ -1,0 +1,108 @@
+{
+  "asks": [
+    {
+      "price": 0.57,
+      "size": 11452.06
+    },
+    {
+      "price": 0.58,
+      "size": 850.0
+    },
+    {
+      "price": 0.59,
+      "size": 750.0
+    },
+    {
+      "price": 0.6,
+      "size": 1000.0
+    },
+    {
+      "price": 0.64,
+      "size": 33.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 52.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.57,
+  "best_ask_size": 11452.06,
+  "best_bid": 0.56,
+  "best_bid_size": 22.26,
+  "bids": [
+    {
+      "price": 0.56,
+      "size": 22.26
+    },
+    {
+      "price": 0.55,
+      "size": 10.0
+    },
+    {
+      "price": 0.54,
+      "size": 400.0
+    },
+    {
+      "price": 0.5,
+      "size": 1000.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.39,
+      "size": 33.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 49.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.565,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1577361",
+  "market_slug": "astatc-mlb-cle-tb-2026-10-19-hits-natlow-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "be1e16c901a3b1a1dc1e322e634ec762ac6ad1ca762f784797473eba1041b13d",
+  "receive_time_utc": "2026-10-19T20:40:54.348641Z",
+  "request_time_utc": "2026-10-19T20:40:54.288314Z",
+  "source_transact_time_utc": "2026-10-19T20:40:05.054456259Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

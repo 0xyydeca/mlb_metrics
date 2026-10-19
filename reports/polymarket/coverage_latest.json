@@ -1,6 +1,6 @@
 {
-  "captured_at_utc": "2026-10-19T05:00:20Z",
-  "finished_at_utc": "2026-10-19T05:00:20Z",
+  "captured_at_utc": "2026-10-19T20:39:48Z",
+  "finished_at_utc": "2026-10-19T20:39:49Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
   "n_markets": 1,
@@ -16,8 +16,8 @@
   },
   "quote_health": {
     "n_index_rows": 1,
-    "latest_receive_time_utc": "2026-10-19T05:00:20.868247Z",
-    "age_seconds": -0.868247,
+    "latest_receive_time_utc": "2026-10-19T20:39:49.527368Z",
+    "age_seconds": -0.5273680000000001,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
@@ -42,14 +42,14 @@
       "team": "TB",
       "outcome_id": "3084711",
       "is_long": false,
-      "executable_buy": 0.5700000000000001,
-      "display_price": 0.435,
+      "executable_buy": 0.585,
+      "display_price": 0.42,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.017034450000000003,
-      "total_acquisition_cost_per_contract": 0.5870344500000001,
+      "est_taker_fee_per_contract": 0.016872862500000002,
+      "total_acquisition_cost_per_contract": 0.6018728624999999,
       "market_id": "1542616",
       "side": "home"
     }
@@ -92,32 +92,51 @@
     "quote": {
       "market_id": "1542616",
       "market_slug": "aec-mlb-cle-tb-2026-10-19",
-      "receive_time_utc": "2026-10-19T05:00:20.868247Z",
-      "age_seconds": -0.868247,
+      "receive_time_utc": "2026-10-19T20:39:49.527368Z",
+      "age_seconds": -0.5273680000000001,
       "stale": false,
       "eligible": true,
-      "best_ask": 0.435,
-      "best_bid": 0.43,
+      "best_ask": 0.42,
+      "best_bid": 0.415,
       "pass_reason": null
     },
     "home_executable_buy": {
       "team": "TB",
       "outcome_id": "3084711",
       "is_long": false,
-      "executable_buy": 0.5700000000000001,
-      "display_price": 0.435,
+      "executable_buy": 0.585,
+      "display_price": 0.42,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.017034450000000003,
-      "total_acquisition_cost_per_contract": 0.5870344500000001
+      "est_taker_fee_per_contract": 0.016872862500000002,
+      "total_acquisition_cost_per_contract": 0.6018728624999999
     },
-    "baseball": null,
-    "actionable": false,
-    "pass_reasons": [
-      "missing_baseball_snapshot"
-    ],
+    "baseball": {
+      "game_pk": "849815",
+      "date": "2026-10-19 00:00:00",
+      "game_datetime": "2026-10-20T00:08:00Z",
+      "home_team": "TB",
+      "away_team": "CLE",
+      "status": "Pre-Game",
+      "home_probable_pitcher_key_mlbam": "642547",
+      "away_probable_pitcher_key_mlbam": "542888",
+      "home_starter_status": "probable",
+      "away_starter_status": "probable",
+      "home_lineup_status": "confirmed",
+      "away_lineup_status": "confirmed",
+      "home_confirmed_starter_count": "9",
+      "away_confirmed_starter_count": "9",
+      "lineup_batting_order_source": "schedule_lineups_list_index",
+      "usable_for_game_winner": "True",
+      "pass_reason": null,
+      "fetched_at_utc": "2026-10-19T20:39:49Z",
+      "source": "schedule_plus_lineups",
+      "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
+    },
+    "actionable": true,
+    "pass_reasons": [],
     "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"TB\\\", \\\"away\\\": \\\"CLE\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
   },
   "modes": {
