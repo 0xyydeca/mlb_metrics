@@ -4,14 +4,14 @@
   "baseball": {
     "away_lineup_status": "confirmed",
     "away_starter_status": "probable",
-    "fetched_at_utc": "2026-10-19T20:39:49Z",
+    "fetched_at_utc": "2026-10-20T00:00:41Z",
     "home_lineup_status": "confirmed",
     "home_starter_status": "probable",
     "pass_reason": NaN,
     "usable_for_game_winner": true
   },
   "best_ask": 0.42,
-  "best_ask_size": 1584667.04,
+  "best_ask_size": 1709626.58,
   "best_bid": 0.415,
   "contract_url": "https://polymarket.us/event/mlb-cle-tb-2026-10-19",
   "event_slug": "mlb-cle-tb-2026-10-19",
@@ -38,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-19T20:39:49.527368Z",
-  "quote_request_time_utc": "2026-10-19T20:39:49.501777Z",
+  "quote_receive_time_utc": "2026-10-20T00:00:41.741156Z",
+  "quote_request_time_utc": "2026-10-20T00:00:41.659184Z",
   "rules_hash": "477fb61e909a13cf",
   "rules_text_excerpt": "This market will settle to the winner of the Cleveland Guardians vs Tampa Bay Rays MLB AL Championship Series Game 6 scheduled for October 19, 2026 at 8:08PM ET (as of the listing of the event's first instrument). Extra innings are included",
   "scheduled_start_utc": "2026-10-20T00:08:00Z",
