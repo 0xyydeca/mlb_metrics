@@ -1,52 +1,7 @@
 {
-  "actionable_suppressed": true,
-  "away_team": "CLE",
-  "baseball": {
-    "away_lineup_status": "confirmed",
-    "away_starter_status": "probable",
-    "fetched_at_utc": "2026-10-20T00:00:41Z",
-    "home_lineup_status": "confirmed",
-    "home_starter_status": "probable",
-    "pass_reason": NaN,
-    "usable_for_game_winner": true
-  },
-  "best_ask": 0.42,
-  "best_ask_size": 1709626.58,
-  "best_bid": 0.415,
-  "contract_url": "https://polymarket.us/event/mlb-cle-tb-2026-10-19",
-  "event_slug": "mlb-cle-tb-2026-10-19",
-  "evidence_verdict": "insufficient_evidence",
-  "fee_version": "us_taker_theta_0.0695_2026-09-17",
   "game_pk": 849815.0,
-  "home_team": "TB",
-  "long_team": "CLE",
   "market_id": "1542616",
-  "market_slug": "aec-mlb-cle-tb-2026-10-19",
-  "missing_for_labeled_eval": [
-    "evidence_gate_pass"
-  ],
-  "ok": true,
-  "paper_purchase": {
-    "acquisition_cost": 0.0,
-    "adverse_ticks": 2,
-    "avg_fill_price": NaN,
-    "delay_seconds": 60,
-    "fees_paid": 0.0,
-    "filled_qty": 0.0,
-    "fills": [],
-    "pass_reason": "missing_quote_after_manual_delay",
-    "status": "unfilled",
-    "unfilled_qty": 1.0
-  },
-  "quote_receive_time_utc": "2026-10-20T00:00:41.741156Z",
-  "quote_request_time_utc": "2026-10-20T00:00:41.659184Z",
-  "rules_hash": "477fb61e909a13cf",
-  "rules_text_excerpt": "This market will settle to the winner of the Cleveland Guardians vs Tampa Bay Rays MLB AL Championship Series Game 6 scheduled for October 19, 2026 at 8:08PM ET (as of the listing of the event's first instrument). Extra innings are included",
-  "scheduled_start_utc": "2026-10-20T00:08:00Z",
-  "short_team": "TB",
-  "suppress_note": "BETTING_MODE=disabled; evidence gates have not passed",
-  "taker_theta": 0.0695,
-  "validation_status": "insufficient_data",
-  "venue_id": "polymarket_us",
-  "venue_label": "polymarket_us_provisional_research"
+  "missing": "no_stored_quotes_for_market",
+  "note": "Capture books before tracing; mapping alone is not enough.",
+  "ok": false
 }
