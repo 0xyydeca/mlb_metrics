@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849805.0,
+    "game_type": "W",
+    "key_mlbam": 650490.0,
+    "market_id": "1682964",
+    "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-yandia-gte1",
+    "requested_local_date": "2026-10-23",
+    "rules_hash": "1c68d180cf604c84",
+    "rules_text": "This market will settle to Yes if Yandy D\u00edaz records 1 or more hits in the Tampa Bay Rays vs Milwaukee Brewers MLB World Series Game 1 scheduled for October 23, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-24T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "75964611c84f456ba73ece57b018ab3149c3a7060871a39a51595106118b06c5",
+  "forecast_id": "649ae0b82c35e5ddf96519ea68eb4fabed68519be06bb2529ba96544204e8c7f",
+  "forecast_time_utc": "2026-10-23T22:25:16.794073+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "0fb940e10eb2d14823dd06c68ac56bb03b2f8f592833230f12a1a2ce5bab429b",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "4e662919386820f7af3ed523f2372ca8d3f437f91cd97beef74dfae2a2cb9d53"
+  },
+  "inputs_observed_at_utc": "2026-10-23T22:25:15.520297+00:00",
+  "manifest_sha256": "59473e7403b4e24c819f962d632fe0326ce1ba5d450e302df977d106aa5656b0",
+  "prediction_book_sha256": "9dc632c97a0f810818707e6d0d120f91fe307d4e905da047c7d81327d4c84d81",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.05125685097619671,
+    "qualifying_hit": 0.6868798674846477,
+    "qualifying_no_hit": 0.2618632815391556
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261023T222515343545Z-20713672"
+}

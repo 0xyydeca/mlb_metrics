@@ -1,0 +1,120 @@
+{
+  "asks": [
+    {
+      "price": 0.52,
+      "size": 1125.0
+    },
+    {
+      "price": 0.53,
+      "size": 8285.61
+    },
+    {
+      "price": 0.54,
+      "size": 16423.0
+    },
+    {
+      "price": 0.55,
+      "size": 847.0
+    },
+    {
+      "price": 0.56,
+      "size": 1250.0
+    },
+    {
+      "price": 0.58,
+      "size": 357.0
+    },
+    {
+      "price": 0.59,
+      "size": 3048.0
+    },
+    {
+      "price": 0.86,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 4441.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.52,
+  "best_ask_size": 1125.0,
+  "best_bid": 0.5,
+  "best_bid_size": 150.0,
+  "bids": [
+    {
+      "price": 0.5,
+      "size": 150.0
+    },
+    {
+      "price": 0.49,
+      "size": 5898.39
+    },
+    {
+      "price": 0.43,
+      "size": 1.0
+    },
+    {
+      "price": 0.41,
+      "size": 4375.0
+    },
+    {
+      "price": 0.4,
+      "size": 625.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.51,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.52,
+  "market_id": "1725218",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-benwil-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "85a46e568021bed4eadeaaceefc363e3d4c4413dc73b02d06143cbbeed3432a0",
+  "receive_time_utc": "2026-10-23T22:26:15.917126Z",
+  "request_time_utc": "2026-10-23T22:26:15.829663Z",
+  "source_transact_time_utc": "2026-10-23T22:25:37.844150142Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

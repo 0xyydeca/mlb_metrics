@@ -1,0 +1,124 @@
+{
+  "asks": [
+    {
+      "price": 0.4,
+      "size": 25449.0
+    },
+    {
+      "price": 0.41,
+      "size": 461.0
+    },
+    {
+      "price": 0.42,
+      "size": 927.0
+    },
+    {
+      "price": 0.43,
+      "size": 10.99
+    },
+    {
+      "price": 0.45,
+      "size": 100.0
+    },
+    {
+      "price": 0.46,
+      "size": 2591.0
+    },
+    {
+      "price": 0.75,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 4441.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.4,
+  "best_ask_size": 25449.0,
+  "best_bid": 0.39,
+  "best_bid_size": 2532.09,
+  "bids": [
+    {
+      "price": 0.39,
+      "size": 2532.09
+    },
+    {
+      "price": 0.38,
+      "size": 250.0
+    },
+    {
+      "price": 0.37,
+      "size": 6357.0
+    },
+    {
+      "price": 0.36,
+      "size": 1.0
+    },
+    {
+      "price": 0.35,
+      "size": 1.0
+    },
+    {
+      "price": 0.28,
+      "size": 4375.0
+    },
+    {
+      "price": 0.27,
+      "size": 925.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.395,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.39,
+  "market_id": "1725224",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-taywal-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "176486b155d0dfc63670a566d2a589468af0e0328de3a81bc96341f6729a694e",
+  "receive_time_utc": "2026-10-23T22:26:16.505380Z",
+  "request_time_utc": "2026-10-23T22:26:16.433924Z",
+  "source_transact_time_utc": "2026-10-23T22:25:50.481341659Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

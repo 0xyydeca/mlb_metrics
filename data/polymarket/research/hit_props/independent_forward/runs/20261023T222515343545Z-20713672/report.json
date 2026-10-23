@@ -1,0 +1,65 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-britur-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chasim-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chryel-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-coopra-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-garmit-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jaccho-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jakbau-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jonara-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jondel-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-juncam-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-liahic-gte1",
+      "reason": "first_forecast_already_saved"
+    },
+    {
+      "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-wilcon2-gte1",
+      "reason": "first_forecast_already_saved"
+    }
+  ],
+  "executable_quotes_matched": 6,
+  "finished_at_utc": "2026-10-23T22:26:16.888775+00:00",
+  "forecasts_saved": 6,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2452,
+  "loaded_capture_rows": 18,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261023T222515343545Z-20713672",
+  "started_at_utc": "2026-10-23T22:25:15.343740+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}
