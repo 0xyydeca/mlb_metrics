@@ -1,0 +1,136 @@
+{
+  "asks": [
+    {
+      "price": 0.57,
+      "size": 310.07
+    },
+    {
+      "price": 0.58,
+      "size": 12855.0
+    },
+    {
+      "price": 0.59,
+      "size": 1293.61
+    },
+    {
+      "price": 0.6,
+      "size": 750.0
+    },
+    {
+      "price": 0.61,
+      "size": 1000.0
+    },
+    {
+      "price": 0.63,
+      "size": 1405.0
+    },
+    {
+      "price": 0.64,
+      "size": 1000.0
+    },
+    {
+      "price": 0.65,
+      "size": 35.0
+    },
+    {
+      "price": 0.8,
+      "size": 9.52
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.96,
+      "size": 4429.0
+    },
+    {
+      "price": 0.97,
+      "size": 66.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 34999.0
+    }
+  ],
+  "best_ask": 0.57,
+  "best_ask_size": 310.07,
+  "best_bid": 0.56,
+  "best_bid_size": 461.15,
+  "bids": [
+    {
+      "price": 0.56,
+      "size": 461.15
+    },
+    {
+      "price": 0.55,
+      "size": 3000.0
+    },
+    {
+      "price": 0.54,
+      "size": 200.0
+    },
+    {
+      "price": 0.53,
+      "size": 1206.39
+    },
+    {
+      "price": 0.43,
+      "size": 4410.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 49.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.565,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.57,
+  "market_id": "1692773",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-garmit-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "6831526879703c3e29658eb73cd077e8b8faa38ecee8ab328d28b57068237bb8",
+  "receive_time_utc": "2026-10-23T19:22:46.651336Z",
+  "request_time_utc": "2026-10-23T19:22:46.628246Z",
+  "source_transact_time_utc": "2026-10-23T19:21:54.813153516Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

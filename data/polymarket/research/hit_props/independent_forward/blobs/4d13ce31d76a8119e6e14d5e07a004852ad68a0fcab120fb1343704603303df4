@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.6,
+      "size": 311.27
+    },
+    {
+      "price": 0.61,
+      "size": 10992.02
+    },
+    {
+      "price": 0.63,
+      "size": 1155.0
+    },
+    {
+      "price": 0.66,
+      "size": 2000.0
+    },
+    {
+      "price": 0.69,
+      "size": 35.0
+    },
+    {
+      "price": 0.83,
+      "size": 1.0
+    },
+    {
+      "price": 0.84,
+      "size": 25.78
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 66.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.6,
+  "best_ask_size": 311.27,
+  "best_bid": 0.59,
+  "best_bid_size": 313.31,
+  "bids": [
+    {
+      "price": 0.59,
+      "size": 313.31
+    },
+    {
+      "price": 0.58,
+      "size": 150.0
+    },
+    {
+      "price": 0.55,
+      "size": 1013.43
+    },
+    {
+      "price": 0.52,
+      "size": 35.0
+    },
+    {
+      "price": 0.4,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 10001.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.595,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.6,
+  "market_id": "1679394",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chryel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "81d54d56f46a01e2b12c3704b7645ddd7a61f76a29ee8211e393cfd5ea33c5e5",
+  "receive_time_utc": "2026-10-23T19:22:46.561888Z",
+  "request_time_utc": "2026-10-23T19:22:46.517713Z",
+  "source_transact_time_utc": "2026-10-23T19:22:18.337243734Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

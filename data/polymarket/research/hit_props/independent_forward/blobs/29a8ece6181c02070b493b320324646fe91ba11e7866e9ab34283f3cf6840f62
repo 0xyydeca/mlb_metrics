@@ -1,0 +1,120 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 11311.07
+    },
+    {
+      "price": 0.54,
+      "size": 4.48
+    },
+    {
+      "price": 0.55,
+      "size": 750.0
+    },
+    {
+      "price": 0.56,
+      "size": 340.0
+    },
+    {
+      "price": 0.57,
+      "size": 2000.0
+    },
+    {
+      "price": 0.62,
+      "size": 35.0
+    },
+    {
+      "price": 0.81,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 66.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 10000.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 11311.07,
+  "best_bid": 0.52,
+  "best_bid_size": 14.68,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 14.68
+    },
+    {
+      "price": 0.51,
+      "size": 0.2
+    },
+    {
+      "price": 0.5,
+      "size": 1445.52
+    },
+    {
+      "price": 0.46,
+      "size": 35.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.1,
+      "size": 4.48
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 10000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.52,
+  "market_id": "1679406",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-liahic-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "d64a38278ec451965e9eb69557d4b6cad458dfd13364d42553b4b35917433887",
+  "receive_time_utc": "2026-10-23T19:23:47.770731Z",
+  "request_time_utc": "2026-10-23T19:23:47.663427Z",
+  "source_transact_time_utc": "2026-10-23T19:23:30.453927989Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
