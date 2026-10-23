@@ -1,0 +1,101 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 226,
+  "intact_pregame_forecasts": 226,
+  "execution_quotes_matched": 213,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 226
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 71,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 576,
+    "request_budget_omission": 106,
+    "ValueError: invalid_crossed_or_insufficient_book": 11,
+    "first_forecast_already_saved": 98
+  },
+  "audit_date": "2026-10-23",
+  "source_commit": "a59d444dc4a763aeb46f8fdb68fd93b5e34cfcef",
+  "task": "Step 3 no-new-forecast collection follow-up",
+  "new_run_reports": [
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-22T19:19:04.518305+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261022T191904443638Z-bf12b740",
+      "started_at_utc": "2026-10-22T19:19:04.443801+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-22T22:32:11.133571+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261022T223211047914Z-d578df03",
+      "started_at_utc": "2026-10-22T22:32:11.048099+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-23T01:04:21.621146+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261023T010421511703Z-1899fa70",
+      "started_at_utc": "2026-10-23T01:04:21.511877+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-23T05:07:46.707327+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 0,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261023T050746619690Z-cee17780",
+      "started_at_utc": "2026-10-23T05:07:46.619853+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    }
+  ],
+  "checks": "Fresh integrity audit and four empty current-date input assertions; unchanged regression suites not repeated",
+  "owner_input_missing": "Actual venue confirmation"
+}
