@@ -1,16 +1,16 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261024T181613Z",
+  "capture_id": "hp_20261024T210051Z",
   "contract": {
-    "book_receive_time_utc": "2026-10-24T18:16:14.890454Z",
-    "book_request_time_utc": "2026-10-24T18:16:14Z",
+    "book_receive_time_utc": "2026-10-24T21:00:52.089269Z",
+    "book_request_time_utc": "2026-10-24T21:00:52Z",
     "book_status": "captured",
     "event_slug": "mlb-tb-mil-2026-10-24",
     "fee_coefficient": 0.0695,
     "market_id": "1739859",
     "market_slug": "astatc-mlb-tb-mil-2026-10-24-hits-britur-gte1",
     "no_buy_price": 0.41000000000000003,
-    "no_buy_size": 1253.93,
+    "no_buy_size": 22.02,
     "player_name": "Brice Turang",
     "provider_game_id": 10079797,
     "provider_player_id": 373,
@@ -20,10 +20,10 @@
     "rules_version": "hit_prop_rules_v1",
     "scheduled_start_utc": "2026-10-25T00:00:00Z",
     "yes_buy_price": 0.6,
-    "yes_buy_size": 15015.06
+    "yes_buy_size": 17020.06
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-10-24T18:16:17Z",
+  "generated_at_utc": "2026-10-24T21:00:53Z",
   "identity_mapping": {
     "game": {
       "away_team": "TB",
@@ -101,7 +101,7 @@
     "event_slugs": [
       "mlb-tb-mil-2026-10-24"
     ],
-    "n_contracts_in_fetched_events": 12,
+    "n_contracts_in_fetched_events": 15,
     "n_event_requests": 1,
     "n_events": 1,
     "n_events_failed": 0,

@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.44,
+      "size": 6404.88
+    },
+    {
+      "price": 0.45,
+      "size": 18033.0
+    },
+    {
+      "price": 0.46,
+      "size": 566.0
+    },
+    {
+      "price": 0.47,
+      "size": 1488.0
+    },
+    {
+      "price": 0.48,
+      "size": 1247.0
+    },
+    {
+      "price": 0.49,
+      "size": 10013.0
+    },
+    {
+      "price": 0.5,
+      "size": 2500.0
+    },
+    {
+      "price": 0.75,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.44,
+  "best_ask_size": 6404.88,
+  "best_bid": 0.43,
+  "best_bid_size": 2441.28,
+  "bids": [
+    {
+      "price": 0.43,
+      "size": 2441.28
+    },
+    {
+      "price": 0.42,
+      "size": 1.35
+    },
+    {
+      "price": 0.41,
+      "size": 1163.0
+    },
+    {
+      "price": 0.38,
+      "size": 107.0
+    },
+    {
+      "price": 0.37,
+      "size": 214.61
+    },
+    {
+      "price": 0.35,
+      "size": 1.0
+    },
+    {
+      "price": 0.32,
+      "size": 495.0
+    },
+    {
+      "price": 0.3,
+      "size": 833.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.435,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.4,
+  "market_id": "1765908",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-24-hits-taywal-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "afe074a3b5dad5b37932defd5540f4b19bdd2cd72e77ab1d841f10978bd026b6",
+  "receive_time_utc": "2026-10-24T21:01:55.153030Z",
+  "request_time_utc": "2026-10-24T21:01:55.063543Z",
+  "source_transact_time_utc": "2026-10-24T21:01:49.521944542Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

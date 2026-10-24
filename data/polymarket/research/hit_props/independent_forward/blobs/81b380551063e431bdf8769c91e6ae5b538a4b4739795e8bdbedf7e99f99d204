@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.53,
+      "size": 1000.0
+    },
+    {
+      "price": 0.54,
+      "size": 12281.69
+    },
+    {
+      "price": 0.56,
+      "size": 977.0
+    },
+    {
+      "price": 0.57,
+      "size": 7212.0
+    },
+    {
+      "price": 0.58,
+      "size": 2576.0
+    },
+    {
+      "price": 0.59,
+      "size": 2928.0
+    },
+    {
+      "price": 0.6,
+      "size": 3125.0
+    },
+    {
+      "price": 0.65,
+      "size": 2431.0
+    },
+    {
+      "price": 0.82,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    }
+  ],
+  "best_ask": 0.53,
+  "best_ask_size": 1000.0,
+  "best_bid": 0.52,
+  "best_bid_size": 25.0,
+  "bids": [
+    {
+      "price": 0.52,
+      "size": 25.0
+    },
+    {
+      "price": 0.51,
+      "size": 1524.01
+    },
+    {
+      "price": 0.44,
+      "size": 50.0
+    },
+    {
+      "price": 0.4,
+      "size": 625.0
+    },
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 297.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.525,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1765898",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-24-hits-vicmes-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "2efeaec67d556a290979ad71f61860d037add49b99806313a7ce13f1441525b5",
+  "receive_time_utc": "2026-10-24T21:01:55.362983Z",
+  "request_time_utc": "2026-10-24T21:01:55.282855Z",
+  "source_transact_time_utc": "2026-10-24T21:01:11.221478756Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
