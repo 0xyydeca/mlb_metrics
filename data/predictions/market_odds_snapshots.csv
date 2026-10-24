@@ -1883,3 +1883,4 @@ provider_event_id,sportsbook,captured_at_utc,game_datetime,date,home_team,away_t
 401908042,DraftKings,2026-10-24T00:38:25Z,2026-10-24T00:00Z,2026-10-23 00:00:00,MIL,TB,-186.0,165.0,0.6328155090512261,post_start,849805.0,provider_map,odds_0781093737de,intraday
 401908042,DraftKings,2026-10-24T04:34:29Z,2026-10-24T00:00Z,2026-10-23 00:00:00,MIL,TB,-186.0,165.0,0.6328155090512261,post_start,849805.0,provider_map,odds_911bbc795ba8,intraday
 401908043,DraftKings,2026-10-24T18:06:08Z,2026-10-25T00:00Z,2026-10-24 00:00:00,MIL,TB,-120.0,100.0,0.5217391304347826,ok,849802.0,unique_matchup,odds_78c085fd2fad,intraday
+401908043,DraftKings,2026-10-24T20:43:52Z,2026-10-25T00:00Z,2026-10-24 00:00:00,MIL,TB,-120.0,100.0,0.5217391304347826,ok,849802.0,provider_map,odds_a2bcabc1a4fe,intraday
