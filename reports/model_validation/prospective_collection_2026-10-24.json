@@ -1,0 +1,301 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 244,
+  "intact_pregame_forecasts": 244,
+  "execution_quotes_matched": 231,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 244
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 75,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 612,
+    "request_budget_omission": 107,
+    "ValueError: invalid_crossed_or_insufficient_book": 11,
+    "first_forecast_already_saved": 110
+  },
+  "audit_date": "2026-10-24",
+  "source_commit": "fed05d1b4dce39bdc1bb796bfbb45185d2a10301",
+  "task": "Step 3 resumed collection follow-up",
+  "new_run_reports": [
+    {
+      "exclusions": [
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-yandia-gte1",
+          "reason": "request_budget_omission"
+        }
+      ],
+      "executable_quotes_matched": 12,
+      "finished_at_utc": "2026-10-23T19:23:47.893173+00:00",
+      "forecasts_saved": 12,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 13,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261023T192246319164Z-758e14be",
+      "started_at_utc": "2026-10-23T19:22:46.319350+00:00",
+      "status": "captured",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-britur-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chasim-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chryel-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-coopra-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-garmit-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jaccho-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jakbau-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jonara-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jondel-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-juncam-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-liahic-gte1",
+          "reason": "first_forecast_already_saved"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-wilcon2-gte1",
+          "reason": "first_forecast_already_saved"
+        }
+      ],
+      "executable_quotes_matched": 6,
+      "finished_at_utc": "2026-10-23T22:26:16.888775+00:00",
+      "forecasts_saved": 6,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 18,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261023T222515343545Z-20713672",
+      "started_at_utc": "2026-10-23T22:25:15.343740+00:00",
+      "status": "captured",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-benwil-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-britur-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chasim-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chryel-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-coopra-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-davham-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-garmit-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jaccho-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jakbau-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jonara-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jondel-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-juncam-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-liahic-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-salfre-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-taywal-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-vicmes-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-wilcon2-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-yandia-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        }
+      ],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-24T00:54:31.967664+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 18,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261024T005431871879Z-f1cd0262",
+      "started_at_utc": "2026-10-24T00:54:31.872092+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    },
+    {
+      "exclusions": [
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-benwil-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-britur-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chasim-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-chryel-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-coopra-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-davham-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-garmit-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jaccho-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jakbau-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jonara-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-jondel-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-juncam-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-liahic-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-salfre-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-taywal-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-vicmes-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-wilcon2-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        },
+        {
+          "market_slug": "astatc-mlb-tb-mil-2026-10-23-hits-yandia-gte1",
+          "reason": "inside_entry_cutoff_or_invalid_start"
+        }
+      ],
+      "executable_quotes_matched": 0,
+      "finished_at_utc": "2026-10-24T04:51:32.195223+00:00",
+      "forecasts_saved": 0,
+      "formal_evaluation_eligible_dates": 0,
+      "historical_or_other_date_rows_not_replayed": 2452,
+      "loaded_capture_rows": 18,
+      "outcomes_opened": false,
+      "real_money_ready": false,
+      "research_only": true,
+      "run_id": "20261024T045132112012Z-84b2534e",
+      "started_at_utc": "2026-10-24T04:51:32.112205+00:00",
+      "status": "no_eligible_forecasts",
+      "version": "independent-prospective-capture-v1"
+    }
+  ],
+  "checks": "Fresh archive integrity audit and four-run forecast/match reconciliation; unchanged regression suites not repeated",
+  "owner_input_missing": "Actual venue confirmation"
+}
