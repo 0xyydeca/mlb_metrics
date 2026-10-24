@@ -1,10 +1,18 @@
 {
   "actionable_suppressed": true,
   "away_team": "TB",
-  "baseball": null,
-  "best_ask": 0.455,
-  "best_ask_size": 558807.49,
-  "best_bid": 0.45,
+  "baseball": {
+    "away_lineup_status": "unconfirmed",
+    "away_starter_status": "probable",
+    "fetched_at_utc": "2026-10-24T18:16:12Z",
+    "home_lineup_status": "unconfirmed",
+    "home_starter_status": "probable",
+    "pass_reason": NaN,
+    "usable_for_game_winner": true
+  },
+  "best_ask": 0.475,
+  "best_ask_size": 800065.95,
+  "best_bid": 0.47,
   "contract_url": "https://polymarket.us/event/mlb-tb-mil-2026-10-24",
   "event_slug": "mlb-tb-mil-2026-10-24",
   "evidence_verdict": "insufficient_evidence",
@@ -15,7 +23,6 @@
   "market_id": "1622103",
   "market_slug": "aec-mlb-tb-mil-2026-10-24",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-24T04:51:29.514594Z",
-  "quote_request_time_utc": "2026-10-24T04:51:29.425363Z",
+  "quote_receive_time_utc": "2026-10-24T18:16:12.575458Z",
+  "quote_request_time_utc": "2026-10-24T18:16:12.507700Z",
   "rules_hash": "85e4103a339f441b",
   "rules_text_excerpt": "This market will settle to the winner of the Tampa Bay Rays vs Milwaukee Brewers MLB World Series Game 2 scheduled for October 24, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. ",
   "scheduled_start_utc": "2026-10-25T00:00:00Z",

@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849802.0,
+    "game_type": "W",
+    "key_mlbam": 661388.0,
+    "market_id": "1739853",
+    "market_slug": "astatc-mlb-tb-mil-2026-10-24-hits-wilcon2-gte1",
+    "requested_local_date": "2026-10-24",
+    "rules_hash": "6eafaec1cf0d05bd",
+    "rules_text": "This market will settle to Yes if William Contreras records 1 or more hits in the Tampa Bay Rays vs Milwaukee Brewers MLB World Series Game 2 scheduled for October 24, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-25T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "e16fccc1d452c697ce8d11e1a9af25feeef46e38a81f0ac20023f11fd87ed4c2",
+  "forecast_id": "06ed53efd69e750d1882a69d7d22c8ff8dd57f2498bb2dd18863b68cc4651daa",
+  "forecast_time_utc": "2026-10-24T18:16:19.528221+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "7c12d0c4bfc205d7b4e9dd045469026de7a84b2e48b1a4441a70aea670918f19",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "4e662919386820f7af3ed523f2372ca8d3f437f91cd97beef74dfae2a2cb9d53"
+  },
+  "inputs_observed_at_utc": "2026-10-24T18:16:18.497064+00:00",
+  "manifest_sha256": "c30453969a874c1e85c8c715d471e8aed47241cf546fb3aaa34d3805e67c349e",
+  "prediction_book_sha256": "71ba730736391adb6e55e3e4ea67b3c00e871c3aae2b6435f6c06c483ab7723d",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.05188737612983468,
+    "qualifying_hit": 0.6516042150587369,
+    "qualifying_no_hit": 0.2965084088114284
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261024T181618484114Z-c1467745"
+}

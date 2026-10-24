@@ -1,0 +1,124 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 2879.06
+    },
+    {
+      "price": 0.62,
+      "size": 12386.0
+    },
+    {
+      "price": 0.63,
+      "size": 841.64
+    },
+    {
+      "price": 0.64,
+      "size": 693.0
+    },
+    {
+      "price": 0.65,
+      "size": 1750.0
+    },
+    {
+      "price": 0.67,
+      "size": 3787.0
+    },
+    {
+      "price": 0.69,
+      "size": 35.0
+    },
+    {
+      "price": 0.84,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 4057.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 2879.06,
+  "best_bid": 0.6,
+  "best_bid_size": 3140.37,
+  "bids": [
+    {
+      "price": 0.6,
+      "size": 3140.37
+    },
+    {
+      "price": 0.59,
+      "size": 3000.0
+    },
+    {
+      "price": 0.58,
+      "size": 93.0
+    },
+    {
+      "price": 0.53,
+      "size": 471.0
+    },
+    {
+      "price": 0.48,
+      "size": 3536.0
+    },
+    {
+      "price": 0.41,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.605,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.62,
+  "market_id": "1739862",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-24-hits-jonara-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "740f1fa6181ee43fd30dd39b4a5a7db2b5eb3fb6fff2594a0c59e7e73bf8c977",
+  "receive_time_utc": "2026-10-24T18:16:19.180099Z",
+  "request_time_utc": "2026-10-24T18:16:19.114087Z",
+  "source_transact_time_utc": "2026-10-24T18:15:47.336351827Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

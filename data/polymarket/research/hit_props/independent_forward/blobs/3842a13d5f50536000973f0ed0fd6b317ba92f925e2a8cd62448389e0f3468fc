@@ -1,0 +1,116 @@
+{
+  "asks": [
+    {
+      "price": 0.63,
+      "size": 11933.06
+    },
+    {
+      "price": 0.64,
+      "size": 1000.0
+    },
+    {
+      "price": 0.65,
+      "size": 2068.4
+    },
+    {
+      "price": 0.66,
+      "size": 441.0
+    },
+    {
+      "price": 0.69,
+      "size": 4032.0
+    },
+    {
+      "price": 0.7,
+      "size": 35.0
+    },
+    {
+      "price": 0.85,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.97,
+      "size": 3882.66
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 24999.0
+    }
+  ],
+  "best_ask": 0.63,
+  "best_ask_size": 11933.06,
+  "best_bid": 0.62,
+  "best_bid_size": 1483.58,
+  "bids": [
+    {
+      "price": 0.62,
+      "size": 1483.58
+    },
+    {
+      "price": 0.61,
+      "size": 3500.0
+    },
+    {
+      "price": 0.53,
+      "size": 471.0
+    },
+    {
+      "price": 0.49,
+      "size": 3851.0
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.03,
+      "size": 66.66
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 25000.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.625,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.63,
+  "market_id": "1739853",
+  "market_slug": "astatc-mlb-tb-mil-2026-10-24-hits-wilcon2-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "ac04405bd29f6c774f3b1176f48ff16ef9de8279ca6636d2f56b30f3ddda7c4b",
+  "receive_time_utc": "2026-10-24T18:17:20.569236Z",
+  "request_time_utc": "2026-10-24T18:17:20.358489Z",
+  "source_transact_time_utc": "2026-10-24T18:16:51.266791090Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
