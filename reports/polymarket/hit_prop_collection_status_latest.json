@@ -1,18 +1,18 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261024T210051Z",
+  "capture_id": "hp_20261024T232717Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-10-24T21:00:53Z",
+  "generated_at_utc": "2026-10-24T23:27:19Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
   },
-  "n_books_captured": 15,
-  "n_contracts": 15,
-  "n_mapped_game_pk": 15,
-  "n_mapped_key_mlbam": 15,
+  "n_books_captured": 18,
+  "n_contracts": 18,
+  "n_mapped_game_pk": 18,
+  "n_mapped_key_mlbam": 18,
   "n_quarantined": 0,
   "remaining_blockers": [
     "no_registered_prop_evaluation_outcomes_yet",
@@ -20,7 +20,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-8c5dfb20c3944b4ba58b3a1ac25887ce.json",
+  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-3af197e6d35545da96260fd12d439b48.json",
   "requested_local_date": "2026-10-24",
   "research_only": true,
   "status": "captured",
@@ -30,7 +30,7 @@
     "event_slugs": [
       "mlb-tb-mil-2026-10-24"
     ],
-    "n_contracts_in_fetched_events": 15,
+    "n_contracts_in_fetched_events": 18,
     "n_event_requests": 1,
     "n_events": 1,
     "n_events_failed": 0,
