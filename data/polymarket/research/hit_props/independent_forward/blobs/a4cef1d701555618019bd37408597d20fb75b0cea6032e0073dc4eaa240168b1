@@ -1,0 +1,34 @@
+{
+  "delay_seconds": 60,
+  "features": [
+    "WAVE",
+    "PA_L",
+    "PA_R",
+    "Exit_Velo",
+    "Barrel_Rate",
+    "xBA",
+    "xwOBA",
+    "Whiff_Rate",
+    "Chase_Rate",
+    "avg_batting_order",
+    "start_rate",
+    "Days_Rest",
+    "is_home"
+  ],
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "input_hashes": {
+    "contracts": "51aa8015914f4cef388cb2c834d0775386d0ae226d2ef8791f2ec7efd4d05a95",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "07b9391da9fb24e47459388c44a7d32c90252cd39b62a872944c9285a507da55"
+  },
+  "inputs_observed_at_utc": "2026-10-25T05:01:11.074248+00:00",
+  "max_quote_age_seconds": 30,
+  "model_version": "hit-prop-three-state-development-v1",
+  "outcome_scoring_allowed": false,
+  "quantity": 1.0,
+  "registration_sha256": "3b7b0ab829f43e532358b6d82277ea51d804773e615f6ac97d048760ba690ca2",
+  "selection": "first pregame forecast per exact contract; sorted slug; bounded request budget; no outcome-based selection",
+  "training_end_date": "2026-09-14",
+  "version": "independent-prospective-capture-v1"
+}
