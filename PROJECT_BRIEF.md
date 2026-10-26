@@ -1,5 +1,12 @@
 # Project brief: mlb_metrics
 
+## October 26 maintenance — no material readiness change
+
+- Read applicable instructions, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded archives to owner main `8fd0db7`.
+- Fresh audit: 85 complete runs, no failed/incomplete runs or integrity errors. Forecasts remain 262, delayed price matches 249 and missing quotes 13; all postseason research. Five new runs had zero current-date input rows and saved no forecasts. Empty inputs do not independently prove absent venue opportunities. Formal eligible dates remain zero and returns unknown.
+- Saved `reports/model_validation/prospective_collection_2026-10-26.json` and working-document `research/2026-10-26/collection-review/audit.json`. Checks: fresh archive integrity audit and five empty-input assertions. No source changes; unchanged regression suites not repeated. No capture, training, backfill, settlement reads, scoring, policy changes or orders.
+- Blockers unchanged: actual venue confirmation, historical training provenance, immutable untouched formal evaluation assignment, genuine settlements and sufficient registered evidence. Betting remains disabled; readiness remains incomplete. Initial report preparation referenced a cleaned temporary helper; recreated the helper and completed the report without altering production data.
+
 ## October 25 maintenance — resumed collection follow-up
 
 - Read both instruction files, compared matching briefs and consulted the readiness plan. Clean checkout; inspected incoming changes with no source/test/workflow/instruction changes and fast-forwarded generated archives to owner main `99ba388`.
