@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849804.0,
+    "game_type": "W",
+    "key_mlbam": 641343.0,
+    "market_id": "1797605",
+    "market_slug": "astatc-mlb-mil-tb-2026-10-26-hits-jakbau-gte1",
+    "requested_local_date": "2026-10-26",
+    "rules_hash": "b5870fc801b8ca70",
+    "rules_text": "This market will settle to Yes if Jake Bauers records 1 or more hits in the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 3 scheduled for October 26, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-27T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "41b135de839fb353c85e09eaa20f278c818ea3684e5a2c3fef75f374df13d34b",
+  "forecast_id": "e7cae56580ec222defcc20083aace56ccb2b9ac8f102cf0ae1de1567ee73de65",
+  "forecast_time_utc": "2026-10-26T20:39:13.822290+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "7563de13716739d4b96c67b7781c0555666fbc2cd40628ad306ae082f8369c5c",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "4b254af7565cde2c4d52db4cdf3a2ca5e639338efec050bf477995bf8a1d308e"
+  },
+  "inputs_observed_at_utc": "2026-10-26T20:39:13.206338+00:00",
+  "manifest_sha256": "e630fb6c804f20fde3c7bd22824905b35e84d75270e9757d9903594d4fe55db4",
+  "prediction_book_sha256": "b5f8097414db55ff992582c3dc8ff031ea909b9dbfbe85d24b2c3dfa132cae14",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.08474747070572243,
+    "qualifying_hit": 0.580339490151925,
+    "qualifying_no_hit": 0.3349130391423525
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261026T203913194078Z-c311a4de"
+}

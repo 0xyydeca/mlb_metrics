@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849804.0,
+    "game_type": "W",
+    "key_mlbam": 592885.0,
+    "market_id": "1797602",
+    "market_slug": "astatc-mlb-mil-tb-2026-10-26-hits-chryel-gte1",
+    "requested_local_date": "2026-10-26",
+    "rules_hash": "ec355dfe82906de4",
+    "rules_text": "This market will settle to Yes if Christian Yelich records 1 or more hits in the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 3 scheduled for October 26, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-27T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "618341002196f300b347641634343fe7e3fe1580eaaa4a5edd5485c00b30416c",
+  "forecast_id": "55258cf1cb6fb134fd5f555de0b6af3821ce218808cc7f8e6862aeb577ba6279",
+  "forecast_time_utc": "2026-10-26T20:39:13.569851+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "7563de13716739d4b96c67b7781c0555666fbc2cd40628ad306ae082f8369c5c",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "4b254af7565cde2c4d52db4cdf3a2ca5e639338efec050bf477995bf8a1d308e"
+  },
+  "inputs_observed_at_utc": "2026-10-26T20:39:13.206338+00:00",
+  "manifest_sha256": "e630fb6c804f20fde3c7bd22824905b35e84d75270e9757d9903594d4fe55db4",
+  "prediction_book_sha256": "c02123e3235e6ea8578a202c497028335ec240035a2b1fd99ba4db6bd53ea50b",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.12536714435878382,
+    "qualifying_hit": 0.5618805026283178,
+    "qualifying_no_hit": 0.3127523530128984
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261026T203913194078Z-c311a4de"
+}

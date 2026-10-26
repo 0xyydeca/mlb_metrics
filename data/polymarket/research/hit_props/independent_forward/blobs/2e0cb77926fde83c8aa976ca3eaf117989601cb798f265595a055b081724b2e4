@@ -1,0 +1,152 @@
+{
+  "asks": [
+    {
+      "price": 0.54,
+      "size": 25.27
+    },
+    {
+      "price": 0.55,
+      "size": 300.0
+    },
+    {
+      "price": 0.56,
+      "size": 3674.35
+    },
+    {
+      "price": 0.57,
+      "size": 80.04
+    },
+    {
+      "price": 0.58,
+      "size": 500.0
+    },
+    {
+      "price": 0.59,
+      "size": 10000.0
+    },
+    {
+      "price": 0.6,
+      "size": 750.0
+    },
+    {
+      "price": 0.61,
+      "size": 1384.0
+    },
+    {
+      "price": 0.63,
+      "size": 70.0
+    },
+    {
+      "price": 0.76,
+      "size": 4376.0
+    },
+    {
+      "price": 0.77,
+      "size": 8383.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2033.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6038.0
+    },
+    {
+      "price": 0.99,
+      "size": 35002.0
+    }
+  ],
+  "best_ask": 0.54,
+  "best_ask_size": 25.27,
+  "best_bid": 0.53,
+  "best_bid_size": 1323.55,
+  "bids": [
+    {
+      "price": 0.53,
+      "size": 1323.55
+    },
+    {
+      "price": 0.52,
+      "size": 3325.65
+    },
+    {
+      "price": 0.51,
+      "size": 90.0
+    },
+    {
+      "price": 0.5,
+      "size": 4.99
+    },
+    {
+      "price": 0.43,
+      "size": 4429.0
+    },
+    {
+      "price": 0.42,
+      "size": 70.0
+    },
+    {
+      "price": 0.35,
+      "size": 1.0
+    },
+    {
+      "price": 0.3,
+      "size": 4328.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 4340.0
+    },
+    {
+      "price": 0.04,
+      "size": 7339.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6038.0
+    },
+    {
+      "price": 0.01,
+      "size": 35003.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.535,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.53,
+  "market_id": "1797605",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-26-hits-jakbau-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "54ebd48ac1017450aa393792f773bcb632a4294a8c4a22f6e6d93eb505fe80a4",
+  "receive_time_utc": "2026-10-26T20:40:14.398090Z",
+  "request_time_utc": "2026-10-26T20:40:14.182045Z",
+  "source_transact_time_utc": "2026-10-26T20:39:56.300314549Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

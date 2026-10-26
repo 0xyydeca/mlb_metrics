@@ -1,0 +1,132 @@
+{
+  "asks": [
+    {
+      "price": 0.72,
+      "size": 5215.31
+    },
+    {
+      "price": 0.73,
+      "size": 80.0
+    },
+    {
+      "price": 0.74,
+      "size": 200.0
+    },
+    {
+      "price": 0.75,
+      "size": 12012.2
+    },
+    {
+      "price": 0.77,
+      "size": 750.0
+    },
+    {
+      "price": 0.79,
+      "size": 70.0
+    },
+    {
+      "price": 0.89,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35001.0
+    }
+  ],
+  "best_ask": 0.72,
+  "best_ask_size": 5215.31,
+  "best_bid": 0.71,
+  "best_bid_size": 29.04,
+  "bids": [
+    {
+      "price": 0.71,
+      "size": 29.04
+    },
+    {
+      "price": 0.7,
+      "size": 2517.8
+    },
+    {
+      "price": 0.68,
+      "size": 80.0
+    },
+    {
+      "price": 0.67,
+      "size": 10.0
+    },
+    {
+      "price": 0.58,
+      "size": 4445.0
+    },
+    {
+      "price": 0.45,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.715,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.72,
+  "market_id": "1797581",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-26-hits-yandia-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "ab485ed37e228d48a33b69e6f2e64e8aa8fc1ebcad2afe95cc76505e8a618651",
+  "receive_time_utc": "2026-10-26T20:39:14.248769Z",
+  "request_time_utc": "2026-10-26T20:39:14.165425Z",
+  "source_transact_time_utc": "2026-10-26T20:38:40.769510317Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

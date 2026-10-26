@@ -1,0 +1,156 @@
+{
+  "asks": [
+    {
+      "price": 0.56,
+      "size": 4210.11
+    },
+    {
+      "price": 0.57,
+      "size": 90.0
+    },
+    {
+      "price": 0.58,
+      "size": 200.0
+    },
+    {
+      "price": 0.6,
+      "size": 11750.0
+    },
+    {
+      "price": 0.62,
+      "size": 394.0
+    },
+    {
+      "price": 0.64,
+      "size": 70.0
+    },
+    {
+      "price": 0.77,
+      "size": 4375.0
+    },
+    {
+      "price": 0.78,
+      "size": 10545.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 56.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35001.0
+    }
+  ],
+  "best_ask": 0.56,
+  "best_ask_size": 4210.11,
+  "best_bid": 0.55,
+  "best_bid_size": 26.04,
+  "bids": [
+    {
+      "price": 0.55,
+      "size": 26.04
+    },
+    {
+      "price": 0.54,
+      "size": 300.0
+    },
+    {
+      "price": 0.53,
+      "size": 1000.0
+    },
+    {
+      "price": 0.52,
+      "size": 3000.0
+    },
+    {
+      "price": 0.51,
+      "size": 80.0
+    },
+    {
+      "price": 0.5,
+      "size": 5.0
+    },
+    {
+      "price": 0.44,
+      "size": 4428.0
+    },
+    {
+      "price": 0.43,
+      "size": 70.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.32,
+      "size": 4456.0
+    },
+    {
+      "price": 0.31,
+      "size": 1446.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.555,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.56,
+  "market_id": "1797608",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-26-hits-garmit-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "7759670a9c5b6f0fa80e6fe5d925f0baf79c8f6e79822c959f833552832b652d",
+  "receive_time_utc": "2026-10-26T20:40:14.103538Z",
+  "request_time_utc": "2026-10-26T20:40:13.889200Z",
+  "source_transact_time_utc": "2026-10-26T20:39:52.004923556Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

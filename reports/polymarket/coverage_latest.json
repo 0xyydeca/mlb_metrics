@@ -1,6 +1,6 @@
 {
-  "captured_at_utc": "2026-10-26T05:05:09Z",
-  "finished_at_utc": "2026-10-26T05:05:10Z",
+  "captured_at_utc": "2026-10-26T20:39:07Z",
+  "finished_at_utc": "2026-10-26T20:39:08Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
   "n_markets": 2,
@@ -16,8 +16,8 @@
   },
   "quote_health": {
     "n_index_rows": 2,
-    "latest_receive_time_utc": "2026-10-26T05:05:10.398292Z",
-    "age_seconds": -0.398292,
+    "latest_receive_time_utc": "2026-10-26T20:39:08.160909Z",
+    "age_seconds": -0.16090899999999997,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
@@ -57,14 +57,14 @@
       "team": "TB",
       "outcome_id": "3243699",
       "is_long": false,
-      "executable_buy": 0.48,
-      "display_price": 0.53,
+      "executable_buy": 0.53,
+      "display_price": 0.475,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173472,
-      "total_acquisition_cost_per_contract": 0.4973472,
+      "est_taker_fee_per_contract": 0.017312450000000004,
+      "total_acquisition_cost_per_contract": 0.5473124500000001,
       "market_id": "1622112",
       "side": "home"
     }
@@ -73,7 +73,7 @@
     "n_schedule_games": 193,
     "n_mapped_contracts": 216,
     "n_usable_prices": 2,
-    "n_usable_baseball_snapshots": 0,
+    "n_usable_baseball_snapshots": 1,
     "removed_price_reasons": {
       "missing_quote": 214
     },
@@ -107,8 +107,8 @@
     "quote": {
       "market_id": "1622094",
       "market_slug": "aec-mlb-mil-tb-2026-10-26",
-      "receive_time_utc": "2026-10-26T05:05:10.346577Z",
-      "age_seconds": -0.346577,
+      "receive_time_utc": "2026-10-26T20:39:08.090304Z",
+      "age_seconds": -0.09030400000000005,
       "stale": false,
       "eligible": true,
       "best_ask": 0.48,
@@ -128,11 +128,30 @@
       "est_taker_fee_per_contract": 0.0173315625,
       "total_acquisition_cost_per_contract": 0.5423315625
     },
-    "baseball": null,
-    "actionable": false,
-    "pass_reasons": [
-      "missing_baseball_snapshot"
-    ],
+    "baseball": {
+      "game_pk": "849804",
+      "date": "2026-10-26 00:00:00",
+      "game_datetime": "2026-10-27T00:00:00Z",
+      "home_team": "TB",
+      "away_team": "MIL",
+      "status": "Pre-Game",
+      "home_probable_pitcher_key_mlbam": "642547",
+      "away_probable_pitcher_key_mlbam": "688107",
+      "home_starter_status": "probable",
+      "away_starter_status": "probable",
+      "home_lineup_status": "confirmed",
+      "away_lineup_status": "confirmed",
+      "home_confirmed_starter_count": "9",
+      "away_confirmed_starter_count": "9",
+      "lineup_batting_order_source": "schedule_lineups_list_index",
+      "usable_for_game_winner": "True",
+      "pass_reason": null,
+      "fetched_at_utc": "2026-10-26T20:39:08Z",
+      "source": "schedule_plus_lineups",
+      "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
+    },
+    "actionable": true,
+    "pass_reasons": [],
     "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"TB\\\", \\\"away\\\": \\\"MIL\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
   },
   "modes": {
