@@ -1,10 +1,18 @@
 {
   "actionable_suppressed": true,
   "away_team": "MIL",
-  "baseball": null,
-  "best_ask": 0.575,
-  "best_ask_size": 613081.86,
-  "best_bid": 0.57,
+  "baseball": {
+    "away_lineup_status": "unconfirmed",
+    "away_starter_status": "missing_probable",
+    "fetched_at_utc": "2026-10-27T20:09:58Z",
+    "home_lineup_status": "confirmed",
+    "home_starter_status": "probable",
+    "pass_reason": "missing_away_probable_pitcher",
+    "usable_for_game_winner": false
+  },
+  "best_ask": 0.535,
+  "best_ask_size": 1766364.77,
+  "best_bid": 0.53,
   "contract_url": "https://polymarket.us/event/mlb-mil-tb-2026-10-27",
   "event_slug": "mlb-mil-tb-2026-10-27",
   "evidence_verdict": "insufficient_evidence",
@@ -15,7 +23,6 @@
   "market_id": "1622112",
   "market_slug": "aec-mlb-mil-tb-2026-10-27",
   "missing_for_labeled_eval": [
-    "persisted_baseball_snapshot",
     "evidence_gate_pass"
   ],
   "ok": true,
@@ -31,8 +38,8 @@
     "status": "unfilled",
     "unfilled_qty": 1.0
   },
-  "quote_receive_time_utc": "2026-10-27T05:21:06.797090Z",
-  "quote_request_time_utc": "2026-10-27T05:21:06.751634Z",
+  "quote_receive_time_utc": "2026-10-27T20:09:58.271494Z",
+  "quote_request_time_utc": "2026-10-27T20:09:58.248517Z",
   "rules_hash": "9d72f26cd66ee9eb",
   "rules_text_excerpt": "This market will settle to the winner of the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 4 scheduled for October 27, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. ",
   "scheduled_start_utc": "2026-10-28T00:00:00Z",

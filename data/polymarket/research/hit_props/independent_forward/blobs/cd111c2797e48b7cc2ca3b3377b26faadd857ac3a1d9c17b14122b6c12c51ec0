@@ -1,0 +1,152 @@
+{
+  "asks": [
+    {
+      "price": 0.68,
+      "size": 0.01
+    },
+    {
+      "price": 0.69,
+      "size": 3675.0
+    },
+    {
+      "price": 0.7,
+      "size": 13968.39
+    },
+    {
+      "price": 0.71,
+      "size": 344.0
+    },
+    {
+      "price": 0.72,
+      "size": 1000.0
+    },
+    {
+      "price": 0.73,
+      "size": 555.0
+    },
+    {
+      "price": 0.74,
+      "size": 4807.0
+    },
+    {
+      "price": 0.76,
+      "size": 80.0
+    },
+    {
+      "price": 0.77,
+      "size": 750.0
+    },
+    {
+      "price": 0.89,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.93,
+      "size": 4432.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35001.0
+    }
+  ],
+  "best_ask": 0.68,
+  "best_ask_size": 0.01,
+  "best_bid": 0.67,
+  "best_bid_size": 2974.61,
+  "bids": [
+    {
+      "price": 0.67,
+      "size": 2974.61
+    },
+    {
+      "price": 0.66,
+      "size": 3000.0
+    },
+    {
+      "price": 0.65,
+      "size": 16.0
+    },
+    {
+      "price": 0.61,
+      "size": 409.0
+    },
+    {
+      "price": 0.55,
+      "size": 4455.0
+    },
+    {
+      "price": 0.5,
+      "size": 2.0
+    },
+    {
+      "price": 0.45,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 36.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.675,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.68,
+  "market_id": "1858415",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-27-hits-yandia-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "892a56cf55334483b0ea954e1a88caddd760aabd760cf7bc7c8c4a1d7cf07e66",
+  "receive_time_utc": "2026-10-27T20:10:03.098592Z",
+  "request_time_utc": "2026-10-27T20:10:03.057121Z",
+  "source_transact_time_utc": "2026-10-27T20:09:37.142735631Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

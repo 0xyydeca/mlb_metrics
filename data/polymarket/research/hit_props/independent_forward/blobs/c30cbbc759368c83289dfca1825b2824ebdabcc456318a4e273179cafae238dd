@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.71,
+      "size": 440.01
+    },
+    {
+      "price": 0.72,
+      "size": 17619.3
+    },
+    {
+      "price": 0.73,
+      "size": 555.0
+    },
+    {
+      "price": 0.75,
+      "size": 5000.0
+    },
+    {
+      "price": 0.76,
+      "size": 1000.0
+    },
+    {
+      "price": 0.77,
+      "size": 750.0
+    },
+    {
+      "price": 0.8,
+      "size": 80.0
+    },
+    {
+      "price": 0.88,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.94,
+      "size": 4375.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35001.0
+    }
+  ],
+  "best_ask": 0.71,
+  "best_ask_size": 440.01,
+  "best_bid": 0.7,
+  "best_bid_size": 1878.96,
+  "bids": [
+    {
+      "price": 0.7,
+      "size": 1878.96
+    },
+    {
+      "price": 0.69,
+      "size": 500.0
+    },
+    {
+      "price": 0.68,
+      "size": 200.0
+    },
+    {
+      "price": 0.67,
+      "size": 2818.7
+    },
+    {
+      "price": 0.64,
+      "size": 390.0
+    },
+    {
+      "price": 0.59,
+      "size": 4455.0
+    },
+    {
+      "price": 0.51,
+      "size": 1.96
+    },
+    {
+      "price": 0.44,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.705,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.71,
+  "market_id": "1861093",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-27-hits-jaccho-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "2ab77bab00c404b7553bc84fda26074ae341e255ce7bb2352bbc34b6230f9a46",
+  "receive_time_utc": "2026-10-27T20:11:02.462837Z",
+  "request_time_utc": "2026-10-27T20:11:02.382933Z",
+  "source_transact_time_utc": "2026-10-27T20:10:45.761491420Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

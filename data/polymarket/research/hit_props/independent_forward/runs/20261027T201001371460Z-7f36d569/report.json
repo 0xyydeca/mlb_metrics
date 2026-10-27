@@ -1,0 +1,21 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-mil-tb-2026-10-27-hits-yandia-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    }
+  ],
+  "executable_quotes_matched": 11,
+  "finished_at_utc": "2026-10-27T20:11:03.115127+00:00",
+  "forecasts_saved": 11,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2539,
+  "loaded_capture_rows": 12,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261027T201001371460Z-7f36d569",
+  "started_at_utc": "2026-10-27T20:10:01.371605+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}

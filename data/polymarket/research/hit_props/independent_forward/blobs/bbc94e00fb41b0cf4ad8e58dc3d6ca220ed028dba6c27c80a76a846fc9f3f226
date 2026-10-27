@@ -1,0 +1,76 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 384.0
+    },
+    {
+      "price": 0.62,
+      "size": 750.0
+    },
+    {
+      "price": 0.82,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 2.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 384.0,
+  "best_bid": 0.39,
+  "best_bid_size": 1.0,
+  "bids": [
+    {
+      "price": 0.39,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 2.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.5,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": null,
+  "market_id": "1881596",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-27-hits-ryavil-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "a4563c1aaa81bb2f680aea4cfbfb7b0d45eec9370793aa75177cf6cf8e6495c9",
+  "receive_time_utc": "2026-10-27T20:10:02.945200Z",
+  "request_time_utc": "2026-10-27T20:10:02.897909Z",
+  "source_transact_time_utc": "2026-10-27T20:09:00.697445810Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

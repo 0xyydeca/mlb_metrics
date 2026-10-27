@@ -1,0 +1,140 @@
+{
+  "asks": [
+    {
+      "price": 0.66,
+      "size": 5993.37
+    },
+    {
+      "price": 0.67,
+      "size": 1060.19
+    },
+    {
+      "price": 0.68,
+      "size": 200.0
+    },
+    {
+      "price": 0.69,
+      "size": 482.0
+    },
+    {
+      "price": 0.7,
+      "size": 10000.0
+    },
+    {
+      "price": 0.71,
+      "size": 4310.0
+    },
+    {
+      "price": 0.73,
+      "size": 80.0
+    },
+    {
+      "price": 0.74,
+      "size": 753.84
+    },
+    {
+      "price": 0.85,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.93,
+      "size": 4401.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35002.0
+    }
+  ],
+  "best_ask": 0.66,
+  "best_ask_size": 5993.37,
+  "best_bid": 0.65,
+  "best_bid_size": 1979.04,
+  "bids": [
+    {
+      "price": 0.65,
+      "size": 1979.04
+    },
+    {
+      "price": 0.63,
+      "size": 2765.81
+    },
+    {
+      "price": 0.56,
+      "size": 446.0
+    },
+    {
+      "price": 0.52,
+      "size": 4455.0
+    },
+    {
+      "price": 0.48,
+      "size": 2.08
+    },
+    {
+      "price": 0.42,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35003.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.655,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.66,
+  "market_id": "1861099",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-27-hits-wilcon2-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "b0b3f27b37680dc1fa670c97623c7ac2524586b1190e9a05869ac894e826474c",
+  "receive_time_utc": "2026-10-27T20:11:03.112134Z",
+  "request_time_utc": "2026-10-27T20:11:03.054432Z",
+  "source_transact_time_utc": "2026-10-27T20:10:56.921227439Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}
