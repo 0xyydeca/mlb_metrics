@@ -1,9 +1,9 @@
 {
-  "captured_at_utc": "2026-10-27T00:08:07Z",
-  "finished_at_utc": "2026-10-27T00:08:08Z",
+  "captured_at_utc": "2026-10-27T05:21:05Z",
+  "finished_at_utc": "2026-10-27T05:21:06Z",
   "venue_id": "polymarket_us",
   "venue_label": "polymarket_us_provisional_research",
-  "n_markets": 2,
+  "n_markets": 1,
   "n_schedule_games": 193,
   "schedule_source": "live_plus_snapshots",
   "coverage": {
@@ -15,56 +15,41 @@
     "mapped_rate": 0.9908256880733946
   },
   "quote_health": {
-    "n_index_rows": 2,
-    "latest_receive_time_utc": "2026-10-27T00:08:08.317061Z",
-    "age_seconds": -0.31706100000000004,
+    "n_index_rows": 1,
+    "latest_receive_time_utc": "2026-10-27T05:21:06.797090Z",
+    "age_seconds": -0.79709,
     "stale": false,
     "max_age_seconds": 30.0,
     "reason": "ok"
   },
   "per_contract_quote_health": {
     "n_markets_checked": 216,
-    "n_fresh_eligible": 2,
-    "n_stale": 214,
+    "n_fresh_eligible": 1,
+    "n_stale": 215,
     "n_ineligible": 0,
-    "n_missing": 214,
+    "n_missing": 215,
     "max_age_seconds": 30.0
   },
-  "n_books_captured": 2,
-  "n_books_written": 2,
+  "n_books_captured": 1,
+  "n_books_written": 1,
   "n_book_http_failures": 0,
   "book_failure_samples": [],
   "book_liquidity_counts": {
-    "eligible_book": 2
+    "eligible_book": 1
   },
   "sample_home_buys": [
     {
       "team": "TB",
-      "outcome_id": "3243663",
-      "is_long": false,
-      "executable_buy": 0.525,
-      "display_price": 0.48,
-      "method": "one_minus_book_best_bid_short",
-      "eligible": true,
-      "reason": null,
-      "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173315625,
-      "total_acquisition_cost_per_contract": 0.5423315625,
-      "market_id": "1622094",
-      "side": "home"
-    },
-    {
-      "team": "TB",
       "outcome_id": "3243699",
       "is_long": false,
-      "executable_buy": 0.51,
-      "display_price": 0.495,
+      "executable_buy": 0.43000000000000005,
+      "display_price": 0.575,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.017368050000000003,
-      "total_acquisition_cost_per_contract": 0.52736805,
+      "est_taker_fee_per_contract": 0.017034450000000003,
+      "total_acquisition_cost_per_contract": 0.44703445,
       "market_id": "1622112",
       "side": "home"
     }
@@ -72,10 +57,10 @@
   "coverage_waterfall": {
     "n_schedule_games": 193,
     "n_mapped_contracts": 216,
-    "n_usable_prices": 2,
+    "n_usable_prices": 1,
     "n_usable_baseball_snapshots": 1,
     "removed_price_reasons": {
-      "missing_quote": 214
+      "missing_quote": 215
     },
     "removed_baseball_reasons": {},
     "notes": [
@@ -89,9 +74,9 @@
   },
   "sample_contract_trace": {
     "venue_id": "polymarket_us",
-    "market_id": "1622094",
-    "market_slug": "aec-mlb-mil-tb-2026-10-26",
-    "game_pk": 849804.0,
+    "market_id": "1622112",
+    "market_slug": "aec-mlb-mil-tb-2026-10-27",
+    "game_pk": 849803.0,
     "home_team": "TB",
     "away_team": "MIL",
     "long_team": "MIL",
@@ -99,59 +84,40 @@
     "outcome_orientation_note": "long_team_recorded_separately_from_home_team",
     "orientation_assumes_long_is_home": false,
     "orientation_ok": true,
-    "rules_hash": "2bec1ca4d79d4985",
-    "rules_text": "This market will settle to the winner of the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 3 scheduled for October 26, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "rules_hash": "9d72f26cd66ee9eb",
+    "rules_text": "This market will settle to the winner of the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 4 scheduled for October 27, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "fee_version": "us_taker_theta_0.0695_2026-09-17",
     "price_unit": "usd_share_cost_0_to_1",
     "quantity_unit": "contracts",
     "quote": {
-      "market_id": "1622094",
-      "market_slug": "aec-mlb-mil-tb-2026-10-26",
-      "receive_time_utc": "2026-10-27T00:08:08.212577Z",
-      "age_seconds": -0.21257700000000002,
+      "market_id": "1622112",
+      "market_slug": "aec-mlb-mil-tb-2026-10-27",
+      "receive_time_utc": "2026-10-27T05:21:06.797090Z",
+      "age_seconds": -0.79709,
       "stale": false,
       "eligible": true,
-      "best_ask": 0.48,
-      "best_bid": 0.475,
+      "best_ask": 0.575,
+      "best_bid": 0.57,
       "pass_reason": null
     },
     "home_executable_buy": {
       "team": "TB",
-      "outcome_id": "3243663",
+      "outcome_id": "3243699",
       "is_long": false,
-      "executable_buy": 0.525,
-      "display_price": 0.48,
+      "executable_buy": 0.43000000000000005,
+      "display_price": 0.575,
       "method": "one_minus_book_best_bid_short",
       "eligible": true,
       "reason": null,
       "fee_version": "us_taker_theta_0.0695_2026-09-17",
-      "est_taker_fee_per_contract": 0.0173315625,
-      "total_acquisition_cost_per_contract": 0.5423315625
+      "est_taker_fee_per_contract": 0.017034450000000003,
+      "total_acquisition_cost_per_contract": 0.44703445
     },
-    "baseball": {
-      "game_pk": "849804",
-      "date": "2026-10-26 00:00:00",
-      "game_datetime": "2026-10-27T00:00:00Z",
-      "home_team": "TB",
-      "away_team": "MIL",
-      "status": "Warmup",
-      "home_probable_pitcher_key_mlbam": "642547",
-      "away_probable_pitcher_key_mlbam": "688107",
-      "home_starter_status": "probable",
-      "away_starter_status": "probable",
-      "home_lineup_status": "confirmed",
-      "away_lineup_status": "confirmed",
-      "home_confirmed_starter_count": "9",
-      "away_confirmed_starter_count": "9",
-      "lineup_batting_order_source": "schedule_lineups_list_index",
-      "usable_for_game_winner": "True",
-      "pass_reason": null,
-      "fetched_at_utc": "2026-10-27T00:08:08Z",
-      "source": "schedule_plus_lineups",
-      "as_of_limitation": "announced_lineup_list_order_may_diverge_from_final_boxscore"
-    },
-    "actionable": true,
-    "pass_reasons": [],
+    "baseball": null,
+    "actionable": false,
+    "pass_reasons": [
+      "missing_baseball_snapshot"
+    ],
     "evidence_json": "{\"mapping_status\": \"mapped\", \"mapping_evidence\": \"{\\\"reason\\\": \\\"unique_teams_and_start\\\", \\\"home\\\": \\\"TB\\\", \\\"away\\\": \\\"MIL\\\", \\\"delta_min\\\": 0.0, \\\"tolerance_minutes\\\": 45}\"}"
   },
   "modes": {
