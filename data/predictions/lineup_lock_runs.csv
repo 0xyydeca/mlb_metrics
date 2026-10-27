@@ -159,3 +159,4 @@ fetched_at_utc,as_of_date,status,changed_game_pks,window_hours,upcoming_game_cou
 2026-10-26T01:38:37Z,2026-10-25,no_games_in_window,,6.0,
 2026-10-26T04:35:06Z,2026-10-25,no_games_in_window,,6.0,
 2026-10-26T20:28:00Z,2026-10-26,recomputed,849804,6.0,1.0
+2026-10-27T00:04:03Z,2026-10-26,no_games_in_window,,6.0,
