@@ -1,0 +1,40 @@
+{
+  "actionable": false,
+  "artifact_sha256": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+  "cohort": "postseason",
+  "contract": {
+    "game_pk": 849799.0,
+    "game_type": "W",
+    "key_mlbam": 668723.0,
+    "market_id": "1916973",
+    "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-ryavil-gte1",
+    "requested_local_date": "2026-10-28",
+    "rules_hash": "8d485bf73b880db4",
+    "rules_text": "This market will settle to Yes if Ryan Vilade records 1 or more hits in the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 5 scheduled for October 28, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "scheduled_start_utc": "2026-10-29T00:00:00Z",
+    "venue_id": "polymarket_us"
+  },
+  "feature_matrix_sha256": "60db216efae66aebfc6aa2609d85285274ad95b36a00d55b3fcf9c1ccb756bee",
+  "forecast_id": "5121d22a3cfcc382bbdfa2da36c272b2b0806bafd0911d1ba3e4e297b79d8b7d",
+  "forecast_time_utc": "2026-10-28T20:25:10.324135+00:00",
+  "formal_holdout_assignment": "unassigned_research_only",
+  "historical_training_availability_certified": false,
+  "inference_inputs_observed_before_prediction": true,
+  "input_hashes": {
+    "contracts": "e2a72a71eeb95e080fbb9a75f446af56d9e36d29c8ba3a3ec2a0b711bb040315",
+    "model": "53a195d08f79d7baf83a750618652010f8b4b263b906ebf19fb486496a2d306f",
+    "wave": "69318f0a92b3897b1fc52979e9c318cb5662bdc07225cf96929aa210cc5c2e22"
+  },
+  "inputs_observed_at_utc": "2026-10-28T20:25:08.984884+00:00",
+  "manifest_sha256": "ac31446dee1844aeda266b9a72f536a9049eb763bd98685bcc7ec2eb1d31c937",
+  "prediction_book_sha256": "15edf3032d08cfe67346f4feba5a49113e87cd380a013642e2ad2dcdce89f666",
+  "prediction_time_availability_certified": false,
+  "probabilities": {
+    "nonqualifying": 0.509643297690187,
+    "qualifying_hit": 0.27857916547985423,
+    "qualifying_no_hit": 0.21177753682995878
+  },
+  "probability_source": "independent_three_state_model",
+  "research_only": true,
+  "run_id": "20261028T202508935717Z-46edaf36"
+}

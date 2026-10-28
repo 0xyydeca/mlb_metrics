@@ -1,40 +1,40 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261027T235310Z",
+  "capture_id": "hp_20261028T202504Z",
   "contract": {
-    "book_receive_time_utc": "2026-10-27T23:53:11.188282Z",
-    "book_request_time_utc": "2026-10-27T23:53:11Z",
+    "book_receive_time_utc": "2026-10-28T20:25:05.623650Z",
+    "book_request_time_utc": "2026-10-28T20:25:05Z",
     "book_status": "captured",
-    "event_slug": "mlb-mil-tb-2026-10-27",
+    "event_slug": "mlb-mil-tb-2026-10-28",
     "fee_coefficient": 0.0695,
-    "market_id": "1861096",
-    "market_slug": "astatc-mlb-mil-tb-2026-10-27-hits-britur-gte1",
-    "no_buy_price": 0.38,
-    "no_buy_size": 1.22,
-    "player_name": "Brice Turang",
-    "provider_game_id": 10079799,
-    "provider_player_id": 373,
-    "question": "Will Brice Turang record at least 1 hits in Game 4: MIL Brewers vs. TB Rays?",
-    "rules_hash": "10a2d96e31650eb9",
-    "rules_text": "This market will settle to Yes if Brice Turang records 1 or more hits in the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 4 scheduled for October 27, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
+    "market_id": "1916969",
+    "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-benwil-gte1",
+    "no_buy_price": 0.48,
+    "no_buy_size": 1923.0,
+    "player_name": "Ben Williamson",
+    "provider_game_id": 10079800,
+    "provider_player_id": 740,
+    "question": "Will Ben Williamson record at least 1 hits in Game 5: MIL Brewers vs. TB Rays?",
+    "rules_hash": "ec4b9ae8788a6500",
+    "rules_text": "This market will settle to Yes if Ben Williamson records 1 or more hits in the Milwaukee Brewers vs Tampa Bay Rays MLB World Series Game 5 scheduled for October 28, 2026 at 8:00PM ET (as of the listing of the event's first instrument). Extra innings are included if played. The listed player must be in the starting lineup and record a plate appearance; otherwise, the market will settle to the last fair market price. If the game is shortened but an official final result is declared, the market will settle based on that result. If the game is delayed, postponed, suspended or otherwise rescheduled to a date and time not within two days of the originally scheduled date and time, the market will settle to the last fair market price. Outcome sourced from MLB.",
     "rules_version": "hit_prop_rules_v1",
-    "scheduled_start_utc": "2026-10-28T00:00:00Z",
-    "yes_buy_price": 0.63,
-    "yes_buy_size": 3084.32
+    "scheduled_start_utc": "2026-10-29T00:00:00Z",
+    "yes_buy_price": 0.54,
+    "yes_buy_size": 6.0
   },
   "edge_claimed": false,
-  "generated_at_utc": "2026-10-27T23:53:13Z",
+  "generated_at_utc": "2026-10-28T20:25:07Z",
   "identity_mapping": {
     "game": {
       "away_team": "MIL",
-      "game_pk": 849803,
+      "game_pk": 849799,
       "home_team": "TB",
-      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-mil-tb-2026-10-27\", \"game_pk\": 849803}",
+      "mapping_evidence": "{\"reason\": \"moneyline_registry_event_slug\", \"event_slug\": \"mlb-mil-tb-2026-10-28\", \"game_pk\": 849799}",
       "mapping_status": "mapped"
     },
     "player": {
-      "key_mlbam": 668930,
-      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"brice turang\", \"key_mlbam\": 668930}",
+      "key_mlbam": 810938,
+      "mapping_evidence": "{\"reason\": \"unique_normalized_name\", \"name\": \"ben williamson\", \"key_mlbam\": 810938}",
       "mapping_status": "mapped"
     }
   },
@@ -97,11 +97,11 @@
   },
   "universe": {
     "complete_denominator_claimed": true,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-27 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-28 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [
-      "mlb-mil-tb-2026-10-27"
+      "mlb-mil-tb-2026-10-28"
     ],
-    "n_contracts_in_fetched_events": 18,
+    "n_contracts_in_fetched_events": 15,
     "n_event_requests": 1,
     "n_events": 1,
     "n_events_failed": 0,

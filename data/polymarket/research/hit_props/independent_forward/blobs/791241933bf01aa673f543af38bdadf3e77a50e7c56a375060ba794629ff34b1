@@ -1,0 +1,144 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 480.17
+    },
+    {
+      "price": 0.62,
+      "size": 3071.0
+    },
+    {
+      "price": 0.63,
+      "size": 13793.94
+    },
+    {
+      "price": 0.64,
+      "size": 2055.0
+    },
+    {
+      "price": 0.65,
+      "size": 2750.0
+    },
+    {
+      "price": 0.66,
+      "size": 441.0
+    },
+    {
+      "price": 0.67,
+      "size": 4787.0
+    },
+    {
+      "price": 0.69,
+      "size": 90.0
+    },
+    {
+      "price": 0.77,
+      "size": 1.0
+    },
+    {
+      "price": 0.78,
+      "size": 4465.9
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35001.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 480.17,
+  "best_bid": 0.6,
+  "best_bid_size": 5813.77,
+  "bids": [
+    {
+      "price": 0.6,
+      "size": 5813.77
+    },
+    {
+      "price": 0.59,
+      "size": 1860.0
+    },
+    {
+      "price": 0.58,
+      "size": 200.0
+    },
+    {
+      "price": 0.53,
+      "size": 471.0
+    },
+    {
+      "price": 0.48,
+      "size": 4465.0
+    },
+    {
+      "price": 0.36,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 58.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.605,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1897865",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-coopra-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "4ae592768dddfb5ee44859af5e249167c6ad6b2cc09b7d4557aa8da2d9223345",
+  "receive_time_utc": "2026-10-28T20:25:09.555119Z",
+  "request_time_utc": "2026-10-28T20:25:09.483451Z",
+  "source_transact_time_utc": "2026-10-28T20:24:36.066542064Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

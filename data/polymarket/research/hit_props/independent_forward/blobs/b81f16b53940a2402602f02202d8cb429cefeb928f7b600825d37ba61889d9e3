@@ -1,0 +1,160 @@
+{
+  "asks": [
+    {
+      "price": 0.58,
+      "size": 0.09
+    },
+    {
+      "price": 0.59,
+      "size": 1968.0
+    },
+    {
+      "price": 0.6,
+      "size": 4400.0
+    },
+    {
+      "price": 0.61,
+      "size": 10000.0
+    },
+    {
+      "price": 0.62,
+      "size": 263.0
+    },
+    {
+      "price": 0.63,
+      "size": 750.0
+    },
+    {
+      "price": 0.64,
+      "size": 1000.0
+    },
+    {
+      "price": 0.65,
+      "size": 3999.0
+    },
+    {
+      "price": 0.68,
+      "size": 4081.0
+    },
+    {
+      "price": 0.76,
+      "size": 83.33
+    },
+    {
+      "price": 0.79,
+      "size": 13273.0
+    },
+    {
+      "price": 0.8,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.93,
+      "size": 57.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.97,
+      "size": 6066.66
+    },
+    {
+      "price": 0.98,
+      "size": 6005.0
+    },
+    {
+      "price": 0.99,
+      "size": 35001.0
+    }
+  ],
+  "best_ask": 0.58,
+  "best_ask_size": 0.09,
+  "best_bid": 0.57,
+  "best_bid_size": 5695.8,
+  "bids": [
+    {
+      "price": 0.57,
+      "size": 5695.8
+    },
+    {
+      "price": 0.56,
+      "size": 126.0
+    },
+    {
+      "price": 0.55,
+      "size": 200.0
+    },
+    {
+      "price": 0.51,
+      "size": 490.0
+    },
+    {
+      "price": 0.47,
+      "size": 4450.0
+    },
+    {
+      "price": 0.38,
+      "size": 1.0
+    },
+    {
+      "price": 0.36,
+      "size": 5906.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.06,
+      "size": 47.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6066.66
+    },
+    {
+      "price": 0.02,
+      "size": 6005.0
+    },
+    {
+      "price": 0.01,
+      "size": 35002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.575,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.58,
+  "market_id": "1897869",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-jondel-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "3c45a2bd840639d9d193fed7a65a6b3f10e1ff03f1c5064524b1818ad6955737",
+  "receive_time_utc": "2026-10-28T20:25:09.971826Z",
+  "request_time_utc": "2026-10-28T20:25:09.899637Z",
+  "source_transact_time_utc": "2026-10-28T20:25:05.731126899Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

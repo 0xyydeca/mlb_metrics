@@ -1,0 +1,112 @@
+{
+  "asks": [
+    {
+      "price": 0.61,
+      "size": 3564.0
+    },
+    {
+      "price": 0.62,
+      "size": 11199.99
+    },
+    {
+      "price": 0.64,
+      "size": 1250.0
+    },
+    {
+      "price": 0.66,
+      "size": 4117.0
+    },
+    {
+      "price": 0.88,
+      "size": 1.0
+    },
+    {
+      "price": 0.92,
+      "size": 1.0
+    },
+    {
+      "price": 0.95,
+      "size": 2002.0
+    },
+    {
+      "price": 0.96,
+      "size": 2000.0
+    },
+    {
+      "price": 0.98,
+      "size": 5.0
+    },
+    {
+      "price": 0.99,
+      "size": 10002.0
+    }
+  ],
+  "best_ask": 0.61,
+  "best_ask_size": 3564.0,
+  "best_bid": 0.59,
+  "best_bid_size": 1694.0,
+  "bids": [
+    {
+      "price": 0.59,
+      "size": 1694.0
+    },
+    {
+      "price": 0.58,
+      "size": 6.0
+    },
+    {
+      "price": 0.54,
+      "size": 800.01
+    },
+    {
+      "price": 0.52,
+      "size": 480.0
+    },
+    {
+      "price": 0.43,
+      "size": 1.0
+    },
+    {
+      "price": 0.08,
+      "size": 1.0
+    },
+    {
+      "price": 0.05,
+      "size": 2002.0
+    },
+    {
+      "price": 0.04,
+      "size": 2000.0
+    },
+    {
+      "price": 0.03,
+      "size": 6000.0
+    },
+    {
+      "price": 0.02,
+      "size": 5.0
+    },
+    {
+      "price": 0.01,
+      "size": 10002.0
+    }
+  ],
+  "data_class": "order_book",
+  "display_current_px": 0.6,
+  "eligibility_reason": null,
+  "eligible": true,
+  "fee_coefficient": 0.0695,
+  "fee_version": "us_taker_theta_0.0695_2026-09-17",
+  "last_trade_px": 0.61,
+  "market_id": "1916961",
+  "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-juncam-gte1",
+  "market_state": "MARKET_STATE_OPEN",
+  "min_trade_qty": null,
+  "raw_response_hash": "3a4f203b1ef72068a832a80223085574b8469197b7b2ea4feeddc18754b7752c",
+  "receive_time_utc": "2026-10-28T20:25:10.118066Z",
+  "request_time_utc": "2026-10-28T20:25:10.033451Z",
+  "source_transact_time_utc": "2026-10-28T20:24:27.980192414Z",
+  "suspended": false,
+  "tick_size": null,
+  "venue_id": "polymarket_us"
+}

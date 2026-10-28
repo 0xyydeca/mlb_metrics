@@ -1,0 +1,33 @@
+{
+  "exclusions": [
+    {
+      "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-jondel-gte1",
+      "reason": "ValueError: invalid_crossed_or_insufficient_book"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-taywal-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-wilcon2-gte1",
+      "reason": "request_budget_omission"
+    },
+    {
+      "market_slug": "astatc-mlb-mil-tb-2026-10-28-hits-yandia-gte1",
+      "reason": "request_budget_omission"
+    }
+  ],
+  "executable_quotes_matched": 11,
+  "finished_at_utc": "2026-10-28T20:26:10.892265+00:00",
+  "forecasts_saved": 11,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2569,
+  "loaded_capture_rows": 15,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261028T202508935717Z-46edaf36",
+  "started_at_utc": "2026-10-28T20:25:08.935881+00:00",
+  "status": "captured",
+  "version": "independent-prospective-capture-v1"
+}
