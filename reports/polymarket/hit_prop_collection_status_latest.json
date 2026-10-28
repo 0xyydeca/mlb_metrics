@@ -1,10 +1,10 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261028T025121Z",
+  "capture_id": "hp_20261028T060005Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-10-28T02:51:22Z",
+  "generated_at_utc": "2026-10-28T06:00:06Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
@@ -20,7 +20,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-f6418721a70447e8bf14832a4e154dcc.json",
+  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-8519ab0ca7264afe9282a4fdc38056b5.json",
   "requested_local_date": "2026-10-27",
   "research_only": true,
   "status": "no_eligible_contracts",
@@ -34,8 +34,8 @@
     "n_events_failed": 0,
     "n_events_fetched": 0,
     "n_events_not_fetched_due_to_budget": 0,
-    "n_excluded_already_started": 1,
-    "n_excluded_wrong_local_day": 0,
+    "n_excluded_already_started": 0,
+    "n_excluded_wrong_local_day": 1,
     "note": "League list may omit props; event-detail fetch is required for contracts. event_limit/book_limit bound requests \u2014 incomplete fetch is explicit, not silent."
   }
 }
