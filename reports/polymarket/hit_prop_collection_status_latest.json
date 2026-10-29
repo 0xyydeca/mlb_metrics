@@ -1,10 +1,10 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261029T060723Z",
+  "capture_id": "hp_20261029T202321Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-10-29T06:07:23Z",
+  "generated_at_utc": "2026-10-29T20:23:22Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
@@ -20,13 +20,13 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-edf5356b4e0c450799b9d1ef894d746a.json",
-  "requested_local_date": "2026-10-28",
+  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-fe20cbffbb8e4d86942831b2673e3a03.json",
+  "requested_local_date": "2026-10-29",
   "research_only": true,
   "status": "no_eligible_contracts",
   "universe": {
     "complete_denominator_claimed": false,
-    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-28 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
+    "definition": "All active future MLB Polymarket US events with start local-date 2026-10-29 (America/Phoenix) from the league list response; 1+ baseball_player_hits markets only.",
     "event_slugs": [],
     "n_contracts_in_fetched_events": 0,
     "n_event_requests": 0,
