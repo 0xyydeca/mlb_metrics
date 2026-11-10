@@ -1,10 +1,10 @@
 {
   "actionable": false,
-  "capture_id": "hp_20261110T073445Z",
+  "capture_id": "hp_20261110T212207Z",
   "edge_claimed": false,
   "errors": [],
   "exclusions": [],
-  "generated_at_utc": "2026-11-10T07:34:46Z",
+  "generated_at_utc": "2026-11-10T21:22:08Z",
   "modes": {
     "BETTING_MODE": "disabled",
     "GAME_PREDICTION_MODE": "shadow"
@@ -20,7 +20,7 @@
     "BETTING_MODE_disabled_orders_absent",
     "venue_us_vs_international_unconfirmed"
   ],
-  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-0d9aabd85c64445eae8b0fdd410f2b6b.json",
+  "report_path": "/home/runner/work/mlb_metrics/mlb_metrics/reports/polymarket/hit_prop_run_captures/hit-props-74317ed2acc740589c2d62ddf70d1348.json",
   "requested_local_date": "2026-11-10",
   "research_only": true,
   "status": "no_eligible_contracts",
