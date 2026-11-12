@@ -1,0 +1,16 @@
+{
+  "exclusions": [],
+  "executable_quotes_matched": 0,
+  "finished_at_utc": "2026-11-12T21:52:49.724366+00:00",
+  "forecasts_saved": 0,
+  "formal_evaluation_eligible_dates": 0,
+  "historical_or_other_date_rows_not_replayed": 2584,
+  "loaded_capture_rows": 0,
+  "outcomes_opened": false,
+  "real_money_ready": false,
+  "research_only": true,
+  "run_id": "20261112T215248905920Z-f14f5600",
+  "started_at_utc": "2026-11-12T21:52:48.906107+00:00",
+  "status": "no_eligible_forecasts",
+  "version": "independent-prospective-capture-v1"
+}
