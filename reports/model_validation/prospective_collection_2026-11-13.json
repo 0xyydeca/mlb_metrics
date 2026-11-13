@@ -1,0 +1,46 @@
+{
+  "status": "insufficient_evidence",
+  "forecasts": 295,
+  "intact_pregame_forecasts": 295,
+  "execution_quotes_matched": 282,
+  "integrity_errors": [],
+  "missing_execution": 13,
+  "cohort_counts": {
+    "postseason": 295
+  },
+  "formal_eligible_dates": 0,
+  "outcomes_opened": false,
+  "realized_returns": null,
+  "real_money_ready": false,
+  "remaining_gates": [
+    "historical_training_provenance_uncertified",
+    "immutable_formal_holdout_assignment_missing",
+    "registered_sample_and_precision_requirements",
+    "verified_actual_contract_settlements_required"
+  ],
+  "capture_runs": 145,
+  "failed_runs": 0,
+  "incomplete_runs": 0,
+  "exclusion_reason_counts": {
+    "inside_entry_cutoff_or_invalid_start": 754,
+    "request_budget_omission": 110,
+    "ValueError: invalid_crossed_or_insufficient_book": 13,
+    "first_forecast_already_saved": 137
+  },
+  "audit_date": "2026-11-13",
+  "source_commit": "e44a90f54267d3b5fb722ab083f82019a73a34f0",
+  "task": "Step 3 empty-input collection follow-up",
+  "new_run_ids": [
+    "20261110T212209365393Z-2ac250fa",
+    "20261111T012010279964Z-8c71f3a7",
+    "20261111T065250602192Z-4514be04",
+    "20261111T220539451369Z-eb1adf66",
+    "20261112T031041278000Z-111f3a4e",
+    "20261112T072951193029Z-214acbfe",
+    "20261112T215248905920Z-f14f5600",
+    "20261113T021413752017Z-f44b3636",
+    "20261113T070031122367Z-d33ecc5c"
+  ],
+  "checks": "Fresh integrity audit and nine empty-input assertions; unchanged regression suites not repeated",
+  "owner_input_missing": "Actual venue confirmation"
+}
